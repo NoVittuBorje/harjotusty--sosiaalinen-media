@@ -7,13 +7,13 @@ import { Box } from '@mui/material'
 function App() {
 
   return (
-    <>
+    <Box sx={{paddingTop:0,margin:0}}>
       <AppBar />
       <Box className='content'>
         <Homescreen />
       </Box>
       
-    </>
+    </Box>
     
   )
 }
