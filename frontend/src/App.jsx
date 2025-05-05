@@ -1,18 +1,19 @@
 
 import AppBar from './components/Appbar'
 import './App.css'
-import Homescreen from './components/Homescreen'
+import Homescreen from './components/homepage/Homepage'
 import { Box } from '@mui/material'
-
+import { Routes, Route, } from 'react-router-dom'
+import Profilepage from './components/profilepage/Profilepage'
 function App() {
 
   return (
-    <Box sx={{paddingTop:0,margin:0}}>
+    <Box>
       <AppBar />
-      <Box className='content'>
-        <Homescreen />
-      </Box>
-      
+      <Routes>
+        <Route path='/' element={<Homescreen/>}/>
+        <Route path='/profile' element={<Profilepage />} />
+      </Routes>
     </Box>
     
   )

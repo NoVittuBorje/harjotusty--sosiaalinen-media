@@ -10,7 +10,7 @@ const FeedItem = ({item,handleDislike,handleLike}) => {
                 <Box sx={{flexDirection:"column",padding:1}}>
                 <Box>
                     <Link href="#" color="inherit">
-                        <h3>{item.header}</h3>
+                        <h3>{item.Headline}</h3>
                     </Link>
                 </Box>
                 <Box>

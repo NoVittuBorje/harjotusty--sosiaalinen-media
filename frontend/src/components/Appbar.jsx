@@ -15,6 +15,8 @@ import AccountCircle from '@mui/icons-material/AccountCircle';
 import MailIcon from '@mui/icons-material/Mail';
 import NotificationsIcon from '@mui/icons-material/Notifications';
 import MoreIcon from '@mui/icons-material/MoreVert';
+import { useNavigate } from 'react-router';
+import HomeIcon from '@mui/icons-material/Home';
 
 const Search = styled('div')(({ theme }) => ({
   position: 'relative',
@@ -57,6 +59,7 @@ const StyledInputBase = styled(InputBase)(({ theme }) => ({
 }));
 
 export default function PrimarySearchAppBar() {
+  const navigate = useNavigate()
   const [anchorEl, setAnchorEl] = React.useState(null);
   const [mobileMoreAnchorEl, setMobileMoreAnchorEl] = React.useState(null);
 
@@ -79,13 +82,18 @@ export default function PrimarySearchAppBar() {
   const handleMobileMenuOpen = (event) => {
     setMobileMoreAnchorEl(event.currentTarget);
   };
-  const ProfileMenu = () => {
-    return (
-        <>
-            <MenuItem onClick={handleMenuClose}>Profile</MenuItem>
-            <MenuItem onClick={handleMenuClose}>My account</MenuItem>
-        </>
-    )
+  const handleProfileMenuClick = () => {
+    console.log("profile Page")
+    navigate("/profile")
+    handleMenuClose()
+  }
+  const handleMyaccountClick = () => {
+    console.log("my acc page")
+    handleMenuClose()
+  }
+  const handleHomeClick = () => {
+    console.log("home")
+    navigate("/")
   }
   const menuId = 'primary-search-account-menu';
   const renderMenu = (
@@ -104,7 +112,8 @@ export default function PrimarySearchAppBar() {
       open={isMenuOpen}
       onClose={handleMenuClose}
     >
-    {ProfileMenu()}
+    <MenuItem onClick={handleProfileMenuClick}>Profile</MenuItem>
+    <MenuItem onClick={handleMyaccountClick}>My account</MenuItem>
     </Menu>
   );
 
@@ -133,6 +142,7 @@ export default function PrimarySearchAppBar() {
         </IconButton>
         <p>Messages</p>
       </MenuItem>
+
       <MenuItem>
         <IconButton
           size="large"
@@ -145,6 +155,7 @@ export default function PrimarySearchAppBar() {
         </IconButton>
         <p>Notifications</p>
       </MenuItem>
+
       <MenuItem onClick={handleProfileMenuOpen}>
         <IconButton
           size="large"
@@ -173,14 +184,20 @@ export default function PrimarySearchAppBar() {
           >
             <MenuIcon />
           </IconButton>
-          <Typography
-            variant="h6"
-            noWrap
-            component="div"
-            sx={{ display: { xs: 'none', sm: 'block' } }}
+
+
+          <IconButton
+            size="large"
+            edge="start"
+            color="inherit"
+            aria-label="Home button"
+            sx={{ mr: 2 }}
+            onClick={handleHomeClick}
           >
-            MUI
-          </Typography>
+            <HomeIcon />
+          </IconButton>
+
+
           <Search>
             <SearchIconWrapper>
               <SearchIcon />
