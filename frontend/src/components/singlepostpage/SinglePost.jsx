@@ -1,37 +1,8 @@
-
-User = {
-    id:Id,
-    username:String,
-    firstname:String,
-    lastname:String,
-    relationship:String,
-    description:String,
-    work:String,
-    avatar:AvatarUrl,
-    posts:[],
-    comments:[...Comment],
-}
-
-Post = {
-        id:Id,
-        headline:String,
-        text:String,
-        user:User,
-        karma:Number,
-        img
-        comments:[...Comment]
-    },
-
-Comment = {
-        id:Id,
-        timestamp: Timestamp,
-        content:String,
-        karma:Number,
-        user:User,
-        replies:[...Comment]
-},
-
-example post 
+import { Box, List, ListItem } from "@mui/material"
+import Comment from "../commentsection/Comment"
+import CommentSection from "../commentsection/CommentSection"
+const date = Date.now()
+const postdata = [
 {
     id:1,
     headline:"String",
@@ -104,16 +75,15 @@ example post
         }
     ]
 }
-example subfeed
-{
-    feedname:String,
-    posts:[
-        {
-            id:Id,
-        timestamp:Number ,
-        content:{
-            post
-        }
-        },
-    ]
+]
+
+const SinglePost = () => {
+    console.log(postdata)
+    return(
+        <Box>
+            {postdata.map((post) => <CommentSection item={post.comments} ></CommentSection>)}
+        </Box>
+    )
 }
+
+export default SinglePost

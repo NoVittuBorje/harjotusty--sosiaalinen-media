@@ -1,5 +1,5 @@
 import { Stack,Box,Link,Paper } from "@mui/material"
-import Comment from "../Comment"
+import Comment from "../commentsection/Comment"
 const ProfileFeedComment = ({item}) => {
 
     return(
@@ -12,8 +12,7 @@ const ProfileFeedComment = ({item}) => {
                 </Link>
             </Box>
                 <Stack>
-                    <Comment comment={item.commentTo.comment} user={item.commentTo.user.username} img={item.commentTo.user.picture} commentpadding={0} likes={item.commentTo.likes}></Comment>
-                    <Comment comment={item.comment} user={item.user.username} likes={item.likes} commentpadding={2} img={item.user.picture}></Comment>
+
                 </Stack>
             </Box>
     </Box>

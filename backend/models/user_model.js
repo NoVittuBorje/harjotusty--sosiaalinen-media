@@ -11,6 +11,30 @@ const schema = new mongoose.Schema({
     type: String,
     required: true,
   },
-})
+  firstname:{
+    type:String,
+  },
+  lastname:{
+    type:String,
+  },
+  avatar:{
+    type:String,
+  },
+  relationship:{
+    type:String,
+    enum:["Single","Married","Dating"]
+  },
+  description:{
+    type:String,
+  },
+  work:{
+    Type:String,
+    enum:["Working","Unemployed","Retired"]
+  },
+  posts:[{
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'Post'
+  }]
+},{timestamps:true})
 
 module.exports = mongoose.model('User', schema)

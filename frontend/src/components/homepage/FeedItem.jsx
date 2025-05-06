@@ -1,45 +1,43 @@
-import { Box, Divider, IconButton, Link, List, ListItem, ListItemButton, } from "@mui/material"
+import { Box, Divider, IconButton, Link, List, ListItem, ListItemButton,Typography } from "@mui/material"
 import ThumbUpIcon from '@mui/icons-material/ThumbUp';
 import ThumbDownIcon from '@mui/icons-material/ThumbDown';
+import { useNavigate } from "react-router";
+const FeedItem = ({item}) => {
+    const navigate = useNavigate()
 
-const FeedItem = ({item,handleDislike,handleLike}) => {
+    const handleLike = () => {
+        console.log("like")
+    }
+    const handleDislike = () => {
+        console.log("dislike")
+    }
+
     console.log(item)
     return (
-        <Box sx={{paddingBottom:1,border:1,borderRadius:5,backgroundColor:"green"}}>
+        <Box className={"feed"}>
             <Box sx={{display:"flex" ,flexDirection:"column"}}>
+            <Link onClick={() => {navigate(`/post/${item.id}`)}} variant="inherit" underline="none" color="white">
                 <Box sx={{flexDirection:"column",padding:1}}>
-                <Box>
-                    <Link href="#" color="inherit">
-                        <h3>{item.Headline}</h3>
-                    </Link>
+                <Typography variant="h5" >{item.headline}</Typography>
+                <Typography variant="h7" color="#c4c3c0">{item.text}</Typography>
                 </Box>
-                <Box>
-                    {item.text}
-                </Box>
-                </Box>
-            <Box sx={{backgroundColor:"red",padding:0}}>
-                <Box sx={{display:"flex",flexDirection:"row",alignItems:"center"}}>
-
-                <Box>
+                </Link>
+            <Box className={"feedfooter"}>
                 <IconButton onClick={handleLike} size="small">
-                    <ThumbUpIcon></ThumbUpIcon>
+                    <ThumbUpIcon style={{color:"green"}}></ThumbUpIcon>
                 </IconButton>
-                </Box>
-                <Box sx={{height: 35,width: 35,borderStyle:"solid",borderRadius: 1000,borderColor:"blue",borderWidth:2,alignContent:"center",textAlign:"center",color:"blue",textAlignVertical:"center",}}>
+
+                <Box className={"feedfooterkarma"}>
                     <a style={{paddingTop:0,textAlignVertical:"top"}}>{item.karma}</a>
                 </Box>
-                <Box>
-                <IconButton onClick={handleDislike} size="small">
-                    <ThumbDownIcon></ThumbDownIcon>
-                </IconButton>
-                </Box>
-                
-                </Box>
-                <Box sx={{backgroundColor:"blue"}}>
 
-                </Box>
+                <IconButton onClick={handleDislike} size="small">
+                    <ThumbDownIcon style={{color:"red"}} ></ThumbDownIcon>
+                </IconButton>
+
             </Box>
         </Box>
+        
         <Divider></Divider>
         </Box>
     )
