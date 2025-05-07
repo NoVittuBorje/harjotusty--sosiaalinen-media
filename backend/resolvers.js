@@ -6,6 +6,7 @@ const User = require('./models/user_model')
 const resolvers = {
     Query: {
       me: (root, args, context) => {
+        console.log(context)
         const currentUser = context.currentUser
           if (!currentUser) {
             throw new GraphQLError('not authenticated', {
@@ -21,7 +22,7 @@ const resolvers = {
       createUser: async (root,args) => {
         const salt_rounds = 10
         const passwordHash = await bcrypt.hash(args.password,salt_rounds)
-        const user = new User({ username: args.username, password_hash: passwordHash,favoriteGenre:args.favoriteGenre})
+        const user = new User({ username: args.username,email:args.email, password_hash: passwordHash})
         return user.save()
         .catch(error => {
           throw new GraphQLError('Creating the user failed', {

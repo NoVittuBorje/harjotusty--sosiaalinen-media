@@ -6,20 +6,25 @@ import { Box } from '@mui/material'
 import { Routes, Route, useMatch, } from 'react-router-dom'
 import Profilepage from './components/profilepage/Profilepage'
 import SinglePost from './components/singlepostpage/SinglePost'
+import LoginPage from './components/loginpage/Loginpage'
+import RegisterPage from './components/loginpage/Registerpage'
 function App() {
   let match = useMatch('/post/:id');
   if (!match){
     match = "none"
   }
-  console.log(match)
+  
+
   
   return (
     <Box>
-      <AppBar />
+      <AppBar/>
       <Routes>
-        <Route path='/' element={<Homescreen/>}/>
-        <Route path='/profile' element={<Profilepage />} />
+        <Route path='/' element={<Homescreen  />}/>
+        <Route path='/profile' element={<Profilepage/>} />
         <Route path='/post/:id' element={<SinglePost id={match}/>} />
+        <Route path='/login' element={<LoginPage/>}/>
+        <Route path='/register' element={<RegisterPage/>} />
       </Routes>
     </Box>
     

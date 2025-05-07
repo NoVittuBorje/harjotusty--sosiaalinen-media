@@ -9,6 +9,10 @@ const schema = new mongoose.Schema({
     },
     karma:Number,
     img:String,
+    subfeed:{
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'Feed'
+    },
     comments:[{
         type: mongoose.Schema.Types.ObjectId,
         ref: 'Comment'

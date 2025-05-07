@@ -7,6 +7,11 @@ const schema = new mongoose.Schema({
     minlength: 6,
     unique: true
   },
+  email:{
+    type:String,
+    required: true,
+    unique: true,
+  },
   password_hash:{
     type: String,
     required: true,
@@ -28,9 +33,13 @@ const schema = new mongoose.Schema({
     type:String,
   },
   work:{
-    Type:String,
+    type:String,
     enum:["Working","Unemployed","Retired"]
   },
+  feedsubs:[{
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'Feed'
+  }],
   posts:[{
     type: mongoose.Schema.Types.ObjectId,
     ref: 'Post'

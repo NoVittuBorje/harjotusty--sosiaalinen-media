@@ -17,6 +17,8 @@ import NotificationsIcon from '@mui/icons-material/Notifications';
 import MoreIcon from '@mui/icons-material/MoreVert';
 import { useNavigate } from 'react-router';
 import HomeIcon from '@mui/icons-material/Home';
+import LoginIcon from '@mui/icons-material/Login';
+import LogoutIcon from '@mui/icons-material/Logout';
 
 const Search = styled('div')(({ theme }) => ({
   position: 'relative',
@@ -61,27 +63,28 @@ const StyledInputBase = styled(InputBase)(({ theme }) => ({
 export default function PrimarySearchAppBar() {
   const navigate = useNavigate()
   const [anchorEl, setAnchorEl] = React.useState(null);
-  const [mobileMoreAnchorEl, setMobileMoreAnchorEl] = React.useState(null);
-
+  const [loginanchorEl, setLoginAnchorEl] = React.useState(null);
+  const [User, setUser] = React.useState(localStorage.getItem("token"))
   const isMenuOpen = Boolean(anchorEl);
-  const isMobileMenuOpen = Boolean(mobileMoreAnchorEl);
+  const isLoginMenuOpen = Boolean(loginanchorEl);
+  console.log(User)
+  const {data} = useME();
 
+  const handleLoginMenuOpen = (event) => {
+    setLoginAnchorEl(event.currentTarget)
+  }
   const handleProfileMenuOpen = (event) => {
+    console.log(event.currentTarget)
     setAnchorEl(event.currentTarget);
   };
 
-  const handleMobileMenuClose = () => {
-    setMobileMoreAnchorEl(null);
-  };
-
+  const handleLoginMenuClose = () => {
+    setLoginAnchorEl(null)
+  }
   const handleMenuClose = () => {
     setAnchorEl(null);
-    handleMobileMenuClose();
   };
-  
-  const handleMobileMenuOpen = (event) => {
-    setMobileMoreAnchorEl(event.currentTarget);
-  };
+
   const handleProfileMenuClick = () => {
     console.log("profile Page")
     navigate("/profile")
@@ -90,6 +93,22 @@ export default function PrimarySearchAppBar() {
   const handleMyaccountClick = () => {
     console.log("my acc page")
     handleMenuClose()
+  }
+  const handleLoginClick = () => {
+    console.log("login page")
+    navigate("/login")
+    handleLoginMenuClose()
+  }
+  const handleLogoutClick = () => {
+    console.log("logout")
+    handleMenuClose()
+    setUser(null)
+    localStorage.clear()
+  }
+  const handleRegisterClick = () => {
+    console.log("register page")
+    navigate("/register")
+    handleLoginMenuClose()
   }
   const handleHomeClick = () => {
     console.log("home")
@@ -112,65 +131,84 @@ export default function PrimarySearchAppBar() {
       open={isMenuOpen}
       onClose={handleMenuClose}
     >
-    <MenuItem onClick={handleProfileMenuClick}>Profile</MenuItem>
-    <MenuItem onClick={handleMyaccountClick}>My account</MenuItem>
+      <MenuItem onClick={handleProfileMenuClick}>Profile</MenuItem>
+      <MenuItem onClick={handleMyaccountClick}>My account</MenuItem>
+      <MenuItem onClick={handleLogoutClick}>Logout</MenuItem>
     </Menu>
   );
-
-  const mobileMenuId = 'primary-search-account-menu-mobile';
-  const renderMobileMenu = (
+  const loginMenuId = 'login-menu'
+  const renderLoginMenu = (
     <Menu
-      anchorEl={mobileMoreAnchorEl}
+      anchorEl={loginanchorEl}
       anchorOrigin={{
         vertical: 'top',
         horizontal: 'right',
       }}
-      id={mobileMenuId}
+      id={loginMenuId}
       keepMounted
       transformOrigin={{
         vertical: 'top',
         horizontal: 'right',
       }}
-      open={isMobileMenuOpen}
-      onClose={handleMobileMenuClose}
+      open={isLoginMenuOpen}
+      onClose={handleLoginMenuClose}
     >
-      <MenuItem>
-        <IconButton size="large" aria-label="show new direct messages" color="inherit">
-          <Badge badgeContent={4} color="error">
+      <MenuItem onClick={handleLoginClick}>Login</MenuItem>
+      <MenuItem onClick={handleRegisterClick}>Register</MenuItem>
+
+    </Menu>
+  )
+
+  const Renderloginstate = ({User}) => {
+    console.log(User)
+    if (User){
+      return(
+        <Box sx={{ display: { xs: 'none', md: 'flex' } }}>
+        <IconButton size="large" aria-label="show new dms" color="inherit">
+          <Badge badgeContent={0} color="error">
             <MailIcon />
           </Badge>
         </IconButton>
-        <p>Messages</p>
-      </MenuItem>
-
-      <MenuItem>
         <IconButton
           size="large"
           aria-label="show new notifications"
           color="inherit"
         >
-          <Badge badgeContent={0} color="error">
+          <Badge badgeContent={17} color="error">
             <NotificationsIcon />
           </Badge>
         </IconButton>
-        <p>Notifications</p>
-      </MenuItem>
-
-      <MenuItem onClick={handleProfileMenuOpen}>
         <IconButton
           size="large"
+          edge="end"
           aria-label="account of current user"
-          aria-controls="primary-search-account-menu"
+          aria-controls={menuId}
           aria-haspopup="true"
+          onClick={handleProfileMenuOpen}
           color="inherit"
         >
           <AccountCircle />
         </IconButton>
-        <p>Profile</p>
-      </MenuItem>
-    </Menu>
-  );
-
+      </Box>
+      )
+    }else{
+      return(
+        <Box sx={{ display: { xs: 'none', md: 'flex' } }}>
+          <IconButton
+          size="large"
+          edge="end"
+          aria-label="login"
+          aria-controls={loginMenuId}
+          aria-haspopup="true"
+          onClick={handleLoginMenuOpen}
+          color="inherit"
+        >
+          <AccountCircle />
+        </IconButton>
+        </Box>
+      )
+    }
+  }
   return (
     <Box sx={{ flexGrow: 1 }}>
       <AppBar position="static">
@@ -207,50 +245,14 @@ export default function PrimarySearchAppBar() {
               inputProps={{ 'aria-label': 'search' }}
             />
           </Search>
+
           <Box sx={{ flexGrow: 1 }} />
-          <Box sx={{ display: { xs: 'none', md: 'flex' } }}>
-            <IconButton size="large" aria-label="show new dms" color="inherit">
-              <Badge badgeContent={0} color="error">
-                <MailIcon />
-              </Badge>
-            </IconButton>
-            <IconButton
-              size="large"
-              aria-label="show new notifications"
-              color="inherit"
-            >
-              <Badge badgeContent={17} color="error">
-                <NotificationsIcon />
-              </Badge>
-            </IconButton>
-            <IconButton
-              size="large"
-              edge="end"
-              aria-label="account of current user"
-              aria-controls={menuId}
-              aria-haspopup="true"
-              onClick={handleProfileMenuOpen}
-              color="inherit"
-            >
-              <AccountCircle />
-            </IconButton>
-          </Box>
-          <Box sx={{ display: { xs: 'flex', md: 'none' } }}>
-            <IconButton
-              size="large"
-              aria-label="show more"
-              aria-controls={mobileMenuId}
-              aria-haspopup="true"
-              onClick={handleMobileMenuOpen}
-              color="inherit"
-            >
-              <MoreIcon />
-            </IconButton>
-          </Box>
+          {Renderloginstate({User})}
         </Toolbar>
       </AppBar>
-      {renderMobileMenu}
       {renderMenu}
+      {renderLoginMenu}
+      
     </Box>
   );
 }
