@@ -9,7 +9,7 @@ import { createClient } from 'graphql-ws'
 import { BrowserRouter } from 'react-router-dom'
 
 const authLink = setContext((_, { headers }) => {  
-  const token = localStorage.getItem('user-token')  
+  const token = localStorage.getItem('token')  
   return {    
     headers: {      
     ...headers,

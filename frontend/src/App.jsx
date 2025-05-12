@@ -13,9 +13,6 @@ function App() {
   if (!match){
     match = "none"
   }
-  
-
-  
   return (
     <Box>
       <AppBar/>
@@ -30,5 +27,6 @@ function App() {
     
   )
 }
+
 
 export default App

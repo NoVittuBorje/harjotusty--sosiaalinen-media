@@ -29,9 +29,8 @@ const LoginPage = () => {
         console.log("login")
         const { data } = await login({ Username, Password });
         console.log(data)
-        if (data.login.value){
-            localStorage.setItem("token", data.login.value);
-            navigate("/")
+        if (localStorage.getItem("token")){
+        navigate(-1)
         }
     }
     console.log(Username,Password)
@@ -46,7 +45,6 @@ const LoginPage = () => {
                 <FormGroup sx={{alignItems:"center",verticalAlign:"center",marginTop:10,}}>
                 <TextField id="username" sx={{ m: 0.5, width: '25ch' }} label="Username" variant="outlined" onChange={(event) => setUsername(event.target.value)}/>
                 <FormControl sx={{ m: 0.5, width: '25ch' }} variant="outlined">
-                
                     <InputLabel htmlFor="password">Password</InputLabel>
                     <OutlinedInput
                         id="password"

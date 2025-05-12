@@ -6,7 +6,7 @@ const User = require('./models/user_model')
 const resolvers = {
     Query: {
       me: (root, args, context) => {
-        console.log(context)
+        console.log(context,"context")
         const currentUser = context.currentUser
           if (!currentUser) {
             throw new GraphQLError('not authenticated', {

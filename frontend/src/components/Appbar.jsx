@@ -19,6 +19,8 @@ import { useNavigate } from 'react-router';
 import HomeIcon from '@mui/icons-material/Home';
 import LoginIcon from '@mui/icons-material/Login';
 import LogoutIcon from '@mui/icons-material/Logout';
+import useMe from './hooks/useMe';
+
 
 const Search = styled('div')(({ theme }) => ({
   position: 'relative',
@@ -62,14 +64,19 @@ const StyledInputBase = styled(InputBase)(({ theme }) => ({
 
 export default function PrimarySearchAppBar() {
   const navigate = useNavigate()
+  const {data,loading,error,refetch} = useMe()
   const [anchorEl, setAnchorEl] = React.useState(null);
   const [loginanchorEl, setLoginAnchorEl] = React.useState(null);
-  const [User, setUser] = React.useState(localStorage.getItem("token"))
   const isMenuOpen = Boolean(anchorEl);
   const isLoginMenuOpen = Boolean(loginanchorEl);
+  const me = data ? data.me : null
+  const [User, setUser] = React.useState(null)
+  const token = localStorage.getItem("token")
+  if (!User && token){
+    refetch
+    setUser(me)
+  }
   console.log(User)
-  const {data} = useME();
-
   const handleLoginMenuOpen = (event) => {
     setLoginAnchorEl(event.currentTarget)
   }
@@ -104,6 +111,7 @@ export default function PrimarySearchAppBar() {
     handleMenuClose()
     setUser(null)
     localStorage.clear()
+    
   }
   const handleRegisterClick = () => {
     console.log("register page")
@@ -159,9 +167,24 @@ export default function PrimarySearchAppBar() {
     </Menu>
   )
 
-  const Renderloginstate = ({User}) => {
-    console.log(User)
-    if (User){
+  const Renderloginstate = (User) => {
+    if (!User){
+      return(
+        <Box sx={{ display: { xs: 'none', md: 'flex' } }}>
+          <IconButton
+          size="large"
+          edge="end"
+          aria-label="login"
+          aria-controls={loginMenuId}
+          aria-haspopup="true"
+          onClick={handleLoginMenuOpen}
+          color="inherit"
+        >
+          <AccountCircle />
+        </IconButton>
+        </Box>
+      )
+    }else{
       return(
         <Box sx={{ display: { xs: 'none', md: 'flex' } }}>
         <IconButton size="large" aria-label="show new dms" color="inherit">
@@ -191,22 +214,7 @@ export default function PrimarySearchAppBar() {
         </IconButton>
       </Box>
       )
-    }else{
-      return(
-        <Box sx={{ display: { xs: 'none', md: 'flex' } }}>
-          <IconButton
-          size="large"
-          edge="end"
-          aria-label="login"
-          aria-controls={loginMenuId}
-          aria-haspopup="true"
-          onClick={handleLoginMenuOpen}
-          color="inherit"
-        >
-          <AccountCircle />
-        </IconButton>
-        </Box>
-      )
+
     }
   }
   return (
@@ -247,12 +255,12 @@ export default function PrimarySearchAppBar() {
           </Search>
 
           <Box sx={{ flexGrow: 1 }} />
-          {Renderloginstate({User})}
+          {Renderloginstate(User)}
         </Toolbar>
       </AppBar>
       {renderMenu}
       {renderLoginMenu}
       
     </Box>
-  );
+  )
 }
