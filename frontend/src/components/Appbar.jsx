@@ -65,15 +65,19 @@ const StyledInputBase = styled(InputBase)(({ theme }) => ({
 export default function PrimarySearchAppBar() {
   const navigate = useNavigate()
   const {data,loading,error,refetch} = useMe()
+  console.log(data,loading,error)
   const [anchorEl, setAnchorEl] = React.useState(null);
   const [loginanchorEl, setLoginAnchorEl] = React.useState(null);
   const isMenuOpen = Boolean(anchorEl);
   const isLoginMenuOpen = Boolean(loginanchorEl);
-  const me = data ? data.me : null
+  
   const [User, setUser] = React.useState(null)
   const token = localStorage.getItem("token")
-  if (!User && token){
-    refetch
+  if (!User && token && !loading){
+    console.log(User,token,data)
+    const me = data ? data.me : null
+    refetch()
+    console.log(me,loading)
     setUser(me)
   }
   console.log(User)

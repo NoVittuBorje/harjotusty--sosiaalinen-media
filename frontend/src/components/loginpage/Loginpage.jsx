@@ -29,20 +29,22 @@ const LoginPage = () => {
         console.log("login")
         const { data } = await login({ Username, Password });
         console.log(data)
-        if (localStorage.getItem("token")){
-        navigate(-1)
+        if (data.login.value){
+        navigate("/")
         }
     }
     console.log(Username,Password)
     return(
-        <Box sx={{ flexGrow: 1 }}>
+        <Box sx={{ flexGrow: 1, backgroundColor:"grey"}}>
         <Grid container rowSpacing={1} sx={{flexDirection:"row"}}>
-            <Grid size={{xs:12, md:2}} sx={{backgroundColor:"grey"}}>
+            <Grid size={{xs:12, md:4}} >
 
             </Grid>
-            <Grid size={{xs:12, md:8}} sx={{}}>
-                <Box>
-                <FormGroup sx={{alignItems:"center",verticalAlign:"center",marginTop:10,}}>
+            <Grid size={{xs:12, md:4}} >
+                <Box sx={{border:"solid 0.1em",borderRadius:3,backgroundColor:"whitesmoke"}}>
+                
+                <FormGroup sx={{alignItems:"center",verticalAlign:"center",marginTop:1}}>
+                <h3>Log in</h3>
                 <TextField id="username" sx={{ m: 0.5, width: '25ch' }} label="Username" variant="outlined" onChange={(event) => setUsername(event.target.value)}/>
                 <FormControl sx={{ m: 0.5, width: '25ch' }} variant="outlined">
                     <InputLabel htmlFor="password">Password</InputLabel>
@@ -74,7 +76,7 @@ const LoginPage = () => {
                 </Box>
 
             </Grid>
-            <Grid size={{xs:12, md:2}} sx={{backgroundColor:"red"}}>
+            <Grid size={{xs:12, md:4}}>
                 
             </Grid>
         </Grid>

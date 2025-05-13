@@ -5,7 +5,6 @@ query Me {
   me {
     username
     email
-    password_hash
     firstname
     lastname
     avatar

@@ -25,14 +25,31 @@ const resolvers = {
         const user = new User({ username: args.username,email:args.email, password_hash: passwordHash})
         return user.save()
         .catch(error => {
-          throw new GraphQLError('Creating the user failed', {
+          if (error.errorResponse.keyValue.username){
+            console.log("username error")
+            throw new GraphQLError('Username already in use', {
             extensions: {
               code: 'BAD_USER_INPUT',
-              invalidArgs: args.username,
+              invalidArgs: error.errorResponse.keyValue,
               error
-            }
+          }
           })
+          }
+          if(error.errorResponse.keyValue.email){
+            console.log("email error")
+            throw new GraphQLError('Email already in use', {
+            extensions: {
+              code: 'BAD_USER_INPUT',
+              invalidArgs: error.errorResponse.keyValue,
+              error
+          }
+          })
+          }
         })
+
+
+    
+    
     },
     login: async (root, args) => {
       const user = await User.findOne({ username: args.username })

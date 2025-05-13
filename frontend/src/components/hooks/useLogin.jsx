@@ -3,8 +3,9 @@ import { LOGIN } from '../graphql/mutations';
 import { GET_ME } from '../graphql/queries';
 
 
+
 const useLogin = () => {
-    const [mutate, result] = useMutation(LOGIN);
+    const [mutate, result] = useMutation(LOGIN,{awaitRefetchQueries:[GET_ME,"useMe"]});
     const login = async ({ Username, Password }) => {
       const data = await mutate({variables:{password:Password,username:Username}})
       console.log(data.data.login.value)

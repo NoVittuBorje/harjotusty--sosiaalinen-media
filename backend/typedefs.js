@@ -21,7 +21,6 @@ const typeDefs = `#graphql
   type User {
     username: String!
     email:String!
-    password_hash: String!
     firstname:String
     lastname:String
     avatar:String
