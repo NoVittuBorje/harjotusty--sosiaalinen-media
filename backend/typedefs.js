@@ -1,6 +1,8 @@
 const typeDefs = `#graphql
   type Feed {
     feedname:String!
+    description:String!
+    owner:User!
     posts:[Post]
   }
   type Comment {
@@ -11,11 +13,11 @@ const typeDefs = `#graphql
   }
   type Post {
     headline:String!
-    text:String!
-    user:User!
+    description:String!
+    owner:User!
     karma:Int!
     img:String
-    subfeed:Feed!
+    feed:Feed!
     comments:[Comment]
   }
   type User {
@@ -36,7 +38,8 @@ const typeDefs = `#graphql
   }
   
   type Query {
-  me: User
+    me: User!
+    getfeed(feedname:String!):Feed
 
   }
 
@@ -46,12 +49,14 @@ const typeDefs = `#graphql
     email:String!
     password: String!
   ): User
-
   login(
     username: String!
     password: String!
   ): Token
-  
+  makeFeed(
+    feedname: String!
+    description: String!
+  ): Feed
   }
 `
 module.exports = typeDefs

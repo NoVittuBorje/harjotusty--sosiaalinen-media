@@ -20,7 +20,7 @@ import HomeIcon from '@mui/icons-material/Home';
 import LoginIcon from '@mui/icons-material/Login';
 import LogoutIcon from '@mui/icons-material/Logout';
 import useMe from './hooks/useMe';
-
+import AddCircleOutlineIcon from '@mui/icons-material/AddCircleOutline';
 
 const Search = styled('div')(({ theme }) => ({
   position: 'relative',
@@ -62,28 +62,46 @@ const StyledInputBase = styled(InputBase)(({ theme }) => ({
   },
 }));
 
+
+import Drawer from '@mui/material/Drawer';
+import Button from '@mui/material/Button';
+import List from '@mui/material/List';
+import Divider from '@mui/material/Divider';
+import ListItem from '@mui/material/ListItem';
+import ListItemButton from '@mui/material/ListItemButton';
+import ListItemIcon from '@mui/material/ListItemIcon';
+import ListItemText from '@mui/material/ListItemText';
+import InboxIcon from '@mui/icons-material/MoveToInbox';
+
+
+  
+
+ 
+
+
 export default function PrimarySearchAppBar() {
   const navigate = useNavigate()
+  const token = localStorage.getItem("token")
   const {data,loading,error,refetch} = useMe()
   console.log(data,loading,error)
+  const [open, setOpen] = React.useState(false);
   const [anchorEl, setAnchorEl] = React.useState(null);
   const [loginanchorEl, setLoginAnchorEl] = React.useState(null);
   const isMenuOpen = Boolean(anchorEl);
   const isLoginMenuOpen = Boolean(loginanchorEl);
   
   const [User, setUser] = React.useState(null)
-  const token = localStorage.getItem("token")
-  if (!User && token && !loading){
-    console.log(User,token,data)
-    const me = data ? data.me : null
-    refetch()
-    console.log(me,loading)
+  
+  const me = data ? data.me : null
+  if (token && !User && me){
     setUser(me)
   }
-  console.log(User)
   const handleLoginMenuOpen = (event) => {
     setLoginAnchorEl(event.currentTarget)
   }
+   const toggleDrawer = (newOpen) => () => {
+    setOpen(newOpen);
+  };
   const handleProfileMenuOpen = (event) => {
     console.log(event.currentTarget)
     setAnchorEl(event.currentTarget);
@@ -126,6 +144,36 @@ export default function PrimarySearchAppBar() {
     console.log("home")
     navigate("/")
   }
+  const handleMakeNewFeedClick = () => {
+    console.log("makenewfeed")
+    navigate("/makefeed")
+  }
+  const DrawerList = (
+    <Box sx={{ width: 250 }} role="presentation" onClick={toggleDrawer(false)}>
+      <List>
+          <ListItem key="makefeed" disablePadding>
+            <ListItemButton onClick={handleMakeNewFeedClick}>
+              <ListItemIcon>
+                <AddCircleOutlineIcon />
+              </ListItemIcon>
+              <ListItemText primary={"Make new feed"} />
+            </ListItemButton>
+          </ListItem>
+        
+      </List>
+      <Divider />
+      <List>
+        {["Feeds"].map((text) => (
+          <ListItem key={text} disablePadding>
+            <ListItemButton>
+              <ListItemText primary={text} />
+            </ListItemButton>
+          </ListItem>
+        ))}
+      </List>
+    </Box>
+  );
+  
   const menuId = 'primary-search-account-menu';
   const renderMenu = (
     <Menu
@@ -170,11 +218,14 @@ export default function PrimarySearchAppBar() {
 
     </Menu>
   )
-
-  const Renderloginstate = (User) => {
+  const Renderloginstate = ({User,token,refetch,me}) => {
     if (!User){
+      if(token && !me){
+        refetch()
+      }
       return(
         <Box sx={{ display: { xs: 'none', md: 'flex' } }}>
+          
           <IconButton
           size="large"
           edge="end"
@@ -189,6 +240,7 @@ export default function PrimarySearchAppBar() {
         </Box>
       )
     }else{
+      console.log(User)
       return(
         <Box sx={{ display: { xs: 'none', md: 'flex' } }}>
         <IconButton size="large" aria-label="show new dms" color="inherit">
@@ -221,11 +273,13 @@ export default function PrimarySearchAppBar() {
 
     }
   }
+
   return (
     <Box sx={{ flexGrow: 1 }}>
       <AppBar position="static">
         <Toolbar>
           <IconButton
+            onClick={toggleDrawer(true)}
             size="large"
             edge="start"
             color="inherit"
@@ -234,7 +288,11 @@ export default function PrimarySearchAppBar() {
           >
             <MenuIcon />
           </IconButton>
-
+          
+          <Drawer open={open} onClose={toggleDrawer(false)}>
+              {DrawerList}
+          </Drawer>
+          
 
           <IconButton
             size="large"
@@ -257,9 +315,8 @@ export default function PrimarySearchAppBar() {
               inputProps={{ 'aria-label': 'search' }}
             />
           </Search>
-
           <Box sx={{ flexGrow: 1 }} />
-          {Renderloginstate(User)}
+          {Renderloginstate({User,refetch,token,me})}
         </Toolbar>
       </AppBar>
       {renderMenu}

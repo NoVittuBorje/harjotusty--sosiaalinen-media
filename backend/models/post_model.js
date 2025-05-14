@@ -2,14 +2,14 @@ const mongoose = require('mongoose')
 
 const schema = new mongoose.Schema({
     headline:String,
-    text:String,
-    user:{
+    description:String,
+    owner:{
         type: mongoose.Schema.Types.ObjectId,
         ref: 'User'
     },
     karma:Number,
     img:String,
-    subfeed:{
+    feed:{
         type: mongoose.Schema.Types.ObjectId,
         ref: 'Feed'
     },

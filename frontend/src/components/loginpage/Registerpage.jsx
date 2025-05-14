@@ -36,7 +36,7 @@ const RegisterPage = () => {
         if(data.createUser){
             const logindata = await login({Username:formik.values.Username,Password:formik.values.Password})
             if (logindata.data.login.value){
-            navigate("/login")
+            navigate("/")
             }
         }
         }catch(error){
@@ -79,7 +79,7 @@ const RegisterPage = () => {
             </Grid>
 
             <Grid size={{xs:12, md:4}}>
-                <Box sx={{border:"solid 0.1em"}}>
+                <Box sx={{border:"solid 0.1em",borderRadius:1}}>
                 <FormGroup sx={{alignItems:"center",verticalAlign:"center",marginTop:5,}}>
                 <TextField 
                 id="username"

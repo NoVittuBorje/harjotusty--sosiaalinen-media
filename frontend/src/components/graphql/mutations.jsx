@@ -11,3 +11,8 @@ export const REGISTER = gql`mutation Mutation($username: String!, $email: String
     email
   }
 }`
+export const MAKEFEED = gql`mutation Mutation($feedname: String!, $description: String!) {
+  makeFeed(feedname: $feedname, description: $description) {
+    feedname
+  }
+}`
