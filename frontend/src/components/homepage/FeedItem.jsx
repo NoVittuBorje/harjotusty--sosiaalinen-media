@@ -19,7 +19,7 @@ const FeedItem = ({item}) => {
             <Link onClick={() => {navigate(`/post/${item.id}`)}} variant="inherit" underline="none" color="white">
                 <Box sx={{flexDirection:"column",padding:1}}>
                 <Typography variant="h5" >{item.headline}</Typography>
-                <Typography variant="h7" color="#c4c3c0">{item.text}</Typography>
+                <Typography variant="h7" color="#c4c3c0">{item.description}</Typography>
                 </Box>
                 </Link>
             <Box className={"feedfooter"}>

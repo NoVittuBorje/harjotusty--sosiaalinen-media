@@ -19,6 +19,7 @@ const typeDefs = `#graphql
     img:String
     feed:Feed!
     comments:[Comment]
+    id:ID!
   }
   type User {
     username: String!
@@ -31,32 +32,41 @@ const typeDefs = `#graphql
     work:String
     feedsubs:[Feed]
     posts:[Post]
+    ownedfeeds:[Feed]
     id: ID!
   }
   type Token {
     value: String!
   }
-  
   type Query {
     me: User!
-    getfeed(feedname:String!):Feed
+    getfeed(
+    feedname:String
+    querytype:String!
+    ):[Feed]
 
   }
 
   type Mutation {
-  createUser(
-    username: String!
-    email:String!
-    password: String!
-  ): User
-  login(
-    username: String!
-    password: String!
-  ): Token
-  makeFeed(
-    feedname: String!
-    description: String!
-  ): Feed
+    createUser(
+      username: String!
+      email:String!
+      password: String!
+    ): User
+    login(
+      username: String!
+      password: String!
+    ): Token
+    makeFeed(
+      feedname: String!
+      description: String!
+    ): Feed
+    makePost(
+      headline: String!
+      feedname: String!
+      description: String!
+      img: String
+    ): Post
   }
 `
 module.exports = typeDefs

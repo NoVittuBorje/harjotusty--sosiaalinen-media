@@ -1,7 +1,7 @@
 import { Box, FormGroup, Grid, TextField,Button } from "@mui/material"
 import { useFormik } from "formik"
 import * as yup from 'yup'
-import useMakeFeed from "../hooks/useMakeFeed"
+import useMakePost from "../hooks/useMakePost"
 import { useNavigate } from "react-router"
 
 const validationSchema = yup.object().shape({
@@ -11,13 +11,20 @@ const validationSchema = yup.object().shape({
 })
 const NewPostpage = ({match}) => {
     const navigate = useNavigate()
-    const handleFormSubmit = () => {
+    const [mutate,result] = useMakePost()
+    console.log(match)
+    const handleFormSubmit = async () => {
         console.log("submit post")
+        const data = await mutate(formik.values)
+        if(data.data.makePost){
+            navigate("/feed/$")
+        }
     }
     const formik = useFormik({
         initialValues:{
             headline:"",
-            text:"",
+            description:"",
+            feedname:match.params.postfeedname,
             img:"",
         },
         onSubmit: values => {

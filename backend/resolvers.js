@@ -19,19 +19,34 @@ const resolvers = {
           }
         return currentUser
       },
-      getfeed: async (root,args,context) => {
-        const currentUser = context.currentUser
-        const feed = await Feed.findOne({feedname:args.feedname}).populate("owner",{username:1})
-        return feed
+      getfeed: async (root,args) => {
+        if (args.querytype === "single"){
+        const feed = await Feed.findOne({feedname:args.feedname}).populate({ path: 'posts',select: ["headline","description","owner","karma","id"],
+        populate: { path: 'owner' ,select:["username"]}
+      }).populate("owner",{username:1})
+        console.log(feed)
+        return [feed]
+        } 
+        if(args.querytype === "many"){
+          const feeds = await Feed.find({})
+          return feeds
+        }
       }
     },
     Mutation: {
       makePost: async (root,args,context) => {
-        if(context.currentUser){
+        if(!context.currentUser){
           throw new GraphQLError("not logged in")
         }
         const feed = await Feed.findOne({feedname:args.feedname})
-        const post = new Post({headline:args.headline,feed:feed,karma:0,owner:context.currentUser,img:args.img})
+        const user = await User.findById(context.currentUser._id)
+        const post = new Post({headline:args.headline,description:args.description,feed:feed,karma:0,owner:user,img:args.img})
+        feed.posts = [...feed.posts,post]
+        user.posts = [...user.posts,post]
+        await feed.save()
+        await user.save()
+        await post.save()
+        return 
       },
       createUser: async (root,args) => {
         const salt_rounds = 10
@@ -85,6 +100,11 @@ const resolvers = {
     makeFeed: async (root, args,context) => {
       console.log(context.currentUser)
       const newfeed = new Feed({ feedname:args.feedname,description:args.description,owner:context.currentUser})
+      const user = await User.findById(context.currentUser._id)
+      console.log(user)
+      user.ownedfeeds = [...context.currentUser.ownedfeeds,newfeed]
+      console.log(user)
+      await user.save()
       return newfeed.save()
         .catch(error => {
           console.log(error)

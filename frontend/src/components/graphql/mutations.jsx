@@ -16,3 +16,15 @@ export const MAKEFEED = gql`mutation Mutation($feedname: String!, $description: 
     feedname
   }
 }`
+
+export const MAKEPOST = gql`mutation Mutation($headline: String!, $feedname: String!, $img: String, $description: String!) {
+  makePost(headline: $headline, feedname: $feedname, img: $img, description: $description) {
+    headline
+    description
+    owner {
+      username
+    }
+    karma
+    img
+  }
+}`

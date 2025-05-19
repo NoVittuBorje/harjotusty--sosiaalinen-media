@@ -72,7 +72,8 @@ import ListItemButton from '@mui/material/ListItemButton';
 import ListItemIcon from '@mui/material/ListItemIcon';
 import ListItemText from '@mui/material/ListItemText';
 import InboxIcon from '@mui/icons-material/MoveToInbox';
-
+import FeedIcon from '@mui/icons-material/Feed';
+import useGetManyFeeds from './hooks/useGetManyFeeds';
 
   
 
@@ -83,15 +84,17 @@ export default function PrimarySearchAppBar() {
   const navigate = useNavigate()
   const token = localStorage.getItem("token")
   const {data,loading,error,refetch} = useMe()
+  const feeds = useGetManyFeeds()
   console.log(data,loading,error)
   const [open, setOpen] = React.useState(false);
   const [anchorEl, setAnchorEl] = React.useState(null);
   const [loginanchorEl, setLoginAnchorEl] = React.useState(null);
   const isMenuOpen = Boolean(anchorEl);
   const isLoginMenuOpen = Boolean(loginanchorEl);
-  
   const [User, setUser] = React.useState(null)
-  
+  const menuId = 'primary-search-account-menu';
+  const loginMenuId = 'login-menu'
+  console.log(feeds)
   const me = data ? data.me : null
   if (token && !User && me){
     setUser(me)
@@ -148,35 +151,11 @@ export default function PrimarySearchAppBar() {
     console.log("makenewfeed")
     navigate("/makefeed")
   }
-  const DrawerList = (
-    <Box sx={{ width: 250 }} role="presentation" onClick={toggleDrawer(false)}>
-      <List>
-          <ListItem key="makefeed" disablePadding>
-            <ListItemButton onClick={handleMakeNewFeedClick}>
-              <ListItemIcon>
-                <AddCircleOutlineIcon />
-              </ListItemIcon>
-              <ListItemText primary={"Make new feed"} />
-            </ListItemButton>
-          </ListItem>
-        
-      </List>
-      <Divider />
-      <List>
-        {["Feeds"].map((text) => (
-          <ListItem key={text} disablePadding>
-            <ListItemButton>
-              <ListItemText primary={text} />
-            </ListItemButton>
-          </ListItem>
-        ))}
-      </List>
-    </Box>
-  );
-  
-  const menuId = 'primary-search-account-menu';
-  const renderMenu = (
-    <Menu
+
+  const MenuStatelogin = ({User}) => {
+    if(User){
+      return(
+          <Menu
       anchorEl={anchorEl}
       anchorOrigin={{
         vertical: 'top',
@@ -194,11 +173,10 @@ export default function PrimarySearchAppBar() {
       <MenuItem onClick={handleProfileMenuClick}>Profile</MenuItem>
       <MenuItem onClick={handleMyaccountClick}>My account</MenuItem>
       <MenuItem onClick={handleLogoutClick}>Logout</MenuItem>
-    </Menu>
-  );
-  const loginMenuId = 'login-menu'
-  const renderLoginMenu = (
-    <Menu
+    </Menu>)
+    }else{
+      return (
+      <Menu
       anchorEl={loginanchorEl}
       anchorOrigin={{
         vertical: 'top',
@@ -217,7 +195,80 @@ export default function PrimarySearchAppBar() {
       <MenuItem onClick={handleRegisterClick}>Register</MenuItem>
 
     </Menu>
-  )
+      )
+    }
+  }
+  const DrawerState = ({User}) => {
+  if (User){
+  return(
+    <Box sx={{ width: 250 }} role="presentation" onClick={toggleDrawer(false)}>
+      <List>
+          <ListItem key="makefeed" disablePadding>
+            <ListItemButton onClick={handleMakeNewFeedClick}>
+              <ListItemIcon>
+                <AddCircleOutlineIcon />
+              </ListItemIcon>
+              <ListItemText primary={"Make new feed"} />
+            </ListItemButton>
+          </ListItem>
+          <Divider />
+
+          <ListItem key="ownedfeeds" disablePadding>
+            <ListItemButton>
+              <ListItemIcon>
+                <FeedIcon />
+              </ListItemIcon>
+              <ListItemText primary={"Owned feeds"} />
+            </ListItemButton>
+          </ListItem>
+      </List>
+      
+      <List>
+        {User.ownedfeeds.map((feed) => (
+          <ListItem key={feed.feedname} disablePadding>
+            <ListItemButton>
+              <ListItemText primary={feed.feedname} />
+            </ListItemButton>
+          </ListItem>
+        ))}
+      </List>
+    </Box>
+  );}else{
+  if (feeds.loading | !feeds.data){
+    console.log(feeds)
+    return
+  }else{
+    console.log(feeds.data.getfeed)
+  return(
+        <Box sx={{ width: 250 }} role="presentation" onClick={toggleDrawer(false)}>
+      <List>
+          <ListItem key="popularfeeds" disablePadding>
+            <ListItemButton onClick={handleMakeNewFeedClick}>
+              <ListItemIcon>
+                <FeedIcon/>
+              </ListItemIcon>
+              <ListItemText primary={"Popular feeds"} />
+            </ListItemButton>
+          </ListItem>
+        
+      </List>
+      <Divider />
+      <List>
+        {feeds.data.getfeed.map((feed) => (
+          <ListItem key={feed.feedname} disablePadding>
+            <ListItemButton onClick={() => { navigate(`/feed/${feed.feedname}`)}}>
+              <ListItemText primary={feed.feedname} />
+            </ListItemButton>
+          </ListItem>
+        ))}
+      </List>
+    </Box>
+  )}
+  }
+  }
+  const MenuState = MenuStatelogin({User})
+  const DrawerList = DrawerState({User})
+
   const Renderloginstate = ({User,token,refetch,me}) => {
     if (!User){
       if(token && !me){
@@ -288,9 +339,9 @@ export default function PrimarySearchAppBar() {
           >
             <MenuIcon />
           </IconButton>
-          
+
           <Drawer open={open} onClose={toggleDrawer(false)}>
-              {DrawerList}
+            {DrawerList}
           </Drawer>
           
 
@@ -319,8 +370,7 @@ export default function PrimarySearchAppBar() {
           {Renderloginstate({User,refetch,token,me})}
         </Toolbar>
       </AppBar>
-      {renderMenu}
-      {renderLoginMenu}
+      {MenuState}
       
     </Box>
   )

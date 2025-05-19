@@ -40,6 +40,10 @@ const schema = new mongoose.Schema({
     type: mongoose.Schema.Types.ObjectId,
     ref: 'Feed'
   }],
+  ownedfeeds:[{
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "Feed"
+  }],
   posts:[{
     type: mongoose.Schema.Types.ObjectId,
     ref: 'Post'

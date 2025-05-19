@@ -11,32 +11,58 @@ query Me {
     relationship
     description
     work
+    ownedfeeds{
+      feedname
+    }
     id
   }
 }`
-export const GET_FEED = gql`query Getfeed($feedname: String!) {
-  getfeed(feedname: $feedname) {
+export const GET_FEED = gql`query Getfeed($querytype: String!, $feedname: String) {
+  getfeed(querytype: $querytype, feedname: $feedname) {
     feedname
+    description
+    owner {
+      username
+    }
     posts {
       headline
-      text
-      user {
+      description
+      owner {
         username
       }
       karma
       img
+      id
       comments {
+        user {
+          username
+        }
+        content
         replies {
-          content
           user {
             username
+          }
+          content
+          replies {
+            user {
+              username
+            }
+            content
+            replies {
+              user {
+                username
+              }
+              content
+            }
           }
         }
       }
     }
-    owner {
-      username
-    }
+  }
+}`
+export const GET_ALL_FEED = gql`query Getfeed($querytype: String!, $feedname: String) {
+  getfeed(querytype: $querytype, feedname: $feedname) {
+    feedname
     description
   }
 }`
