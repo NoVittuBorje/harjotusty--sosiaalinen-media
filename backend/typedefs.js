@@ -3,7 +3,9 @@ const typeDefs = `#graphql
     feedname:String!
     description:String!
     owner:User!
+    subs:[User]
     posts:[Post]
+    id:ID!
   }
   type Comment {
       post:Post!
@@ -44,10 +46,13 @@ const typeDefs = `#graphql
     feedname:String
     querytype:String!
     ):[Feed]
-
   }
 
   type Mutation {
+    subscribe(
+      feedname: String!
+      type: String!
+    ): User
     createUser(
       username: String!
       email:String!

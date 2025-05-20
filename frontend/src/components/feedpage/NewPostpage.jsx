@@ -6,7 +6,7 @@ import { useNavigate } from "react-router"
 
 const validationSchema = yup.object().shape({
     headline:yup.string(),
-    text:yup.string(),
+    description:yup.string(),
     img:yup.string(),
 })
 const NewPostpage = ({match}) => {

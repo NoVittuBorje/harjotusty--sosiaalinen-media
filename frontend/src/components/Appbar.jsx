@@ -80,25 +80,19 @@ import useGetManyFeeds from './hooks/useGetManyFeeds';
  
 
 
-export default function PrimarySearchAppBar() {
+export default function PrimarySearchAppBar({setUser,User,refetch}) {
   const navigate = useNavigate()
   const token = localStorage.getItem("token")
-  const {data,loading,error,refetch} = useMe()
   const feeds = useGetManyFeeds()
-  console.log(data,loading,error)
   const [open, setOpen] = React.useState(false);
   const [anchorEl, setAnchorEl] = React.useState(null);
   const [loginanchorEl, setLoginAnchorEl] = React.useState(null);
   const isMenuOpen = Boolean(anchorEl);
   const isLoginMenuOpen = Boolean(loginanchorEl);
-  const [User, setUser] = React.useState(null)
   const menuId = 'primary-search-account-menu';
   const loginMenuId = 'login-menu'
+  console.log(User)
   console.log(feeds)
-  const me = data ? data.me : null
-  if (token && !User && me){
-    setUser(me)
-  }
   const handleLoginMenuOpen = (event) => {
     setLoginAnchorEl(event.currentTarget)
   }
@@ -151,7 +145,6 @@ export default function PrimarySearchAppBar() {
     console.log("makenewfeed")
     navigate("/makefeed")
   }
-
   const MenuStatelogin = ({User}) => {
     if(User){
       return(
@@ -226,19 +219,35 @@ export default function PrimarySearchAppBar() {
       <List>
         {User.ownedfeeds.map((feed) => (
           <ListItem key={feed.feedname} disablePadding>
-            <ListItemButton>
+            <ListItemButton onClick={() => { navigate(`/feed/${feed.feedname}`)}}>
               <ListItemText primary={feed.feedname} />
             </ListItemButton>
           </ListItem>
         ))}
       </List>
+    <Divider />
+      <List>
+          <ListItem key="subscribedfeeds" disablePadding>
+            <ListItemButton onClick={handleMakeNewFeedClick}>
+              <ListItemIcon>
+                <FeedIcon/>
+              </ListItemIcon>
+              <ListItemText primary={"Subscribed feeds"} />
+            </ListItemButton>
+          </ListItem>
+        {User.feedsubs ? User.feedsubs.map((subs) => (
+          <ListItem key={subs.feedname} disablePadding>
+            <ListItemButton>
+              <ListItemText primary={subs.feedname}/>
+            </ListItemButton>
+          </ListItem>
+        )) :null}
+      </List>
     </Box>
   );}else{
   if (feeds.loading | !feeds.data){
-    console.log(feeds)
-    return
+    return <Box>...loading</Box>
   }else{
-    console.log(feeds.data.getfeed)
   return(
         <Box sx={{ width: 250 }} role="presentation" onClick={toggleDrawer(false)}>
       <List>
@@ -262,6 +271,7 @@ export default function PrimarySearchAppBar() {
           </ListItem>
         ))}
       </List>
+
     </Box>
   )}
   }
@@ -269,11 +279,8 @@ export default function PrimarySearchAppBar() {
   const MenuState = MenuStatelogin({User})
   const DrawerList = DrawerState({User})
 
-  const Renderloginstate = ({User,token,refetch,me}) => {
+  const Renderloginstate = ({User}) => {
     if (!User){
-      if(token && !me){
-        refetch()
-      }
       return(
         <Box sx={{ display: { xs: 'none', md: 'flex' } }}>
           
@@ -291,7 +298,6 @@ export default function PrimarySearchAppBar() {
         </Box>
       )
     }else{
-      console.log(User)
       return(
         <Box sx={{ display: { xs: 'none', md: 'flex' } }}>
         <IconButton size="large" aria-label="show new dms" color="inherit">
@@ -367,7 +373,7 @@ export default function PrimarySearchAppBar() {
             />
           </Search>
           <Box sx={{ flexGrow: 1 }} />
-          {Renderloginstate({User,refetch,token,me})}
+          {Renderloginstate({User,refetch,token})}
         </Toolbar>
       </AppBar>
       {MenuState}

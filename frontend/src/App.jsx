@@ -11,7 +11,12 @@ import RegisterPage from './components/loginpage/Registerpage'
 import MakeFeedPage from './components/feedpage/Makefeedpage'
 import FeedPage from './components/feedpage/Feedpage'
 import NewPostpage from './components/feedpage/NewPostpage'
+import { useState } from 'react'
+import useMe from './components/hooks/useMe'
 function App() {
+  const [User,setUser] = useState(null)
+  const token = localStorage.getItem("token")
+  const {data,loading,error,refetch} = useMe()
   let match = useMatch('/post/:id');
   if (!match){
     match = "none"
@@ -24,10 +29,19 @@ function App() {
   if (!matchfeedpost){
     matchfeedpost = null
   }
-  console.log(match,matchfeed,matchfeedpost)
+  if (loading){
+    return <Box>loading</Box>
+  }
+  let me = data ? data.me : null
+  if (token && !User && me){
+    setUser(me)
+    me = null
+  }
+
+  console.log(User)
   return (
     <Box>
-      <AppBar/>
+      <AppBar User={User} setUser={setUser} refetch={refetch} />
       <Routes>
         <Route path='/' element={<Homescreen  />}/>
         <Route path='/profile' element={<Profilepage/>} />
@@ -35,7 +49,7 @@ function App() {
         <Route path='/login' element={<LoginPage/>}/>
         <Route path='/register' element={<RegisterPage/>} />
         <Route path='/makefeed' element={<MakeFeedPage/>} />
-        <Route path='/feed/:feedname' element={<FeedPage match={matchfeed}/>} />
+        <Route path='/feed/:feedname' element={<FeedPage match={matchfeed} User={User} setUser={setUser} />} />
         <Route path='/newpost/:postfeedname' element={<NewPostpage match={matchfeedpost}/>} />
       </Routes>
     </Box>

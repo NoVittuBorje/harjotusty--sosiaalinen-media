@@ -11,7 +11,7 @@ const Homescreen = () => {
 
             </Grid>
             <Grid size={{xs:12, md:8}} sx={{backgroundColor:"grey"}}>
-                <h3 style={{textAlign:"center"}}>Popular Feed</h3>
+                <h3 style={{textAlign:"center"}}>Popular posts</h3>
                 <Divider></Divider>
                     <List>
                     </List>

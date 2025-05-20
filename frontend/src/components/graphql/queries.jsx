@@ -11,6 +11,10 @@ query Me {
     relationship
     description
     work
+    feedsubs {
+      feedname
+      id
+    }
     ownedfeeds{
       feedname
     }
@@ -23,6 +27,10 @@ export const GET_FEED = gql`query Getfeed($querytype: String!, $feedname: String
     description
     owner {
       username
+    }
+    subs {
+      username
+      id
     }
     posts {
       headline

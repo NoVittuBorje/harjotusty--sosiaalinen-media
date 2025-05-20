@@ -38,6 +38,7 @@ const schema = new mongoose.Schema({
   },
   feedsubs:[{
     type: mongoose.Schema.Types.ObjectId,
+    unique:true,
     ref: 'Feed'
   }],
   ownedfeeds:[{

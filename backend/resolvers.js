@@ -23,7 +23,7 @@ const resolvers = {
         if (args.querytype === "single"){
         const feed = await Feed.findOne({feedname:args.feedname}).populate({ path: 'posts',select: ["headline","description","owner","karma","id"],
         populate: { path: 'owner' ,select:["username"]}
-      }).populate("owner",{username:1})
+      }).populate("owner",{username:1,id:1}).populate("subs",{username:1,id:1})
         console.log(feed)
         return [feed]
         } 
@@ -34,19 +34,46 @@ const resolvers = {
       }
     },
     Mutation: {
+      subscribe: async (root,args,context) => {
+        if(!context.currentUser){
+          throw new GraphQLError("not logged in")
+        }
+        if (args.type === "sub"){
+        const feed = await Feed.findOne({feedname:args.feedname})
+        const user = await User.findById(context.currentUser._id)
+        feed.subs = [...feed.subs,user]
+        user.feedsubs = [...user.feedsubs,feed]
+        console.log(feed,user)
+        await user.save()
+        await feed.save()
+        return user
+        }
+        if (args.type === "unsub"){
+          console.log("juu")
+        const feed = await Feed.findOneAndUpdate(
+        {'feedname':args.feedname},
+        { $pull: { subs: context.currentUser._id }},)
+        console.log(feed)
+        const user = await User.findOneAndUpdate(
+        {'_id':context.currentUser._id},
+        { $pull: { feedsubs: feed._id }},).populate("feedsubs",{feedname:1,id:1})
+        console.log(feed,user)
+
+        return user
+        }
+      },
       makePost: async (root,args,context) => {
         if(!context.currentUser){
           throw new GraphQLError("not logged in")
         }
         const feed = await Feed.findOne({feedname:args.feedname})
         const user = await User.findById(context.currentUser._id)
-        const post = new Post({headline:args.headline,description:args.description,feed:feed,karma:0,owner:user,img:args.img})
+        const post = new Post({headline:args.headline,description:args.description,feed:feed,karma:0,owner:context.currentUser,img:args.img})
         feed.posts = [...feed.posts,post]
         user.posts = [...user.posts,post]
         await feed.save()
         await user.save()
-        await post.save()
-        return 
+        return post.save()
       },
       createUser: async (root,args) => {
         const salt_rounds = 10

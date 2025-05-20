@@ -17,6 +17,7 @@ const schema = new mongoose.Schema({
     },
     subs:[{
         type:mongoose.Schema.Types.ObjectId,
+        unique:true,
         ref:'User'
     }],
     posts:[{
