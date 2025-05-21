@@ -21,8 +21,8 @@ const validationSchema = yup.object().shape({
     confirmPassword: yup.string().oneOf([yup.ref('Password'), null], 'Passwords must match'),
   });
 const RegisterPage = () => {
-    const [register,result] = useRegister()
-    const [login,resutl] = useLogin()
+    const [register,regresult] = useRegister()
+    const [login,loginresult] = useLogin()
     const navigate = useNavigate()
     const [showPassword, setShowPassword] = React.useState(false);
     const [showconfirmPassword, setShowconfirmPassword] = React.useState(false);

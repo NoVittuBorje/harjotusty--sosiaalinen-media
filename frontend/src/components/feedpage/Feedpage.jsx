@@ -2,7 +2,6 @@ import { Box, Button, Divider, Grid, List } from "@mui/material"
 import useGetFeed from "../hooks/useGetFeed"
 import { useNavigate } from "react-router"
 import FeedItem from "../homepage/FeedItem"
-import useMakePost from "../hooks/useMakePost"
 import useSubscribe from "../hooks/useSubscribe"
 
 const FeedPage = ({match,User,setUser}) => {
@@ -14,7 +13,7 @@ const FeedPage = ({match,User,setUser}) => {
     const Subscribe = async ({feedname,type}) => {
         console.log("Subscribe")
         const data = await sub({feedname,type})
-        console.log(data.data.subscribe)
+        console.log(data)
         if(data){
             setUser(data.data.subscribe)
         }
@@ -39,11 +38,11 @@ const FeedPage = ({match,User,setUser}) => {
             <h1>{feed.feedname}</h1>
         </Box>
         <Grid container rowSpacing={1} sx={{flexDirection:"row"}}>
-            <Grid size={{xs:12, md:2}} sx={{backgroundColor:"grey"}}>
+            <Grid size={{xs:12, md:2}} >
                 {subButton({User})}
             </Grid>
 
-            <Grid size={{xs:12, md:8}} sx={{backgroundColor:"grey"}}>
+            <Grid size={{xs:12, md:8}}>
                 <Box>
                 <h3 style={{textAlign:"center"}}>Posts</h3>
                 <Divider></Divider>
@@ -55,7 +54,7 @@ const FeedPage = ({match,User,setUser}) => {
                 </Box>
             </Grid>
 
-            <Grid size={{xs:12, md:2}} sx={{backgroundColor:"grey"}}>
+            <Grid size={{xs:12, md:2}}>
                 <Button onClick={() => {navigate(`/newpost/${feedname}`)}}>Make new Post</Button>
             </Grid>
 

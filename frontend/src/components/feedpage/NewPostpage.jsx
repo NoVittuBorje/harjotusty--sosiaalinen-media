@@ -17,7 +17,7 @@ const NewPostpage = ({match}) => {
         console.log("submit post")
         const data = await mutate(formik.values)
         if(data.data.makePost){
-            navigate("/feed/$")
+            navigate(`/feed/${formik.values.feedname}`)
         }
     }
     const formik = useFormik({
@@ -38,11 +38,11 @@ const NewPostpage = ({match}) => {
             <h3>{"Make post to "+match.params.postfeedname}</h3>
         </Box>
         <Grid container rowSpacing={1} sx={{flexDirection:"row"}}>
-            <Grid size={{xs:12, md:2}} sx={{backgroundColor:"grey"}}>
+            <Grid size={{xs:12, md:2}} >
 
             </Grid>
 
-            <Grid size={{xs:12, md:8,}} sx={{backgroundColor:"grey"}}>
+            <Grid size={{xs:12, md:8,}} >
                 <Box sx={{border:"solid 0.1em",borderRadius:1}}>
                     <FormGroup sx={{alignItems:"center",verticalAlign:"center",marginTop:5,}}>
                         <TextField 
@@ -55,18 +55,18 @@ const NewPostpage = ({match}) => {
                         <TextField 
                         required
                         sx={{ m: 0.5, width: "70%"}}
-                        value={formik.values.text}
+                        value={formik.values.description}
                         multiline
                         rows={6}
                         label="Post description" variant="filled"
-                        onChange={formik.handleChange("text")}
+                        onChange={formik.handleChange("description")}
                         />
                     <Button sx={{alignSelf:"left"}} onClick={formik.handleSubmit} variant="contained">Make post</Button>
                     </FormGroup>
                 </Box>
             </Grid>
 
-            <Grid size={{xs:12, md:2}} sx={{backgroundColor:"grey"}}>
+            <Grid size={{xs:12, md:2}}>
 
             </Grid>
 

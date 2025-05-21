@@ -29,9 +29,23 @@ export const MAKEPOST = gql`mutation Mutation($headline: String!, $feedname: Str
   }
 }`
 
-export const SUBSCRIBE =gql`mutation Mutation($feedname: String!, $type: String!) {
+export const SUBSCRIBE = gql`mutation Mutation($feedname: String!, $type: String!) {
   subscribe(feedname: $feedname, type: $type) {
-
+    username
+    email
+    firstname
+    lastname
+    avatar
+    relationship
+    description
+    work
+    feedsubs {
+      feedname
+      id
     }
+    ownedfeeds{
+      feedname
+    }
+    id
   }
 }`

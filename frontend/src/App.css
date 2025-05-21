@@ -1,8 +1,12 @@
 #root {
   width: 100%;
+  font-family:Arial, Helvetica, sans-serif;
+  background-color:rgb(58, 54, 54);
+  color:white
 }
 #body {
   margin: 0;
+  background-color:rgb(58, 54, 54);
 }
 .Appbar {
   width: 100%;
@@ -39,7 +43,7 @@
   text-align: center;
 }
 .feed:hover{
-  background-color: rgb(90, 86, 86);
+  background-color: rgb(8, 8, 8);
 }
 .comment {
   --size: 2rem;
@@ -54,4 +58,17 @@
   border-radius: 50%;
 }
 
-
+.feedDesc {
+   overflow: hidden;
+   display: -webkit-box;
+   white-space: pre-wrap;
+   -webkit-line-clamp: 8; /* number of lines to show */
+           line-clamp: 8; 
+   -webkit-box-orient: vertical;
+}
+.postDesc {
+  display: flexbox;
+  padding: 1%;
+  font-size: medium;
+  white-space: pre-wrap;
+}

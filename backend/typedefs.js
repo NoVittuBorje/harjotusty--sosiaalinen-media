@@ -46,6 +46,7 @@ const typeDefs = `#graphql
     feedname:String
     querytype:String!
     ):[Feed]
+    getpost(id:String!):Post
   }
 
   type Mutation {

@@ -41,30 +41,6 @@ export const GET_FEED = gql`query Getfeed($querytype: String!, $feedname: String
       karma
       img
       id
-      comments {
-        user {
-          username
-        }
-        content
-        replies {
-          user {
-            username
-          }
-          content
-          replies {
-            user {
-              username
-            }
-            content
-            replies {
-              user {
-                username
-              }
-              content
-            }
-          }
-        }
-      }
     }
   }
 }`
@@ -72,5 +48,43 @@ export const GET_ALL_FEED = gql`query Getfeed($querytype: String!, $feedname: St
   getfeed(querytype: $querytype, feedname: $feedname) {
     feedname
     description
+  }
+}`
+export const GET_POST = gql`query Getpost($getpostId: String!) {
+  getpost(id: $getpostId) {
+    headline
+    description
+    owner {
+      username
+      id
+      avatar
+    }
+    karma
+    img
+    comments {
+      user {
+        username
+        avatar
+        id
+      }
+      content
+      replies {
+        content
+        replies {
+          content
+          user {
+            avatar
+            id
+            username
+          }
+        }
+        user {
+          username
+          avatar
+          id
+        }
+      }
+    }
+    id
   }
 }`

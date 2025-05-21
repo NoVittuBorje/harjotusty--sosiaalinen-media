@@ -1,87 +1,43 @@
-import { Box, List, ListItem } from "@mui/material"
+import { Box, Divider, Grid, List, ListItem, Typography } from "@mui/material"
 import Comment from "../commentsection/Comment"
 import CommentSection from "../commentsection/CommentSection"
-const date = Date.now()
-const postdata = [
-{
-    id:1,
-    headline:"String",
-    text:"String",
-    user:{
-        id:1,
-        username:"xzxJonnexzx",
-        firstname:"Jonne",
-        lastname:"Jarmola",
-        relationship:"single",
-        description:"Lorem ipsumdfgdfg",
-        work:"unemployed",
-        avatar:"https://www.bodyfx.co.nz/cdn/shop/products/tag-face-painting-practice-board-523381_2048x.jpg?v=1647397483",
-        posts:[],
-        comments:[],
-    },
-    karma:1005,
-    img:"post url",
-    comments:[
-        {
-            id:1,
-            timestamp: 37834875757,
-            content:"Cats are cool",
-            karma:6,
-            user:{
-                username:"xzxJonnexzx",
-                avatar:"https://www.bodyfx.co.nz/cdn/shop/products/tag-face-painting-practice-board-523381_2048x.jpg?v=1647397483",
-                id:1,
-            },
-            replies:[
-                {
-                    id:1,
-                    postId:1,
-                    timestamp: date,
-                    content:"Dogs are cool",
-                    likes:29,
-                    user:{
-                        id:2,
-                        username:"Janne",
-                        avatar:"https://www.bodyfx.co.nz/cdn/shop/products/tag-face-painting-practice-board-523381_2048x.jpg?v=1647397483"
-                        },
-                    replies:[
-                        {
-                            id:2,
-                            postId:1,
-                            user:{
-                              id:3,
-                              username:"Jappe",
-                              avatar:"https://www.bodyfx.co.nz/cdn/shop/products/tag-face-painting-practice-board-523381_2048x.jpg?v=1647397483"
-                              },
-                            timestamp: date,
-                            content:"Dogs are not cool",
-                            replies:[],
-                        },
-                        {
-                            id:3,
-                            postId:1,
-                            user:{
-                              id:4,
-                              username:"Joni",
-                              avatar:"https://www.bodyfx.co.nz/cdn/shop/products/tag-face-painting-practice-board-523381_2048x.jpg?v=1647397483"
-                              },
-                            timestamp: date,
-                            content:"Dogs are still cool",
-                            replies:[],
-                        },
-                    ],
-            },
-            ]
-        }
-    ]
-}
-]
+import useGetPost from "../hooks/useGetPost"
 
-const SinglePost = () => {
+
+
+const SinglePost = ({match}) => {
+    const id = match.params.id
+    console.log(match.params.id)
+    const {data,loading,error,refetch} = useGetPost({id})
+    console.log(data)
+    if (loading) {return <Box></Box>}
+    const postdata = data.getpost
     console.log(postdata)
     return(
-        <Box>
-            {postdata.map((post) => <CommentSection item={post.comments} ></CommentSection>)}
+        <Box sx={{ flexGrow: 1 }}>
+            <Grid container rowSpacing={1} sx={{flexDirection:"row"}}>
+                <Grid size={{xs:12, md:2}}>
+
+                </Grid>
+                <Grid size={{xs:12, md:8}} sx={{borderLeft:1,border:"solid",borderColor:"black"}}>
+                    <Box className="postDesc">
+                        <Typography  variant="h5" paddingLeft={2} >{postdata.headline}</Typography>
+                        <Typography variant="h7">{postdata.description}</Typography>
+                        <Divider></Divider>
+                        <Typography variant="h5" >Comments</Typography>
+                        <CommentSection item={postdata.comments} ></CommentSection>
+                    </Box>
+                    
+                    <Box>
+
+                    </Box>
+                </Grid>
+                <Grid size={{xs:12, md:2}}>
+
+                </Grid>
+            </Grid>
+
+            
         </Box>
     )
 }

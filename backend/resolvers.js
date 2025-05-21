@@ -4,6 +4,7 @@ const bcrypt = require('bcrypt')
 const User = require('./models/user_model')
 const Feed = require('./models/feed_model')
 const Post = require('./models/post_model')
+const Comment = require(`./models/comment_model`)
 
 const resolvers = {
     Query: {
@@ -31,6 +32,10 @@ const resolvers = {
           const feeds = await Feed.find({})
           return feeds
         }
+      },
+      getpost: async (root,args) => {
+        const post = await Post.findById(args.id).populate("owner",{username:1,id:1,avatar:1}).populate({path: "comments",select:["user","content","replies"],populate: {path: "user",select:["username","avatar"]},populate:{path:"replies",select:["user","content","replies"]},populate: {path: "user",select:["username","avatar"]}})
+        return post
       }
     },
     Mutation: {
@@ -40,7 +45,7 @@ const resolvers = {
         }
         if (args.type === "sub"){
         const feed = await Feed.findOne({feedname:args.feedname})
-        const user = await User.findById(context.currentUser._id)
+        const user = await User.findById(context.currentUser._id).populate("ownedfeeds",{feedname:1,id:1}).populate("feedsubs",{id:1,feedname:1})
         feed.subs = [...feed.subs,user]
         user.feedsubs = [...user.feedsubs,feed]
         console.log(feed,user)
@@ -56,10 +61,13 @@ const resolvers = {
         console.log(feed)
         const user = await User.findOneAndUpdate(
         {'_id':context.currentUser._id},
-        { $pull: { feedsubs: feed._id }},).populate("feedsubs",{feedname:1,id:1})
+        { $pull: { feedsubs: feed._id }},)
         console.log(feed,user)
-
-        return user
+        
+        await feed.save()
+        await user.save()
+        const res = await User.findById(context.currentUser._id).populate("ownedfeeds",{feedname:1,id:1}).populate("feedsubs",{id:1,feedname:1})
+        return res
         }
       },
       makePost: async (root,args,context) => {
@@ -69,6 +77,7 @@ const resolvers = {
         const feed = await Feed.findOne({feedname:args.feedname})
         const user = await User.findById(context.currentUser._id)
         const post = new Post({headline:args.headline,description:args.description,feed:feed,karma:0,owner:context.currentUser,img:args.img})
+        console.log(post)
         feed.posts = [...feed.posts,post]
         user.posts = [...user.posts,post]
         await feed.save()

@@ -35,11 +35,11 @@ const MakeFeedPage = () => {
             </Box>
         <Grid container rowSpacing={1} sx={{flexDirection:"row"}}>
 
-            <Grid size={{xs:12, md:2}} sx={{backgroundColor:"grey"}}>
+            <Grid size={{xs:12, md:2}}>
 
             </Grid>
 
-            <Grid size={{xs:12, md:8}} sx={{backgroundColor:"grey"}}>
+            <Grid size={{xs:12, md:8}} >
                 <Box sx={{border:"solid 0.1em",borderRadius:1}}>
                     <FormGroup sx={{alignItems:"center",verticalAlign:"center",marginTop:5,}}>
                         
@@ -64,7 +64,7 @@ const MakeFeedPage = () => {
                 </Box>
             </Grid>
 
-            <Grid size={{xs:12, md:2}} sx={{backgroundColor:"grey"}}>
+            <Grid size={{xs:12, md:2}}>
 
             </Grid>
 

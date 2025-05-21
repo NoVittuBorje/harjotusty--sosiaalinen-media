@@ -35,17 +35,16 @@ function App() {
   let me = data ? data.me : null
   if (token && !User && me){
     setUser(me)
-    me = null
   }
 
   console.log(User)
   return (
-    <Box>
+    <Box >
       <AppBar User={User} setUser={setUser} refetch={refetch} />
       <Routes>
         <Route path='/' element={<Homescreen  />}/>
         <Route path='/profile' element={<Profilepage/>} />
-        <Route path='/post/:id' element={<SinglePost id={match}/>} />
+        <Route path='/post/:id' element={<SinglePost match={match} User={User} />} />
         <Route path='/login' element={<LoginPage/>}/>
         <Route path='/register' element={<RegisterPage/>} />
         <Route path='/makefeed' element={<MakeFeedPage/>} />

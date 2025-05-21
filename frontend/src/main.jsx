@@ -7,6 +7,7 @@ import { getMainDefinition } from '@apollo/client/utilities'
 import { GraphQLWsLink } from '@apollo/client/link/subscriptions'
 import { createClient } from 'graphql-ws'
 import { BrowserRouter } from 'react-router-dom'
+import { createTheme, ThemeProvider } from "@mui/material";
 
 const authLink = setContext((_, { headers }) => {  
   const token = localStorage.getItem('token')  
@@ -34,11 +35,16 @@ const client = new ApolloClient({
   cache: new InMemoryCache(),
   link: splitLink
 })
+const theme = createTheme({
+  cssVariables: true,
+})
 
 ReactDOM.createRoot(document.getElementById("root")).render(
+  <ThemeProvider theme={theme}>
   <BrowserRouter>
     <ApolloProvider client={client}>    
         <App />
     </ApolloProvider>
   </BrowserRouter>
+  </ThemeProvider>
 )
