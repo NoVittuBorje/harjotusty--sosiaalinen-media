@@ -1,4 +1,4 @@
-import FeedItem from "../homepage/FeedItem"
+import FeedItem from "../../FeedItem"
 import ProfileFeedComment from "./ProfilefeedComment"
 
 const ProfileFeed = ({item}) => {

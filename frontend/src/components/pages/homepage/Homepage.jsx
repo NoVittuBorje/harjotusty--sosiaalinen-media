@@ -1,6 +1,6 @@
 import { Box, Divider, Grid, List, } from "@mui/material"
 
-import FeedItem from "./FeedItem";
+import FeedItem from "../../FeedItem";
 
 const Homescreen = () => {
 

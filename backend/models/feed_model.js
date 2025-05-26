@@ -23,7 +23,11 @@ const schema = new mongoose.Schema({
     posts:[{
         type: mongoose.Schema.Types.ObjectId,
         ref: 'Post'
-    }]
+    }],
+    active:{
+    type: Boolean,
+    default:true
+  }
 
 },{timestamps:true})
 

@@ -1,11 +1,11 @@
 import { Box, Divider, Grid, List, ListItem, Typography } from "@mui/material"
-import Comment from "../commentsection/Comment"
-import CommentSection from "../commentsection/CommentSection"
-import useGetPost from "../hooks/useGetPost"
+import Comment from "../../commentsection/Comment"
+import CommentSection from "../../commentsection/CommentSection"
+import useGetPost from "../../hooks/useGetPost"
 
 
 
-const SinglePost = ({match}) => {
+const SinglePost = ({match,User}) => {
     const id = match.params.id
     console.log(match.params.id)
     const {data,loading,error,refetch} = useGetPost({id})
@@ -25,7 +25,7 @@ const SinglePost = ({match}) => {
                         <Typography variant="h7">{postdata.description}</Typography>
                         <Divider></Divider>
                         <Typography variant="h5" >Comments</Typography>
-                        <CommentSection item={postdata.comments} ></CommentSection>
+                        <CommentSection item={postdata.comments} User={User} postid={postdata.id} ></CommentSection>
                     </Box>
                     
                     <Box>

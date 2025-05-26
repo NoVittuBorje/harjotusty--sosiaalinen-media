@@ -1,8 +1,8 @@
 import { Box, Button, Divider, Grid, List } from "@mui/material"
-import useGetFeed from "../hooks/useGetFeed"
+import useGetFeed from "../../hooks/useGetFeed"
 import { useNavigate } from "react-router"
-import FeedItem from "../homepage/FeedItem"
-import useSubscribe from "../hooks/useSubscribe"
+import FeedItem from "../../FeedItem"
+import useSubscribe from "../../hooks/useSubscribe"
 
 const FeedPage = ({match,User,setUser}) => {
     console.log(match.params.feedname)

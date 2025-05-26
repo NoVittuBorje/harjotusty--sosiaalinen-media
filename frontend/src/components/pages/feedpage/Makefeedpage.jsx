@@ -1,7 +1,7 @@
 import { Box, FormGroup, Grid, TextField,Button } from "@mui/material"
 import { useFormik } from "formik"
 import * as yup from 'yup'
-import useMakeFeed from "../hooks/useMakeFeed"
+import useMakeFeed from "../../hooks/useMakeFeed"
 import { useNavigate } from "react-router"
 const validationSchema = yup.object().shape({
     feedname:yup.string().min(1).required(),

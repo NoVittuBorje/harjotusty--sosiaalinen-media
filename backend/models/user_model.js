@@ -41,6 +41,10 @@ const schema = new mongoose.Schema({
     unique:true,
     ref: 'Feed'
   }],
+  comments:[{
+    type:mongoose.Schema.Types.ObjectId,
+    ref: "Comment"
+  }],
   ownedfeeds:[{
     type: mongoose.Schema.Types.ObjectId,
     ref: "Feed"
@@ -48,7 +52,11 @@ const schema = new mongoose.Schema({
   posts:[{
     type: mongoose.Schema.Types.ObjectId,
     ref: 'Post'
-  }]
+  }],
+  active:{
+    type: Boolean,
+    default:true
+  }
 },{timestamps:true})
 
 module.exports = mongoose.model('User', schema)

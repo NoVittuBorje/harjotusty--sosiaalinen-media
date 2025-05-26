@@ -1,16 +1,16 @@
 
 import AppBar from './components/Appbar'
 import './App.css'
-import Homescreen from './components/homepage/Homepage'
+import Homescreen from './components/pages/homepage/Homepage'
 import { Box } from '@mui/material'
 import { Routes, Route, useMatch, } from 'react-router-dom'
-import Profilepage from './components/profilepage/Profilepage'
-import SinglePost from './components/singlepostpage/SinglePost'
+import Profilepage from './components/pages/profilepage/Profilepage'
+import SinglePost from './components/pages/singlepostpage/SinglePost'
 import LoginPage from './components/loginpage/Loginpage'
 import RegisterPage from './components/loginpage/Registerpage'
-import MakeFeedPage from './components/feedpage/Makefeedpage'
-import FeedPage from './components/feedpage/Feedpage'
-import NewPostpage from './components/feedpage/NewPostpage'
+import MakeFeedPage from './components/pages/feedpage/Makefeedpage'
+import FeedPage from './components/pages/feedpage/Feedpage'
+import NewPostpage from './components/pages/feedpage/NewPostpage'
 import { useState } from 'react'
 import useMe from './components/hooks/useMe'
 function App() {
@@ -42,14 +42,14 @@ function App() {
     <Box >
       <AppBar User={User} setUser={setUser} refetch={refetch} />
       <Routes>
-        <Route path='/' element={<Homescreen  />}/>
-        <Route path='/profile' element={<Profilepage/>} />
+        <Route path='/' element={<Homescreen User={User} />}/>
+        <Route path='/profile' element={<Profilepage User={User}/>} />
         <Route path='/post/:id' element={<SinglePost match={match} User={User} />} />
         <Route path='/login' element={<LoginPage/>}/>
         <Route path='/register' element={<RegisterPage/>} />
-        <Route path='/makefeed' element={<MakeFeedPage/>} />
+        <Route path='/makefeed' element={<MakeFeedPage User={User}/>} />
         <Route path='/feed/:feedname' element={<FeedPage match={matchfeed} User={User} setUser={setUser} />} />
-        <Route path='/newpost/:postfeedname' element={<NewPostpage match={matchfeedpost}/>} />
+        <Route path='/newpost/:postfeedname' element={<NewPostpage match={matchfeedpost} User={User}/>} />
       </Routes>
     </Box>
     

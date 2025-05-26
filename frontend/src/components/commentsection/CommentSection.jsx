@@ -1,13 +1,20 @@
 import React, { useState } from 'react';
 import Comment from './Comment';
 import CommentForm from './CommentForm';
-const CommentSection = ({item}) => {
+import useMakeComment from '../hooks/useMakeComment';
+const CommentSection = ({item,User,postid}) => {
   console.log(item)
+  const [newcomment,result] = useMakeComment()
   const [comments, setComments] = useState(item);
   const [currentComment, setCurrentComment] = useState(null);
 
-  const handleNewComment = (comment) => {
-    setComments([...comments, comment]);
+  const [replyComment, setReplycomment] = useState(null)
+
+  const handleNewComment = (content) => {
+    console.log("new comment")
+    console.log(content.content,postid)
+    const data = newcomment({postid,content:content.content})
+    console.log(data)
   };
 
   const handleReply = (commentId, reply) => {
@@ -20,7 +27,7 @@ const CommentSection = ({item}) => {
     });
     setComments(updatedComments);
   };
-
+  console.log(comments)
   return (
     <div>
       {comments.map((comment) => (
@@ -30,7 +37,7 @@ const CommentSection = ({item}) => {
           onReply={(reply) => handleReply(comment.id, reply)}
         />
       ))}
-      <CommentForm onSubmit={(comment) => handleNewComment(comment)} />
+      <CommentForm postid={postid} onSubmit={(comment) => handleNewComment(comment)} />
     </div>
   );
 };

@@ -1,7 +1,7 @@
 import { gql } from '@apollo/client'
 
 export const GET_ME = gql`
-query Me {
+query Query {
   me {
     username
     email
@@ -15,9 +15,21 @@ query Me {
       feedname
       id
     }
-    ownedfeeds{
-      feedname
+    posts {
+      description
+      feed {
+        feedname
+      }
+      headline
+      id
+      img
+      karma
     }
+    ownedfeeds {
+      feedname
+      id
+    }
+    active
     id
   }
 }`
@@ -26,22 +38,27 @@ export const GET_FEED = gql`query Getfeed($querytype: String!, $feedname: String
     feedname
     description
     owner {
+      avatar
       username
+      id
     }
     subs {
-      username
       id
     }
     posts {
       headline
       description
+      id
+      img
+      karma
       owner {
         username
+        id
+        avatar
       }
-      karma
-      img
-      id
     }
+    active
+    id
   }
 }`
 export const GET_ALL_FEED = gql`query Getfeed($querytype: String!, $feedname: String) {

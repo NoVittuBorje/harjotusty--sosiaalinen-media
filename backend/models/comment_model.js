@@ -14,6 +14,17 @@ const schema = new mongoose.Schema({
         type: mongoose.Schema.Types.ObjectId,
         ref: 'Comment'
     }],
+    replyto:{
+        type:mongoose.Schema.Types.ObjectId,
+        ref:"Comment"
+    },
+    karma:{
+        type:Number
+    },
+    active:{
+    type: Boolean,
+    default:true
+    }
 },{timestamps:true})
 
 module.exports = mongoose.model('Comment', schema)

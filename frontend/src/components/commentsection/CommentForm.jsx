@@ -6,17 +6,11 @@ const CommentForm = ({ onSubmit }) => {
 
   const handleSubmit = (event) => {
     event.preventDefault();
-    onSubmit({ author, content });
+    onSubmit({ content });
   };
 
   return (
     <form onSubmit={handleSubmit}>
-      <input
-        type="text"
-        value={author}
-        onChange={(event) => setAuthor(event.target.value)}
-        placeholder="Author"
-      />
       <textarea
         value={content}
         onChange={(event) => setContent(event.target.value)}

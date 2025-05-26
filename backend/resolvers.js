@@ -18,13 +18,19 @@ const resolvers = {
               }
             })
           }
+          if (currentUser.active == false){
+            throw new GraphQLError("account not active")
+          }
+        console.log(currentUser.comments[0].headline)
         return currentUser
       },
       getfeed: async (root,args) => {
         if (args.querytype === "single"){
-        const feed = await Feed.findOne({feedname:args.feedname}).populate({ path: 'posts',select: ["headline","description","owner","karma","id"],
-        populate: { path: 'owner' ,select:["username"]}
-      }).populate("owner",{username:1,id:1}).populate("subs",{username:1,id:1})
+        const feed = await Feed.findOne({feedname:args.feedname}).populate({ 
+          path: 'posts',
+          select: ["headline","description","owner","karma","id"],
+          populate:{path:"owner",select:["username","id","avatar"]}
+          }).populate("owner",{username:1,id:1}).populate("subs",{username:1,id:1})
         console.log(feed)
         return [feed]
         } 
@@ -45,7 +51,7 @@ const resolvers = {
         }
         if (args.type === "sub"){
         const feed = await Feed.findOne({feedname:args.feedname})
-        const user = await User.findById(context.currentUser._id).populate("ownedfeeds",{feedname:1,id:1}).populate("feedsubs",{id:1,feedname:1})
+        const user = context.currentUser
         feed.subs = [...feed.subs,user]
         user.feedsubs = [...user.feedsubs,feed]
         console.log(feed,user)
@@ -75,7 +81,7 @@ const resolvers = {
           throw new GraphQLError("not logged in")
         }
         const feed = await Feed.findOne({feedname:args.feedname})
-        const user = await User.findById(context.currentUser._id)
+        const user = context.currentUser
         const post = new Post({headline:args.headline,description:args.description,feed:feed,karma:0,owner:context.currentUser,img:args.img})
         console.log(post)
         feed.posts = [...feed.posts,post]
@@ -136,15 +142,36 @@ const resolvers = {
     makeFeed: async (root, args,context) => {
       console.log(context.currentUser)
       const newfeed = new Feed({ feedname:args.feedname,description:args.description,owner:context.currentUser})
-      const user = await User.findById(context.currentUser._id)
+      const user = context.currentUser
       console.log(user)
-      user.ownedfeeds = [...context.currentUser.ownedfeeds,newfeed]
+      user.ownedfeeds = [...user.ownedfeeds,newfeed]
       console.log(user)
       await user.save()
       return newfeed.save()
         .catch(error => {
           console.log(error)
         })
+    },
+    makeComment: async (root,args,context) => {
+      console.log(context.currentUser)
+      const user = context.currentUser
+      if (args.replyto){
+        //reply
+      }else{
+        //newComment
+        const user = context.currentUser
+        const post = await Post.findOne({_id:args.postid})
+        
+        const newComment = new Comment({content:args.content,post:post,user:user})
+        console.log(user,post)
+        post.comments.push(newComment)
+        user.comments.push(newComment)
+        await newComment.save()
+        await user.save()
+        await post.save()
+        return newComment
+      }
+      
     }
   },
     

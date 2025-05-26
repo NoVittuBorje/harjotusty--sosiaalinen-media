@@ -1,7 +1,7 @@
 import { Box, FormGroup, Grid, TextField,Button } from "@mui/material"
 import { useFormik } from "formik"
 import * as yup from 'yup'
-import useMakePost from "../hooks/useMakePost"
+import useMakePost from "../../hooks/useMakePost"
 import { useNavigate } from "react-router"
 
 const validationSchema = yup.object().shape({

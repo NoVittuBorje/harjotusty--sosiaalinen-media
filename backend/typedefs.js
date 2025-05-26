@@ -5,13 +5,16 @@ const typeDefs = `#graphql
     owner:User!
     subs:[User]
     posts:[Post]
+    active:Boolean
     id:ID!
   }
   type Comment {
-      post:Post!
-      user:User!
-      content:String!
-      replies:[Comment]
+    post:Post!
+    user:User!
+    content:String!
+    replies:[Comment]
+    replyto:Comment
+    id:ID!
   }
   type Post {
     headline:String!
@@ -21,6 +24,7 @@ const typeDefs = `#graphql
     img:String
     feed:Feed!
     comments:[Comment]
+    active:Boolean
     id:ID!
   }
   type User {
@@ -35,6 +39,8 @@ const typeDefs = `#graphql
     feedsubs:[Feed]
     posts:[Post]
     ownedfeeds:[Feed]
+    active:Boolean
+    comments:[Comment]
     id: ID!
   }
   type Token {
@@ -73,6 +79,11 @@ const typeDefs = `#graphql
       description: String!
       img: String
     ): Post
+    makeComment(
+      postid: String!
+      content: String!
+      replyto: String
+    ):[Comment]
   }
 `
 module.exports = typeDefs

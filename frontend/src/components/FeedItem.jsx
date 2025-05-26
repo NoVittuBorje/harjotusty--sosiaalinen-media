@@ -1,6 +1,8 @@
 import { Box, Chip, Divider, IconButton, Link, List, ListItem, ListItemButton,TextareaAutosize,Typography } from "@mui/material"
 import ThumbUpIcon from '@mui/icons-material/ThumbUp';
 import ThumbDownIcon from '@mui/icons-material/ThumbDown';
+import ArrowUpwardRoundedIcon from '@mui/icons-material/ArrowUpwardRounded';
+import ArrowDownwardRoundedIcon from '@mui/icons-material/ArrowDownwardRounded';
 import { useNavigate } from "react-router";
 const FeedItem = ({item}) => {
     const navigate = useNavigate()
@@ -24,20 +26,23 @@ const FeedItem = ({item}) => {
                 </Box>
                 </Box>
                 </Link>
+            <Divider></Divider>
             <Box className={"feedfooter"}>
+                <Box className={"feedfooterkarma"} >
                 <IconButton onClick={handleLike} size="small">
-                    <ThumbUpIcon style={{color:"green"}}></ThumbUpIcon>
+                    <ArrowUpwardRoundedIcon style={{color:"green"}}></ArrowUpwardRoundedIcon>
                 </IconButton>
 
-                <Box className={"feedfooterkarma"}>
+                <Box>
                     <a style={{paddingTop:0,textAlignVertical:"top"}}>{item.karma}</a>
                 </Box>
 
                 <IconButton onClick={handleDislike} size="small">
-                    <ThumbDownIcon style={{color:"red"}} ></ThumbDownIcon>
+                    <ArrowDownwardRoundedIcon style={{color:"red"}}></ArrowDownwardRoundedIcon>
                 </IconButton>
-
+                </Box>
             </Box>
+            
         </Box>
         
         <Divider></Divider>

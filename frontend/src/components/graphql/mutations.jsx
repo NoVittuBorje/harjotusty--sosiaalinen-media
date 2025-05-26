@@ -49,3 +49,30 @@ export const SUBSCRIBE = gql`mutation Mutation($feedname: String!, $type: String
     id
   }
 }`
+export const MAKECOMMENT = gql`mutation Mutation($content: String!, $replyto: String, $postid: String!) {
+  makeComment(content: $content, replyto: $replyto, postid: $postid) {
+    content
+    id
+    post {
+      id
+    }
+    replyto {
+      id
+      content
+    }
+    replies {
+      content
+        user {
+          avatar
+          id
+          username
+        }
+    }
+    user {
+      avatar
+      username
+      id
+    }
+
+  }
+}`

@@ -1,5 +1,5 @@
 import { Stack,Box,Link,Paper } from "@mui/material"
-import Comment from "../commentsection/Comment"
+import Comment from "../../commentsection/Comment"
 const ProfileFeedComment = ({item}) => {
 
     return(
