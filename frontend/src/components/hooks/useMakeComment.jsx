@@ -5,6 +5,7 @@ const useMakeComment = () => {
     const [mutate,result] = useMutation(MAKECOMMENT)
     const comment = async ({postid,replyto,content}) => {
         if (replyto){
+            console.log(postid,replyto,content)
         const data = await mutate({variables:{postid:postid,replyto:replyto,content:content}})
         return data
         }else{

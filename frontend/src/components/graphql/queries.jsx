@@ -78,30 +78,77 @@ export const GET_POST = gql`query Getpost($getpostId: String!) {
     }
     karma
     img
+    id
     comments {
       user {
         username
         avatar
         id
       }
+      karma
+      depth
       content
+      id
       replies {
         content
-        replies {
-          content
-          user {
-            avatar
-            id
-            username
-          }
-        }
+        karma
+        depth
+        id
         user {
           username
           avatar
           id
         }
+        replies {
+          karma
+          depth
+          content
+          id
+          user {
+            username
+            avatar
+            id
+          }
+          replies {
+            karma
+            depth
+            content
+            id
+            user {
+              username
+              avatar
+              id
+            }
+            replies {
+              karma
+              depth
+              content
+              id
+              user {
+                username
+                id
+                avatar
+              }
+              replies {
+                karma
+                depth
+                content
+                id
+                user {
+                  username
+                  avatar
+                  id
+                }
+                replies {
+                  id
+                }
+              }
+
+            }
+          }
+        }
       }
+      
     }
-    id
   }
 }`

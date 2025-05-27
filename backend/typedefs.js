@@ -14,6 +14,8 @@ const typeDefs = `#graphql
     content:String!
     replies:[Comment]
     replyto:Comment
+    karma:Int
+    depth:Int
     id:ID!
   }
   type Post {
@@ -53,6 +55,7 @@ const typeDefs = `#graphql
     querytype:String!
     ):[Feed]
     getpost(id:String!):Post
+    getcomments(commentid:String!):Comment
   }
 
   type Mutation {

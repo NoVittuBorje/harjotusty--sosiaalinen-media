@@ -19,7 +19,12 @@ const schema = new mongoose.Schema({
         ref:"Comment"
     },
     karma:{
-        type:Number
+        type:Number,
+        default:0
+    },
+    depth:{
+        type:Number,
+        default: 0
     },
     active:{
     type: Boolean,

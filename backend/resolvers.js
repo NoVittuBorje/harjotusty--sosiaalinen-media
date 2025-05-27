@@ -40,8 +40,53 @@ const resolvers = {
         }
       },
       getpost: async (root,args) => {
-        const post = await Post.findById(args.id).populate("owner",{username:1,id:1,avatar:1}).populate({path: "comments",select:["user","content","replies"],populate: {path: "user",select:["username","avatar"]},populate:{path:"replies",select:["user","content","replies"]},populate: {path: "user",select:["username","avatar"]}})
+        const post = await Post.findById(args.id).populate("owner",{username:1,id:1,avatar:1
+        }).populate({
+          path: 'comments',
+          model: Comment,
+          select:"replies content karma depth",
+          populate: [{
+              path: 'user',
+              model: User,
+          },{
+              path:"replies",
+              model:Comment,
+              select:"content karma depth",
+              populate: [{
+                path: 'user',
+                model: User,
+                },{
+                path:"replies",
+                model:Comment,
+                select:"content karma depth",
+                  populate: [{
+                    path: 'user',
+                    model: User,
+                    },{
+                    path:"replies",
+                    model:Comment,
+                    select:"content karma depth",
+                    populate: [{
+                      path: 'user',
+                      model: User,
+                      },{
+                      path:"replies",
+                      model:Comment,
+                      select:"content karma depth",
+                    }],
+                    }],
+                    }],
+          }
+            ],
+          
+
+          })
+          console.log(post)
         return post
+      },
+      getcomments: async (root,args) => {
+        const comments = await Comment.findById(args.commentid)
+        return comments
       }
     },
     Mutation: {
@@ -153,16 +198,26 @@ const resolvers = {
         })
     },
     makeComment: async (root,args,context) => {
-      console.log(context.currentUser)
-      const user = context.currentUser
       if (args.replyto){
         //reply
+        const user = context.currentUser
+        const post = await Post.findById(args.postid)
+        console.log(post)
+        const replyto = await Comment.findById(args.replyto)
+        console.log(replyto)
+        const newComment = new Comment({content:args.content,post:post._id,user:user._id,replyto:replyto._id,depth:replyto.depth+1})
+        replyto.replies.push(newComment)
+        user.comments.push(newComment)
+        replyto.save()
+        user.save()
+        newComment.save()
+        return newComment
       }else{
         //newComment
         const user = context.currentUser
         const post = await Post.findOne({_id:args.postid})
         
-        const newComment = new Comment({content:args.content,post:post,user:user})
+        const newComment = new Comment({content:args.content,post:post,user:user,karma:0,depth:0})
         console.log(user,post)
         post.comments.push(newComment)
         user.comments.push(newComment)

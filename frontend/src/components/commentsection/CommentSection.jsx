@@ -7,7 +7,7 @@ const CommentSection = ({item,User,postid}) => {
   const [newcomment,result] = useMakeComment()
   const [comments, setComments] = useState(item);
   const [currentComment, setCurrentComment] = useState(null);
-
+  const [Counter,setCounter] = useState(0)
   const [replyComment, setReplycomment] = useState(null)
 
   const handleNewComment = (content) => {
@@ -17,15 +17,10 @@ const CommentSection = ({item,User,postid}) => {
     console.log(data)
   };
 
-  const handleReply = (commentId, reply) => {
-    const updatedComments = comments.map((comment) => {
-        console.log(comment.replies)
-      if (comment.id === commentId) {
-        return { ...comment, replies: [...comment.replies, reply] };
-      }
-      return comment;
-    });
-    setComments(updatedComments);
+  const handleReply = ({content,commentid}) => {
+    console.log(content)
+    const data = newcomment({postid,content:content,replyto:commentid})
+    console.log(data)
   };
   console.log(comments)
   return (
@@ -34,7 +29,9 @@ const CommentSection = ({item,User,postid}) => {
         <Comment
           key={comment.id}
           comment={comment}
-          onReply={(reply) => handleReply(comment.id, reply)}
+          onReply={handleReply}
+          setCounter={setCounter}
+          Counter={Counter}
         />
       ))}
       <CommentForm postid={postid} onSubmit={(comment) => handleNewComment(comment)} />

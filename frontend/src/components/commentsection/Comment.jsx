@@ -3,7 +3,8 @@ import Popover from '@mui/material/Popover';
 import Typography from '@mui/material/Typography';
 import Button from '@mui/material/Button';
 import NewComment from './NewComment';
-const Comment = ({ comment, onReply }) => {
+import { Box } from '@mui/material';
+const Comment = ({ comment, onReply,Counter,setCounter }) => {
   const [anchorEl, setAnchorEl] = React.useState(null);
 
   const handleClick = (event) => {
@@ -16,23 +17,14 @@ const Comment = ({ comment, onReply }) => {
 
   const open = Boolean(anchorEl);
   const id = open ? 'simple-popover' : undefined;
-
-  console.log(comment)
+  console.log(comment.depth)
+  if (comment.depth < 3){
   return (
-    <div key={comment.id}>
+    <Box key={comment.id}>
       <h4>{comment.user.username}</h4>
       <p>{comment.content}</p>
       <p>{comment.timestamp}</p>
-      {comment.replies.length > 0 && (
-        <ul>
-          {comment.replies.map((reply) => (
-            <li key={reply.id}>
-              <Comment comment={reply} onReply={onReply} />
-            </li>
-          ))}
-        </ul>
-      )}
-      <Button aria-describedby={id} onClick={handleClick}>
+      <Button size='small' aria-describedby={id} onClick={handleClick}>
         reply
       </Button>
       <Popover
@@ -45,12 +37,26 @@ const Comment = ({ comment, onReply }) => {
         horizontal: 'left',
       }}
     >
-      <Typography sx={{ p: 2 }}>
-        <NewComment ></NewComment>
+      <Typography>
+        <NewComment onReply={onReply} commentid={comment.id} ></NewComment>
         </Typography>
     </Popover>
-    </div>
-  )
+      {comment.replies.length > 0 && (
+        <ul>
+          {comment.replies.map((reply) => (
+            <li key={reply.id}>
+              <Comment comment={reply} onReply={onReply} setCounter={setCounter} Counter={Counter}/>
+            </li>
+          ))}
+        </ul>
+      )}
+
+    </Box>
+  )}else{
+    return(
+      <Button size='small'>show more comments</Button>
+    )
+  }
 };
 
 export default Comment

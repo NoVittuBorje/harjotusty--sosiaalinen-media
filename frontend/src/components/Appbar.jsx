@@ -207,12 +207,10 @@ export default function PrimarySearchAppBar({setUser,User,refetch}) {
           <Divider />
 
           <ListItem key="ownedfeeds" disablePadding>
-            <ListItemButton>
               <ListItemIcon>
                 <FeedIcon />
               </ListItemIcon>
               <ListItemText primary={"Owned feeds"} />
-            </ListItemButton>
           </ListItem>
       </List>
       
@@ -228,12 +226,10 @@ export default function PrimarySearchAppBar({setUser,User,refetch}) {
     <Divider />
       <List>
           <ListItem key="subscribedfeeds" disablePadding>
-            <ListItemButton onClick={handleMakeNewFeedClick}>
               <ListItemIcon>
                 <FeedIcon/>
               </ListItemIcon>
               <ListItemText primary={"Subscribed feeds"} />
-            </ListItemButton>
           </ListItem>
         {User.feedsubs ? User.feedsubs.map((subs) => (
           <ListItem key={subs.feedname} disablePadding>

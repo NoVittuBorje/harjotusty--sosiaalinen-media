@@ -1,18 +1,19 @@
 import { FormGroup,TextField ,Button} from "@mui/material"
 import { useState } from "react"
 
-const NewComment = () => {
+const NewComment = ({onReply,commentid}) => {
     const [comment, setComment] = useState("")
     return(
-        <FormGroup sx={{alignItems:"center",verticalAlign:"center",marginTop:5,}}>
+        <FormGroup sx={{}}>
                         <TextField 
                         required
-                        sx={{ m: 0.5, width: "30%" }}
                         value={comment}
+                        multiline
+                        rows={3}
                         label="Comment" variant="outlined" 
                         onChange={(event) => setComment(event.target.value)}
                         />
-                    <Button sx={{alignSelf:"left"}} variant="contained">Make feed</Button>
+                    <Button onClick={() => {onReply({content:comment,commentid})}} sx={{alignSelf:"left"}} variant="contained">reply</Button>
                     </FormGroup>
     )
 }
