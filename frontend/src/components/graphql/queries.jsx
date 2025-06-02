@@ -152,3 +152,52 @@ export const GET_POST = gql`query Getpost($getpostId: String!) {
     }
   }
 }`
+export const GET_COMMENTS = gql`query Getcomments($commentid: String!) {
+  getcomments(commentid: $commentid) {
+    replies {
+      user {
+        username
+        avatar
+        id
+      }
+      id
+      replyto {
+        id
+      }
+      content
+      replies {
+            replies {
+      user {
+        username
+        avatar
+        id
+      }
+      id
+      content
+      replies {
+            replies {
+      user {
+        username
+        avatar
+        id
+      }
+      id
+      content
+      replies {
+            replies {
+      user {
+        username
+        avatar
+        id
+      }
+      id
+      content
+    }
+      }
+    }
+      }
+    }
+      }
+    }
+  }
+}`

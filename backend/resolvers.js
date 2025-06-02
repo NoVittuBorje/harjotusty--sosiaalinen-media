@@ -78,14 +78,54 @@ const resolvers = {
                     }],
           }
             ],
-          
-
           })
           console.log(post)
         return post
       },
       getcomments: async (root,args) => {
-        const comments = await Comment.findById(args.commentid)
+        const comments = await Comment.findById(args.commentid).populate("replies",{user:1,id:1,content:1,replies:1}).populate({
+          path:"replies",
+          model:Comment,
+          select:"content karma depth replies replyto",
+          populate: [{
+            path: 'user',
+            model: User,
+            },{
+            path:"replyto",
+            model:Comment,
+            select:"id"
+            },{
+            path:"replies",
+            model:Comment,
+            select:"content karma depth",
+            populate: [{
+                path: 'user',
+                model: User,
+                },{
+                path:"replies",
+                model:Comment,
+                select:"content karma depth",
+                  populate: [{
+                    path: 'user',
+                    model: User,
+                    },{
+                    path:"replies",
+                    model:Comment,
+                    select:"content karma depth",
+                    populate: [{
+                      path: 'user',
+                      model: User,
+                      },{
+                      path:"replies",
+                      model:Comment,
+                      select:"content karma depth",
+                    }],
+                    }],
+                    }],
+                    }],
+        }).exec()
+        const paths = comments.
+        console.log(comments)
         return comments
       }
     },

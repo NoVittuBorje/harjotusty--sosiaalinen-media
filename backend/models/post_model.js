@@ -15,12 +15,13 @@ const schema = new mongoose.Schema({
     },
     comments:[{
         type: mongoose.Schema.Types.ObjectId,
-        ref: 'Comment'
+        ref: 'Comment',
+        autopopulate: true,
     }],
     active:{
     type: Boolean,
     default:true
   }
 },{timestamps:true})
-
+schema.plugin(require('mongoose-autopopulate'))
 module.exports = mongoose.model('Post', schema)

@@ -3,44 +3,50 @@ import Popover from '@mui/material/Popover';
 import Typography from '@mui/material/Typography';
 import Button from '@mui/material/Button';
 import NewComment from './NewComment';
-import { Box } from '@mui/material';
+import { Box, Collapse } from '@mui/material';
 const Comment = ({ comment, onReply,Counter,setCounter }) => {
-  const [anchorEl, setAnchorEl] = React.useState(null);
 
-  const handleClick = (event) => {
-    setAnchorEl(event.currentTarget);
+  const [open, setOpen] = React.useState(false);
+  const [ShowComments,setShowComments] = React.useState(false)
+  const handleReplyClick = () => {
+    setOpen(!open);
   };
+  const handleMoreComments = () => {
+    setShowComments(true)
+  }
+  const ReplySection = () => {
+    if (open){
+      return (
+        <Collapse in={open} timeout={"auto"} unmountOnExit >
+          <Box>
+        <NewComment onReply={onReply} commentid={comment.id} handleReplyClick={handleReplyClick} ></NewComment>
 
-  const handleClose = () => {
-    setAnchorEl(null);
-  };
+        </Box>
+        </Collapse>
+      )
+    }else{
+        return (
+        <Button size='small'  onClick={handleReplyClick}>
+          reply
+        </Button>
+        )
+      }
+  }
 
-  const open = Boolean(anchorEl);
-  const id = open ? 'simple-popover' : undefined;
-  console.log(comment.depth)
-  if (comment.depth < 3){
+  console.log(ShowComments)
+  if (comment.depth < 2 || ShowComments){
+    if (!comment.user){
+      console.log(comment)
+      
+    }
+  console.log(comment.content,"depth" ,comment.depth)
   return (
-    <Box key={comment.id}>
+    <Box key={comment.id} sx={{color:'white'}}>
       <h4>{comment.user.username}</h4>
       <p>{comment.content}</p>
       <p>{comment.timestamp}</p>
-      <Button size='small' aria-describedby={id} onClick={handleClick}>
-        reply
-      </Button>
-      <Popover
-      id={id}
-      open={open}
-      anchorEl={anchorEl}
-      onClose={handleClose}
-      anchorOrigin={{
-        vertical: 'bottom',
-        horizontal: 'left',
-      }}
-    >
-      <Typography>
-        <NewComment onReply={onReply} commentid={comment.id} ></NewComment>
-        </Typography>
-    </Popover>
+        {ReplySection()}
+    
       {comment.replies.length > 0 && (
         <ul>
           {comment.replies.map((reply) => (
@@ -53,8 +59,9 @@ const Comment = ({ comment, onReply,Counter,setCounter }) => {
 
     </Box>
   )}else{
+    console.log(comment)
     return(
-      <Button size='small'>show more comments</Button>
+      <Button size='small' onClick={handleMoreComments}>show more comments</Button>
     )
   }
 };
