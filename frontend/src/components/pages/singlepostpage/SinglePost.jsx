@@ -24,7 +24,6 @@ const SinglePost = ({match,User}) => {
                         <Typography  variant="h5" paddingLeft={2} >{postdata.headline}</Typography>
                         <Typography variant="h7">{postdata.description}</Typography>
                         <Divider></Divider>
-                        <Typography variant="h5" >Comments</Typography>
                         <CommentSection item={postdata.comments} User={User} postid={postdata.id} ></CommentSection>
                     </Box>
                     

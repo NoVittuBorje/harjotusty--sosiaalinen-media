@@ -242,7 +242,7 @@ export default function PrimarySearchAppBar({setUser,User,refetch}) {
     </Box>
   );}else{
   if (feeds.loading | !feeds.data){
-    return <Box>...loading</Box>
+    return(<Box></Box>)
   }else{
   return(
         <Box sx={{ width: 250 }} role="presentation" onClick={toggleDrawer(false)}>

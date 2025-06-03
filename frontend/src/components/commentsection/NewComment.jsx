@@ -1,4 +1,4 @@
-import { FormGroup,TextField ,Button} from "@mui/material"
+import { FormGroup,TextField ,Button, Box} from "@mui/material"
 import { useState } from "react"
 
 const NewComment = ({onReply,commentid,handleReplyClick}) => {
@@ -8,15 +8,19 @@ const NewComment = ({onReply,commentid,handleReplyClick}) => {
             <TextField 
             required
             value={comment}
-            sx={{color: "white",}}
             multiline
-            label="Comment" variant="standard" 
+            InputLabelProps={{
+            style: { color: '#fff'}}}
+            slotProps={{style:{color:"white"}}}
+            variant="standard" 
             onChange={(event) => setComment(event.target.value)}
             />
-        <Button onClick={() => {onReply({content:comment,commentid})}}  >reply</Button>
-        <Button size='small' onClick={handleReplyClick}>
-          cancel
-        </Button>
+        <Box sx={{display:"flex",paddingTop:1}}>
+        <Button size='small' variant="outlined" color=""  onClick={() => {onReply({content:comment,commentid})}}  >reply</Button>
+        <Button size='small' variant="outlined" color="" onClick={handleReplyClick}>cancel</Button>
+        </Box>
+
+
         </FormGroup>
     )
 }

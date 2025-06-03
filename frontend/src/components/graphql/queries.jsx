@@ -140,7 +140,40 @@ export const GET_POST = gql`query Getpost($getpostId: String!) {
                   id
                 }
                 replies {
+                karma
+                depth
+                content
+                id
+                user {
+                  username
+                  avatar
                   id
+                }
+                replies {
+                karma
+                depth
+                content
+                id
+                user {
+                  username
+                  avatar
+                  id
+                }
+                replies {
+                karma
+                depth
+                content
+                id
+                user {
+                  username
+                  avatar
+                  id
+                }
+                replies {
+                  id
+                }
+                }
+                }
                 }
               }
 
@@ -152,52 +185,38 @@ export const GET_POST = gql`query Getpost($getpostId: String!) {
     }
   }
 }`
-export const GET_COMMENTS = gql`query Getcomments($commentid: String!) {
-  getcomments(commentid: $commentid) {
+export const GET_COMMENTS = gql`query Getcomments($postid: String!) {
+  getcomments(postid: $postid) {
+    content
     replies {
-      user {
-        username
-        avatar
-        id
-      }
       id
-      replyto {
-        id
-      }
       content
+      active
+      karma
+      depth
       replies {
-            replies {
-      user {
-        username
-        avatar
         id
-      }
-      id
-      content
-      replies {
-            replies {
-      user {
-        username
-        avatar
-        id
-      }
-      id
-      content
-      replies {
-            replies {
-      user {
-        username
-        avatar
-        id
-      }
-      id
-      content
-    }
+        depth
       }
     }
-      }
+    replyto {
+      id
     }
-      }
+    active
+    karma
+    depth
+    id
+    user {
+      username
+      email
+      firstname
+      lastname
+      avatar
+      relationship
+      description
+      work
+      active
+      id
     }
   }
 }`

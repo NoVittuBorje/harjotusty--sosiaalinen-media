@@ -36,7 +36,16 @@ const client = new ApolloClient({
   link: splitLink
 })
 const theme = createTheme({
-  cssVariables: true,
+  cssVariables:true,
+  palette: {
+    type: 'dark',
+    primary: {
+      main: '#3f51b5',
+    },
+    secondary: {
+      main: '#f50057',
+    },
+  },
 })
 
 ReactDOM.createRoot(document.getElementById("root")).render(

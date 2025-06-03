@@ -40,91 +40,12 @@ const resolvers = {
         }
       },
       getpost: async (root,args) => {
-        const post = await Post.findById(args.id).populate("owner",{username:1,id:1,avatar:1
-        }).populate({
-          path: 'comments',
-          model: Comment,
-          select:"replies content karma depth",
-          populate: [{
-              path: 'user',
-              model: User,
-          },{
-              path:"replies",
-              model:Comment,
-              select:"content karma depth",
-              populate: [{
-                path: 'user',
-                model: User,
-                },{
-                path:"replies",
-                model:Comment,
-                select:"content karma depth",
-                  populate: [{
-                    path: 'user',
-                    model: User,
-                    },{
-                    path:"replies",
-                    model:Comment,
-                    select:"content karma depth",
-                    populate: [{
-                      path: 'user',
-                      model: User,
-                      },{
-                      path:"replies",
-                      model:Comment,
-                      select:"content karma depth",
-                    }],
-                    }],
-                    }],
-          }
-            ],
-          })
-          console.log(post)
+        const post = await Post.find({_id:args.id}).populate("owner",{username:1,id:1,avatar:1})
+        console.log(post)
         return post
       },
       getcomments: async (root,args) => {
-        const comments = await Comment.findById(args.commentid).populate("replies",{user:1,id:1,content:1,replies:1}).populate({
-          path:"replies",
-          model:Comment,
-          select:"content karma depth replies replyto",
-          populate: [{
-            path: 'user',
-            model: User,
-            },{
-            path:"replyto",
-            model:Comment,
-            select:"id"
-            },{
-            path:"replies",
-            model:Comment,
-            select:"content karma depth",
-            populate: [{
-                path: 'user',
-                model: User,
-                },{
-                path:"replies",
-                model:Comment,
-                select:"content karma depth",
-                  populate: [{
-                    path: 'user',
-                    model: User,
-                    },{
-                    path:"replies",
-                    model:Comment,
-                    select:"content karma depth",
-                    populate: [{
-                      path: 'user',
-                      model: User,
-                      },{
-                      path:"replies",
-                      model:Comment,
-                      select:"content karma depth",
-                    }],
-                    }],
-                    }],
-                    }],
-        }).exec()
-        const paths = comments.
+        const comments = await Comment.find({post:args.postid,depth:0},null,{limit:10})
         console.log(comments)
         return comments
       }
@@ -237,6 +158,20 @@ const resolvers = {
           console.log(error)
         })
     },
+    modifyComment: async (root,args,context) => {
+      const user = context.currentUser
+      const comment = await Comment.findById(args.commentid)
+      if (args.action === "delete" && comment.user.id === user.id){
+        comment.active = false
+        await comment.save()
+        return comment
+      }
+      if(args.action === "modify"){
+        comment.content = args.content
+        await comment.save()
+        return comment
+      }
+    },
     makeComment: async (root,args,context) => {
       if (args.replyto){
         //reply
@@ -248,12 +183,13 @@ const resolvers = {
         const newComment = new Comment({content:args.content,post:post._id,user:user._id,replyto:replyto._id,depth:replyto.depth+1})
         replyto.replies.push(newComment)
         user.comments.push(newComment)
-        replyto.save()
-        user.save()
-        newComment.save()
+        await replyto.save()
+        await user.save()
+        await newComment.save()
         return newComment
       }else{
         //newComment
+        console.log("newcomment")
         const user = context.currentUser
         const post = await Post.findOne({_id:args.postid})
         
