@@ -6,6 +6,9 @@ import NewComment from './NewComment';
 import { Avatar, Box, Collapse, IconButton, List, ListItem, ListItemAvatar, ListItemText } from '@mui/material';
 import ArrowUpwardRoundedIcon from '@mui/icons-material/ArrowUpwardRounded';
 import ArrowDownwardRoundedIcon from '@mui/icons-material/ArrowDownwardRounded';
+import MoreComments from './MoreComments';
+import useMakeComment from '../hooks/useMakeComment';
+import KarmaItem from '../KarmaItem';
 function stringToColor(string) {
   let hash = 0;
   let i;
@@ -34,7 +37,8 @@ function stringAvatar(name) {
   };
 }
 
-const Comment = ({ comment, onReply,Counter,setCounter,User ,handleDelete, handleModify}) => {
+const Comment = ({ comment, handleDelete,User, handleModify,handleReply,postid }) => {
+  console.log(comment,"1")
   const [open, setOpen] = React.useState(false);
   const [ShowComments,setShowComments] = React.useState(false)
   const handleReplyClick = () => {
@@ -43,37 +47,43 @@ const Comment = ({ comment, onReply,Counter,setCounter,User ,handleDelete, handl
   const handleMoreComments = () => {
     setShowComments(true)
   }
-  const DeleteCommentButton = () => {
-    if(comment.user.username === User.username){
-      return(
-        <>
-      <Button onClick={() => {handleDelete(comment)}} size='small' variant="outlined" color=''>delete</Button>
-      <Button onClick={() => {handleModify(comment)}} size='small' variant="outlined" color=''>edit</Button>
-      </>
-    )
-    }
+  const handleDislike = () => {
+    console.log("dislike comment")
   }
+  const handleLike = () => {
+    console.log("like comment")
+  }
+  const Showmorecomments = () => {
+    if (comment.replies.length == 0){
+      return
+    }
+    if (ShowComments == false){
+    return(<Button size='small' variant="outlined" color='' onClick={handleMoreComments}>show {comment.replies.length} replies</Button>)
+    }else{
+      return(
+      <MoreComments comment={comment} ShowComments={ShowComments} User={User} postid={postid} ></MoreComments>
+    )}
+  }
+
   const ReplySection = () => {
     if (open){
       return (
         <Collapse in={open} timeout={"auto"} unmountOnExit >
-          <Box>
-        <NewComment onReply={onReply} commentid={comment.id} handleReplyClick={handleReplyClick} ></NewComment>
-        </Box>
+        <NewComment onReply={handleReply} commentid={comment.id} handleReplyClick={handleReplyClick} ></NewComment>
         </Collapse>
       )
     }else{
         return (
-        <Box>
-        <Button size='small' variant="outlined" color='' onClick={handleReplyClick}>reply</Button>
-        <DeleteCommentButton></DeleteCommentButton>
+        <Box >
+        <Button className={'button'} style={{ borderRadius: 50 }} size='small' variant="standard" color='' onClick={handleReplyClick}>reply</Button>
+        <Button className={'button'} style={{ borderRadius: 50 }} onClick={() => {handleDelete(comment)}} size='small' variant="standard" color=''>delete</Button>
+        <Button className={'button'} style={{ borderRadius: 50 }} onClick={() => {handleModify(comment)}} size='small' variant="standard" color=''>edit</Button>
         </Box>
         )
       }
   }
-
   console.log(ShowComments)
-  if (comment.depth < 2 || ShowComments){
+  if (comment.content || ShowComments){
   console.log(comment.content,"depth" ,comment.depth)
   return (
     <Box key={comment.id} sx={{color:'white',border:"2px black solid",borderRadius:"15px", padding:0.5,minWidth:"100%" , maxWidth:"100%",}}>
@@ -85,45 +95,19 @@ const Comment = ({ comment, onReply,Counter,setCounter,User ,handleDelete, handl
       <Typography>{comment.timestamp}</Typography>
       </Box>
       <Box sx={{paddingLeft:2 ,maxWidth:"100%",whiteSpace:"pre-wrap"}}>
-      <Typography style={{wordWrap: "break-word",}} gutterBottom >{comment.content}</Typography>
+      <Typography style={{wordWrap: "break-word",}} >{comment.content}</Typography>
       </Box>
-
-        <Box className={"feedfooter"}>
-          <Box className={"feedfooterkarma"} >
-                <IconButton  size="small">
-                    <ArrowUpwardRoundedIcon style={{color:"green"}}></ArrowUpwardRoundedIcon>
-                </IconButton>
-
-                <Box>
-                    <a style={{paddingTop:0,textAlignVertical:"top"}}>{comment.karma}</a>
-                </Box>
-
-                <IconButton  size="small">
-                    <ArrowDownwardRoundedIcon style={{color:"red"}}></ArrowDownwardRoundedIcon>
-                </IconButton>
-                </Box>
-                {ReplySection()}
+        <Box className={"footer"}>
+            <KarmaItem handleDislike={handleDislike} handleLike={handleLike} karma={comment.karma}></KarmaItem>
             </Box>
-        
-
-        
-      {comment.replies.length > 0 && (
-        <List>
-          {comment.replies.map((reply) => (
-            <ListItem key={reply.id}>
-              <Comment comment={reply} User={User} onReply={onReply} setCounter={setCounter} Counter={Counter} handleDelete={handleDelete} handleModify={handleModify}/>
-            </ListItem>
-          ))}
-        </List>
-      )}
+            {ReplySection()}
+            <Showmorecomments></Showmorecomments>
 
     </Box>
   )}else{
-    console.log(comment)
-    return(
-      <Button size='small' variant="outlined" color='' onClick={handleMoreComments}>show more replies</Button>
-    )
+    return(<></>)
   }
 };
 
 export default Comment
+

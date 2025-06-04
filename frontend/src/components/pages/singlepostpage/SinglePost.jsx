@@ -1,15 +1,34 @@
-import { Box, Divider, Grid, List, ListItem, Typography } from "@mui/material"
+import { Box, Collapse, Divider, Grid, IconButton, List, ListItem, Tooltip, Typography } from "@mui/material"
 import Comment from "../../commentsection/Comment"
 import CommentSection from "../../commentsection/CommentSection"
 import useGetPost from "../../hooks/useGetPost"
-
-
+import ArrowUpwardRoundedIcon from '@mui/icons-material/ArrowUpwardRounded';
+import ArrowDownwardRoundedIcon from '@mui/icons-material/ArrowDownwardRounded';
+import useMakeComment from "../../hooks/useMakeComment";
+import CommentForm from "../../commentsection/CommentForm";
+import AddCommentIcon from '@mui/icons-material/AddComment';
+import { useState } from "react";
+import KarmaItem from "../../KarmaItem";
 
 const SinglePost = ({match,User}) => {
     const id = match.params.id
     console.log(match.params.id)
+    const [newcomment,result] = useMakeComment()
     const {data,loading,error,refetch} = useGetPost({id})
+    const [openNewComment,setopenNewComment] = useState(false)
     console.log(data)
+    const handleNewComment = (content) => {
+    console.log("new comment")
+    const data = newcomment({postid:postdata.id,content:content.content})
+    console.log(data)
+    };
+    
+    const handleLike = () => {
+        console.log("likepost")
+    }
+    const handleDislike = () => {
+        console.log("dislikepost")
+    }
     if (loading) {return <Box></Box>}
     const postdata = data.getpost
     console.log(postdata)
@@ -20,9 +39,20 @@ const SinglePost = ({match,User}) => {
 
                 </Grid>
                 <Grid size={{xs:12, md:8}} sx={{borderLeft:1,border:"solid",borderColor:"black"}}>
-                    <Box className="postDesc">
+                    <Box className={"postDesc"}>
                         <Typography  variant="h5" paddingLeft={2} >{postdata.headline}</Typography>
                         <Typography variant="h7">{postdata.description}</Typography>
+                        <Box className={"footer"}>
+                            <KarmaItem handleDislike={handleDislike} handleLike={handleLike} karma={postdata.karma}></KarmaItem>
+                            <Tooltip title="New comment">
+                                <IconButton className={'button'} onClick={()=> {if(openNewComment == false){ setopenNewComment(true)}else{setopenNewComment(false)}}}>
+                                    <AddCommentIcon style={{color:"white"}}></AddCommentIcon>
+                                </IconButton>
+                            </Tooltip>
+                        </Box>
+                        <Collapse in={openNewComment} timeout={"auto"} unmountOnExit >
+                            <CommentForm postid={postdata.id} onSubmit={(comment) => handleNewComment(comment)} />
+                        </Collapse>
                         <Divider></Divider>
                         <CommentSection item={postdata.comments} User={User} postid={postdata.id} ></CommentSection>
                     </Box>

@@ -20,7 +20,7 @@ const CommentForm = ({ onSubmit }) => {
             onChange={(event) => setContent(event.target.value)}
             />
         <Box sx={{display:"flex",paddingTop:1}}>
-        <Button size='small' variant="outlined" color=""  onClick={() => {onSubmit({content:content})}}  >send</Button>
+        <Button size='small' variant="outlined" color=""  onClick={() => {onSubmit({content:content})}}>send</Button>
         </Box>
         </FormGroup>
   );

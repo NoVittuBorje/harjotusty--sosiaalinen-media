@@ -27,14 +27,14 @@
   font-family:Arial, Helvetica, sans-serif;
   font-size: medium;
 }
-.feedfooter{
+.footer{
   align-items: center;
   flex-direction: row;
   display: flex;
   padding: 0;
   color: white;
 }
-.feedfooterkarma{
+.footerkarma{
   align-items: center;
   flex-direction: row;
   display: flex;
@@ -76,4 +76,11 @@
   padding: 1%;
   font-size: medium;
   white-space: pre-wrap;
+}
+.button{
+  border-radius: 10px;
+}
+.button:hover {
+  background-color: rgb(8, 8, 8);
+  border-radius: 50px;
 }

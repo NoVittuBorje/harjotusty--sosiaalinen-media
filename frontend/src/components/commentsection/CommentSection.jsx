@@ -7,13 +7,7 @@ const CommentSection = ({item,User,postid}) => {
   console.log(item)
   const [newcomment,result] = useMakeComment()
   const [comments, setComments] = useState(item);
-  const [Counter,setCounter] = useState(0)
-  const handleNewComment = (content) => {
-    console.log("new comment")
-    console.log(content.content,postid)
-    const data = newcomment({postid,content:content.content})
-    console.log(data)
-  };
+
   const handleDelete = (comment) => {
     console.log(comment)
   }
@@ -28,7 +22,6 @@ const CommentSection = ({item,User,postid}) => {
   console.log(comments)
   return (
     <Box>
-      <CommentForm postid={postid} onSubmit={(comment) => handleNewComment(comment)} />
       {comments.map((comment) => (
         <Box sx={{paddingBottom:0.5, marginRight:2,marginLeft:1}}>
         <Comment
@@ -37,10 +30,9 @@ const CommentSection = ({item,User,postid}) => {
           handleModify={handleModify}
           key={comment.id}
           comment={comment}
-          onReply={handleReply}
-          setCounter={setCounter}
-          Counter={Counter}
+          handleReply={handleReply}
           setComments={setComments}
+          postid={postid}
         />
         </Box>
       ))}

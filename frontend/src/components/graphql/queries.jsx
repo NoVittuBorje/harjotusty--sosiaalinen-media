@@ -61,6 +61,38 @@ export const GET_FEED = gql`query Getfeed($querytype: String!, $feedname: String
     id
   }
 }`
+export const GET_POST_MIN = gql`query Getpost($getpostId: String!) {
+  getpost(id: $getpostId) {
+    headline
+    description
+    karma
+    img
+    active
+    id
+    comments {
+      content
+      active
+      karma
+      depth
+      id
+      replies {
+        id
+      }
+      user {
+        username
+        email
+        firstname
+        lastname
+        avatar
+        relationship
+        description
+        work
+        active
+        id
+      }
+    }
+  }
+}`
 export const GET_ALL_FEED = gql`query Getfeed($querytype: String!, $feedname: String) {
   getfeed(querytype: $querytype, feedname: $feedname) {
     feedname
@@ -185,38 +217,32 @@ export const GET_POST = gql`query Getpost($getpostId: String!) {
     }
   }
 }`
-export const GET_COMMENTS = gql`query Getcomments($postid: String!) {
-  getcomments(postid: $postid) {
+export const GET_COMMENTS = gql`query Getcomments($commentid: String!) {
+  getcomments(commentid: $commentid) {
     content
-    replies {
-      id
-      content
-      active
-      karma
-      depth
-      replies {
-        id
-        depth
-      }
-    }
-    replyto {
+    user {
+      username
+      avatar
       id
     }
     active
     karma
     depth
     id
-    user {
-      username
-      email
-      firstname
-      lastname
-      avatar
-      relationship
-      description
-      work
+    replies {
+      content
       active
+      karma
+      depth
       id
+      user {
+        username
+        avatar
+        id
+      }
+      replies {
+        id
+      }
     }
   }
 }`

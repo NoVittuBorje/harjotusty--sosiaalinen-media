@@ -42,10 +42,10 @@ const resolvers = {
       getpost: async (root,args) => {
         const post = await Post.find({_id:args.id}).populate("owner",{username:1,id:1,avatar:1})
         console.log(post)
-        return post
+        return post[0]
       },
       getcomments: async (root,args) => {
-        const comments = await Comment.find({post:args.postid,depth:0},null,{limit:10})
+        const comments = await Comment.find({_id:args.commentid})
         console.log(comments)
         return comments
       }

@@ -4,6 +4,7 @@ import ThumbDownIcon from '@mui/icons-material/ThumbDown';
 import ArrowUpwardRoundedIcon from '@mui/icons-material/ArrowUpwardRounded';
 import ArrowDownwardRoundedIcon from '@mui/icons-material/ArrowDownwardRounded';
 import { useNavigate } from "react-router";
+import KarmaItem from "./KarmaItem";
 const FeedItem = ({item}) => {
     const navigate = useNavigate()
 
@@ -27,20 +28,8 @@ const FeedItem = ({item}) => {
                 </Box>
                 </Link>
             <Divider></Divider>
-            <Box className={"feedfooter"}>
-                <Box className={"feedfooterkarma"} >
-                <IconButton onClick={handleLike} size="small">
-                    <ArrowUpwardRoundedIcon style={{color:"green"}}></ArrowUpwardRoundedIcon>
-                </IconButton>
-
-                <Box>
-                    <a style={{paddingTop:0,textAlignVertical:"top"}}>{item.karma}</a>
-                </Box>
-
-                <IconButton onClick={handleDislike} size="small">
-                    <ArrowDownwardRoundedIcon style={{color:"red"}}></ArrowDownwardRoundedIcon>
-                </IconButton>
-                </Box>
+            <Box className={"footer"}>
+                <KarmaItem handleDislike={handleDislike} handleLike={handleLike} karma={item.karma}></KarmaItem>
             </Box>
             
         </Box>

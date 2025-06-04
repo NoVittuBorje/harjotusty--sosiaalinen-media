@@ -56,7 +56,7 @@ const typeDefs = `#graphql
     querytype:String!
     ):[Feed]
     getpost(id:String!):Post
-    getcomments(postid:String!):[Comment]
+    getcomments(commentid:String!):[Comment]
   }
 
   type Mutation {
