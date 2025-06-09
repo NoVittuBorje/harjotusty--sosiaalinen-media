@@ -17,6 +17,8 @@ const typeDefs = `#graphql
     active:Boolean
     karma:Int
     depth:Int
+    createdAt:String
+    updatedAt:String
     id:ID!
   }
   type Post {
@@ -28,6 +30,8 @@ const typeDefs = `#graphql
     feed:Feed!
     comments:[Comment]
     active:Boolean
+    createdAt:String
+    updatedAt:String
     id:ID!
   }
   type User {

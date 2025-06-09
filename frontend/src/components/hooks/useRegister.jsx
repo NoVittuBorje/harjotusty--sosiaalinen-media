@@ -1,14 +1,15 @@
-import { useMutation } from '@apollo/client';
-import { REGISTER } from '../graphql/mutations';
-
+import { useMutation } from "@apollo/client";
+import { REGISTER } from "../graphql/mutations";
 
 const useRegister = () => {
-    const [mutate, result] = useMutation(REGISTER);
-    const register = async ({ Username, Password, Email }) => {
-      const {data} = await mutate({variables:{password:Password,username:Username,email:Email}})
-      return data
-    };
-    
-    return [register, result];
+  const [mutate, result] = useMutation(REGISTER);
+  const register = async ({ Username, Password, Email }) => {
+    const { data } = await mutate({
+      variables: { password: Password, username: Username, email: Email },
+    });
+    return data;
   };
-export default useRegister
+
+  return [register, result];
+};
+export default useRegister;

@@ -1,11 +1,15 @@
-import { useQuery } from '@apollo/client';
-import { GET_COMMENTS} from '../graphql/queries';
-const useGetComments = ({commentid}) =>{
-  console.log(commentid)
-const { data, error, loading,refetch } = useQuery(GET_COMMENTS,{variables:{commentid:commentid}}, {
-  fetchPolicy: 'network-only',
-  nextFetchPolicy: 'cache-first',
-})
-    return { data:data, loading:loading,error:error,refetch:refetch};
-}
-export default useGetComments
+import { useQuery } from "@apollo/client";
+import { GET_COMMENTS } from "../graphql/queries";
+const useGetComments = ({ commentid }) => {
+  console.log(commentid);
+  const { data, error, loading, refetch } = useQuery(
+    GET_COMMENTS,
+    { variables: { commentid: commentid } },
+    {
+      fetchPolicy: "network-only",
+      nextFetchPolicy: "cache-first",
+    }
+  );
+  return { data: data, loading: loading, error: error, refetch: refetch };
+};
+export default useGetComments;
