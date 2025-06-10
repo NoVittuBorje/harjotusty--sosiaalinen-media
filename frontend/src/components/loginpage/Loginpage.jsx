@@ -10,7 +10,7 @@ import * as React from "react";
 import useLogin from "../hooks/useLogin";
 import { useNavigate } from "react-router";
 
-const LoginPage = () => {
+const LoginPage = ({setUser,User,refetch}) => {
     const navigate = useNavigate()
     const [login,result] = useLogin();
     const [showPassword, setShowPassword] = React.useState(false);
@@ -30,6 +30,7 @@ const LoginPage = () => {
         const { data } = await login({ Username, Password });
         console.log(data)
         if (data.login.value){
+            refetch()
         navigate("/")
         }
     }

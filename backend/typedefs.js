@@ -55,6 +55,9 @@ const typeDefs = `#graphql
   }
   type Query {
     me: User!
+    getuser(
+    id:String!
+    ):User
     getfeed(
     feedname:String
     querytype:String!

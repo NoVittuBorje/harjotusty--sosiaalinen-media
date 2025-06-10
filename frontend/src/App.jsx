@@ -16,17 +16,22 @@ function App() {
   const [User, setUser] = useState(null);
   const token = localStorage.getItem("token");
   const { data, loading, error, refetch } = useMe();
+  console.log(data)
   let match = useMatch("/post/:id");
   if (!match) {
-    match = "none";
+    match = null;
   }
   let matchfeed = useMatch("/feed/:feedname");
   if (!matchfeed) {
-    matchfeed = "none";
+    matchfeed = null;
   }
   let matchfeedpost = useMatch("/newpost/:postfeedname");
   if (!matchfeedpost) {
     matchfeedpost = null;
+  }
+  let matchuserid = useMatch("/profile/:userid")
+  if (!matchuserid){
+    matchuserid = null
   }
   if (loading) {
     return <Box>loading</Box>;
@@ -42,12 +47,12 @@ function App() {
       <AppBar User={User} setUser={setUser} refetch={refetch} />
       <Routes>
         <Route path="/" element={<Homescreen User={User} />} />
-        <Route path="/profile/:userid" element={<Profilepage User={User} />} />
+        <Route path="/profile/:userid" element={<Profilepage User={User} match={matchuserid}/>} />
         <Route
           path="/post/:id"
           element={<SinglePost match={match} User={User} />}
         />
-        <Route path="/login" element={<LoginPage />} />
+        <Route path="/login" element={<LoginPage setUser={setUser} User={User} refetch={refetch}/>} />
         <Route path="/register" element={<RegisterPage />} />
         <Route path="/makefeed" element={<MakeFeedPage User={User} />} />
         <Route

@@ -102,6 +102,55 @@ export const GET_POST_MIN = gql`
     }
   }
 `;
+export const GET_USER = gql`query Getuser($getuserId: String!) {
+  getuser(id: $getuserId) {
+      username
+      email
+      firstname
+      lastname
+      avatar
+      relationship
+      description
+      work
+      feedsubs {
+        feedname
+        id
+      }
+      posts {
+        description
+        feed {
+          feedname
+        }
+        headline
+        id
+        img
+        karma
+      }
+      ownedfeeds {
+        feedname
+        id
+      }
+      active
+      id
+      comments {
+        content
+        id
+        depth
+        karma
+        replyto {
+          id
+          karma
+          depth
+          content
+          user {
+            username
+            avatar
+            id
+          }
+        }
+      }
+    }
+}`
 export const GET_ALL_FEED = gql`
   query Getfeed($querytype: String!, $feedname: String) {
     getfeed(querytype: $querytype, feedname: $feedname) {

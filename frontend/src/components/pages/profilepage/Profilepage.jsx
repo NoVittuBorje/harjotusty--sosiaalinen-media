@@ -3,6 +3,7 @@ import AccountCircle from "@mui/icons-material/AccountCircle";
 import AccountBoxIcon from "@mui/icons-material/AccountBox";
 import { Divider, List } from "@mui/material";
 import ProfileFeed from "./Profilefeed";
+import { useState } from "react";
 
 const relationship = {
   Single: "single",
@@ -11,8 +12,16 @@ const relationship = {
   None: "none",
 };
 
-const Profilepage = ({ User }) => {
+const Profilepage = ({ User ,match}) => {
+  const [data, setData] = useState(null)
   console.log(User);
+  console.log(match)
+  const id = match.params.userid;
+  console.log(id);
+  if(id == User.id & data != User){
+    setData(User)
+  }
+  console.log(data)
   return (
     <Box sx={{ flexGrow: 1 }}>
       <Grid container rowSpacing={1} sx={{ flexDirection: "row" }}>
@@ -42,6 +51,7 @@ const Profilepage = ({ User }) => {
       </Grid>
     </Box>
   );
+
 };
 
 export default Profilepage;
