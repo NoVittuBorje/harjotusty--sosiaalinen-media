@@ -11,7 +11,7 @@ const typeDefs = `#graphql
   type Comment {
     post:Post!
     user:User!
-    content:String!
+    content:String
     replies:[Comment]
     replyto:Comment
     active:Boolean

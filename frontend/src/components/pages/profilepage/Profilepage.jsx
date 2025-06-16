@@ -4,6 +4,7 @@ import AccountBoxIcon from "@mui/icons-material/AccountBox";
 import { Divider, List } from "@mui/material";
 import ProfileFeed from "./Profilefeed";
 import { useState } from "react";
+import useGetUser from "../../hooks/useGetUser";
 
 const relationship = {
   Single: "single",
@@ -13,14 +14,17 @@ const relationship = {
 };
 
 const Profilepage = ({ User ,match}) => {
-  const [data, setData] = useState(null)
   console.log(User);
   console.log(match)
   const id = match.params.userid;
+  const userdata = useGetUser({id:id})
   console.log(id);
-  if(id == User.id & data != User){
-    setData(User)
-  }
+  if (userdata.loading){
+    return <p>loading...</p>
+  }else{
+  
+  
+  const data = userdata.data.getuser
   console.log(data)
   return (
     <Box sx={{ flexGrow: 1 }}>
@@ -32,16 +36,16 @@ const Profilepage = ({ User ,match}) => {
         <Grid size={{ xs: 12, md: 8 }} sx={{ backgroundColor: "green" }}>
           <Box sx={{ padding: 1 }}>
             <h1>
-              {User.firstname} {User.lastname}
+              {data.firstname} {data.lastname}
             </h1>
-            <p>{User.description}</p>
-            <p>Relationship status: {User.relationship}</p>
-            <p>Job: {User.work}</p>
+            <p>{data.description}</p>
+            <p>Relationship status: {data.relationship}</p>
+            <p>Job: {data.work}</p>
           </Box>
           <Divider></Divider>
           <Box>
             <List>
-              {User.posts.map((item) => (
+              {data.posts.map((item) => (
                 <ProfileFeed item={item}></ProfileFeed>
               ))}
             </List>
@@ -51,7 +55,7 @@ const Profilepage = ({ User ,match}) => {
       </Grid>
     </Box>
   );
-
+  }
 };
 
 export default Profilepage;

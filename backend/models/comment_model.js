@@ -3,12 +3,13 @@ const mongoose = require('mongoose')
 const schema = new mongoose.Schema({
     post:{
         type: mongoose.Schema.Types.ObjectId,
-        ref: 'Post'
+        ref: 'Post',
+        autopopulate: true,
     },
     user:{
         type: mongoose.Schema.Types.ObjectId,
         ref: 'User',
-        autopopulate:true,
+        autopopulate: true,
       },
     content:String,
     replies:[{
@@ -18,7 +19,8 @@ const schema = new mongoose.Schema({
     }],
     replyto:{
         type:mongoose.Schema.Types.ObjectId,
-        ref:"Comment"
+        ref:"Comment",
+        autopopulate: {maxDepth:1},
     },
     karma:{
         type:Number,

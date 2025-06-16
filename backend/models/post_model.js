@@ -5,13 +5,15 @@ const schema = new mongoose.Schema({
     description:String,
     owner:{
         type: mongoose.Schema.Types.ObjectId,
-        ref: 'User'
+        ref: 'User',
+        autopopulate: {maxDepth:1},
     },
     karma:Number,
     img:String,
     feed:{
         type: mongoose.Schema.Types.ObjectId,
-        ref: 'Feed'
+        ref: 'Feed',
+        autopopulate: {maxDepth:1},
     },
     comments:[{
         type: mongoose.Schema.Types.ObjectId,

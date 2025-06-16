@@ -25,14 +25,14 @@ const resolvers = {
       return currentUser;
     },
     getuser: async (root, args) => {
-      const user = await User.findById({ _id: args.id }).populate("ownedfeeds",{feedname:1,id:1})
-            .populate("feedsubs",{id:1,feedname:1,description:1})
+      const user = await User.findById(args.id).populate("ownedfeeds",{feedname:1,id:1})
+            .populate("feedsubs",{id:1,feedname:1,description:1,owner:1})
             .populate({ path: 'posts',select: ["headline","description","owner","karma","id","feed"],
               populate: { path: 'owner' ,select:["username","avatar","id"]},
               populate:{path:"feed",select:["feedname"]}
               }).populate({path:"comments",select:["post","content","replyto","id","karma","depth"],
                 populate:{path:"post",select:["headline","id","karma"]},
-                populate:{path:"replyto",select:["content","user","id","karma","depth"],populate:{path:"user",select:["avatar","username","id"]},}
+                populate:{path:"replyto",select:["content","user"],populate:{path:"user",select:["avatar","username","id"]},}
                 })
       console.log(user);
       return user;
@@ -222,7 +222,7 @@ const resolvers = {
           content: args.content,
           post: post._id,
           user: user._id,
-          replyto: replyto._id,
+          replyto: replyto,
           depth: replyto.depth + 1,
         });
         replyto.replies.push(newComment);

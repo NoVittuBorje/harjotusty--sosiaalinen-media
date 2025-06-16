@@ -39,24 +39,28 @@ const schema = new mongoose.Schema({
   feedsubs:[{
     type: mongoose.Schema.Types.ObjectId,
     unique:true,
-    ref: 'Feed'
+    ref: 'Feed',
+    autopopulate: {maxDepth:1}
   }],
   comments:[{
     type:mongoose.Schema.Types.ObjectId,
-    ref: "Comment"
+    ref: "Comment",
+    autopopulate: {maxDepth:1},
   }],
   ownedfeeds:[{
     type: mongoose.Schema.Types.ObjectId,
-    ref: "Feed"
+    ref: "Feed",
+    autopopulate: {maxDepth:1},
   }],
   posts:[{
     type: mongoose.Schema.Types.ObjectId,
-    ref: 'Post'
+    ref: 'Post',
+    autopopulate: {maxDepth:2}
   }],
   active:{
     type: Boolean,
     default:true
   }
 },{timestamps:true})
-
+schema.plugin(require('mongoose-autopopulate'))
 module.exports = mongoose.model('User', schema)
