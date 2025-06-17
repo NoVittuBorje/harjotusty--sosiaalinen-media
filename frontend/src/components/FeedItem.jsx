@@ -16,6 +16,8 @@ import ArrowUpwardRoundedIcon from "@mui/icons-material/ArrowUpwardRounded";
 import ArrowDownwardRoundedIcon from "@mui/icons-material/ArrowDownwardRounded";
 import { useNavigate } from "react-router";
 import KarmaItem from "./KarmaItem";
+import Timestamp from "./utils/Timestamp";
+import Useritem from "./Useritem";
 const FeedItem = ({ item }) => {
   const navigate = useNavigate();
 
@@ -25,8 +27,7 @@ const FeedItem = ({ item }) => {
   const handleDislike = () => {
     console.log("dislike");
   };
-
-  console.log(item);
+  console.log(item.createdAt)
   return (
     <Box className={"feed"}>
       <Box sx={{ display: "flex", flexDirection: "column" }}>
@@ -39,7 +40,9 @@ const FeedItem = ({ item }) => {
           color="white"
         >
           <Box sx={{ flexDirection: "column", padding: 1 }}>
-            <Typography variant="h5">{item.headline}</Typography>
+            <Typography variant="h5">{`${item.headline}`}</Typography>
+            <Useritem time={item.createdAt} user={item.owner}></Useritem>
+            
             <Box>
               <Typography className="feedDesc" variant="h7" color="#c4c3c0">
                 {item.description}

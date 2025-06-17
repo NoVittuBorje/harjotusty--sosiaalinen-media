@@ -45,7 +45,7 @@ const schema = new mongoose.Schema({
   comments:[{
     type:mongoose.Schema.Types.ObjectId,
     ref: "Comment",
-    autopopulate: {maxDepth:1},
+    autopopulate: {maxDepth:3},
   }],
   ownedfeeds:[{
     type: mongoose.Schema.Types.ObjectId,

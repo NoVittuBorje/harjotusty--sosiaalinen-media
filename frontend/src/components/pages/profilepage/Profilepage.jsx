@@ -23,7 +23,7 @@ const Profilepage = ({ User ,match}) => {
     return <p>loading...</p>
   }else{
   
-  
+  console.log(userdata)
   const data = userdata.data.getuser
   console.log(data)
   return (

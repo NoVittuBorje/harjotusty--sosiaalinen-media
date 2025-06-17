@@ -3,6 +3,7 @@ import Popover from "@mui/material/Popover";
 import Typography from "@mui/material/Typography";
 import Button from "@mui/material/Button";
 import NewComment from "./NewComment";
+import Timestamp from "../utils/Timestamp";
 import {
   Avatar,
   Box,
@@ -19,33 +20,9 @@ import MoreComments from "./MoreComments";
 import useMakeComment from "../hooks/useMakeComment";
 import KarmaItem from "../KarmaItem";
 import { Link, useNavigate } from "react-router";
-function stringToColor(string) {
-  let hash = 0;
-  let i;
+import Useritem from "../Useritem";
+import EditComment from "./EditComment";
 
-  /* eslint-disable no-bitwise */
-  for (i = 0; i < string.length; i += 1) {
-    hash = string.charCodeAt(i) + ((hash << 5) - hash);
-  }
-
-  let color = "#";
-  for (i = 0; i < 3; i += 1) {
-    const value = (hash >> (i * 8)) & 0xff;
-    color += `00${value.toString(16)}`.slice(-2);
-  }
-  /* eslint-enable no-bitwise */
-
-  return color;
-}
-
-function stringAvatar(name) {
-  return {
-    sx: {
-      bgcolor: stringToColor(name),
-    },
-    children: `${name.split(" ")[0][0]}`,
-  };
-}
 
 const Comment = ({
   comment,
@@ -57,11 +34,15 @@ const Comment = ({
 }) => {
   console.log(comment, "1");
   const [open, setOpen] = React.useState(false);
+  const [editopen, setEditOpen] = React.useState(false)
   const [ShowComments, setShowComments] = React.useState(false);
   const navigate = useNavigate()
   const handleReplyClick = () => {
     setOpen(!open);
   };
+  const handleEditClick = () => {
+    setEditOpen(!editopen)
+  }
   const handleMoreComments = () => {
     setShowComments(true);
   };
@@ -89,38 +70,15 @@ const Comment = ({
     } else {
       return (
         <MoreComments
+          handleModify={handleModify}
+          handleDelete={handleDelete}
+          handleReply={handleReply}
           comment={comment}
           ShowComments={ShowComments}
           User={User}
           postid={postid}
         ></MoreComments>
       );
-    }
-  };
-  const Timestamp = () => {
-    console.log(comment.createdAt);
-    const createdtime = new Date(Number(comment.createdAt));
-    const ms = Math.abs(new Date() - createdtime);
-    const sec = Math.floor(ms / 1000);
-
-    if (sec < 60) {
-      return ` ${sec} seconds ago`;
-    }
-    const min = Math.floor((sec / 60) << 0);
-    if ((min > 0) & (min < 60)) {
-      return ` ${min} minutes ago`;
-    }
-    const hr = Math.floor((min / 60) << 0);
-    if ((hr <= 24) & (hr >= 1)) {
-      return ` ${hr} hr ago`;
-    }
-    const days = Math.floor((hr / 24) << 0);
-    if ((days > 0) & (days < 365)) {
-      return ` ${days} days ago`;
-    }
-    const years = Math.floor((days / 365) << 0);
-    if (years > 0) {
-      return ` ${years} years ago`;
     }
   };
   const CommentEdit = () => {
@@ -143,7 +101,7 @@ const Comment = ({
             className={"button"}
             style={{ borderRadius: 50 }}
             onClick={() => {
-              handleModify(comment);
+              handleEditClick();
             }}
             size="small"
             variant="standard"
@@ -159,6 +117,18 @@ const Comment = ({
     if (!User) {
       console.log("no user");
       return;
+    }
+    if (editopen){
+      return(
+        <Collapse in={editopen} timeout={"auto"} unmountOnExit>
+          <EditComment
+            onReply={handleModify}
+            commentid={comment.id}
+            oldcomment={comment.content}
+            handleEditClick={handleEditClick}
+          ></EditComment>
+        </Collapse>
+      )
     }
     if (open) {
       return (
@@ -204,27 +174,7 @@ const Comment = ({
           maxWidth: "100%",
         }}
       >
-        <Box
-          sx={{ display: "flex", flexDirection: "row", alignItems: "center" }}
-        >
-          <ListItemAvatar>
-            <Avatar
-              sx={{ width: 24, height: 24 }}
-              {...stringAvatar(comment.user.username)}
-            ></Avatar>
-          </ListItemAvatar>
-          <Button >
-            <Typography
-              onClick={() => {navigate(`/profile/${comment.user.id}`)}}
-              color="whitesmoke"
-              variant="h8"
-              underline="none"
-            >{`u/${comment.user.username}`}</Typography>
-            </Button>
-          <Typography variant="h9" sx={{ color: "grey" }}>
-            {Timestamp()}
-          </Typography>
-        </Box>
+        <Useritem time={comment.createdAt} user={comment.user}></Useritem>
         <Box
           sx={{
             paddingLeft: 7,

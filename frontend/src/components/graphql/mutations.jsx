@@ -97,3 +97,12 @@ export const MAKECOMMENT = gql`
     }
   }
 `;
+export const EDITCOMMENT = gql`mutation ModifyComment($commentid: String!, $content: String!, $action: String!) {
+  modifyComment(commentid: $commentid, content: $content, action: $action) {
+    content
+    active
+    karma
+    depth
+    id
+  }
+}`

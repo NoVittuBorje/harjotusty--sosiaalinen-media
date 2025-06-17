@@ -25,14 +25,19 @@ const SinglePost = ({ match, User }) => {
   const id = match.params.id;
   console.log(match.params.id);
   const navigate = useNavigate();
+  
   const [newcomment, result] = useMakeComment();
   const { data, loading, error, refetch } = useGetPost({ id });
   const [openNewComment, setopenNewComment] = useState(false);
-  console.log(data);
+  if (loading) {
+    return <Box></Box>;
+  }else{
+  let postdata = data.getpost
   const handleNewComment = (content) => {
     console.log("new comment");
     const data = newcomment({ postid: postdata.id, content: content.content });
     console.log(data);
+    refetch()
   };
   const NewComment = () => {
     if (!User) {
@@ -89,11 +94,7 @@ const SinglePost = ({ match, User }) => {
   const handleDislike = () => {
     console.log("dislikepost");
   };
-  if (loading) {
-    return <Box></Box>;
-  }
-  const postdata = data.getpost;
-  console.log(postdata);
+
   return (
     <Box sx={{ flexGrow: 1 }}>
       <Grid container rowSpacing={1} sx={{ flexDirection: "row" }}>
@@ -138,6 +139,7 @@ const SinglePost = ({ match, User }) => {
             <Divider></Divider>
             <CommentSection
               item={postdata.comments}
+              refetch={refetch}
               User={User}
               postid={postdata.id}
             ></CommentSection>
@@ -149,6 +151,7 @@ const SinglePost = ({ match, User }) => {
       </Grid>
     </Box>
   );
+  }
 };
 
 export default SinglePost;

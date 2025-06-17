@@ -26,14 +26,8 @@ const resolvers = {
     },
     getuser: async (root, args) => {
       const user = await User.findById(args.id).populate("ownedfeeds",{feedname:1,id:1})
-            .populate("feedsubs",{id:1,feedname:1,description:1,owner:1})
-            .populate({ path: 'posts',select: ["headline","description","owner","karma","id","feed"],
-              populate: { path: 'owner' ,select:["username","avatar","id"]},
-              populate:{path:"feed",select:["feedname"]}
-              }).populate({path:"comments",select:["post","content","replyto","id","karma","depth"],
-                populate:{path:"post",select:["headline","id","karma"]},
-                populate:{path:"replyto",select:["content","user"],populate:{path:"user",select:["avatar","username","id"]},}
-                })
+            
+            
       console.log(user);
       return user;
     },
@@ -42,7 +36,7 @@ const resolvers = {
         const feed = await Feed.findOne({ feedname: args.feedname })
           .populate({
             path: "posts",
-            select: ["headline", "description", "owner", "karma", "id"],
+            select: ["headline", "description", "owner", "karma", "id","createdAt"],
             populate: { path: "owner", select: ["username", "id", "avatar"] },
           })
           .populate("owner", { username: 1, id: 1 })
@@ -220,8 +214,8 @@ const resolvers = {
         console.log(replyto);
         const newComment = new Comment({
           content: args.content,
-          post: post._id,
-          user: user._id,
+          post: post,
+          user: user,
           replyto: replyto,
           depth: replyto.depth + 1,
         });

@@ -35,34 +35,39 @@ export const GET_ME = gql`
   }
 `;
 export const GET_FEED = gql`
-  query Getfeed($querytype: String!, $feedname: String) {
-    getfeed(querytype: $querytype, feedname: $feedname) {
-      feedname
-      description
-      owner {
-        avatar
-        username
-        id
-      }
-      subs {
-        id
-      }
-      posts {
-        headline
-        description
-        id
-        img
-        karma
-        owner {
-          username
-          id
-          avatar
-        }
-      }
+query Getfeed($querytype: String!, $feedname: String) {
+  getfeed(querytype: $querytype, feedname: $feedname) {
+    feedname
+    description
+    active
+    id
+    owner {
+      username
+      avatar
+      id
       active
+    }
+    subs {
       id
     }
+    posts {
+      headline
+      description
+      karma
+      img
+      active
+      createdAt
+      updatedAt
+      id
+      owner {
+        username
+        avatar
+        id
+        active
+      }
+    }
   }
+}
 `;
 export const GET_POST_MIN = gql`
   query Getpost($getpostId: String!) {
@@ -104,52 +109,73 @@ export const GET_POST_MIN = gql`
 `;
 export const GET_USER = gql`query Getuser($getuserId: String!) {
   getuser(id: $getuserId) {
-      username
-      email
-      firstname
-      lastname
-      avatar
-      relationship
+    username
+    email
+    firstname
+    lastname
+    avatar
+    relationship
+    description
+    work
+    active
+    id
+    feedsubs {
+      feedname
       description
-      work
-      feedsubs {
-        feedname
-        id
-      }
-      posts {
-        description
-        feed {
-          feedname
-        }
-        headline
-        id
-        img
-        karma
-      }
-      ownedfeeds {
-        feedname
-        id
-      }
       active
       id
-      comments {
-        content
+    }
+    posts {
+      headline
+      description
+      karma
+      img
+      active
+      createdAt
+      updatedAt
+      id
+      feed {
+        feedname
+        description
+        active
         id
-        depth
-        karma
-        replyto {
-          id
-          karma
-          depth
-          content
-          user {
-            username
-            avatar
-            id
-          }
-        }
       }
     }
+    ownedfeeds {
+      feedname
+      description
+      active
+      id
+    }
+    comments {
+      content
+      active
+      karma
+      depth
+      createdAt
+      updatedAt
+      id
+      post {
+        headline
+        description
+        karma
+        img
+        active
+        createdAt
+        updatedAt
+        id
+      }
+      replyto {
+        content
+        active
+        karma
+        depth
+        createdAt
+        updatedAt
+        id
+      }
+    }
+  }
 }`
 export const GET_ALL_FEED = gql`
   query Getfeed($querytype: String!, $feedname: String) {

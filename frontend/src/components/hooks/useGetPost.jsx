@@ -6,7 +6,7 @@ const useGetPost = ({ id }) => {
     { variables: { getpostId: id } },
     {
       fetchPolicy: "network-only",
-      nextFetchPolicy: "cache-first",
+      nextFetchPolicy: "ntwork-only",
     }
   );
   console.log(id);
