@@ -4,7 +4,7 @@ import { useNavigate } from "react-router";
 import FeedItem from "../../FeedItem";
 import useSubscribe from "../../hooks/useSubscribe";
 
-const FeedPage = ({ match, User, setUser }) => {
+const FeedPage = ({ match, User, setUser,refetchUser }) => {
   console.log(match.params.feedname);
   const feedname = match.params.feedname;
   const navigate = useNavigate();
@@ -14,16 +14,13 @@ const FeedPage = ({ match, User, setUser }) => {
     console.log("Subscribe");
     const data = await sub({ feedname, type });
     console.log(data);
-    if (data) {
-      setUser(data.data.subscribe);
-    }
+    refetchUser()
   };
   const subButton = ({ User }) => {
     if (!User) {
       return;
     }
     if (!User.feedsubs.find((e) => e.feedname === feedname)) {
-      console.log(User.feedsubs);
       return (
         <Button onClick={() => Subscribe({ feedname, type: "sub" })}>
           Subscribe
@@ -71,7 +68,7 @@ const FeedPage = ({ match, User, setUser }) => {
               <Divider></Divider>
               <List>
                 {feed.posts.map((item) => (
-                  <FeedItem item={item}></FeedItem>
+                  <FeedItem item={item} User={User}></FeedItem>
                 ))}
               </List>
             </Box>

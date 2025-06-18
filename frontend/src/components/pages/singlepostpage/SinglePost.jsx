@@ -21,72 +21,20 @@ import { useState } from "react";
 import KarmaItem from "../../KarmaItem";
 import { useNavigate } from "react-router";
 
-const SinglePost = ({ match, User }) => {
+const SinglePost = ({ match, User ,refetchUser}) => {
   const id = match.params.id;
   console.log(match.params.id);
   const navigate = useNavigate();
-  
-  const [newcomment, result] = useMakeComment();
   const { data, loading, error, refetch } = useGetPost({ id });
+  const [newcomment, result] = useMakeComment();
   const [openNewComment, setopenNewComment] = useState(false);
   if (loading) {
-    return <Box></Box>;
+    return <Box>..loading</Box>;
   }else{
-  let postdata = data.getpost
+
   const handleNewComment = (content) => {
     console.log("new comment");
-    const data = newcomment({ postid: postdata.id, content: content.content });
-    console.log(data);
-    refetch()
-  };
-  const NewComment = () => {
-    if (!User) {
-      return (
-        <Box className={"footer"}>
-          <KarmaItem
-            handleDislike={handleDislike}
-            handleLike={handleLike}
-            User={User}
-            karma={postdata.karma}
-          ></KarmaItem>
-          <Tooltip title="Login to comment">
-            <IconButton
-              className={"button"}
-              onClick={() => {
-                navigate("/login");
-              }}
-            >
-              <AddCommentIcon style={{ color: "white" }}></AddCommentIcon>
-            </IconButton>
-          </Tooltip>
-        </Box>
-      );
-    } else {
-      return (
-        <Box className={"footer"}>
-          <KarmaItem
-            handleDislike={handleDislike}
-            handleLike={handleLike}
-            User={User}
-            karma={postdata.karma}
-          ></KarmaItem>
-          <Tooltip title="New comment">
-            <IconButton
-              className={"button"}
-              onClick={() => {
-                if (openNewComment == false) {
-                  setopenNewComment(true);
-                } else {
-                  setopenNewComment(false);
-                }
-              }}
-            >
-              <AddCommentIcon style={{ color: "white" }}></AddCommentIcon>
-            </IconButton>
-          </Tooltip>
-        </Box>
-      );
-    }
+    const data = newcomment({ postid: id, content: content.content });
   };
   const handleLike = () => {
     console.log("likepost");
@@ -94,7 +42,7 @@ const SinglePost = ({ match, User }) => {
   const handleDislike = () => {
     console.log("dislikepost");
   };
-
+  const postdata = data ? data.getpost : [];
   return (
     <Box sx={{ flexGrow: 1 }}>
       <Grid container rowSpacing={1} sx={{ flexDirection: "row" }}>
@@ -112,6 +60,7 @@ const SinglePost = ({ match, User }) => {
               <KarmaItem
                 handleDislike={handleDislike}
                 handleLike={handleLike}
+                
                 User={User}
                 karma={postdata.karma}
               ></KarmaItem>
@@ -138,8 +87,8 @@ const SinglePost = ({ match, User }) => {
             </Collapse>
             <Divider></Divider>
             <CommentSection
+              refetchUser={refetchUser}
               item={postdata.comments}
-              refetch={refetch}
               User={User}
               postid={postdata.id}
             ></CommentSection>

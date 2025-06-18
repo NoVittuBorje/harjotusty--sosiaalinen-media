@@ -1,7 +1,6 @@
 import { Typography } from "@mui/material";
 
 const Timestamp = ({time}) => {
-  console.log(time);
   const createdtime = new Date(Number(time));
   const ms = Math.abs(new Date() - createdtime);
   const sec = Math.floor(ms / 1000);

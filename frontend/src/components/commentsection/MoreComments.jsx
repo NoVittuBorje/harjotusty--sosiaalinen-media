@@ -3,7 +3,14 @@ import useGetComments from "../hooks/useGetComments";
 import Comment from "./Comment";
 import useMakeComment from "../hooks/useMakeComment";
 
-const MoreComments = ({ comment, User, postid,handleModify,handleDelete,handleReply }) => {
+const MoreComments = ({
+  comment,
+  User,
+  postid,
+  handleModify,
+  handleDelete,
+  handleReply,
+}) => {
   const { data, error, loading, refetch } = useGetComments({
     commentid: comment.id,
   });

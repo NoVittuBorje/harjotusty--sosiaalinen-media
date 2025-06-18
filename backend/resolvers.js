@@ -25,9 +25,7 @@ const resolvers = {
       return currentUser;
     },
     getuser: async (root, args) => {
-      const user = await User.findById(args.id).populate("ownedfeeds",{feedname:1,id:1})
-            
-            
+      const user = await User.findById(args.id).populate("ownedfeeds",{feedname:1,id:1})  
       console.log(user);
       return user;
     },
@@ -203,6 +201,51 @@ const resolvers = {
         await comment.save();
         return comment;
       }
+      if(args.action === "like") {
+        const likecommentids = user.likedcomments.map(comment => comment._id.toString())
+        const dislikecommentids = user.dislikedcomments.map(comment => comment._id.toString())
+        if (likecommentids.includes(comment._id.toString())){
+          comment.karma = comment.karma -1
+          const newuser = await User.findOneAndUpdate(
+          { _id: context.currentUser._id },
+          { $pull: { likedcomments: comment._id } }
+        )
+          await newuser.save()
+          await comment.save()
+          return comment
+        }else{
+        comment.karma = comment.karma +1
+        user.likedcomments = [...user.likedcomments,comment]
+        await user.save()
+        await comment.save()
+        return comment
+        }
+      }
+      if(args.action === "dislike") {
+        const dislikecommentids = user.dislikedcomments.map(comment => comment._id.toString())
+        const likecommentids = user.likedcomments.map(comment => comment._id.toString())
+        if (dislikecommentids.includes(comment._id.toString())){
+          comment.karma = comment.karma +1
+          const newuser = await User.findOneAndUpdate(
+          { _id: context.currentUser._id },
+          { $pull: { dislikedcomments: comment._id } }
+        )
+          await newuser.save()
+          await comment.save()
+          return comment
+        }else{
+        comment.karma = comment.karma -1
+        user.dislikedcomments = [...user.dislikedcomments,comment]
+        await user.save()
+        await comment.save()
+        return comment
+        }
+      }
+      throw new GraphQLError("unknown operation", {
+          extensions: {
+            code: "UNKNOWN ACTION",
+          },
+        });
     },
     makeComment: async (root, args, context) => {
       if (args.replyto) {

@@ -1,5 +1,6 @@
 import { useMutation } from "@apollo/client";
 import { EDITCOMMENT } from "../graphql/mutations";
+import { GET_ME } from "../graphql/queries";
 
 const useEditComment = () => {
   const [mutate, result] = useMutation(EDITCOMMENT);

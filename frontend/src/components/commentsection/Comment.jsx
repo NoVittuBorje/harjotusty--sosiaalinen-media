@@ -23,35 +23,31 @@ import { Link, useNavigate } from "react-router";
 import Useritem from "../Useritem";
 import EditComment from "./EditComment";
 
-
 const Comment = ({
   comment,
   handleDelete,
   User,
   handleModify,
   handleReply,
+  handleDislike,
+  handleLike,
   postid,
 }) => {
   console.log(comment, "1");
   const [open, setOpen] = React.useState(false);
-  const [editopen, setEditOpen] = React.useState(false)
+  const [editopen, setEditOpen] = React.useState(false);
   const [ShowComments, setShowComments] = React.useState(false);
-  const navigate = useNavigate()
+  const navigate = useNavigate();
   const handleReplyClick = () => {
     setOpen(!open);
   };
   const handleEditClick = () => {
-    setEditOpen(!editopen)
-  }
+    setEditOpen(!editopen);
+  };
   const handleMoreComments = () => {
     setShowComments(true);
   };
-  const handleDislike = () => {
-    console.log("dislike comment");
-  };
-  const handleLike = () => {
-    console.log("like comment");
-  };
+
   const Showmorecomments = () => {
     if (comment.replies.length == 0) {
       return;
@@ -72,6 +68,8 @@ const Comment = ({
         <MoreComments
           handleModify={handleModify}
           handleDelete={handleDelete}
+          handleDislike={handleDislike}
+          handleLike={handleLike}
           handleReply={handleReply}
           comment={comment}
           ShowComments={ShowComments}
@@ -118,8 +116,8 @@ const Comment = ({
       console.log("no user");
       return;
     }
-    if (editopen){
-      return(
+    if (editopen) {
+      return (
         <Collapse in={editopen} timeout={"auto"} unmountOnExit>
           <EditComment
             onReply={handleModify}
@@ -128,7 +126,7 @@ const Comment = ({
             handleEditClick={handleEditClick}
           ></EditComment>
         </Collapse>
-      )
+      );
     }
     if (open) {
       return (
@@ -191,6 +189,7 @@ const Comment = ({
           <KarmaItem
             handleDislike={handleDislike}
             User={User}
+            id={comment.id}
             handleLike={handleLike}
             karma={comment.karma}
           ></KarmaItem>

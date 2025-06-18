@@ -31,6 +31,18 @@ export const GET_ME = gql`
       }
       active
       id
+      dislikedposts {
+        id
+      }
+      likedposts {
+        id
+      }
+      likedcomments {
+        id
+      }
+      dislikedcomments {
+        id
+      }
     }
   }
 `;

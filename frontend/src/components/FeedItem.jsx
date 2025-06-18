@@ -18,7 +18,7 @@ import { useNavigate } from "react-router";
 import KarmaItem from "./KarmaItem";
 import Timestamp from "./utils/Timestamp";
 import Useritem from "./Useritem";
-const FeedItem = ({ item }) => {
+const FeedItem = ({ item ,User}) => {
   const navigate = useNavigate();
 
   const handleLike = () => {
@@ -27,7 +27,6 @@ const FeedItem = ({ item }) => {
   const handleDislike = () => {
     console.log("dislike");
   };
-  console.log(item.createdAt)
   return (
     <Box className={"feed"}>
       <Box sx={{ display: "flex", flexDirection: "column" }}>
@@ -56,6 +55,7 @@ const FeedItem = ({ item }) => {
             handleDislike={handleDislike}
             handleLike={handleLike}
             karma={item.karma}
+            User={User}
           ></KarmaItem>
         </Box>
       </Box>

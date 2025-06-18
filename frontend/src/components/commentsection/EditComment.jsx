@@ -1,7 +1,7 @@
 import { FormGroup, TextField, Button, Box } from "@mui/material";
 import { useState } from "react";
 
-const EditComment = ({ onReply,commentid, oldcomment, handleEditClick }) => {
+const EditComment = ({ onReply, commentid, oldcomment, handleEditClick }) => {
   const [comment, setComment] = useState(oldcomment);
   return (
     <FormGroup>
@@ -22,7 +22,8 @@ const EditComment = ({ onReply,commentid, oldcomment, handleEditClick }) => {
           variant="outlined"
           color=""
           onClick={() => {
-            onReply({ content: comment, commentid,action:"modify" });
+            onReply({ content: comment, commentid, action: "modify" });
+            handleEditClick();
           }}
         >
           edit

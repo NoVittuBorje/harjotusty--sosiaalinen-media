@@ -6,10 +6,10 @@ const useGetPost = ({ id }) => {
     { variables: { getpostId: id } },
     {
       fetchPolicy: "network-only",
-      nextFetchPolicy: "ntwork-only",
+      nextFetchPolicy: "network-only",
     }
   );
-  console.log(id);
+  console.log(data);
   return { data: data, loading: loading, error: error, refetch: refetch };
 };
 export default useGetPost;

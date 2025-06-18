@@ -42,6 +42,10 @@ const typeDefs = `#graphql
     avatar:String
     relationship:String
     description:String
+    dislikedposts:[Post]
+    likedposts:[Post]
+    likedcomments:[Comment]
+    dislikedcomments:[Comment]
     work:String
     feedsubs:[Feed]
     posts:[Post]

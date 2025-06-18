@@ -10,13 +10,11 @@ import RegisterPage from "./components/loginpage/Registerpage";
 import MakeFeedPage from "./components/pages/feedpage/Makefeedpage";
 import FeedPage from "./components/pages/feedpage/Feedpage";
 import NewPostpage from "./components/pages/feedpage/NewPostpage";
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import useMe from "./components/hooks/useMe";
 function App() {
-  const [User, setUser] = useState(null);
   const token = localStorage.getItem("token");
   const { data, loading, error, refetch } = useMe();
-  console.log(data)
   let match = useMatch("/post/:id");
   if (!match) {
     match = null;
@@ -36,32 +34,31 @@ function App() {
   if (loading) {
     return <Box>loading</Box>;
   }
-  let me = data ? data.me : null;
-  if (token && !User && me) {
-    setUser(me);
-  }
+
+  const User = data ? data.me : null;
+
 
   console.log(User);
   return (
     <Box>
-      <AppBar User={User} setUser={setUser} refetch={refetch} />
+      <AppBar User={User}  refetch={refetch} />
       <Routes>
         <Route path="/" element={<Homescreen User={User} />} />
         <Route path="/profile/:userid" element={<Profilepage User={User} match={matchuserid}/>} />
         <Route
           path="/post/:id"
-          element={<SinglePost match={match} User={User} />}
+          element={<SinglePost match={match} User={User} refetchUser={refetch}/>}
         />
-        <Route path="/login" element={<LoginPage setUser={setUser} User={User} refetch={refetch}/>} />
+        <Route path="/login" element={<LoginPage  User={User} refetch={refetch}/>} />
         <Route path="/register" element={<RegisterPage />} />
         <Route path="/makefeed" element={<MakeFeedPage User={User} />} />
         <Route
           path="/feed/:feedname"
-          element={<FeedPage match={matchfeed} User={User} setUser={setUser} />}
+          element={<FeedPage match={matchfeed} User={User}  refetchUser={refetch} />}
         />
         <Route
           path="/newpost/:postfeedname"
-          element={<NewPostpage match={matchfeedpost} User={User} />}
+          element={<NewPostpage match={matchfeedpost} User={User} refetchUser={refetch}/>}
         />
       </Routes>
     </Box>
