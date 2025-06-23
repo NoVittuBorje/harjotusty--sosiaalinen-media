@@ -81,6 +81,24 @@ query Getfeed($querytype: String!, $feedname: String) {
   }
 }
 `;
+export const GET_FEED_POSTS = gql`query Getfeedposts($feedname: String!, $offset: Int!, $limit: Int!) {
+  getfeedposts(feedname: $feedname, offset: $offset, limit: $limit) {
+      headline
+      description
+      karma
+      img
+      active
+      createdAt
+      updatedAt
+      id
+      owner {
+        username
+        avatar
+        id
+        active
+      }
+    }
+}`
 export const GET_POST_MIN = gql`
   query Getpost($getpostId: String!) {
     getpost(id: $getpostId) {

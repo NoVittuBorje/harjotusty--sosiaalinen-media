@@ -14,6 +14,7 @@ import { GraphQLWsLink } from "@apollo/client/link/subscriptions";
 import { createClient } from "graphql-ws";
 import { BrowserRouter } from "react-router-dom";
 import { createTheme, ThemeProvider } from "@mui/material";
+import { offsetLimitPagination } from "@apollo/client/utilities";
 
 const authLink = setContext((_, { headers }) => {
   const token = localStorage.getItem("token");
@@ -28,7 +29,18 @@ const authLink = setContext((_, { headers }) => {
 const httpLink = createHttpLink({
   uri: "http://localhost:4000",
 });
+const cache = new InMemoryCache({
+  typePolicies: {
+    Query: {
+      fields: {
+        getfeedposts: offsetLimitPagination()
+      },
 
+    },
+
+  },
+
+});
 const wsLink = new GraphQLWsLink(createClient({ url: "ws://localhost:4000" }));
 const splitLink = split(
   ({ query }) => {
@@ -43,15 +55,15 @@ const splitLink = split(
 );
 
 const client = new ApolloClient({
-  cache: new InMemoryCache(),
+  cache: cache,
   link: splitLink,
 });
 const theme = createTheme({
   cssVariables: true,
   typography: {
     button: {
-      textTransform: 'none'
-    }
+      textTransform: "none",
+    },
   },
   palette: {
     type: "dark",

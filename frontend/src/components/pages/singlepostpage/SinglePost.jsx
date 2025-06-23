@@ -21,6 +21,7 @@ import { useState } from "react";
 import KarmaItem from "../../KarmaItem";
 import { useNavigate } from "react-router";
 
+
 const SinglePost = ({ match, User ,refetchUser}) => {
   const id = match.params.id;
   console.log(match.params.id);
@@ -43,6 +44,7 @@ const SinglePost = ({ match, User ,refetchUser}) => {
     console.log("dislikepost");
   };
   const postdata = data ? data.getpost : [];
+  if(postdata){
   return (
     <Box sx={{ flexGrow: 1 }}>
       <Grid container rowSpacing={1} sx={{ flexDirection: "row" }}>
@@ -60,8 +62,10 @@ const SinglePost = ({ match, User ,refetchUser}) => {
               <KarmaItem
                 handleDislike={handleDislike}
                 handleLike={handleLike}
-                
+                id={postdata.id}
                 User={User}
+                likes={User ? User.likedposts : []}
+                dislikes={User ? User.dislikedposts : []}
                 karma={postdata.karma}
               ></KarmaItem>
               <Tooltip title="New comment">
@@ -90,6 +94,7 @@ const SinglePost = ({ match, User ,refetchUser}) => {
               refetchUser={refetchUser}
               item={postdata.comments}
               User={User}
+              refetch={refetch}
               postid={postdata.id}
             ></CommentSection>
           </Box>
@@ -100,6 +105,9 @@ const SinglePost = ({ match, User ,refetchUser}) => {
       </Grid>
     </Box>
   );
+}else{
+  <Box>loading</Box>
+}
   }
 };
 

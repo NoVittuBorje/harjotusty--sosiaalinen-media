@@ -10,11 +10,12 @@ import RegisterPage from "./components/loginpage/Registerpage";
 import MakeFeedPage from "./components/pages/feedpage/Makefeedpage";
 import FeedPage from "./components/pages/feedpage/Feedpage";
 import NewPostpage from "./components/pages/feedpage/NewPostpage";
-import { useMemo, useState } from "react";
 import useMe from "./components/hooks/useMe";
+
 function App() {
   const token = localStorage.getItem("token");
   const { data, loading, error, refetch } = useMe();
+  
   let match = useMatch("/post/:id");
   if (!match) {
     match = null;
@@ -34,14 +35,14 @@ function App() {
   if (loading) {
     return <Box>loading</Box>;
   }
-
-  const User = data ? data.me : null;
-
-
-  console.log(User);
+  let User = data ? data.me : null;
+  if(!token){
+    User = null
+  }
+  console.log(User,data)
   return (
     <Box>
-      <AppBar User={User}  refetch={refetch} />
+      <AppBar User={User} refetch={refetch} />
       <Routes>
         <Route path="/" element={<Homescreen User={User} />} />
         <Route path="/profile/:userid" element={<Profilepage User={User} match={matchuserid}/>} />

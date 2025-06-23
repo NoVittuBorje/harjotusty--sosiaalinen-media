@@ -172,7 +172,7 @@ const Comment = ({
           maxWidth: "100%",
         }}
       >
-        <Useritem time={comment.createdAt} user={comment.user}></Useritem>
+        <Useritem time={comment.createdAt} edittime={comment.updatedAt} user={comment.user}></Useritem>
         <Box
           sx={{
             paddingLeft: 7,
@@ -189,6 +189,8 @@ const Comment = ({
           <KarmaItem
             handleDislike={handleDislike}
             User={User}
+            likes={User ? User.likedcomments : []}
+            dislikes={User ? User.dislikedcomments : []}
             id={comment.id}
             handleLike={handleLike}
             karma={comment.karma}

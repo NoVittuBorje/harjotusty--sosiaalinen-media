@@ -47,6 +47,9 @@ const resolvers = {
         return feeds;
       }
     },
+    getfeedposts:async (root,args) => {
+      console.log(args.feedname,args.offset,args.limit)
+    },
     getpost: async (root, args) => {
       const post = await Post.find({ _id: args.id }).populate("owner", {
         username: 1,

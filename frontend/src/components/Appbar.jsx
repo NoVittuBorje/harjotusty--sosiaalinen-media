@@ -73,9 +73,12 @@ import ListItemText from "@mui/material/ListItemText";
 import InboxIcon from "@mui/icons-material/MoveToInbox";
 import FeedIcon from "@mui/icons-material/Feed";
 import useGetManyFeeds from "./hooks/useGetManyFeeds";
+import { ApolloClient, useApolloClient } from "@apollo/client";
 
-export default function PrimarySearchAppBar({ setUser, User, refetch }) {
+export default function PrimarySearchAppBar({ User, refetch }) {
   const navigate = useNavigate();
+  const apolloClient = useApolloClient()
+  
   const token = localStorage.getItem("token");
   const feeds = useGetManyFeeds();
   const [open, setOpen] = React.useState(false);
@@ -85,8 +88,6 @@ export default function PrimarySearchAppBar({ setUser, User, refetch }) {
   const isLoginMenuOpen = Boolean(loginanchorEl);
   const menuId = "primary-search-account-menu";
   const loginMenuId = "login-menu";
-  console.log(User);
-  console.log(feeds);
   const handleLoginMenuOpen = (event) => {
     setLoginAnchorEl(event.currentTarget);
   };
@@ -94,7 +95,6 @@ export default function PrimarySearchAppBar({ setUser, User, refetch }) {
     setOpen(newOpen);
   };
   const handleProfileMenuOpen = (event) => {
-    console.log(event.currentTarget);
     setAnchorEl(event.currentTarget);
   };
 
@@ -122,8 +122,9 @@ export default function PrimarySearchAppBar({ setUser, User, refetch }) {
   const handleLogoutClick = () => {
     console.log("logout");
     handleMenuClose();
-    setUser(null);
+    apolloClient.clearStore()
     localStorage.clear();
+    navigate("/")
   };
   const handleRegisterClick = () => {
     console.log("register page");

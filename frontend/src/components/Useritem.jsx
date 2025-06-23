@@ -28,7 +28,7 @@ function stringAvatar(name) {
     children: `${name.split(" ")[0][0]}`,
   };
 }
-const Useritem = ({ user, time }) => {
+const Useritem = ({ user, time,edittime }) => {
   const navigate = useNavigate();
   return (
     <Box sx={{ display: "flex", flexDirection: "row", alignItems: "center" ,gap:0,marginBottom:1}}>
@@ -48,7 +48,7 @@ const Useritem = ({ user, time }) => {
           underline="none"
         >{`u/${user.username}`}</Typography>
       </Button>
-      <Timestamp time={time}></Timestamp>
+      <Timestamp time={time} edittime={edittime}></Timestamp>
     </Box>
   );
 };

@@ -54,6 +54,8 @@ const FeedItem = ({ item ,User}) => {
           <KarmaItem
             handleDislike={handleDislike}
             handleLike={handleLike}
+            likes={User ? User.likedposts : []}
+            dislikes={User ? User.dislikedposts : []}
             karma={item.karma}
             User={User}
           ></KarmaItem>

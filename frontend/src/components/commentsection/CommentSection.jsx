@@ -4,7 +4,7 @@ import CommentForm from "./CommentForm";
 import useMakeComment from "../hooks/useMakeComment";
 import { Box } from "@mui/material";
 import useEditComment from "../hooks/useEditComment";
-const CommentSection = ({ item, User, postid, refetchUser}) => {
+const CommentSection = ({ item, User, postid, refetchUser,refetch}) => {
   console.log(item);
   const [newcomment, result] = useMakeComment();
   const [edit, editresult] = useEditComment();
@@ -12,27 +12,32 @@ const CommentSection = ({ item, User, postid, refetchUser}) => {
   const handleDelete = (comment) => {
     console.log(comment);
   };
-  const handleModify = ({ commentid, content, action }) => {
-    const data = edit({ commentid, content, action });
+  const handleModify = async ({ commentid, content, action }) => {
+    const data = await edit({ commentid, content, action });
     console.log(data);
+    refetch()
   };
-  const handleReply = ({ content, commentid }) => {
+  const handleReply = async ({ content, commentid }) => {
     console.log(content);
-    const data = newcomment({ postid, content: content, replyto: commentid });
+    const data = await newcomment({ postid, content: content, replyto: commentid });
     console.log(data);
+    refetch()
   };
-  const handleDislike = ({id}) => {
+  const handleDislike = async ({id}) => {
     console.log("dislike comment");
     console.log(id)
-    const data = edit({ commentid:id, content:"null", action:"dislike" }).then(refetchUser());
-
+    const data = await edit({ commentid:id, content:"null", action:"dislike" })
+    console.log(data)
+    refetchUser()
+    refetch()
   };
-  const handleLike = ({id}) => {
+  const handleLike = async ({id}) => {
     console.log("like comment");
     console.log(id)
-    const data = edit({ commentid:id, content:"null", action:"like" }).then(refetchUser());
-
-    
+    const data = await edit({ commentid:id, content:"null", action:"like" })
+    console.log(data)
+    refetchUser()
+    refetch()
   };
   const comments = item;
   console.log(comments);

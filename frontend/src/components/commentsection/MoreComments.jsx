@@ -9,6 +9,8 @@ const MoreComments = ({
   postid,
   handleModify,
   handleDelete,
+  handleLike,
+  handleDislike,
   handleReply,
 }) => {
   const { data, error, loading, refetch } = useGetComments({
@@ -24,6 +26,8 @@ const MoreComments = ({
               comment={reply}
               User={User}
               handleReply={handleReply}
+              handleLike={handleLike}
+              handleDislike={handleDislike}
               handleDelete={handleDelete}
               handleModify={handleModify}
             />

@@ -3,12 +3,14 @@ import useGetFeed from "../../hooks/useGetFeed";
 import { useNavigate } from "react-router";
 import FeedItem from "../../FeedItem";
 import useSubscribe from "../../hooks/useSubscribe";
+import InfiniteScroll from "react-infinite-scroll-component"
 
 const FeedPage = ({ match, User, setUser,refetchUser }) => {
   console.log(match.params.feedname);
   const feedname = match.params.feedname;
   const navigate = useNavigate();
   const { data, loading, error, refetch } = useGetFeed({ feedname });
+  const { loading, feeddata, fetchMoreposts } = useGetFeedPosts({feedname})
   const [sub, result] = useSubscribe();
   const Subscribe = async ({ feedname, type }) => {
     console.log("Subscribe");
@@ -67,10 +69,12 @@ const FeedPage = ({ match, User, setUser,refetchUser }) => {
               <h3 style={{ textAlign: "center" }}>Posts</h3>
               <Divider></Divider>
               <List>
+                
                 {feed.posts.map((item) => (
                   <FeedItem item={item} User={User}></FeedItem>
                 ))}
               </List>
+              <InfiniteScroll dataLength={feed.posts.length} next={fetchMore} loader={<h4>Loading...</h4>}></InfiniteScroll>
             </Box>
           </Grid>
           <Grid size={{ xs: 12, md: 2 }}>{newPostButton({ User })}</Grid>

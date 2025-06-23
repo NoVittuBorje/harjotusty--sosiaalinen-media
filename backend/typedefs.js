@@ -66,6 +66,11 @@ const typeDefs = `#graphql
     feedname:String
     querytype:String!
     ):[Feed]
+    getfeedposts(
+    feedname:String!
+    offset:Int!
+    limit:Int!
+    ):[Post]
     getpost(id:String!):Post
     getcomments(commentid:String!):[Comment]
   }
