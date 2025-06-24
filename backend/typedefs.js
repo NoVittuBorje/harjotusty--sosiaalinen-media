@@ -71,6 +71,14 @@ const typeDefs = `#graphql
     offset:Int!
     limit:Int!
     ):[Post]
+    getpostcomments(
+    postid:String!
+    offset:Int!
+    limit:Int!
+    ):[Comment]
+    getpopularposts(
+    offset:Int!
+    ):[Post]
     getpost(id:String!):Post
     getcomments(commentid:String!):[Comment]
   }
@@ -109,6 +117,11 @@ const typeDefs = `#graphql
       action:String!
       content: String!
     ):Comment
+    modifyPost(
+    postid:String!
+    action:String!
+    content: String!
+    ):Post
   }
 `
 module.exports = typeDefs

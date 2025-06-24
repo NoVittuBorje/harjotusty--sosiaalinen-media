@@ -33,7 +33,6 @@ const Comment = ({
   handleLike,
   postid,
 }) => {
-  console.log(comment, "1");
   const [open, setOpen] = React.useState(false);
   const [editopen, setEditOpen] = React.useState(false);
   const [ShowComments, setShowComments] = React.useState(false);
@@ -156,10 +155,7 @@ const Comment = ({
       );
     }
   };
-  console.log(ShowComments);
   if (comment.content || ShowComments) {
-    console.log(comment.content, "depth", comment.depth);
-
     return (
       <Box
         key={comment.id}

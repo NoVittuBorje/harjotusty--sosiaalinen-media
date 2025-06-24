@@ -4,7 +4,20 @@ import ArrowDownwardRoundedIcon from "@mui/icons-material/ArrowDownwardRounded";
 import { useNavigate } from "react-router";
 import { useState } from "react";
 
-const ArrowcolorDislike = ({ setDownArrow, downArrow, id, dislikes }) => {
+
+const KarmaItem = ({
+  handleDislike,
+  handleLike,
+  id,
+  karma,
+  User,
+  likes,
+  dislikes,
+}) => {
+  const navigate = useNavigate();
+  const [upArrow, setUpArrow] = useState(false);
+  const [downArrow, setDownArrow] = useState(false);
+  const ArrowcolorDislike = ({ setDownArrow, downArrow, id, dislikes }) => {
   if (downArrow) {
     setDownArrow(false);
   }
@@ -50,19 +63,6 @@ const ArrowcolorLike = ({ upArrow, setUpArrow, id, likes }) => {
     );
   }
 };
-const KarmaItem = ({
-  handleDislike,
-  handleLike,
-  id,
-  karma,
-  User,
-  likes,
-  dislikes,
-}) => {
-  const navigate = useNavigate();
-  const [upArrow, setUpArrow] = useState(false);
-  const [downArrow, setDownArrow] = useState(false);
-  console.log(karma)
   if (!User) {
     return (
       <Box className={"footerkarma"}>

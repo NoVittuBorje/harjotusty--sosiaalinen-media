@@ -106,3 +106,15 @@ export const EDITCOMMENT = gql`mutation ModifyComment($commentid: String!, $cont
     id
   }
 }`
+export const EDITPOST = gql`mutation ModifyPost($postid: String!, $action: String!, $content: String!) {
+  modifyPost(postid: $postid, action: $action, content: $content) {
+    headline
+    description
+    karma
+    img
+    active
+    createdAt
+    updatedAt
+    id
+  }
+}`

@@ -33,7 +33,15 @@ const cache = new InMemoryCache({
   typePolicies: {
     Query: {
       fields: {
-        getfeedposts: offsetLimitPagination()
+        getfeedposts: {
+          ...offsetLimitPagination(),
+          keyArgs: ["feedname"],
+        },
+        getpostcomments: {
+          ...offsetLimitPagination(),
+          keyArgs:["postid"],
+        },
+        getpopularposts: offsetLimitPagination()
       },
 
     },

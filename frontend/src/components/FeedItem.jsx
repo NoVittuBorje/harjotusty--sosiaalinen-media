@@ -28,7 +28,7 @@ const FeedItem = ({ item ,User}) => {
     console.log("dislike");
   };
   return (
-    <Box className={"feed"}>
+    <Box className={"feed"} key={item.id}>
       <Box sx={{ display: "flex", flexDirection: "column" }}>
         <Link
           onClick={() => {

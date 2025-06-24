@@ -20,12 +20,14 @@ import AddCommentIcon from "@mui/icons-material/AddComment";
 import { useState } from "react";
 import KarmaItem from "../../KarmaItem";
 import { useNavigate } from "react-router";
+import useEditPost from "../../hooks/useEditPost";
 
 
 const SinglePost = ({ match, User ,refetchUser}) => {
   const id = match.params.id;
   console.log(match.params.id);
   const navigate = useNavigate();
+  const [edit,editresult] = useEditPost()
   const { data, loading, error, refetch } = useGetPost({ id });
   const [newcomment, result] = useMakeComment();
   const [openNewComment, setopenNewComment] = useState(false);
@@ -33,15 +35,20 @@ const SinglePost = ({ match, User ,refetchUser}) => {
     return <Box>..loading</Box>;
   }else{
 
-  const handleNewComment = (content) => {
+  const handleNewComment = async (content) => {
     console.log("new comment");
-    const data = newcomment({ postid: id, content: content.content });
+    const data = await newcomment({ postid: id, content: content.content });
   };
-  const handleLike = () => {
+  const handleLike = async () => {
     console.log("likepost");
+    const data = await edit({action:"like",content:"",postid:id})
+    refetchUser()
   };
-  const handleDislike = () => {
+  const handleDislike = async () => {
     console.log("dislikepost");
+    const data = await edit({action:"dislike",content:"",postid:id})
+    console.log(data)
+    refetchUser()
   };
   const postdata = data ? data.getpost : [];
   if(postdata){

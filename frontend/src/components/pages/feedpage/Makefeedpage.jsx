@@ -14,8 +14,8 @@ const MakeFeedPage = () => {
     console.log("submit");
     const data = await make(formik.values);
     console.log(data);
-    if (data.data.makefeed) {
-      navigate(`/feed/${data.data.makefeed}`);
+    if (data.data.makeFeed.feedname) {
+      navigate(`/feed/${data.data.makeFeed.feedname}`);
     }
   };
   const formik = useFormik({

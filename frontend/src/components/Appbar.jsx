@@ -236,7 +236,9 @@ export default function PrimarySearchAppBar({ User, refetch }) {
             {User.feedsubs
               ? User.feedsubs.map((subs) => (
                   <ListItem key={subs.feedname} disablePadding>
-                    <ListItemButton>
+                    <ListItemButton onClick={() => {
+                    navigate(`/feed/${subs.feedname}`);
+                  }}>
                       <ListItemText primary={subs.feedname} />
                     </ListItemButton>
                   </ListItem>

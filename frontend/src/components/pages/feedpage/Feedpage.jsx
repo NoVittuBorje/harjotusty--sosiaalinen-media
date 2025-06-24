@@ -4,13 +4,14 @@ import { useNavigate } from "react-router";
 import FeedItem from "../../FeedItem";
 import useSubscribe from "../../hooks/useSubscribe";
 import InfiniteScroll from "react-infinite-scroll-component"
+import useGetFeedPosts from "../../hooks/useGetFeedPosts";
 
-const FeedPage = ({ match, User, setUser,refetchUser }) => {
+
+const FeedPage = ({ match, User,refetchUser }) => {
   console.log(match.params.feedname);
   const feedname = match.params.feedname;
   const navigate = useNavigate();
-  const { data, loading, error, refetch } = useGetFeed({ feedname });
-  const { loading, feeddata, fetchMoreposts } = useGetFeedPosts({feedname})
+  const { data, loading, error,fetchMore } = useGetFeedPosts({feedname})
   const [sub, result] = useSubscribe();
   const Subscribe = async ({ feedname, type }) => {
     console.log("Subscribe");
@@ -51,12 +52,19 @@ const FeedPage = ({ match, User, setUser,refetchUser }) => {
       );
     }
   };
+
   console.log(data, loading, error);
   if (loading) {
     return <Box>Loading ...</Box>;
   } else {
     console.log(data);
-    const feed = data.getfeed[0];
+    const feed = data.getfeedposts;
+    console.log(feed)
+    console.log(feed.length)
+    const loadmore = () => {
+    console.log("loadmore")
+    fetchMore({offset:feed.length})
+    }
     return (
       <Box sx={{ flexGrow: 1 }}>
         <Box sx={{ textAlign: "center" }}>
@@ -68,13 +76,14 @@ const FeedPage = ({ match, User, setUser,refetchUser }) => {
             <Box>
               <h3 style={{ textAlign: "center" }}>Posts</h3>
               <Divider></Divider>
-              <List>
-                
-                {feed.posts.map((item) => (
+              
+              <InfiniteScroll dataLength={feed.length} next={loadmore} hasMore={true}>
+                <List>
+                {feed.map((item) => (
                   <FeedItem item={item} User={User}></FeedItem>
                 ))}
               </List>
-              <InfiniteScroll dataLength={feed.posts.length} next={fetchMore} loader={<h4>Loading...</h4>}></InfiniteScroll>
+              </InfiniteScroll>
             </Box>
           </Grid>
           <Grid size={{ xs: 12, md: 2 }}>{newPostButton({ User })}</Grid>

@@ -49,17 +49,30 @@ const resolvers = {
     },
     getfeedposts:async (root,args) => {
       console.log(args.feedname,args.offset,args.limit)
+      const feed = await Feed.findOne({feedname:args.feedname})
+      const posts = await Post.find({feed:feed._id,active:true}).sort({createdAt:-1}).skip(args.offset).limit(10)
+      if (posts.length != args.offset+args.limit){console.log("ei oo enempää")}
+      console.log(posts)
+      
+      return posts
+    },
+    getpostcomments:async (root,args) => {
+      console.log(args.postid,args.offset,args.limit)
+      const comments = await Comment.find({post:args.postid,depth:0,active:true}).sort({karma:-1}).skip(args.offset).limit(10)
+      if (comments.length != args.offset+args.limit){console.log("ei oo enempää")}
+      console.log(comments)
+      return comments
+    },
+    getpopularposts:async (root, args) => {
+      const posts = await Post.find({active:true}).sort({karma:-1}).skip(args.offset).limit(10)
+      return posts
     },
     getpost: async (root, args) => {
-      const post = await Post.find({ _id: args.id }).populate("owner", {
-        username: 1,
-        id: 1,
-        avatar: 1,
-      });
-      console.log(post);
+      const post = await Post.find({ _id: args.id })
       return post[0];
     },
     getcomments: async (root, args) => {
+      console.log(args)
       const comments = await Comment.find({ _id: args.commentid });
       console.log(comments);
       return comments;
@@ -199,7 +212,7 @@ const resolvers = {
         await comment.save();
         return comment;
       }
-      if (args.action === "modify") {
+      if (args.action === "modify" && comment.user.id == user.id) {
         comment.content = args.content;
         await comment.save();
         return comment;
@@ -242,6 +255,65 @@ const resolvers = {
         await user.save()
         await comment.save()
         return comment
+        }
+      }
+      throw new GraphQLError("unknown operation", {
+          extensions: {
+            code: "UNKNOWN ACTION",
+          },
+        });
+    },
+    modifyPost: async (root, args, context) => {
+      const user = context.currentUser;
+      const post = await Post.findById(args.postid);
+      if (args.action === "delete" && post.owner.id === user.id) {
+        post.active = false;
+        await post.save();
+        return post;
+      }
+      if (args.action === "modify" && post.owner.id == user.id) {
+        post.content = args.content;
+        await post.save();
+        return post;
+      }
+      if(args.action === "like") {
+        const likeids = user.likedposts.map(post => post._id.toString())
+        const dislikedids = user.dislikedposts.map(post => post._id.toString())
+        if (likeids.includes(post._id.toString())){
+          post.karma = post.karma -1
+          const newuser = await User.findOneAndUpdate(
+          { _id: context.currentUser._id },
+          { $pull: { likedposts: post._id } }
+        )
+          await newuser.save()
+          await post.save()
+          return post
+        }else{
+        post.karma = post.karma +1
+        user.likedposts = [...user.likedposts,post]
+        await user.save()
+        await post.save()
+        return post
+        }
+      }
+      if(args.action === "dislike") {
+        const dislikeids = user.dislikedposts.map(post => post._id.toString())
+        const likeids = user.likedposts.map(post => post._id.toString())
+        if (dislikeids.includes(post._id.toString())){
+          post.karma = post.karma +1
+          const newuser = await User.findOneAndUpdate(
+          { _id: context.currentUser._id },
+          { $pull: { dislikedposts: post._id } }
+        )
+          await newuser.save()
+          await post.save()
+          return post
+        }else{
+        post.karma = post.karma -1
+        user.dislikedposts = [...user.dislikedposts,post]
+        await user.save()
+        await post.save()
+        return post
         }
       }
       throw new GraphQLError("unknown operation", {

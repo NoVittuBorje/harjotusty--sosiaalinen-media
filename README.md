@@ -68,7 +68,7 @@ week 8 : 11 Hours : total 62 Hours /n
   </tr>
     <tr>
   <td>11</td>
-  <td>4</td>
-  <td>78</td>
+  <td>8</td>
+  <td>82</td>
   </tr>
 </table>
