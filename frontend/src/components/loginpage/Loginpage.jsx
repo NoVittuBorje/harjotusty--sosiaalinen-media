@@ -8,7 +8,7 @@ import Visibility from '@mui/icons-material/Visibility';
 import VisibilityOff from '@mui/icons-material/VisibilityOff';
 import * as React from "react";
 import useLogin from "../hooks/useLogin";
-import { useNavigate } from "react-router";
+import { Link, useNavigate } from "react-router";
 
 const LoginPage = ({setUser,User,refetch}) => {
     const navigate = useNavigate()
@@ -42,7 +42,7 @@ const LoginPage = ({setUser,User,refetch}) => {
 
             </Grid>
             <Grid size={{xs:12, md:4}} >
-                <Box sx={{border:"solid 0.1em",borderRadius:3,backgroundColor:"whitesmoke"}}>
+                <Box sx={{border:"solid 0.1em",borderRadius:3,backgroundColor:"whitesmoke",color:"black"}}>
                 
                 <FormGroup sx={{alignItems:"center",verticalAlign:"center",marginTop:1}}>
                 <h3>Log in</h3>
@@ -70,9 +70,12 @@ const LoginPage = ({setUser,User,refetch}) => {
                         }
                         label="Password"
                         />
+                        
                 </FormControl>
                 
                 <Button sx={{alignSelf:"left"}} onClick={handleFormSubmit} variant="contained">Log in</Button>
+                <p>If you have no account <Link to="/register">register by clicking this</Link></p>
+                
                 </FormGroup>
                 </Box>
 

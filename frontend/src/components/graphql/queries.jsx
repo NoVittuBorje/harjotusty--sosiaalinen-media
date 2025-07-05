@@ -166,6 +166,12 @@ export const GET_USER = gql`query Getuser($getuserId: String!) {
       createdAt
       updatedAt
       id
+      owner {
+        username
+        avatar
+        id
+        active
+      }
       feed {
         feedname
         description
@@ -380,5 +386,11 @@ export const GET_POPULAR_POSTS = gql`query Query($offset: Int!) {
     createdAt
     updatedAt
     id
+    owner {
+        username
+        avatar
+        id
+        active
+      }
   }
 }`

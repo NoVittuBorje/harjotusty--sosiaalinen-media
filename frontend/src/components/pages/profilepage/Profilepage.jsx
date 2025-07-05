@@ -29,18 +29,12 @@ const Profilepage = ({ User ,match}) => {
   return (
     <Box sx={{ flexGrow: 1 }}>
       <Grid container rowSpacing={1} sx={{ flexDirection: "row" }}>
-        <Grid size={{ xs: 12, md: 2 }} sx={{ backgroundColor: "grey" }}>
+        <Grid size={{ xs: 12, md: 2 }} sx={{}}>
           <h1>profile picture</h1>
           <AccountBoxIcon sx={{ fontSize: 100 }} />
         </Grid>
-        <Grid size={{ xs: 12, md: 8 }} sx={{ backgroundColor: "green" }}>
+        <Grid size={{ xs: 12, md: 8 }} sx={{  }}>
           <Box sx={{ padding: 1 }}>
-            <h1>
-              {data.firstname} {data.lastname}
-            </h1>
-            <p>{data.description}</p>
-            <p>Relationship status: {data.relationship}</p>
-            <p>Job: {data.work}</p>
           </Box>
           <Divider></Divider>
           <Box>
@@ -51,7 +45,7 @@ const Profilepage = ({ User ,match}) => {
             </List>
           </Box>
         </Grid>
-        <Grid size={{ xs: 12, md: 2 }} sx={{ backgroundColor: "red" }}></Grid>
+        <Grid size={{ xs: 12, md: 2 }} sx={{ }}></Grid>
       </Grid>
     </Box>
   );

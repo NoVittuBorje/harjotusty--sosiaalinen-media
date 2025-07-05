@@ -65,6 +65,7 @@ const resolvers = {
     },
     getpopularposts:async (root, args) => {
       const posts = await Post.find({active:true}).sort({karma:-1}).skip(args.offset).limit(10)
+      console.log(posts)
       return posts
     },
     getpost: async (root, args) => {

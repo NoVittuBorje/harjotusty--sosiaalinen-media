@@ -8,6 +8,7 @@ week 4 : 12 Hours : total 32 Hours /n
 week 5 : 11 hours : total 43 Hours /n
 week 6 : 8 Hours : total 51 Hours /n
 week 8 : 11 Hours : total 62 Hours /n
+week 9 : 1 Hours : total 63 /n
 <h5>Harjotustyö työtunnit</h5>
 <table>
   
@@ -70,5 +71,10 @@ week 8 : 11 Hours : total 62 Hours /n
   <td>11</td>
   <td>8</td>
   <td>82</td>
+  </tr>
+      <tr>
+  <td>1</td>
+  <td>9</td>
+  <td>3</td>
   </tr>
 </table>

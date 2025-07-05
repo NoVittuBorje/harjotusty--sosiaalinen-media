@@ -85,7 +85,7 @@ const start = async () => {
                 populate:{path:"replyto",select:["content","user"],populate:{path:"user",select:["avatar","username","id"]},}
                 }).populate("likedposts",{id:1,headline:1}).populate("dislikedposts",{id:1,headline:1}).populate("likedcomments",{id:1,content:1}).populate("dislikedcomments",{id:1,content:1})
             return { currentUser }
-          }
+          }else{console.log("no auth");return null}
         },
       }),
     )

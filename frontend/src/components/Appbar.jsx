@@ -76,9 +76,10 @@ import useGetManyFeeds from "./hooks/useGetManyFeeds";
 import { ApolloClient, useApolloClient } from "@apollo/client";
 
 export default function PrimarySearchAppBar({ User, refetch }) {
+  console.log(User)
   const navigate = useNavigate();
   const apolloClient = useApolloClient()
-  
+  const [search, setSearch] = React.useState("")
   const token = localStorage.getItem("token");
   const feeds = useGetManyFeeds();
   const [open, setOpen] = React.useState(false);
@@ -88,6 +89,7 @@ export default function PrimarySearchAppBar({ User, refetch }) {
   const isLoginMenuOpen = Boolean(loginanchorEl);
   const menuId = "primary-search-account-menu";
   const loginMenuId = "login-menu";
+  console.log(search)
   const handleLoginMenuOpen = (event) => {
     setLoginAnchorEl(event.currentTarget);
   };
@@ -375,6 +377,10 @@ export default function PrimarySearchAppBar({ User, refetch }) {
             </SearchIconWrapper>
             <StyledInputBase
               placeholder="Search…"
+              value={search}
+              onChange={(event) => {
+                setSearch(event.target.value);
+              }}
               inputProps={{ "aria-label": "search" }}
             />
           </Search>

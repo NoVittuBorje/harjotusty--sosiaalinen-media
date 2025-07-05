@@ -6,9 +6,8 @@ import InfiniteScroll from "react-infinite-scroll-component";
 
 const Homescreen = ({ User }) => {
   const { data, error, loading, fetchMore } = useGetPopularPosts();
-    if (loading) {
-    return <Box>Loading ...</Box>;
-  }
+  console.log(loading)
+  console.log(data)
   const feed = data ? data.getpopularposts : [];
   const loadmore = () => {
     fetchMore({ offset: feed.length });

@@ -53,7 +53,7 @@ const CommentSection = ({ item, User, postid, refetchUser,refetch}) => {
   }
   return (
     <Box>
-      <InfiniteScroll dataLength={comments.length} next={loadmore} hasMore={true} loader={<h4>Loading...</h4>}>
+      <InfiniteScroll dataLength={comments.length} next={loadmore} hasMore={true} loader={<></>}>
       {comments.map((comment,index) => (
         <Box key={index} sx={{ paddingBottom: 0.5, marginRight: 2, marginLeft: 1 }}>
           <Comment

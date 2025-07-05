@@ -36,7 +36,7 @@ const MoreComments = ({
       </List>
     );
   } else {
-    return <Box>...loading</Box>;
+    return <></>;
   }
 };
 
