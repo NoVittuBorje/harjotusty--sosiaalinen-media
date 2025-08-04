@@ -25,11 +25,13 @@ const resolvers = {
       return currentUser;
     },
     getuser: async (root, args) => {
+      console.log(args)
       const user = await User.findById(args.id).populate("ownedfeeds",{feedname:1,id:1})  
       console.log(user);
       return user;
     },
     getfeed: async (root, args) => {
+      console.log(args.querytype)
       if (args.querytype === "single") {
         const feed = await Feed.findOne({ feedname: args.feedname })
           .populate({
@@ -64,8 +66,18 @@ const resolvers = {
       return comments
     },
     getpopularposts:async (root, args) => {
+      console.log(args.orderBy)
+      if(args.orderBy === "HOTTEST"){
+        const posts = await Post.find({active:true}).sort({karma:-1}).sort({createdAt:-1}).skip(args.offset).limit(10)
+        return posts
+      }
+      if (args.orderBy === "POPULAR"){
+      console.log("popular")
       const posts = await Post.find({active:true}).sort({karma:-1}).skip(args.offset).limit(10)
       console.log(posts)
+      return posts
+      }
+      const posts = await Post.find({active:true}).sort({createdAt:-1}).skip(args.offset).limit(10)
       return posts
     },
     getpost: async (root, args) => {

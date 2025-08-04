@@ -41,7 +41,9 @@ const cache = new InMemoryCache({
           ...offsetLimitPagination(),
           keyArgs:["postid"],
         },
-        getpopularposts: offsetLimitPagination()
+        getpopularposts: {
+        ...offsetLimitPagination(),
+        keyArgs:["orderBy"]}
       },
 
     },

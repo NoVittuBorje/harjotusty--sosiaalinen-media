@@ -376,8 +376,8 @@ export const GET_COMMENTS = gql`
     }
   }
 `;
-export const GET_POPULAR_POSTS = gql`query Query($offset: Int!) {
-  getpopularposts(offset: $offset) {
+export const GET_POPULAR_POSTS = gql`query Query($offset: Int!, $orderBy: String) {
+  getpopularposts(offset: $offset, orderBy: $orderBy) {
     headline
     description
     karma
@@ -386,6 +386,9 @@ export const GET_POPULAR_POSTS = gql`query Query($offset: Int!) {
     createdAt
     updatedAt
     id
+    feed {
+      feedname
+    }
     owner {
         username
         avatar

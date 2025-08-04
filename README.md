@@ -73,8 +73,33 @@ week 9 : 1 Hours : total 63 /n
   <td>82</td>
   </tr>
       <tr>
-  <td>1</td>
-  <td>9</td>
-  <td>3</td>
+  <td>12</td>
+  <td>2</td>
+  <td>84</td>
+  </tr>
+        <tr>
+  <td>13</td>
+  <td>0</td>
+  <td>84</td>
+  </tr>
+        <tr>
+  <td>14</td>
+  <td>0</td>
+  <td>84</td>
+  </tr>
+          <tr>
+  <td>14</td>
+  <td>0</td>
+  <td>84</td>
+  </tr>
+     <tr>
+  <td>15</td>
+  <td>0</td>
+  <td>84</td>
+  </tr>
+     <tr>
+  <td>16</td>
+  <td>4</td>
+  <td>88</td>
   </tr>
 </table>

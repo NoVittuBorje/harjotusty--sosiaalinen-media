@@ -36,7 +36,6 @@ const Comment = ({
   const [open, setOpen] = React.useState(false);
   const [editopen, setEditOpen] = React.useState(false);
   const [ShowComments, setShowComments] = React.useState(false);
-  const navigate = useNavigate();
   const handleReplyClick = () => {
     setOpen(!open);
   };

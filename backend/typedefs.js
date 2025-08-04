@@ -78,6 +78,7 @@ const typeDefs = `#graphql
     ):[Comment]
     getpopularposts(
     offset:Int!
+    orderBy:String
     ):[Post]
     getpost(id:String!):Post
     getcomments(commentid:String!):[Comment]

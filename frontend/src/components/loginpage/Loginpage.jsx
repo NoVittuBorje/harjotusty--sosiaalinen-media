@@ -45,7 +45,7 @@ const LoginPage = ({setUser,User,refetch}) => {
                 <Box sx={{border:"solid 0.1em",borderRadius:3,backgroundColor:"whitesmoke",color:"black"}}>
                 
                 <FormGroup sx={{alignItems:"center",verticalAlign:"center",marginTop:1}}>
-                <h3>Log in</h3>
+                <Typography variant="h5">Log in</Typography>
                 <TextField id="username" sx={{ m: 0.5, width: '25ch' }} label="Username" variant="outlined" onChange={(event) => setUsername(event.target.value)}/>
                 <FormControl sx={{ m: 0.5, width: '25ch' }} variant="outlined">
                     <InputLabel htmlFor="password">Password</InputLabel>
@@ -70,11 +70,15 @@ const LoginPage = ({setUser,User,refetch}) => {
                         }
                         label="Password"
                         />
-                        
+                <Button sx={{alignSelf:"left"}} onKeyDown={e => console.log(e.key)} onClick={handleFormSubmit} variant="contained">Log in</Button>
                 </FormControl>
                 
-                <Button sx={{alignSelf:"left"}} onClick={handleFormSubmit} variant="contained">Log in</Button>
-                <p>If you have no account <Link to="/register">register by clicking this</Link></p>
+                
+                <Box sx={{paddingX:2}}>
+                    <Typography>If you have no account</Typography>
+                    <Typography><Link to="/register">register by clicking this</Link></Typography>
+                </Box>
+                
                 
                 </FormGroup>
                 </Box>

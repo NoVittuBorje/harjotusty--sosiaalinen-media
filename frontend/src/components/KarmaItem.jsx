@@ -3,7 +3,8 @@ import ArrowUpwardRoundedIcon from "@mui/icons-material/ArrowUpwardRounded";
 import ArrowDownwardRoundedIcon from "@mui/icons-material/ArrowDownwardRounded";
 import { useNavigate } from "react-router";
 import { useState } from "react";
-
+import LikeButton from "./utils/LikeButton";
+import DislikeButton from "./utils/DislikeButton";
 
 const KarmaItem = ({
   handleDislike,
@@ -21,11 +22,7 @@ const KarmaItem = ({
   if (downArrow) {
     setDownArrow(false);
   }
-  dislikes.map((item) => {
-    if (item.id == id) {
-      setDownArrow(true);
-    }
-  });
+  ;
   if (downArrow) {
     return (
       <ArrowDownwardRoundedIcon
@@ -37,29 +34,6 @@ const KarmaItem = ({
       <ArrowDownwardRoundedIcon
         style={{ color: "grey" }}
       ></ArrowDownwardRoundedIcon>
-    );
-  }
-};
-const ArrowcolorLike = ({ upArrow, setUpArrow, id, likes }) => {
-  if (upArrow) {
-    setUpArrow(false);
-  }
-  likes.map((item) => {
-    if (item.id == id) {
-      setUpArrow(true);
-    }
-  });
-  if (upArrow) {
-    return (
-      <ArrowUpwardRoundedIcon
-        style={{ color: "green" }}
-      ></ArrowUpwardRoundedIcon>
-    );
-  } else {
-    return (
-      <ArrowUpwardRoundedIcon
-        style={{ color: "grey" }}
-      ></ArrowUpwardRoundedIcon>
     );
   }
 };
@@ -94,41 +68,20 @@ const ArrowcolorLike = ({ upArrow, setUpArrow, id, likes }) => {
       </Box>
     );
   }
+  dislikes = dislikes.map(l => l.id)
+ 
+  likes = likes.map(l => l.id)
 
   return (
     <Box className={"footerkarma"}>
       <Tooltip title="Like">
-        <IconButton
-          className={"button"}
-          onClick={() => handleLike({ id })}
-          size="small"
-        >
-          <ArrowcolorLike
-            User={User}
-            likes={likes ? likes : []}
-            id={id}
-            upArrow={upArrow}
-            setUpArrow={setUpArrow}
-          ></ArrowcolorLike>
-        </IconButton>
+      <LikeButton handleDislike={handleDislike} id={id} handleLike={handleLike} likeActive={likes.includes(id)}></LikeButton>
       </Tooltip>
       <Tooltip title="karma">
         <a style={{ paddingTop: 0, textAlignVertical: "top" }}>{karma}</a>
       </Tooltip>
       <Tooltip title="Dislike">
-        <IconButton
-          className={"button"}
-          onClick={() => handleDislike({ id })}
-          size="small"
-        >
-          <ArrowcolorDislike
-            User={User}
-            dislikes={dislikes ? dislikes : []}
-            id={id}
-            downArrow={downArrow}
-            setDownArrow={setDownArrow}
-          ></ArrowcolorDislike>
-        </IconButton>
+      <DislikeButton handleDislike={handleDislike} id={id} handleLike={handleLike} likeActive={dislikes.includes(id)}></DislikeButton>
       </Tooltip>
     </Box>
   );

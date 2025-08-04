@@ -75,17 +75,9 @@ const start = async () => {
           console.log(auth)
           if (auth && auth.startsWith('Bearer ')) {
             const decodedToken = jwt.verify(auth.substring(7), process.env.JWT_SECRET)
-            const currentUser = await User.findById(decodedToken.id).populate("ownedfeeds",{feedname:1,id:1})
-            .populate("feedsubs",{id:1,feedname:1,description:1,owner:1})
-            .populate({ path: 'posts',select: ["headline","description","owner","karma","id","feed"],
-              populate: { path: 'owner' ,select:["username","avatar","id"]},
-              populate:{path:"feed",select:["feedname"]}
-              }).populate({path:"comments",select:["post","content","replyto","id","karma","depth"],
-                populate:{path:"post",select:["headline","id","karma"]},
-                populate:{path:"replyto",select:["content","user"],populate:{path:"user",select:["avatar","username","id"]},}
-                }).populate("likedposts",{id:1,headline:1}).populate("dislikedposts",{id:1,headline:1}).populate("likedcomments",{id:1,content:1}).populate("dislikedcomments",{id:1,content:1})
+            const currentUser = await User.findById(decodedToken.id)
             return { currentUser }
-          }else{console.log("no auth");return null}
+          }
         },
       }),
     )

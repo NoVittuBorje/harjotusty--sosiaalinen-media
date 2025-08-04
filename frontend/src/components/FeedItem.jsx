@@ -1,5 +1,6 @@
 import {
   Box,
+  Button,
   Chip,
   Divider,
   IconButton,
@@ -18,7 +19,7 @@ import { useNavigate } from "react-router";
 import KarmaItem from "./KarmaItem";
 import Timestamp from "./utils/Timestamp";
 import Useritem from "./Useritem";
-const FeedItem = ({ item ,User}) => {
+const FeedItem = ({ item, User }) => {
   const navigate = useNavigate();
 
   const handleLike = () => {
@@ -39,10 +40,31 @@ const FeedItem = ({ item ,User}) => {
           color="white"
         >
           <Box sx={{ flexDirection: "column", padding: 1 }}>
-            <Typography variant="h5">{`${item.headline}`}</Typography>
             <Useritem time={item.createdAt} user={item.owner}></Useritem>
-            
+
             <Box>
+              <Box
+                sx={{
+                  display: "flex",
+                  flexDirection: "row",
+                  alignItems: "center",
+                  gap: 1,
+                  marginBottom: 1,
+                }}
+              >
+                <Button >
+                  <Typography
+                    color="whitesmoke"
+                    variant="h8"
+                    underline="none"
+                    onClick={() => {
+                    navigate(`/feed/${item.feed.feedname}`);
+                  }}
+                  >{`f/${item.feed.feedname}`}</Typography>
+                </Button>
+                <Typography variant="h5">{`${item.headline}`}</Typography>
+              </Box>
+
               <Typography className="feedDesc" variant="h7" color="#c4c3c0">
                 {item.description}
               </Typography>

@@ -189,6 +189,9 @@ export default function PrimarySearchAppBar({ User, refetch }) {
   };
   const DrawerState = ({ User }) => {
     if (User) {
+      if (feeds.loading | !feeds.data) {
+        return <Box></Box>;
+      } else {
       return (
         <Box
           sx={{ width: 250 }}
@@ -212,9 +215,7 @@ export default function PrimarySearchAppBar({ User, refetch }) {
               </ListItemIcon>
               <ListItemText primary={"Owned feeds"} />
             </ListItem>
-          </List>
 
-          <List>
             {User.ownedfeeds.map((feed) => (
               <ListItem key={feed.feedname} disablePadding>
                 <ListItemButton
@@ -226,9 +227,8 @@ export default function PrimarySearchAppBar({ User, refetch }) {
                 </ListItemButton>
               </ListItem>
             ))}
-          </List>
+
           <Divider />
-          <List>
             <ListItem key="subscribedfeeds" disablePadding>
               <ListItemIcon>
                 <FeedIcon />
@@ -246,9 +246,29 @@ export default function PrimarySearchAppBar({ User, refetch }) {
                   </ListItem>
                 ))
               : null}
+              <Divider></Divider>
+                <ListItem key="popularfeeds" disablePadding>
+                  <ListItemIcon>
+                    <FeedIcon />
+                  </ListItemIcon>
+                  <ListItemText primary={"Popular feeds"} />
+              </ListItem>
+              
+                            {feeds.data.getfeed.map((feed) => (
+                <ListItem key={feed.feedname} disablePadding>
+                  <ListItemButton
+                    onClick={() => {
+                      navigate(`/feed/${feed.feedname}`);
+                    }}
+                  >
+                    <ListItemText primary={feed.feedname} />
+                  </ListItemButton>
+                </ListItem>
+              ))}
+              <Divider></Divider>
           </List>
         </Box>
-      );
+      );}
     } else {
       if (feeds.loading | !feeds.data) {
         return <Box></Box>;
@@ -261,12 +281,10 @@ export default function PrimarySearchAppBar({ User, refetch }) {
           >
             <List>
               <ListItem key="popularfeeds" disablePadding>
-                <ListItemButton onClick={handleMakeNewFeedClick}>
                   <ListItemIcon>
                     <FeedIcon />
                   </ListItemIcon>
                   <ListItemText primary={"Popular feeds"} />
-                </ListItemButton>
               </ListItem>
             </List>
             <Divider />
@@ -311,20 +329,7 @@ export default function PrimarySearchAppBar({ User, refetch }) {
     } else {
       return (
         <Box sx={{ display: { xs: "none", md: "flex" } }}>
-          <IconButton size="large" aria-label="show new dms" color="inherit">
-            <Badge badgeContent={0} color="error">
-              <MailIcon />
-            </Badge>
-          </IconButton>
-          <IconButton
-            size="large"
-            aria-label="show new notifications"
-            color="inherit"
-          >
-            <Badge badgeContent={17} color="error">
-              <NotificationsIcon />
-            </Badge>
-          </IconButton>
+          
           <IconButton
             size="large"
             edge="end"

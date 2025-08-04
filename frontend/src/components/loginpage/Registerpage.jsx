@@ -74,12 +74,12 @@ const RegisterPage = () => {
         
         <Grid container rowSpacing={1} sx={{flexDirection:"row"}}>
 
-            <Grid size={{xs:12, md:4}} sx={{backgroundColor:"grey"}}>
+            <Grid size={{xs:12, md:4}} sx={{}}>
 
             </Grid>
 
-            <Grid size={{xs:12, md:4}}>
-                <Box sx={{border:"solid 0.1em",borderRadius:1}}>
+            <Grid size={{xs:12, md:4}} sx={{}}>
+                <Box sx={{border:"solid 0.1em",borderRadius:3,backgroundColor:"whitesmoke",color:"black"}}>
                 <FormGroup sx={{alignItems:"center",verticalAlign:"center",marginTop:5,}}>
                 <TextField 
                 id="username"

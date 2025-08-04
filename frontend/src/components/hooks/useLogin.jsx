@@ -5,11 +5,13 @@ import { GET_ME } from '../graphql/queries';
 
 
 const useLogin = () => {
-    const [mutate, result] = useMutation(LOGIN,{awaitRefetchQueries:[GET_ME,"useMe"]});
+    const [mutate, result] = useMutation(LOGIN);
     const login = async ({ Username, Password }) => {
       const data = await mutate({variables:{password:Password,username:Username}})
+      if (data){
       console.log(data.data.login.value)
-      localStorage.setItem("token", data.data.login.value)
+      await localStorage.setItem("token", data.data.login.value)
+      }
       return data
     };
     
