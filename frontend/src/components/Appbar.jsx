@@ -188,10 +188,10 @@ export default function PrimarySearchAppBar({ User, refetch }) {
     }
   };
   const DrawerState = ({ User }) => {
+    const popularfeeds = feeds.data ? feeds.data.getfeed : [];
+    console.log(popularfeeds,feeds.loading)
+    if(feeds.loading){return <Box>loading...</Box>}
     if (User) {
-      if (feeds.loading | !feeds.data) {
-        return <Box></Box>;
-      } else {
       return (
         <Box
           sx={{ width: 250 }}
@@ -268,11 +268,9 @@ export default function PrimarySearchAppBar({ User, refetch }) {
               <Divider></Divider>
           </List>
         </Box>
-      );}
+      );
     } else {
-      if (feeds.loading | !feeds.data) {
-        return <Box></Box>;
-      } else {
+    
         return (
           <Box
             sx={{ width: 250 }}
@@ -289,7 +287,7 @@ export default function PrimarySearchAppBar({ User, refetch }) {
             </List>
             <Divider />
             <List>
-              {feeds.data.getfeed.map((feed) => (
+              {popularfeeds.map((feed) => (
                 <ListItem key={feed.feedname} disablePadding>
                   <ListItemButton
                     onClick={() => {
@@ -303,7 +301,7 @@ export default function PrimarySearchAppBar({ User, refetch }) {
             </List>
           </Box>
         );
-      }
+      
     }
   };
   const MenuState = MenuStatelogin({ User });

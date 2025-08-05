@@ -6,7 +6,7 @@ const useGetFeed = ({ feedname }) => {
     { variables: { feedname: feedname, querytype: "single" } },
     {
       fetchPolicy: "network-only",
-      nextFetchPolicy: "cache-first",
+      nextFetchPolicy: "network-only",
     }
   );
   const handleFetchMore = () => {

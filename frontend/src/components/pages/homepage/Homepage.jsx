@@ -17,12 +17,12 @@ const Homescreen = ({ User }) => {
     setorderBy(event.target.value);
   };
   const feed = data ? data.getpopularposts : [];
+  console.log(data,error,loading)
   const loadmore = () => {
     fetchMore({ offset: feed.length});
   };
   console.log(orderBy)
   return (
-    
     <Box sx={{ flexGrow: 1 }}>
       <Grid container rowSpacing={1} sx={{ flexDirection: "row" }}>
         <Grid size={{ xs: 12, md: 2 }}></Grid>

@@ -81,7 +81,27 @@ const typeDefs = `#graphql
     orderBy:String
     ):[Post]
     getpost(id:String!):Post
-    getcomments(commentid:String!):[Comment]
+    getcomments(
+    commentid:String!
+    offset:Int!
+    ):[Comment]
+    getuserposts(
+    id:String!
+    offset:Int!
+    ):[Post]
+    getusercomments(
+    id:String!
+    offset:Int!
+    ):[Comment]
+    getusersubs(
+    id:String!
+    offset:Int!
+    ):User
+    getuserownedfeeds(
+    id:String!
+    offset:Int!
+    ):User
+
   }
 
   type Mutation {

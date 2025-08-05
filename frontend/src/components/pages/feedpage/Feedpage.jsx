@@ -18,6 +18,7 @@ const FeedPage = ({ match, User,refetchUser }) => {
     const data = await sub({ feedname, type });
     console.log(data);
     refetchUser()
+    
   };
   const subButton = ({ User }) => {
     if (!User) {
@@ -54,27 +55,20 @@ const FeedPage = ({ match, User,refetchUser }) => {
   };
 
   console.log(data, loading, error);
-  if (loading) {
-    return <Box>Loading ...</Box>;
-  } else {
-    console.log(data);
-    const feed = data.getfeedposts;
-    console.log(feed)
-    console.log(feed.length)
+  const feed = data ? data.getfeedposts : [];
+
     const loadmore = () => {
     console.log("loadmore")
     fetchMore({offset:feed.length})
     }
+
     return (
       <Box sx={{ flexGrow: 1 }}>
-        <Box sx={{ textAlign: "center" }}>
-          <h1>{feed.feedname}</h1>
-        </Box>
         <Grid container rowSpacing={1} sx={{ flexDirection: "row" }}>
           <Grid size={{ xs: 12, md: 2 }}>{subButton({ User })}</Grid>
           <Grid size={{ xs: 12, md: 8 }}>
             <Box>
-              <h3 style={{ textAlign: "center" }}>Posts</h3>
+              <h3 style={{ textAlign: "center" }}>{match.params.feedname} Posts</h3>
               <Divider></Divider>
               
               <InfiniteScroll dataLength={feed.length} next={loadmore} hasMore={true}>
@@ -90,6 +84,6 @@ const FeedPage = ({ match, User,refetchUser }) => {
         </Grid>
       </Box>
     );
-  }
+  
 };
 export default FeedPage;

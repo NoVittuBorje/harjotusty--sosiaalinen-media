@@ -6,16 +6,11 @@ import ProfileFeed from "./Profilefeed";
 import { useState } from "react";
 import useGetUser from "../../hooks/useGetUser";
 
-const relationship = {
-  Single: "single",
-  Married: "married",
-  Dating: "dating",
-  None: "none",
-};
 
 const Profilepage = ({ User ,match}) => {
   console.log(User);
   console.log(match)
+  const [type, setType] = useState("posts")
   const id = match.params.userid;
   const userdata = useGetUser({id:id})
   console.log(id);
@@ -26,6 +21,8 @@ const Profilepage = ({ User ,match}) => {
   console.log(userdata)
   const data = userdata.data.getuser
   console.log(data)
+  const profiledata = userdata.data ? userdata.data.getuser : []
+  console.log(profiledata)
   return (
     <Box sx={{ flexGrow: 1 }}>
       <Grid container rowSpacing={1} sx={{ flexDirection: "row" }}>
@@ -39,9 +36,7 @@ const Profilepage = ({ User ,match}) => {
           <Divider></Divider>
           <Box>
             <List>
-              {data.posts.map((item) => (
-                <ProfileFeed item={item}></ProfileFeed>
-              ))}
+                <ProfileFeed item={profiledata} type={"posts"}></ProfileFeed>
             </List>
           </Box>
         </Grid>

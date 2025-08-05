@@ -81,7 +81,6 @@ const schema = new mongoose.Schema(
       {
         type: mongoose.Schema.Types.ObjectId,
         ref: "Comment",
-        autopopulate: { maxDepth: 3 },
       },
     ],
     ownedfeeds: [
@@ -95,7 +94,6 @@ const schema = new mongoose.Schema(
       {
         type: mongoose.Schema.Types.ObjectId,
         ref: "Post",
-        autopopulate: { maxDepth: 2 },
       },
     ],
     active: {

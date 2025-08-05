@@ -6,7 +6,7 @@ const useGetComments = ({ commentid }) => {
     { variables: { commentid: commentid } },
     {
       fetchPolicy: "network-only",
-      nextFetchPolicy: "cache-first",
+      nextFetchPolicy: "network-only",
     }
   );
   return { data: data, loading: loading, error: error, refetch: refetch };

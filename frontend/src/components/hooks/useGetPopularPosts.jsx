@@ -3,6 +3,10 @@ import { GET_POPULAR_POSTS } from "../graphql/queries";
 const useGetPopularPosts = (variables) => {
   const { data, error, loading, refetch, fetchMore,...result } = useQuery(GET_POPULAR_POSTS,
     { variables: { offset:0 ,limit:10,...variables} },
+    {
+      fetchPolicy: "network-only",
+      nextFetchPolicy: "network-only",
+    }
   );
   const handleFetchMore = ({offset}) => {
     fetchMore({

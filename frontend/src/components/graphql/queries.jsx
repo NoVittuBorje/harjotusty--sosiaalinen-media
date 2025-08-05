@@ -91,6 +91,10 @@ export const GET_FEED_POSTS = gql`query Getfeedposts($feedname: String!, $offset
     createdAt
     updatedAt
     id
+    feed {
+      feedname
+      id
+    }
     owner {
         username
         avatar
@@ -136,6 +140,15 @@ export const GET_POST_MIN = gql`
       createdAt
       updatedAt
       id
+      owner {
+        id
+        avatar
+        username
+      }
+      feed {
+        feedname
+        id
+      }
   }
 }
 `;
@@ -166,18 +179,6 @@ export const GET_USER = gql`query Getuser($getuserId: String!) {
       createdAt
       updatedAt
       id
-      owner {
-        username
-        avatar
-        id
-        active
-      }
-      feed {
-        feedname
-        description
-        active
-        id
-      }
     }
     ownedfeeds {
       feedname
@@ -215,6 +216,7 @@ export const GET_USER = gql`query Getuser($getuserId: String!) {
     }
   }
 }`
+
 export const GET_ALL_FEED = gql`
   query Getfeed($querytype: String!, $feedname: String) {
     getfeed(querytype: $querytype, feedname: $feedname) {

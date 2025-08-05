@@ -25,70 +25,206 @@ const resolvers = {
       return currentUser;
     },
     getuser: async (root, args) => {
-      console.log(args)
-      const user = await User.findById(args.id).populate("ownedfeeds",{feedname:1,id:1})  
+      console.log(args);
+      const user = await User.findById(args.id)
+        .populate({ path: "ownedfeeds", select: ["feedname", "id"] })
+        .populate([
+          {
+            path: "posts",
+            select: [
+              "headline",
+              "description",
+              "karma",
+              "img",
+              "active",
+              "createdAt",
+              "updatedAt",
+              "id",
+              "feed",
+            ],
+          },
+        ]);
       console.log(user);
       return user;
     },
     getfeed: async (root, args) => {
-      console.log(args.querytype)
-      if (args.querytype === "single") {
-        const feed = await Feed.findOne({ feedname: args.feedname })
-          .populate({
-            path: "posts",
-            select: ["headline", "description", "owner", "karma", "id","createdAt"],
-            populate: { path: "owner", select: ["username", "id", "avatar"] },
-          })
-          .populate("owner", { username: 1, id: 1 })
-          .populate("subs", { username: 1, id: 1 });
+      console.log(args.querytype);
+      try {
+        if (args.querytype === "single") {
+          const feed = await Feed.findOne({ feedname: args.feedname })
+            .populate({
+              path: "posts",
+              select: [
+                "headline",
+                "description",
+                "owner",
+                "karma",
+                "id",
+                "createdAt",
+              ],
+              populate: { path: "owner", select: ["username", "id", "avatar"] },
+            })
+            .populate("owner", { username: 1, id: 1 })
+            .populate("subs", { username: 1, id: 1 });
+          console.log(feed);
+          return [feed];
+        }
+        if (args.querytype === "many") {
+          const feeds = await Feed.find({}).limit(10);
+          return feeds;
+        }
+      } catch (e) {
+        console.log(e);
+        throw new GraphQLError(e);
+      }
+    },
+    getfeedposts: async (root, args) => {
+      console.log(args.feedname, args.offset, args.limit);
+      try {
+        const feed = await Feed.findOne({ feedname: args.feedname });
         console.log(feed);
-        return [feed];
-      }
-      if (args.querytype === "many") {
-        const feeds = await Feed.find({});
-        return feeds;
+        const posts = await Post.find({ feed: feed._id, active: true })
+          .sort({ createdAt: -1 })
+          .skip(args.offset)
+          .limit(10)
+          .populate("owner", { username: 1, avatar: 1, id: 1, active: 1 })
+          .populate("feed", { feedname: 1, id: 1 });
+        console.log;
+        if (posts.length != args.offset + args.limit) {
+          console.log("ei oo enempää");
+        }
+        console.log(posts);
+        return posts;
+      } catch (e) {
+        throw new GraphQLError(e);
       }
     },
-    getfeedposts:async (root,args) => {
-      console.log(args.feedname,args.offset,args.limit)
-      const feed = await Feed.findOne({feedname:args.feedname})
-      const posts = await Post.find({feed:feed._id,active:true}).sort({createdAt:-1}).skip(args.offset).limit(10)
-      if (posts.length != args.offset+args.limit){console.log("ei oo enempää")}
-      console.log(posts)
-      
-      return posts
-    },
-    getpostcomments:async (root,args) => {
-      console.log(args.postid,args.offset,args.limit)
-      const comments = await Comment.find({post:args.postid,depth:0,active:true}).sort({karma:-1}).skip(args.offset).limit(10)
-      if (comments.length != args.offset+args.limit){console.log("ei oo enempää")}
-      console.log(comments)
-      return comments
-    },
-    getpopularposts:async (root, args) => {
-      console.log(args.orderBy)
-      if(args.orderBy === "HOTTEST"){
-        const posts = await Post.find({active:true}).sort({karma:-1}).sort({createdAt:-1}).skip(args.offset).limit(10)
-        return posts
+    getpostcomments: async (root, args) => {
+      console.log(args.postid, args.offset, args.limit);
+      const comments = await Comment.find({
+        post: args.postid,
+        depth: 0,
+        active: true,
+      })
+        .sort({ karma: -1 })
+        .skip(args.offset)
+        .limit(10);
+      if (comments.length != args.offset + args.limit) {
+        console.log("ei oo enempää");
       }
-      if (args.orderBy === "POPULAR"){
-      console.log("popular")
-      const posts = await Post.find({active:true}).sort({karma:-1}).skip(args.offset).limit(10)
-      console.log(posts)
-      return posts
+      console.log(comments);
+      return comments;
+    },
+    getpopularposts: async (root, args) => {
+      console.log(args.orderBy);
+      if (args.orderBy === "HOTTEST") {
+        const posts = await Post.find({ active: true })
+          .sort({ karma: -1 })
+          .sort({ createdAt: -1 })
+          .skip(args.offset)
+          .limit(10)
+          .populate("feed", { feedname: 1 })
+          .populate("owner", { username: 1, id: 1, avatar: 1 });
+        return posts;
       }
-      const posts = await Post.find({active:true}).sort({createdAt:-1}).skip(args.offset).limit(10)
-      return posts
+      if (args.orderBy === "POPULAR") {
+        console.log("popular");
+        const posts = await Post.find({ active: true })
+          .sort({ karma: -1 })
+          .skip(args.offset)
+          .limit(10)
+          .populate("feed", { feedname: 1 })
+          .populate("owner", { username: 1, id: 1, avatar: 1 });
+        console.log(posts);
+        return posts;
+      }
+      try {
+        const posts = await Post.find({ active: true })
+          .sort({ createdAt: -1 })
+          .skip(args.offset)
+          .limit(10)
+          .populate("feed", { feedname: 1 })
+          .populate("owner", { username: 1, id: 1, avatar: 1 });
+        return posts;
+      } catch (error) {
+        console.log(error);
+      }
     },
     getpost: async (root, args) => {
       const post = await Post.find({ _id: args.id })
+        .populate("feed", { feedname: 1, id: 1 })
+        .populate("owner", { username: 1, id: 1, avatar: 1 });
       return post[0];
     },
     getcomments: async (root, args) => {
-      console.log(args)
+      console.log(args);
       const comments = await Comment.find({ _id: args.commentid });
       console.log(comments);
       return comments;
+    },
+    getuserposts: async (root, args) => {
+      try {
+        const user = await User.findById(args.id).populate({
+          path: "posts",
+          select: [
+            "headline",
+            "description",
+            "karma",
+            "img",
+            "active",
+            "createdAt",
+            "updatedAt",
+            "id",
+          ],
+          options: {
+            skip:args.offset,
+            limit: 10,
+          },
+        });
+        console.log(user);
+        return user.posts;
+      } catch (e) {
+        throw new GraphQLError(e);
+      }
+    },
+    getusercomments: async (root, args) => {
+      try {
+        const user = await User.findById(args.id).populate({
+          path: "comments",
+          select: [
+            "content",
+            "active",
+            "karma",
+            "depth",
+            "createdAt",
+            "updatedAt",
+            "id",
+          ],
+          options:{
+            skip:args.offset,
+            limit:10
+          }
+        });
+
+        console.log(user);
+        return user.comments;
+      } catch (e) {
+        throw new GraphQLError(e);
+      }
+    },
+    getusersubs: async (root, args) => {
+      try {
+        const user = await User.findById(args.id);
+        return user;
+      } catch (e) {
+        throw new GraphQLError(e);
+      }
+    },
+    getuserownedfeeds: async (root, args) => {
+      try {
+      } catch (e) {
+        throw new GraphQLError(e);
+      }
     },
   },
   Mutation: {
@@ -230,51 +366,59 @@ const resolvers = {
         await comment.save();
         return comment;
       }
-      if(args.action === "like") {
-        const likecommentids = user.likedcomments.map(comment => comment._id.toString())
-        const dislikecommentids = user.dislikedcomments.map(comment => comment._id.toString())
-        if (likecommentids.includes(comment._id.toString())){
-          comment.karma = comment.karma -1
+      if (args.action === "like") {
+        const likecommentids = user.likedcomments.map((comment) =>
+          comment._id.toString()
+        );
+        const dislikecommentids = user.dislikedcomments.map((comment) =>
+          comment._id.toString()
+        );
+        if (likecommentids.includes(comment._id.toString())) {
+          comment.karma = comment.karma - 1;
           const newuser = await User.findOneAndUpdate(
-          { _id: context.currentUser._id },
-          { $pull: { likedcomments: comment._id } }
-        )
-          await newuser.save()
-          await comment.save()
-          return comment
-        }else{
-        comment.karma = comment.karma +1
-        user.likedcomments = [...user.likedcomments,comment]
-        await user.save()
-        await comment.save()
-        return comment
+            { _id: context.currentUser._id },
+            { $pull: { likedcomments: comment._id } }
+          );
+          await newuser.save();
+          await comment.save();
+          return comment;
+        } else {
+          comment.karma = comment.karma + 1;
+          user.likedcomments = [...user.likedcomments, comment];
+          await user.save();
+          await comment.save();
+          return comment;
         }
       }
-      if(args.action === "dislike") {
-        const dislikecommentids = user.dislikedcomments.map(comment => comment._id.toString())
-        const likecommentids = user.likedcomments.map(comment => comment._id.toString())
-        if (dislikecommentids.includes(comment._id.toString())){
-          comment.karma = comment.karma +1
+      if (args.action === "dislike") {
+        const dislikecommentids = user.dislikedcomments.map((comment) =>
+          comment._id.toString()
+        );
+        const likecommentids = user.likedcomments.map((comment) =>
+          comment._id.toString()
+        );
+        if (dislikecommentids.includes(comment._id.toString())) {
+          comment.karma = comment.karma + 1;
           const newuser = await User.findOneAndUpdate(
-          { _id: context.currentUser._id },
-          { $pull: { dislikedcomments: comment._id } }
-        )
-          await newuser.save()
-          await comment.save()
-          return comment
-        }else{
-        comment.karma = comment.karma -1
-        user.dislikedcomments = [...user.dislikedcomments,comment]
-        await user.save()
-        await comment.save()
-        return comment
+            { _id: context.currentUser._id },
+            { $pull: { dislikedcomments: comment._id } }
+          );
+          await newuser.save();
+          await comment.save();
+          return comment;
+        } else {
+          comment.karma = comment.karma - 1;
+          user.dislikedcomments = [...user.dislikedcomments, comment];
+          await user.save();
+          await comment.save();
+          return comment;
         }
       }
       throw new GraphQLError("unknown operation", {
-          extensions: {
-            code: "UNKNOWN ACTION",
-          },
-        });
+        extensions: {
+          code: "UNKNOWN ACTION",
+        },
+      });
     },
     modifyPost: async (root, args, context) => {
       const user = context.currentUser;
@@ -289,51 +433,55 @@ const resolvers = {
         await post.save();
         return post;
       }
-      if(args.action === "like") {
-        const likeids = user.likedposts.map(post => post._id.toString())
-        const dislikedids = user.dislikedposts.map(post => post._id.toString())
-        if (likeids.includes(post._id.toString())){
-          post.karma = post.karma -1
+      if (args.action === "like") {
+        const likeids = user.likedposts.map((post) => post._id.toString());
+        const dislikedids = user.dislikedposts.map((post) =>
+          post._id.toString()
+        );
+        if (likeids.includes(post._id.toString())) {
+          post.karma = post.karma - 1;
           const newuser = await User.findOneAndUpdate(
-          { _id: context.currentUser._id },
-          { $pull: { likedposts: post._id } }
-        )
-          await newuser.save()
-          await post.save()
-          return post
-        }else{
-        post.karma = post.karma +1
-        user.likedposts = [...user.likedposts,post]
-        await user.save()
-        await post.save()
-        return post
+            { _id: context.currentUser._id },
+            { $pull: { likedposts: post._id } }
+          );
+          await newuser.save();
+          await post.save();
+          return post;
+        } else {
+          post.karma = post.karma + 1;
+          user.likedposts = [...user.likedposts, post];
+          await user.save();
+          await post.save();
+          return post;
         }
       }
-      if(args.action === "dislike") {
-        const dislikeids = user.dislikedposts.map(post => post._id.toString())
-        const likeids = user.likedposts.map(post => post._id.toString())
-        if (dislikeids.includes(post._id.toString())){
-          post.karma = post.karma +1
+      if (args.action === "dislike") {
+        const dislikeids = user.dislikedposts.map((post) =>
+          post._id.toString()
+        );
+        const likeids = user.likedposts.map((post) => post._id.toString());
+        if (dislikeids.includes(post._id.toString())) {
+          post.karma = post.karma + 1;
           const newuser = await User.findOneAndUpdate(
-          { _id: context.currentUser._id },
-          { $pull: { dislikedposts: post._id } }
-        )
-          await newuser.save()
-          await post.save()
-          return post
-        }else{
-        post.karma = post.karma -1
-        user.dislikedposts = [...user.dislikedposts,post]
-        await user.save()
-        await post.save()
-        return post
+            { _id: context.currentUser._id },
+            { $pull: { dislikedposts: post._id } }
+          );
+          await newuser.save();
+          await post.save();
+          return post;
+        } else {
+          post.karma = post.karma - 1;
+          user.dislikedposts = [...user.dislikedposts, post];
+          await user.save();
+          await post.save();
+          return post;
         }
       }
       throw new GraphQLError("unknown operation", {
-          extensions: {
-            code: "UNKNOWN ACTION",
-          },
-        });
+        extensions: {
+          code: "UNKNOWN ACTION",
+        },
+      });
     },
     makeComment: async (root, args, context) => {
       if (args.replyto) {

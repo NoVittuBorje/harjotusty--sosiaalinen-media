@@ -52,19 +52,13 @@ const FeedItem = ({ item, User }) => {
                   marginBottom: 1,
                 }}
               >
-                <Button >
+                <Typography variant="h5">{`${item.headline}`}</Typography>
                   <Typography
                     color="whitesmoke"
                     variant="h8"
                     underline="none"
-                    onClick={() => {
-                    navigate(`/feed/${item.feed.feedname}`);
-                  }}
-                  >{`f/${item.feed.feedname}`}</Typography>
-                </Button>
-                <Typography variant="h5">{`${item.headline}`}</Typography>
+                  >{`in f/${item.feed.feedname}`}</Typography>
               </Box>
-
               <Typography className="feedDesc" variant="h7" color="#c4c3c0">
                 {item.description}
               </Typography>
