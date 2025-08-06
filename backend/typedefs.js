@@ -6,6 +6,8 @@ const typeDefs = `#graphql
     subs:[User]
     posts:[Post]
     active:Boolean
+    createdAt:String
+    updatedAt:String
     id:ID!
   }
   type Comment {
@@ -52,6 +54,7 @@ const typeDefs = `#graphql
     ownedfeeds:[Feed]
     active:Boolean
     comments:[Comment]
+    createdAt:String
     id: ID!
   }
   type Token {
@@ -86,22 +89,26 @@ const typeDefs = `#graphql
     offset:Int!
     ):[Comment]
     getuserposts(
-    id:String!
+    userid:String!
     offset:Int!
     ):[Post]
     getusercomments(
-    id:String!
+    userid:String!
     offset:Int!
     ):[Comment]
     getusersubs(
-    id:String!
+    userid:String!
     offset:Int!
-    ):User
+    ):[Feed]
     getuserownedfeeds(
-    id:String!
+    userid:String!
     offset:Int!
+    ):[Feed]
+    getuserinfo(
+    userid:String!
+    offset:Int!
+    type:String!
     ):User
-
   }
 
   type Mutation {

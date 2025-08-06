@@ -1,16 +1,25 @@
-import { Box, Divider, Link, Typography } from "@mui/material";
-import FeedItem from "../../FeedItem";
+
 import ProfileFeedComment from "./ProfileFeedComment";
-import { useNavigate } from "react-router";
-import ProfilePostsItems from "./ProfileFeedPosts";
-const ProfileFeed = ({ item ,type}) => {
+import ProfileFeedPosts from "./ProfileFeedPosts";
+import ProfileFeedOwnedFeeds from "./ProfileFeedOwnedFeeds";
+import ProfileFeedSubs from "./ProfileFeedSubs";
+const ProfileFeed = ({ type, id }) => {
+  const variables = {
+    id: id,
+  };
+  console.log(variables);
+
   if (type === "posts") {
-    return (
-      item.posts.map((item) => <ProfilePostsItems item={item}/>)
-    );
+    return <ProfileFeedPosts variables={variables}></ProfileFeedPosts>;
   }
-  if(type === "comments"){
-    
+  if (type === "comments") {
+    return <ProfileFeedComment variables={variables}></ProfileFeedComment>;
+  }
+  if (type === "ownedfeeds") {
+    return <ProfileFeedOwnedFeeds variables={variables}></ProfileFeedOwnedFeeds>
+  }
+  if (type === "subs") {
+    return <ProfileFeedSubs variables={variables}></ProfileFeedSubs>
   }
 };
 

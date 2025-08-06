@@ -109,7 +109,7 @@ export default function PrimarySearchAppBar({ User, refetch }) {
 
   const handleProfileMenuClick = () => {
     console.log("profile Page");
-    navigate("/profile");
+    navigate(`/profile/${User.id}`);
     handleMenuClose();
   };
   const handleMyaccountClick = () => {

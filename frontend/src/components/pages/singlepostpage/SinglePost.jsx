@@ -92,8 +92,9 @@ const SinglePost = ({ match, User, refetchUser }) => {
         <Grid container rowSpacing={1} sx={{ flexDirection: "row" }}>
           <Grid size={{ xs: 12, md: 2 }}></Grid>
           <Grid
+            className={"feed"}
             size={{ xs: 12, md: 8 }}
-            sx={{ borderLeft: 1, border: "solid", borderColor: "black" }}
+            sx={{}}
           >
             <Box className={"postDesc"}>
               <Useritem

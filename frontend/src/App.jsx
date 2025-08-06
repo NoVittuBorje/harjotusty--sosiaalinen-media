@@ -15,7 +15,7 @@ import useMe from "./components/hooks/useMe";
 function App() {
   const token = localStorage.getItem("token");
   const { data, loading, error, refetch } = useMe();
-  
+  console.log(data)
   let match = useMatch("/post/:id");
   if (!match) {
     match = null;

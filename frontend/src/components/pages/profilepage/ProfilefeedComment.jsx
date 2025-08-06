@@ -1,25 +1,37 @@
-import { Stack, Box, Link, Paper } from "@mui/material";
+import { Stack, Box, Link, Paper, List } from "@mui/material";
 import Comment from "../../commentsection/Comment";
-const ProfileFeedComment = ({ item }) => {
+import useGetUserComments from "../../hooks/useGetUserComments";
+import InfiniteScroll from "react-infinite-scroll-component";
+const ProfileFeedComment = (variables) => {
+  console.log(variables);
+  const comments = useGetUserComments(variables);
+  const loadmore = () => {
+    comments.fetchMore({ offset: comments.data.getusercomments.length });
+  };
+  if (comments.loading) {
+    return <Box>loading</Box>;
+  }
+  console.log(comments.data.getusercomments);
   return (
-    <Box
-      sx={{
-        paddingBottom: 1,
-        border: 1,
-        borderRadius: 5,
-        backgroundColor: "green",
-      }}
-    >
-      <Box sx={{ display: "flex", flexDirection: "column" }}>
-        <Box sx={{ flexDirection: "column", padding: 1 }}>
-          <Box>
-            <Link href="#" color="inherit">
-              <h3>{item.Headline}</h3>
-            </Link>
+    <Box sx={{}}>
+      <InfiniteScroll
+        dataLength={comments.data.getusercomments.length}
+        next={loadmore}
+        hasMore={true}
+      >
+        {comments.data.getusercomments.map((item) => (
+          <Box sx={{ display: "flex", flexDirection: "column" }}>
+            <Box sx={{ flexDirection: "column", padding: 1 }}>
+              <Box>
+                <Link href="#" color="inherit">
+                  <h3>{item.content}</h3>
+                </Link>
+              </Box>
+              <Stack></Stack>
+            </Box>
           </Box>
-          <Stack></Stack>
-        </Box>
-      </Box>
+        ))}
+      </InfiniteScroll>
     </Box>
   );
 };

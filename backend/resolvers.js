@@ -164,7 +164,7 @@ const resolvers = {
     },
     getuserposts: async (root, args) => {
       try {
-        const user = await User.findById(args.id).populate({
+        const user = await User.findById(args.userid).populate({
           path: "posts",
           select: [
             "headline",
@@ -177,9 +177,13 @@ const resolvers = {
             "id",
           ],
           options: {
-            skip:args.offset,
+            skip: args.offset,
             limit: 10,
           },
+          populate:{
+            path: "feed",
+            select:["feedname","id"]
+          }
         });
         console.log(user);
         return user.posts;
@@ -188,8 +192,9 @@ const resolvers = {
       }
     },
     getusercomments: async (root, args) => {
+      console.log(args)
       try {
-        const user = await User.findById(args.id).populate({
+        const user = await User.findById(args.userid).populate({
           path: "comments",
           select: [
             "content",
@@ -200,10 +205,10 @@ const resolvers = {
             "updatedAt",
             "id",
           ],
-          options:{
-            skip:args.offset,
-            limit:10
-          }
+          options: {
+            skip: args.offset,
+            limit: 10,
+          },
         });
 
         console.log(user);
@@ -214,14 +219,30 @@ const resolvers = {
     },
     getusersubs: async (root, args) => {
       try {
-        const user = await User.findById(args.id);
-        return user;
+        const user = await User.findById(args.userid).populate({
+          path: "feedsubs",
+          select: ["feedname", "description", "id", "active","createdAt",],
+          options: {
+            skip: args.offset,
+            limit: 10,
+          },
+        });
+        return user.feedsubs;
       } catch (e) {
         throw new GraphQLError(e);
       }
     },
     getuserownedfeeds: async (root, args) => {
       try {
+        const user = await User.findById(args.userid).populate({
+          path: "ownedfeeds",
+          select: ["feedname", "description", "id", "active","createdAt",],
+          options: {
+            skip: args.offset,
+            limit: 10,
+          },
+        });
+        return user.ownedfeeds;
       } catch (e) {
         throw new GraphQLError(e);
       }

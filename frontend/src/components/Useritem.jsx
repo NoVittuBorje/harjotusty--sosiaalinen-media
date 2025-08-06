@@ -40,7 +40,8 @@ const Useritem = ({ user, time,edittime }) => {
       </ListItemAvatar>
       <Button sx={{paddingLeft:0}}>
         <Typography
-          onClick={() => {
+          onClick={(event) => {
+            event.stopPropagation();
             navigate(`/profile/${user.id}`);
           }}
           color="whitesmoke"

@@ -1,4 +1,4 @@
-import { Box, Divider, Grid, List, Select , MenuItem, FormControl} from "@mui/material";
+import { Box, Divider, Grid, List, Select , MenuItem, FormControl, Button} from "@mui/material";
 
 import FeedItem from "../../FeedItem";
 import useGetPopularPosts from "../../hooks/useGetPopularPosts";
@@ -27,25 +27,24 @@ const Homescreen = ({ User }) => {
       <Grid container rowSpacing={1} sx={{ flexDirection: "row" }}>
         <Grid size={{ xs: 12, md: 2 }}></Grid>
         <Grid size={{ xs: 12, md: 8 }}>
-          <h3 style={{ textAlign: "center" }}>Popular posts</h3>
-          <FormControl fullWidth>
-          <Select defaultValue={"NEWEST"} name="orderBy" id="orderBy-select" onChange={handleChange}>
+          <h3 style={{ textAlign: "center" }}>{orderBy} posts</h3>
+          <FormControl>
+          <Select defaultValue={"NEWEST"} name="orderBy" id="orderBy-select" sx={{color:"white"}} onChange={handleChange}>
             <MenuItem value={"NEWEST"}>Newest</MenuItem>
             <MenuItem value={"POPULAR"}>Popular</MenuItem>
             <MenuItem value={"HOTTEST"}>Hottest</MenuItem>
           </Select>
           </FormControl>
+          
           <Divider></Divider>
           <InfiniteScroll
             dataLength={feed.length}
             next={loadmore}
             hasMore={true}
           >
-            <List>
               {feed.map((item) => (
                 <FeedItem item={item} User={User}></FeedItem>
               ))}
-            </List>
           </InfiniteScroll>
         </Grid>
         <Grid size={{ xs: 12, md: 2 }}></Grid>

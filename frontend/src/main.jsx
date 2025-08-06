@@ -39,17 +39,31 @@ const cache = new InMemoryCache({
         },
         getpostcomments: {
           ...offsetLimitPagination(),
-          keyArgs:["postid"],
+          keyArgs: ["postid"],
         },
         getpopularposts: {
-        ...offsetLimitPagination(),
-        keyArgs:["orderBy"]}
+          ...offsetLimitPagination(),
+          keyArgs: ["orderBy"],
+        },
+        getuserposts: {
+          ...offsetLimitPagination(),
+          keyArgs: ["userid"],
+        },
+        getusercomments: {
+          ...offsetLimitPagination(),
+          keyArgs: ["userid"],
+        },
+        getusersubs: {
+          ...offsetLimitPagination(),
+          keyArgs: ["userid"],
+        },
+        getuserownedfeeds: {
+          ...offsetLimitPagination(),
+          keyArgs: ["userid"],
+        },
       },
-
     },
-
   },
-
 });
 const wsLink = new GraphQLWsLink(createClient({ url: "ws://localhost:4000" }));
 const splitLink = split(
@@ -79,11 +93,13 @@ const theme = createTheme({
     type: "dark",
     primary: {
       main: "#3f51b5",
+      contrastText: "#f5f1f2ff"
     },
     secondary: {
       main: "#f50057",
     },
   },
+  
 });
 
 ReactDOM.createRoot(document.getElementById("root")).render(

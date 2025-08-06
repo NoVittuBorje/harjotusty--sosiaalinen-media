@@ -32,6 +32,7 @@ const FeedItem = ({ item, User }) => {
     <Box className={"feed"} key={item.id}>
       <Box sx={{ display: "flex", flexDirection: "column" }}>
         <Link
+          
           onClick={() => {
             navigate(`/post/${item.id}`);
           }}
@@ -53,11 +54,14 @@ const FeedItem = ({ item, User }) => {
                 }}
               >
                 <Typography variant="h5">{`${item.headline}`}</Typography>
+                <Button>
                   <Typography
                     color="whitesmoke"
                     variant="h8"
                     underline="none"
+                    onClick={(event) => {event.stopPropagation();navigate(`/feed/${item.feed.feedname}`)}}
                   >{`in f/${item.feed.feedname}`}</Typography>
+                  </Button>
               </Box>
               <Typography className="feedDesc" variant="h7" color="#c4c3c0">
                 {item.description}
@@ -75,6 +79,7 @@ const FeedItem = ({ item, User }) => {
             karma={item.karma}
             User={User}
           ></KarmaItem>
+          
         </Box>
       </Box>
 

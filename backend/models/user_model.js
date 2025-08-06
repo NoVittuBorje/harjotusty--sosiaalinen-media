@@ -74,7 +74,6 @@ const schema = new mongoose.Schema(
         type: mongoose.Schema.Types.ObjectId,
         unique: true,
         ref: "Feed",
-        autopopulate: { maxDepth: 1 },
       },
     ],
     comments: [
@@ -87,7 +86,6 @@ const schema = new mongoose.Schema(
       {
         type: mongoose.Schema.Types.ObjectId,
         ref: "Feed",
-        autopopulate: { maxDepth: 1 },
       },
     ],
     posts: [
