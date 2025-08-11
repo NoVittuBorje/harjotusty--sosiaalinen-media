@@ -13,6 +13,6 @@ const useGetPostComments = ({ postid }) => {
       },
     });
   };
-  return { data: data, loading: loading, error: error, refetch: refetch,fetchMore: handleFetchMore,...result };
+  return { data: data, loading: loading, error: error, refetchPostComment: refetch,fetchMore: handleFetchMore,...result };
 };
 export default useGetPostComments;

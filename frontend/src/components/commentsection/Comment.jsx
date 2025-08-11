@@ -29,9 +29,11 @@ const Comment = ({
   User,
   handleModify,
   handleReply,
+  handleNewComment,
   handleDislike,
   handleLike,
   postid,
+  refetchComment,
 }) => {
   const [open, setOpen] = React.useState(false);
   const [editopen, setEditOpen] = React.useState(false);
@@ -47,10 +49,11 @@ const Comment = ({
   };
 
   const Showmorecomments = () => {
-    if (comment.replies.length == 0) {
-      return;
+    if(comment.replies.length == 0){
+      return
     }
     if (ShowComments == false) {
+      console.log(comment)
       return (
         <Button
           size="small"
@@ -130,8 +133,10 @@ const Comment = ({
       return (
         <Collapse in={open} timeout={"auto"} unmountOnExit>
           <NewComment
-            onReply={handleReply}
+            handleReply={handleReply}
+            handleNewComment={handleNewComment}
             commentid={comment.id}
+            refetchComment={refetchComment}
             handleReplyClick={handleReplyClick}
           ></NewComment>
         </Collapse>

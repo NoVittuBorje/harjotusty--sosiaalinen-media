@@ -37,22 +37,43 @@ export const GET_ME = gql`
   }
 `;
 export const GET_FEED = gql`
-query Getfeed($querytype: String!, $feedname: String) {
-  getfeed(querytype: $querytype, feedname: $feedname) {
-    feedname
-    description
-    active
-    id
-    owner {
-      username
-      avatar
-      id
+  query Getfeed($querytype: String!, $feedname: String) {
+    getfeed(querytype: $querytype, feedname: $feedname) {
+      feedname
+      description
       active
-    }
-    subs {
       id
+      owner {
+        username
+        avatar
+        id
+        active
+      }
+      subs {
+        id
+      }
+      posts {
+        headline
+        description
+        karma
+        img
+        active
+        createdAt
+        updatedAt
+        id
+        owner {
+          username
+          avatar
+          id
+          active
+        }
+      }
     }
-    posts {
+  }
+`;
+export const GET_FEED_POSTS = gql`
+  query Getfeedposts($feedname: String!, $offset: Int!, $limit: Int!) {
+    getfeedposts(feedname: $feedname, offset: $offset, limit: $limit) {
       headline
       description
       karma
@@ -61,6 +82,10 @@ query Getfeed($querytype: String!, $feedname: String) {
       createdAt
       updatedAt
       id
+      feed {
+        feedname
+        id
+      }
       owner {
         username
         avatar
@@ -69,56 +94,28 @@ query Getfeed($querytype: String!, $feedname: String) {
       }
     }
   }
-}
 `;
-export const GET_FEED_POSTS = gql`query Getfeedposts($feedname: String!, $offset: Int!, $limit: Int!) {
-  getfeedposts(feedname: $feedname, offset: $offset, limit: $limit) {
-    headline
-    description
-    karma
-    img
-    active
-    createdAt
-    updatedAt
-    id
-    feed {
-      feedname
+export const GET_POST_COMMENTS = gql`
+  query Getpostcomments($postid: String!, $offset: Int!, $limit: Int!) {
+    getpostcomments(postid: $postid, offset: $offset, limit: $limit) {
+      content
+      active
+      karma
+      depth
+      createdAt
+      updatedAt
       id
-    }
-    owner {
+      replies {
+        id
+      }
+      user {
         username
         avatar
         id
-        active
       }
-  }
-}`
-export const GET_POST_COMMENTS = gql`query Getpostcomments($postid: String!, $offset: Int!, $limit: Int!) {
-  getpostcomments(postid: $postid, offset: $offset, limit: $limit) {
-    content
-    active
-    karma
-    depth
-    createdAt
-    updatedAt
-    id
-    replies {
-      id
-    }
-    user {
-      username
-      email
-      firstname
-      lastname
-      avatar
-      relationship
-      description
-      work
-      active
-      id
     }
   }
-}`
+`;
 export const GET_POST_MIN = gql`
   query Getpost($getpostId: String!) {
     getpost(id: $getpostId) {
@@ -139,23 +136,25 @@ export const GET_POST_MIN = gql`
         feedname
         id
       }
+    }
   }
-}
 `;
-export const GET_USER = gql`query Getuser($getuserId: String!) {
-  getuser(id: $getuserId) {
-    username
-    email
-    firstname
-    lastname
-    avatar
-    relationship
-    description
-    work
-    active
-    id
+export const GET_USER = gql`
+  query Getuser($getuserId: String!) {
+    getuser(id: $getuserId) {
+      username
+      email
+      firstname
+      lastname
+      avatar
+      relationship
+      description
+      work
+      active
+      id
+    }
   }
-}`
+`;
 
 export const GET_ALL_FEED = gql`
   query Getfeed($querytype: String!, $feedname: String) {
@@ -284,8 +283,8 @@ export const GET_POST = gql`
   }
 `;
 export const GET_COMMENTS = gql`
-  query Getcomments($commentid: String!) {
-    getcomments(commentid: $commentid) {
+  query Getcomments($commentid: String!, $offset: Int!) {
+    getcomments(commentid: $commentid, offset: $offset) {
       content
       user {
         username
@@ -318,74 +317,79 @@ export const GET_COMMENTS = gql`
     }
   }
 `;
-export const GET_POPULAR_POSTS = gql`query Query($offset: Int!, $orderBy: String) {
-  getpopularposts(offset: $offset, orderBy: $orderBy) {
-    headline
-    description
-    karma
-    img
-    active
-    createdAt
-    updatedAt
-    id
-    feed {
-      feedname
-    }
-    owner {
+export const GET_POPULAR_POSTS = gql`
+  query Query($offset: Int!, $orderBy: String) {
+    getpopularposts(offset: $offset, orderBy: $orderBy) {
+      headline
+      description
+      karma
+      img
+      active
+      createdAt
+      updatedAt
+      id
+      feed {
+        feedname
+      }
+      owner {
         username
         avatar
         id
         active
       }
+    }
   }
-}`
+`;
 export const GET_USER_COMMENTS = gql`
-query Getusercomments($userid: String!, $offset: Int!) {
-  getusercomments(userid: $userid, offset: $offset) {
-    content
-    active
-    karma
-    depth
-    createdAt
-    updatedAt
-    id
-  }
-}
-`
-export const GET_USER_POSTS = gql`
-query Getuserposts($userid: String!, $offset: Int!) {
-  getuserposts(userid: $userid, offset: $offset) {
-    headline
-    description
-    karma
-    img
-    active
-    createdAt
-    updatedAt
-    id
-    feed {
-      feedname
+  query Getusercomments($userid: String!, $offset: Int!) {
+    getusercomments(userid: $userid, offset: $offset) {
+      content
+      active
+      karma
+      depth
+      createdAt
+      updatedAt
       id
     }
   }
-}`
+`;
+export const GET_USER_POSTS = gql`
+  query Getuserposts($userid: String!, $offset: Int!) {
+    getuserposts(userid: $userid, offset: $offset) {
+      headline
+      description
+      karma
+      img
+      active
+      createdAt
+      updatedAt
+      id
+      feed {
+        feedname
+        id
+      }
+    }
+  }
+`;
 export const GET_USER_SUBS = gql`
-query Getusersubs($userid: String!, $offset: Int!) {
-  getusersubs(userid: $userid, offset: $offset) {
-    feedname
-    description
-    active
-    createdAt
-    id
+  query Getusersubs($userid: String!, $offset: Int!) {
+    getusersubs(userid: $userid, offset: $offset) {
+      feedname
+      description
+      active
+      createdAt
+      id
+    }
   }
-}`
+`;
 export const GET_USER_OWNEDFEEDS = gql`
-query Getuserownedfeeds($userid: String!, $offset: Int!) {
-  getuserownedfeeds(userid: $userid, offset: $offset) {
-    feedname
-    description
-    active
-    createdAt
-    id
+  query Getuserownedfeeds($userid: String!, $offset: Int!) {
+    getuserownedfeeds(userid: $userid, offset: $offset) {
+      feedname
+      description
+      active
+      createdAt
+      id
+    }
   }
-}`
+`;

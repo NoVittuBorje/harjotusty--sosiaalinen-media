@@ -13,7 +13,7 @@ const MoreComments = ({
   handleDislike,
   handleReply,
 }) => {
-  const { data, error, loading, refetch } = useGetComments({
+  const { data, error, loading, refetchComments } = useGetComments({
     commentid: comment.id,
   });
   if (!loading) {
@@ -30,6 +30,7 @@ const MoreComments = ({
               handleDislike={handleDislike}
               handleDelete={handleDelete}
               handleModify={handleModify}
+              refetchComment={refetchComments}
             />
           </ListItem>
         ))}

@@ -5,7 +5,9 @@ import { useNavigate } from "react-router";
 import useGetUserPosts from "../../hooks/useGetUserPosts";
 import InfiniteScroll from "react-infinite-scroll-component";
 import Timestamp from "../../utils/Timestamp";
-const ProfileFeedPosts = (variables) => {
+import KarmaItem from "../../KarmaItem";
+const ProfileFeedPosts = ({variables,userdata}) => {
+  console.log(variables)
   const navigate = useNavigate();
   const posts = useGetUserPosts(variables);
   const loadmore = () => {
@@ -58,6 +60,7 @@ const ProfileFeedPosts = (variables) => {
                     >
                       {item.description}
                     </Typography>
+                    
                   </Box>
                 </Box>
               </Link>

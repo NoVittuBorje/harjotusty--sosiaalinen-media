@@ -1,5 +1,6 @@
 import {
   Box,
+  Button,
   Collapse,
   Divider,
   Grid,
@@ -28,13 +29,15 @@ const SinglePost = ({ match, User, refetchUser }) => {
   console.log(match.params.id);
   const navigate = useNavigate();
   const [edit, editresult] = useEditPost();
-  const { data, loading, error, refetch } = useGetPost({ id });
+  const { data, loading, error, refetchPost } = useGetPost({ id });
   const [newcomment, result] = useMakeComment();
   const [openNewComment, setopenNewComment] = useState(false);
 
   const handleNewComment = async (content) => {
     console.log("new comment");
     const data = await newcomment({ postid: id, content: content.content });
+    setopenNewComment(false)
+    refetchUser()
   };
   const handleLike = async () => {
     console.log("likepost");
@@ -92,7 +95,6 @@ const SinglePost = ({ match, User, refetchUser }) => {
         <Grid container rowSpacing={1} sx={{ flexDirection: "row" }}>
           <Grid size={{ xs: 12, md: 2 }}></Grid>
           <Grid
-            className={"feed"}
             size={{ xs: 12, md: 8 }}
             sx={{}}
           >
@@ -113,11 +115,14 @@ const SinglePost = ({ match, User, refetchUser }) => {
                 <Typography variant="h5" sx={{ textDecoration: "underline",textDecorationThickness:1 }}>
                   {postdata.headline}
                 </Typography>
+                <Button>
                 <Typography
                   color="whitesmoke"
                   variant="h8"
                   underline="none"
+                  onClick={() => {navigate(`/feed/${postdata.feed.feedname}`)}}
                 >{`in f/${postdata.feed.feedname}`}</Typography>
+                </Button>
               </Box>
               <Typography variant="h7">{postdata.description}</Typography>
               <Box className={"footer"}>
@@ -141,9 +146,9 @@ const SinglePost = ({ match, User, refetchUser }) => {
               <Divider></Divider>
               <CommentSection
                 refetchUser={refetchUser}
+                refetchPost={refetchPost}
                 item={postdata.comments}
                 User={User}
-                refetch={refetch}
                 postid={postdata.id}
               ></CommentSection>
             </Box>

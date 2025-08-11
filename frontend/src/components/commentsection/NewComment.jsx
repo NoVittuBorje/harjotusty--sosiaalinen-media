@@ -1,19 +1,21 @@
 import { FormGroup, TextField, Button, Box } from "@mui/material";
 import { useState } from "react";
 
-const NewComment = ({ onReply, commentid, handleReplyClick }) => {
+const NewComment = ({ handleReply, commentid, handleReplyClick ,refetchComment}) => {
   const [comment, setComment] = useState("");
+  const handleNewReply = (event) => {
+    event.preventDefault()
+    handleReply({ content: comment, commentid ,refetchComment:refetchComment})
+    
+  }
   return (
     <FormGroup>
       <TextField
         required
         value={comment}
         multiline
-        InputLabelProps={{
-          style: { color: "#fff" },
-        }}
-        slotProps={{ style: { color: "white" } }}
         variant="standard"
+        inputProps={{ style: { color: "white" } }}
         onChange={(event) => setComment(event.target.value)}
       />
       <Box sx={{ display: "flex", paddingTop: 1 }}>
@@ -21,8 +23,8 @@ const NewComment = ({ onReply, commentid, handleReplyClick }) => {
           size="small"
           variant="outlined"
           color=""
-          onClick={() => {
-            onReply({ content: comment, commentid });
+          onClick={(event) => {
+            handleNewReply(event)
           }}
         >
           reply

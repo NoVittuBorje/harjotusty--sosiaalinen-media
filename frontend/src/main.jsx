@@ -89,14 +89,23 @@ const theme = createTheme({
       textTransform: "none",
     },
   },
+
   palette: {
     type: "dark",
     primary: {
       main: "#3f51b5",
-      contrastText: "#f5f1f2ff"
+      contrastText: "#f5f1f2ff",
     },
     secondary: {
       main: "#f50057",
+    },
+  },
+    components:{
+    MuiTextField:{
+      defaultProps:{
+        variant:"standard",
+        color:"primary",
+      }
     },
   },
   

@@ -43,7 +43,7 @@ const Profilepage = ({ User ,match}) => {
           <Divider></Divider>
           <Box>
             <List>
-                <ProfileFeed id={profiledata.id} type={type}></ProfileFeed>
+                <ProfileFeed id={profiledata.id} userdata={userdata.data.getuser} type={type}></ProfileFeed>
             </List>
           </Box>
         </Grid>

@@ -2,18 +2,19 @@ import { IconButton } from '@mui/material'
 import React, { useState } from 'react'
 import ArrowUpwardRoundedIcon from "@mui/icons-material/ArrowUpwardRounded";
 import ArrowDownwardRoundedIcon from "@mui/icons-material/ArrowDownwardRounded";
-const LikeButton = ({handleLike,handleDislike,id,likeActive}) => {
-
-    const [liked,setLiked] = useState(likeActive)
+const LikeButton = ({handleLike,id,likeActive,dislikeActive,setLiked,setDisliked}) => {
     const handleClick = () => {
-        setLiked(!liked)
+        setLiked(!likeActive)
+        if(dislikeActive){
+          setDisliked(!dislikeActive)
+        }
     }
 
-    if (liked){
+    if (likeActive){
         return (
                 <IconButton
                   className={"button"}
-                  onClick={() => {handleDislike({ id });handleClick()}}
+                  onClick={() => {handleLike({ id });handleClick()}}
                   size="small"
                 ><ArrowUpwardRoundedIcon
         style={{ color: "green" }}

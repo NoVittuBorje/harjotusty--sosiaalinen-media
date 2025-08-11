@@ -16,27 +16,10 @@ const KarmaItem = ({
   dislikes,
 }) => {
   const navigate = useNavigate();
-  const [upArrow, setUpArrow] = useState(false);
-  const [downArrow, setDownArrow] = useState(false);
-  const ArrowcolorDislike = ({ setDownArrow, downArrow, id, dislikes }) => {
-  if (downArrow) {
-    setDownArrow(false);
-  }
-  ;
-  if (downArrow) {
-    return (
-      <ArrowDownwardRoundedIcon
-        style={{ color: "red" }}
-      ></ArrowDownwardRoundedIcon>
-    );
-  } else {
-    return (
-      <ArrowDownwardRoundedIcon
-        style={{ color: "grey" }}
-      ></ArrowDownwardRoundedIcon>
-    );
-  }
-};
+  dislikes = dislikes.map((l) => l.id);
+  likes = likes.map((l) => l.id);
+  const [liked, setLiked] = useState(likes.includes(id));
+  const [disliked, setDisliked] = useState(dislikes.includes(id));
   if (!User) {
     return (
       <Box className={"footerkarma"}>
@@ -68,20 +51,30 @@ const KarmaItem = ({
       </Box>
     );
   }
-  dislikes = dislikes.map(l => l.id)
- 
-  likes = likes.map(l => l.id)
-
   return (
     <Box className={"footerkarma"}>
       <Tooltip title="Like">
-      <LikeButton handleDislike={handleDislike} id={id} handleLike={handleLike} likeActive={likes.includes(id)}></LikeButton>
+        <LikeButton
+          id={id}
+          handleLike={handleLike}
+          dislikeActive={disliked}
+          likeActive={liked}
+          setLiked={setLiked}
+          setDisliked={setDisliked}
+        ></LikeButton>
       </Tooltip>
       <Tooltip title="karma">
         <a style={{ paddingTop: 0, textAlignVertical: "top" }}>{karma}</a>
       </Tooltip>
       <Tooltip title="Dislike">
-      <DislikeButton handleDislike={handleDislike} id={id} handleLike={handleLike} likeActive={dislikes.includes(id)}></DislikeButton>
+        <DislikeButton
+          handleDislike={handleDislike}
+          id={id}
+          dislikeActive={disliked}
+          likeActive={liked}
+          setLiked={setLiked}
+          setDisliked={setDisliked}
+        ></DislikeButton>
       </Tooltip>
     </Box>
   );

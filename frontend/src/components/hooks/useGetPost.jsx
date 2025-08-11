@@ -9,6 +9,6 @@ const useGetPost = ({ id }) => {
       nextFetchPolicy: "network-only",
     }
   );
-  return { data: data, loading: loading, error: error, refetch: refetch };
+  return { data: data, loading: loading, error: error, refetchPost: refetch };
 };
 export default useGetPost;

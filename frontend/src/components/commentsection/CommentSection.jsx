@@ -6,8 +6,8 @@ import { Box } from "@mui/material";
 import useEditComment from "../hooks/useEditComment";
 import InfiniteScroll from "react-infinite-scroll-component";
 import useGetPostComments from "../hooks/useGetPostComments";
-const CommentSection = ({ item, User, postid, refetchUser,refetch}) => {
-  const { data, loading, error,fetchMore } = useGetPostComments({postid})
+const CommentSection = ({ item, User, postid,}) => {
+  const { data, loading, error,refetchPostComment,fetchMore } = useGetPostComments({postid})
   const [newcomment, result] = useMakeComment();
   const [edit, editresult] = useEditComment();
   const handleDelete = ({id}) => {
@@ -16,29 +16,24 @@ const CommentSection = ({ item, User, postid, refetchUser,refetch}) => {
   const handleModify = async ({ commentid, content, action }) => {
     const data = await edit({ commentid, content, action });
     console.log(data);
-    refetch()
   };
-  const handleReply = async ({ content, commentid }) => {
+  const handleReply = async ({content, commentid,refetchComment}) => {
     console.log(content);
     const data = await newcomment({ postid, content: content, replyto: commentid });
     console.log(data);
-    refetch()
-  };
+    refetchComment()
+  }
   const handleDislike = async ({id}) => {
     console.log("dislike comment");
     console.log(id)
     const data = await edit({ commentid:id, content:"null", action:"dislike" })
     console.log(data)
-    refetchUser()
-    refetch()
   };
   const handleLike = async ({id}) => {
     console.log("like comment");
     console.log(id)
     const data = await edit({ commentid:id, content:"null", action:"like" })
     console.log(data)
-    refetchUser()
-    refetch()
   };
   console.log(data)
   if(loading){
@@ -62,10 +57,10 @@ const CommentSection = ({ item, User, postid, refetchUser,refetch}) => {
             handleModify={handleModify}
             handleDislike={handleDislike}
             handleLike={handleLike}
-            refetchUser={refetchUser}
             key={comment.id}
             comment={comment}
             handleReply={handleReply}
+            refetchComment={refetchPostComment}
             postid={postid}
           />
           

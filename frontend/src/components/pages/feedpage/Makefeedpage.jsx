@@ -51,6 +51,7 @@ const MakeFeedPage = () => {
                 value={formik.values.feedname}
                 label="Feed name"
                 variant="outlined"
+                inputProps={{ style: { color: "white" } }}
                 onChange={formik.handleChange("feedname")}
               />
               <TextField
@@ -60,6 +61,7 @@ const MakeFeedPage = () => {
                 multiline
                 rows={6}
                 label="Description"
+                inputProps={{ style: { color: "white" } }}
                 variant="filled"
                 onChange={formik.handleChange("description")}
               />

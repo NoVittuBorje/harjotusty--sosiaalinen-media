@@ -106,6 +106,14 @@ const resolvers = {
         depth: 0,
         active: true,
       })
+        .populate({
+          path: "replies",
+          select: ["id"],
+        })
+        .populate({
+          path: "user",
+          select: ["username", "avatar", "id"],
+        })
         .sort({ karma: -1 })
         .skip(args.offset)
         .limit(10);
@@ -158,7 +166,29 @@ const resolvers = {
     },
     getcomments: async (root, args) => {
       console.log(args);
-      const comments = await Comment.find({ _id: args.commentid });
+      const comments = await Comment.find({ _id: args.commentid })
+        .populate({
+          path: "user",
+          select: ["username", "id", "avatar"],
+        })
+        .populate({
+          path: "replies",
+          select: [
+            "content",
+            "active",
+            "karma",
+            "depth",
+            "id",
+            "createdAt",
+            "updatedAt",
+            "user",
+            "replies",
+          ],
+          populate: {
+            path: ["user", "replies"],
+            select: ["username", "avatar", "id"],
+          },
+        });
       console.log(comments);
       return comments;
     },
@@ -180,10 +210,10 @@ const resolvers = {
             skip: args.offset,
             limit: 10,
           },
-          populate:{
+          populate: {
             path: "feed",
-            select:["feedname","id"]
-          }
+            select: ["feedname", "id"],
+          },
         });
         console.log(user);
         return user.posts;
@@ -192,7 +222,7 @@ const resolvers = {
       }
     },
     getusercomments: async (root, args) => {
-      console.log(args)
+      console.log(args);
       try {
         const user = await User.findById(args.userid).populate({
           path: "comments",
@@ -221,7 +251,7 @@ const resolvers = {
       try {
         const user = await User.findById(args.userid).populate({
           path: "feedsubs",
-          select: ["feedname", "description", "id", "active","createdAt",],
+          select: ["feedname", "description", "id", "active", "createdAt"],
           options: {
             skip: args.offset,
             limit: 10,
@@ -236,7 +266,7 @@ const resolvers = {
       try {
         const user = await User.findById(args.userid).populate({
           path: "ownedfeeds",
-          select: ["feedname", "description", "id", "active","createdAt",],
+          select: ["feedname", "description", "id", "active", "createdAt"],
           options: {
             skip: args.offset,
             limit: 10,
@@ -404,6 +434,13 @@ const resolvers = {
           await comment.save();
           return comment;
         } else {
+          if (dislikecommentids.includes(comment._id.toString())) {
+            comment.karma = comment.karma + 1;
+            const newuser = await User.findOneAndUpdate(
+              { _id: context.currentUser._id },
+              { $pull: { dislikedcomments: comment._id } }
+            );
+          }
           comment.karma = comment.karma + 1;
           user.likedcomments = [...user.likedcomments, comment];
           await user.save();
@@ -428,6 +465,13 @@ const resolvers = {
           await comment.save();
           return comment;
         } else {
+          if (likecommentids.includes(comment._id.toString())) {
+            comment.karma = comment.karma - 1;
+            const newuser = await User.findOneAndUpdate(
+              { _id: context.currentUser._id },
+              { $pull: { likedcomments: comment._id } }
+            );
+          }
           comment.karma = comment.karma - 1;
           user.dislikedcomments = [...user.dislikedcomments, comment];
           await user.save();
@@ -469,6 +513,13 @@ const resolvers = {
           await post.save();
           return post;
         } else {
+          if (dislikedids.includes(post._id.toString())) {
+            post.karma = post.karma + 1;
+            const newuser = await User.findOneAndUpdate(
+              { _id: context.currentUser._id },
+              { $pull: { dislikedposts: post._id } }
+            );
+          }
           post.karma = post.karma + 1;
           user.likedposts = [...user.likedposts, post];
           await user.save();
@@ -491,6 +542,13 @@ const resolvers = {
           await post.save();
           return post;
         } else {
+          if (likeids.includes(post._id.toString())) {
+            post.karma = post.karma - 1;
+            const newuser = await User.findOneAndUpdate(
+              { _id: context.currentUser._id },
+              { $pull: { likedposts: post._id } }
+            );
+          }
           post.karma = post.karma - 1;
           user.dislikedposts = [...user.dislikedposts, post];
           await user.save();

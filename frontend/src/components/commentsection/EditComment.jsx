@@ -9,10 +9,7 @@ const EditComment = ({ onReply, commentid, oldcomment, handleEditClick }) => {
         required
         value={comment}
         multiline
-        InputLabelProps={{
-          style: { color: "#fff" },
-        }}
-        slotProps={{ style: { color: "white" } }}
+        inputProps={{ style: { color: "white" } }}
         variant="standard"
         onChange={(event) => setComment(event.target.value)}
       />

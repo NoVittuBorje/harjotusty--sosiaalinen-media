@@ -55,6 +55,7 @@ const NewPostpage = ({ match }) => {
                 value={formik.values.headline}
                 label="Headline"
                 variant="outlined"
+                inputProps={{ style: { color: "white" } }}
                 onChange={formik.handleChange("headline")}
               />
               <TextField
@@ -63,6 +64,7 @@ const NewPostpage = ({ match }) => {
                 value={formik.values.description}
                 multiline
                 rows={6}
+                inputProps={{ style: { color: "white" } }}
                 label="Post description"
                 variant="filled"
                 onChange={formik.handleChange("description")}

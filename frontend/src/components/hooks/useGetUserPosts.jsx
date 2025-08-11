@@ -1,6 +1,7 @@
 import { useQuery } from "@apollo/client";
 import { GET_USER_POSTS } from "../graphql/queries";
-const useGetUserPosts = ({variables}) => {
+const useGetUserPosts = (variables) => {
+  console.log(variables)
   const { data, error, loading, refetch, fetchMore,...result } = useQuery(GET_USER_POSTS,
     { variables: { offset:0 ,userid:variables.id} },
     {

@@ -11,8 +11,8 @@ const typeDefs = `#graphql
     id:ID!
   }
   type Comment {
-    post:Post!
-    user:User!
+    post:Post
+    user:User
     content:String
     replies:[Comment]
     replyto:Comment

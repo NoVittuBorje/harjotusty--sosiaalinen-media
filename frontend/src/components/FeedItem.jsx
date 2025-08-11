@@ -19,14 +19,20 @@ import { useNavigate } from "react-router";
 import KarmaItem from "./KarmaItem";
 import Timestamp from "./utils/Timestamp";
 import Useritem from "./Useritem";
+import useEditPost from "./hooks/useEditPost";
 const FeedItem = ({ item, User }) => {
   const navigate = useNavigate();
+  console.log(User)
+  const [edit, editresult] = useEditPost();
+  const handleLike = async () => {
+    console.log("likepost");
+    const data = await edit({ action: "like", content: "", postid: item.id });
 
-  const handleLike = () => {
-    console.log("like");
   };
-  const handleDislike = () => {
-    console.log("dislike");
+  const handleDislike = async () => {
+    console.log("dislikepost");
+    const data = await edit({ action: "dislike", content: "", postid: item.id });
+    console.log(data);
   };
   return (
     <Box className={"feed"} key={item.id}>
@@ -60,7 +66,9 @@ const FeedItem = ({ item, User }) => {
                     variant="h8"
                     underline="none"
                     onClick={(event) => {event.stopPropagation();navigate(`/feed/${item.feed.feedname}`)}}
-                  >{`in f/${item.feed.feedname}`}</Typography>
+                  >{`in f/${item.feed.feedname}`}
+                  
+                  </Typography>
                   </Button>
               </Box>
               <Typography className="feedDesc" variant="h7" color="#c4c3c0">

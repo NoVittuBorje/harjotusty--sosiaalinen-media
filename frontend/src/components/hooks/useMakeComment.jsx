@@ -1,8 +1,9 @@
 import { MAKECOMMENT } from "../graphql/mutations";
 import { useMutation } from "@apollo/client";
+import { GET_COMMENTS } from "../graphql/queries";
 
 const useMakeComment = () => {
-  const [mutate, result] = useMutation(MAKECOMMENT);
+  const [mutate, result] = useMutation(MAKECOMMENT)
   const comment = async ({ postid, replyto, content }) => {
     if (replyto) {
       const data = await mutate({
