@@ -20,9 +20,8 @@ import KarmaItem from "./KarmaItem";
 import Timestamp from "./utils/Timestamp";
 import Useritem from "./Useritem";
 import useEditPost from "./hooks/useEditPost";
-const FeedItem = ({ item, User }) => {
+const FeedItem = ({ item,owner, User }) => {
   const navigate = useNavigate();
-  console.log(User)
   const [edit, editresult] = useEditPost();
   const handleLike = async () => {
     console.log("likepost");
@@ -34,6 +33,7 @@ const FeedItem = ({ item, User }) => {
     const data = await edit({ action: "dislike", content: "", postid: item.id });
     console.log(data);
   };
+  console.log(User)
   return (
     <Box className={"feed"} key={item.id}>
       <Box sx={{ display: "flex", flexDirection: "column" }}>
@@ -47,7 +47,7 @@ const FeedItem = ({ item, User }) => {
           color="white"
         >
           <Box sx={{ flexDirection: "column", padding: 1 }}>
-            <Useritem time={item.createdAt} user={item.owner}></Useritem>
+            <Useritem time={item.createdAt} user={owner}></Useritem>
 
             <Box>
               <Box
@@ -85,6 +85,7 @@ const FeedItem = ({ item, User }) => {
             likes={User ? User.likedposts : []}
             dislikes={User ? User.dislikedposts : []}
             karma={item.karma}
+            id={item.id}
             User={User}
           ></KarmaItem>
           

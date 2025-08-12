@@ -1,4 +1,4 @@
-import { IconButton } from "@mui/material";
+import { IconButton, Tooltip } from "@mui/material";
 import React, { useState } from "react";
 import ArrowUpwardRoundedIcon from "@mui/icons-material/ArrowUpwardRounded";
 import ArrowDownwardRoundedIcon from "@mui/icons-material/ArrowDownwardRounded";
@@ -27,9 +27,11 @@ const DislikeButton = ({
         }}
         size="small"
       >
+        <Tooltip title={"dislike"}>
         <ArrowDownwardRoundedIcon
           style={{ color: "red" }}
         ></ArrowDownwardRoundedIcon>
+        </Tooltip>
       </IconButton>
     );
   }
@@ -42,9 +44,11 @@ const DislikeButton = ({
       }}
       size="small"
     >
+      <Tooltip title={"dislike"}>
       <ArrowDownwardRoundedIcon
         style={{ color: "grey" }}
       ></ArrowDownwardRoundedIcon>
+      </Tooltip>
     </IconButton>
   );
 };

@@ -164,124 +164,7 @@ export const GET_ALL_FEED = gql`
     }
   }
 `;
-export const GET_POST = gql`
-  query Getpost($getpostId: String!) {
-    getpost(id: $getpostId) {
-      headline
-      description
-      owner {
-        username
-        id
-        avatar
-      }
-      karma
-      img
-      id
-      comments {
-        user {
-          username
-          avatar
-          id
-        }
-        karma
-        depth
-        content
-        id
-        replies {
-          content
-          karma
-          depth
-          id
-          user {
-            username
-            avatar
-            id
-          }
-          replies {
-            karma
-            depth
-            content
-            id
-            user {
-              username
-              avatar
-              id
-            }
-            replies {
-              karma
-              depth
-              content
-              id
-              user {
-                username
-                avatar
-                id
-              }
-              replies {
-                karma
-                depth
-                content
-                id
-                user {
-                  username
-                  id
-                  avatar
-                }
-                replies {
-                  karma
-                  depth
-                  content
-                  id
-                  user {
-                    username
-                    avatar
-                    id
-                  }
-                  replies {
-                    karma
-                    depth
-                    content
-                    id
-                    user {
-                      username
-                      avatar
-                      id
-                    }
-                    replies {
-                      karma
-                      depth
-                      content
-                      id
-                      user {
-                        username
-                        avatar
-                        id
-                      }
-                      replies {
-                        karma
-                        depth
-                        content
-                        id
-                        user {
-                          username
-                          avatar
-                          id
-                        }
-                        replies {
-                          id
-                        }
-                      }
-                    }
-                  }
-                }
-              }
-            }
-          }
-        }
-      }
-    }
-  }
-`;
+
 export const GET_COMMENTS = gql`
   query Getcomments($commentid: String!, $offset: Int!) {
     getcomments(commentid: $commentid, offset: $offset) {
@@ -350,6 +233,14 @@ export const GET_USER_COMMENTS = gql`
       createdAt
       updatedAt
       id
+      user {
+        username
+        id
+        avatar
+      }
+      replies{
+      id
+      }
     }
   }
 `;
@@ -364,6 +255,9 @@ export const GET_USER_POSTS = gql`
       createdAt
       updatedAt
       id
+      owner {
+        id
+      }
       feed {
         feedname
         id

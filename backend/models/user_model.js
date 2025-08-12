@@ -41,7 +41,7 @@ const schema = new mongoose.Schema(
       {
         type: mongoose.Schema.Types.ObjectId,
         ref: "Post",
-        autopopulate: { maxDepth: 1 },
+
         unique:true,
       },
     ],
@@ -49,7 +49,7 @@ const schema = new mongoose.Schema(
       {
         type: mongoose.Schema.Types.ObjectId,
         ref: "Post",
-        autopopulate: { maxDepth: 1 },
+
         unique:true,
       },
     ],
@@ -57,7 +57,7 @@ const schema = new mongoose.Schema(
       {
         type: mongoose.Schema.Types.ObjectId,
         ref: "Comment",
-        autopopulate: { maxDepth: 1 },
+
         unique:true,
       },
     ],
@@ -65,7 +65,6 @@ const schema = new mongoose.Schema(
       {
         type: mongoose.Schema.Types.ObjectId,
         ref: "Comment",
-        autopopulate: { maxDepth: 1 },
         unique:true,
       },
     ],
@@ -101,5 +100,5 @@ const schema = new mongoose.Schema(
   },
   { timestamps: true }
 );
-schema.plugin(require("mongoose-autopopulate"));
+
 module.exports = mongoose.model("User", schema);

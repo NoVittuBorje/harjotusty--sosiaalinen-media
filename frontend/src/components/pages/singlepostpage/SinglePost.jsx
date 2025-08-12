@@ -23,6 +23,7 @@ import KarmaItem from "../../KarmaItem";
 import { useNavigate } from "react-router";
 import useEditPost from "../../hooks/useEditPost";
 import Useritem from "../../Useritem";
+import useGetPostComments from "../../hooks/useGetPostComments";
 
 const SinglePost = ({ match, User, refetchUser }) => {
   const id = match.params.id;
@@ -30,6 +31,7 @@ const SinglePost = ({ match, User, refetchUser }) => {
   const navigate = useNavigate();
   const [edit, editresult] = useEditPost();
   const { data, loading, error, refetchPost } = useGetPost({ id });
+  const postcomments = useGetPostComments({postid:id})
   const [newcomment, result] = useMakeComment();
   const [openNewComment, setopenNewComment] = useState(false);
 
@@ -44,6 +46,7 @@ const SinglePost = ({ match, User, refetchUser }) => {
     const data = await edit({ action: "like", content: "", postid: id });
     refetchUser();
   };
+
   const handleDislike = async () => {
     console.log("dislikepost");
     const data = await edit({ action: "dislike", content: "", postid: id });
@@ -89,6 +92,7 @@ const SinglePost = ({ match, User, refetchUser }) => {
     }
   };
   const postdata = data ? data.getpost : [];
+  const comments = postcomments.data ? postcomments.data.getpostcomments : []
   if (postdata.feed) {
     return (
       <Box sx={{ flexGrow: 1 }}>
@@ -145,11 +149,11 @@ const SinglePost = ({ match, User, refetchUser }) => {
           </Collapse>
               <Divider></Divider>
               <CommentSection
-                refetchUser={refetchUser}
-                refetchPost={refetchPost}
                 item={postdata.comments}
                 User={User}
-                postid={postdata.id}
+                comments={comments}
+                loadmore={postcomments.loadmore}
+                loading={postcomments.loading}
               ></CommentSection>
             </Box>
           </Grid>

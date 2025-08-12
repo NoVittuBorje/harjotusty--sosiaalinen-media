@@ -11,6 +11,7 @@ import MakeFeedPage from "./components/pages/feedpage/Makefeedpage";
 import FeedPage from "./components/pages/feedpage/Feedpage";
 import NewPostpage from "./components/pages/feedpage/NewPostpage";
 import useMe from "./components/hooks/useMe";
+import MyAccountpage from "./components/myaccountpage/MyAccountpage";
 
 function App() {
   const token = localStorage.getItem("token");
@@ -61,6 +62,7 @@ function App() {
           path="/newpost/:postfeedname"
           element={<NewPostpage match={matchfeedpost} User={User} refetchUser={refetch}/>}
         />
+        <Route path="/myaccount" element={<MyAccountpage User={User}></MyAccountpage>}/>
       </Routes>
     </Box>
   );

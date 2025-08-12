@@ -114,6 +114,7 @@ export default function PrimarySearchAppBar({ User, refetch }) {
   };
   const handleMyaccountClick = () => {
     console.log("my acc page");
+    navigate("/myaccount")
     handleMenuClose();
   };
   const handleLoginClick = () => {

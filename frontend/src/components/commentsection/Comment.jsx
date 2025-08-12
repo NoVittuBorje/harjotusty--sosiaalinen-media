@@ -53,7 +53,6 @@ const Comment = ({
       return
     }
     if (ShowComments == false) {
-      console.log(comment)
       return (
         <Button
           size="small"

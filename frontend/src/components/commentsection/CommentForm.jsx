@@ -11,12 +11,9 @@ const CommentForm = ({ onSubmit }) => {
         multiline
         label="new comment"
         color="primary"
-        sx={{
-          input: {
-            color: "white",
-          },
-        }}
+        inputProps={{ style: { color: "white" } }}
         variant="standard"
+        InputLabelProps={{style:{color:"white"}}}
         onChange={(event) => setContent(event.target.value)}
       />
       <Box sx={{ display: "flex", paddingTop: 1 }}>
@@ -24,6 +21,8 @@ const CommentForm = ({ onSubmit }) => {
           size="small"
           variant="outlined"
           color=""
+          className={"button"}
+          style={{ borderRadius: 50 }}
           onClick={() => {
             onSubmit({ content: content });
           }}

@@ -1,6 +1,6 @@
 import { Box, Grid } from "@mui/material";
 
-const MyAccountpage = () => {
+const MyAccountpage = ({User}) => {
   return (
     <Box sx={{ flexGrow: 1 }}>
       <Grid container rowSpacing={1} sx={{ flexDirection: "row" }}>

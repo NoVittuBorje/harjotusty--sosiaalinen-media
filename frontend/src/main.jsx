@@ -100,15 +100,6 @@ const theme = createTheme({
       main: "#f50057",
     },
   },
-    components:{
-    MuiTextField:{
-      defaultProps:{
-        variant:"standard",
-        color:"primary",
-      }
-    },
-  },
-  
 });
 
 ReactDOM.createRoot(document.getElementById("root")).render(

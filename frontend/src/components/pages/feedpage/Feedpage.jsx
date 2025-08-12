@@ -3,22 +3,20 @@ import useGetFeed from "../../hooks/useGetFeed";
 import { useNavigate } from "react-router";
 import FeedItem from "../../FeedItem";
 import useSubscribe from "../../hooks/useSubscribe";
-import InfiniteScroll from "react-infinite-scroll-component"
+import InfiniteScroll from "react-infinite-scroll-component";
 import useGetFeedPosts from "../../hooks/useGetFeedPosts";
 
-
-const FeedPage = ({ match, User,refetchUser }) => {
+const FeedPage = ({ match, User, refetchUser }) => {
   console.log(match.params.feedname);
   const feedname = match.params.feedname;
   const navigate = useNavigate();
-  const { data, loading, error,fetchMore } = useGetFeedPosts({feedname})
+  const { data, loading, error, fetchMore } = useGetFeedPosts({ feedname });
   const [sub, result] = useSubscribe();
   const Subscribe = async ({ feedname, type }) => {
     console.log("Subscribe");
     const data = await sub({ feedname, type });
     console.log(data);
-    refetchUser()
-    
+    refetchUser();
   };
   const subButton = ({ User }) => {
     if (!User) {
@@ -44,6 +42,8 @@ const FeedPage = ({ match, User,refetchUser }) => {
     } else {
       return (
         <Button
+          className="button"
+          style={{ borderRadius: 50 }}
           onClick={() => {
             navigate(`/newpost/${feedname}`);
           }}
@@ -57,33 +57,55 @@ const FeedPage = ({ match, User,refetchUser }) => {
   console.log(data, loading, error);
   const feed = data ? data.getfeedposts : [];
 
-    const loadmore = () => {
-    console.log("loadmore")
-    fetchMore({offset:feed.length})
-    }
+  const loadmore = () => {
+    console.log("loadmore");
+    fetchMore({ offset: feed.length });
+  };
 
-    return (
-      <Box sx={{ flexGrow: 1 }}>
-        <Grid container rowSpacing={1} sx={{ flexDirection: "row" }}>
-          <Grid size={{ xs: 12, md: 2 }}>{subButton({ User })}</Grid>
-          <Grid size={{ xs: 12, md: 8 }}>
-            <Box>
-              <h3 style={{ textAlign: "center" }}>{match.params.feedname} Posts</h3>
-              <Divider></Divider>
-              
-              <InfiniteScroll dataLength={feed.length} next={loadmore} hasMore={true}>
-                <List>
+  return (
+    <Box sx={{ flexGrow: 1 }}>
+      <Grid container rowSpacing={1} sx={{ flexDirection: "row" }}>
+        <Grid size={{ xs: 12, md: 2 }}></Grid>
+        <Grid size={{ xs: 12, md: 8 }}>
+          <Box>
+            <Box
+              sx={{
+                display: "flex",
+                flexDirection: "row",
+                justifyContent: "center",
+                gap: "20%",
+              }}
+            >
+              {subButton({ User })}
+              <h3 style={{ position: "center" }}>
+                {match.params.feedname} Posts
+              </h3>
+
+              {newPostButton({ User })}
+            </Box>
+
+            <Divider></Divider>
+
+            <InfiniteScroll
+              dataLength={feed.length}
+              next={loadmore}
+              hasMore={true}
+            >
+              <List>
                 {feed.map((item) => (
-                  <FeedItem item={item} User={User}></FeedItem>
+                  <FeedItem
+                    item={item}
+                    owner={item.owner}
+                    User={User}
+                  ></FeedItem>
                 ))}
               </List>
-              </InfiniteScroll>
-            </Box>
-          </Grid>
-          <Grid size={{ xs: 12, md: 2 }}>{newPostButton({ User })}</Grid>
+            </InfiniteScroll>
+          </Box>
         </Grid>
-      </Box>
-    );
-  
+        <Grid size={{ xs: 12, md: 2 }}></Grid>
+      </Grid>
+    </Box>
+  );
 };
 export default FeedPage;

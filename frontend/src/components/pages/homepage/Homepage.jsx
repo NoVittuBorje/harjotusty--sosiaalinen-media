@@ -43,7 +43,7 @@ const Homescreen = ({ User }) => {
             hasMore={true}
           >
               {feed.map((item) => (
-                <FeedItem item={item} User={User}></FeedItem>
+                <FeedItem item={item} owner={item.owner} User={User}></FeedItem>
               ))}
           </InfiniteScroll>
         </Grid>

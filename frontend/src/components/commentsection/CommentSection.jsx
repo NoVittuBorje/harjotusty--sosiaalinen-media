@@ -5,9 +5,7 @@ import useMakeComment from "../hooks/useMakeComment";
 import { Box } from "@mui/material";
 import useEditComment from "../hooks/useEditComment";
 import InfiniteScroll from "react-infinite-scroll-component";
-import useGetPostComments from "../hooks/useGetPostComments";
-const CommentSection = ({ item, User, postid,}) => {
-  const { data, loading, error,refetchPostComment,fetchMore } = useGetPostComments({postid})
+const CommentSection = ({ User, postid,comments,loadmore,loading}) => {
   const [newcomment, result] = useMakeComment();
   const [edit, editresult] = useEditComment();
   const handleDelete = ({id}) => {
@@ -23,6 +21,9 @@ const CommentSection = ({ item, User, postid,}) => {
     console.log(data);
     refetchComment()
   }
+  const refetchComment = () => {
+
+  }
   const handleDislike = async ({id}) => {
     console.log("dislike comment");
     console.log(id)
@@ -35,17 +36,13 @@ const CommentSection = ({ item, User, postid,}) => {
     const data = await edit({ commentid:id, content:"null", action:"like" })
     console.log(data)
   };
-  console.log(data)
   if(loading){
     return <Box>loading...</Box>
   }
 
-  const comments = data.getpostcomments;
+  
   console.log(comments);
-  const loadmore = () => {
-    console.log("fetch more")
-    fetchMore({offset:comments.length})
-  }
+
   return (
     <Box>
       <InfiniteScroll dataLength={comments.length} next={loadmore} hasMore={true} loader={<></>}>
@@ -60,7 +57,7 @@ const CommentSection = ({ item, User, postid,}) => {
             key={comment.id}
             comment={comment}
             handleReply={handleReply}
-            refetchComment={refetchPostComment}
+            refetchComment={refetchComment}
             postid={postid}
           />
           

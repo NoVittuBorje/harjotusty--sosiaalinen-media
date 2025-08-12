@@ -1,6 +1,6 @@
 import { useQuery } from "@apollo/client";
 import { GET_USER_COMMENTS } from "../graphql/queries";
-const useGetUserComments = ({variables}) => {
+const useGetUserComments = (variables) => {
     console.log(variables)
   const { data, error, loading, refetch, fetchMore,...result } = useQuery(GET_USER_COMMENTS,
     { variables: { offset:0 ,userid:variables.id} },

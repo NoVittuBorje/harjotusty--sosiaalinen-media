@@ -70,7 +70,7 @@ const resolvers = {
           return [feed];
         }
         if (args.querytype === "many") {
-          const feeds = await Feed.find({}).limit(10);
+          const feeds = await Feed.find({}).sort({subs:-1}).limit(10);
           return feeds;
         }
       } catch (e) {
@@ -205,14 +205,16 @@ const resolvers = {
             "createdAt",
             "updatedAt",
             "id",
+            "owner",
           ],
           options: {
+            sort:{createdAt:-1},
             skip: args.offset,
             limit: 10,
           },
           populate: {
-            path: "feed",
-            select: ["feedname", "id"],
+            path: ["feed","owner"],
+            select: ["feedname", "id",],
           },
         });
         console.log(user);
@@ -234,8 +236,15 @@ const resolvers = {
             "createdAt",
             "updatedAt",
             "id",
+            "user",
+            "replies",
           ],
+          populate:{
+            path:["user","replies"],
+            select:["username","id","avatar"]
+          },
           options: {
+            sort:{createdAt:-1},
             skip: args.offset,
             limit: 10,
           },
@@ -253,6 +262,7 @@ const resolvers = {
           path: "feedsubs",
           select: ["feedname", "description", "id", "active", "createdAt"],
           options: {
+            sort:{createdAt:-1},
             skip: args.offset,
             limit: 10,
           },
@@ -268,6 +278,7 @@ const resolvers = {
           path: "ownedfeeds",
           select: ["feedname", "description", "id", "active", "createdAt"],
           options: {
+            sort:{createdAt:-1},
             skip: args.offset,
             limit: 10,
           },

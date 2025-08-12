@@ -1,8 +1,10 @@
-import { Stack, Box, Link, Paper, List } from "@mui/material";
+import { Stack, Box, Link, Paper, List, Tooltip, Typography } from "@mui/material";
 import Comment from "../../commentsection/Comment";
 import useGetUserComments from "../../hooks/useGetUserComments";
 import InfiniteScroll from "react-infinite-scroll-component";
-const ProfileFeedComment = (variables) => {
+import KarmaItem from "../../KarmaItem";
+import CommentSection from "../../commentsection/CommentSection";
+const ProfileFeedComment = ({variables,User}) => {
   console.log(variables);
   const comments = useGetUserComments(variables);
   const loadmore = () => {
@@ -14,24 +16,7 @@ const ProfileFeedComment = (variables) => {
   console.log(comments.data.getusercomments);
   return (
     <Box sx={{}}>
-      <InfiniteScroll
-        dataLength={comments.data.getusercomments.length}
-        next={loadmore}
-        hasMore={true}
-      >
-        {comments.data.getusercomments.map((item) => (
-          <Box sx={{ display: "flex", flexDirection: "column" }}>
-            <Box sx={{ flexDirection: "column", padding: 1 }}>
-              <Box>
-                <Link href="#" color="inherit">
-                  <h3>{item.content}</h3>
-                </Link>
-              </Box>
-              <Stack></Stack>
-            </Box>
-          </Box>
-        ))}
-      </InfiniteScroll>
+      <CommentSection User={User} comments={comments.data.getusercomments} loadmore={loadmore} loading={comments.loading}></CommentSection>
     </Box>
   );
 };

@@ -3,17 +3,17 @@ import ProfileFeedComment from "./ProfileFeedComment";
 import ProfileFeedPosts from "./ProfileFeedPosts";
 import ProfileFeedOwnedFeeds from "./ProfileFeedOwnedFeeds";
 import ProfileFeedSubs from "./ProfileFeedSubs";
-const ProfileFeed = ({ type, id,userdata }) => {
+const ProfileFeed = ({ type, id,userdata ,User}) => {
   const variables = {
     id: id,
   };
   console.log(variables);
 
   if (type === "posts") {
-    return <ProfileFeedPosts variables={variables} userdata={userdata}></ProfileFeedPosts>;
+    return <ProfileFeedPosts variables={variables} userdata={userdata} User={User}></ProfileFeedPosts>;
   }
   if (type === "comments") {
-    return <ProfileFeedComment variables={variables} userdata={userdata}></ProfileFeedComment>;
+    return <ProfileFeedComment variables={variables} userdata={userdata} User={User}></ProfileFeedComment>;
   }
   if (type === "ownedfeeds") {
     return <ProfileFeedOwnedFeeds variables={variables} userdata={userdata}></ProfileFeedOwnedFeeds>
