@@ -20,8 +20,8 @@ const ProfileFeedOwnedFeeds = (variables) => {
         next={loadmore}
         hasMore={true}
       >
-        {ownedfeeds.data.getuserownedfeeds.map((item) => (
-          <Box sx={{ display: "flex", flexDirection: "column" }}>
+        {ownedfeeds.data.getuserownedfeeds.map((item,index) => (
+          <Box key={index} sx={{ display: "flex", flexDirection: "column" }}>
             <Box sx={{ flexDirection: "column", padding: 1 }}>
               <Link
                 variant="inherit"

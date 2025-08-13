@@ -241,6 +241,11 @@ export const GET_USER_COMMENTS = gql`
       replies{
       id
       }
+      post{
+      id
+      headline
+      description
+      }
     }
   }
 `;
@@ -287,3 +292,14 @@ export const GET_USER_OWNEDFEEDS = gql`
     }
   }
 `;
+export const GET_SEARCH_BAR = gql`
+query Getsearchbar($searchby: String!) {
+  getsearchbar(searchby: $searchby) {
+    feedname
+    description
+    active
+    createdAt
+    updatedAt
+    id
+  }
+}`

@@ -1,4 +1,14 @@
-import { Box, Divider, Grid, List, Select , MenuItem, FormControl, Button} from "@mui/material";
+import {
+  Box,
+  Divider,
+  Grid,
+  List,
+  Select,
+  MenuItem,
+  FormControl,
+  Button,
+  CircularProgress,
+} from "@mui/material";
 
 import FeedItem from "../../FeedItem";
 import useGetPopularPosts from "../../hooks/useGetPopularPosts";
@@ -6,22 +16,26 @@ import InfiniteScroll from "react-infinite-scroll-component";
 import { useState } from "react";
 
 const Homescreen = ({ User }) => {
-  const [orderBy, setorderBy] = useState("")
+  const [orderBy, setorderBy] = useState("");
   const variables = {
-    orderBy:orderBy
-  }
+    orderBy: orderBy,
+  };
   const { data, error, loading, fetchMore } = useGetPopularPosts(variables);
-  console.log(loading)
-  console.log(data)
+  console.log(loading);
+  console.log(data);
   const handleChange = (event) => {
     setorderBy(event.target.value);
   };
   const feed = data ? data.getpopularposts : [];
-  console.log(data,error,loading)
+  console.log(data, error, loading);
   const loadmore = () => {
-    fetchMore({ offset: feed.length});
+    fetchMore({ offset: feed.length });
   };
-  console.log(orderBy)
+  let hasmore = true;
+  if (feed.length % 10 != 0 || hasmore === false) {
+    console.log("no more")
+    hasmore = false
+  }
   return (
     <Box sx={{ flexGrow: 1 }}>
       <Grid container rowSpacing={1} sx={{ flexDirection: "row" }}>
@@ -29,22 +43,29 @@ const Homescreen = ({ User }) => {
         <Grid size={{ xs: 12, md: 8 }}>
           <h3 style={{ textAlign: "center" }}>{orderBy} posts</h3>
           <FormControl>
-          <Select defaultValue={"NEWEST"} name="orderBy" id="orderBy-select" sx={{color:"white"}} onChange={handleChange}>
-            <MenuItem value={"NEWEST"}>Newest</MenuItem>
-            <MenuItem value={"POPULAR"}>Popular</MenuItem>
-            <MenuItem value={"HOTTEST"}>Hottest</MenuItem>
-          </Select>
+            <Select
+              defaultValue={"NEWEST"}
+              name="orderBy"
+              id="orderBy-select"
+              sx={{ color: "white" }}
+              onChange={handleChange}
+            >
+              <MenuItem value={"NEWEST"}>Newest</MenuItem>
+              <MenuItem value={"POPULAR"}>Popular</MenuItem>
+              <MenuItem value={"HOTTEST"}>Hottest</MenuItem>
+            </Select>
           </FormControl>
-          
+
           <Divider></Divider>
           <InfiniteScroll
             dataLength={feed.length}
             next={loadmore}
-            hasMore={true}
+            hasMore={hasmore}
+            loader={<CircularProgress color="inherit"></CircularProgress>}
           >
-              {feed.map((item) => (
-                <FeedItem item={item} owner={item.owner} User={User}></FeedItem>
-              ))}
+            {feed.map((item) => (
+              <FeedItem item={item} owner={item.owner} User={User}></FeedItem>
+            ))}
           </InfiniteScroll>
         </Grid>
         <Grid size={{ xs: 12, md: 2 }}></Grid>

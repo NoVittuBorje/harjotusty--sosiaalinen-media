@@ -19,10 +19,8 @@ const KarmaItem = ({
   
   dislikes = dislikes.map((l) => l.id);
   likes = likes.map((l) => l.id);
-  console.log(likes,dislikes,id)
   const [liked, setLiked] = useState(likes.includes(id));
   const [disliked, setDisliked] = useState(dislikes.includes(id));
-  console.log(likes.includes(id))
   if (!User) {
     return (
       <Box className={"footerkarma"}>

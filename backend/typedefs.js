@@ -109,6 +109,9 @@ const typeDefs = `#graphql
     offset:Int!
     type:String!
     ):User
+    getsearchbar(
+    searchby:String!
+    ):[Feed]
   }
 
   type Mutation {

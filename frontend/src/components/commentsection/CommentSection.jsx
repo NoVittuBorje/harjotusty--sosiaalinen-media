@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import Comment from "./Comment";
 import CommentForm from "./CommentForm";
 import useMakeComment from "../hooks/useMakeComment";
-import { Box } from "@mui/material";
+import { Box, CircularProgress } from "@mui/material";
 import useEditComment from "../hooks/useEditComment";
 import InfiniteScroll from "react-infinite-scroll-component";
 const CommentSection = ({ User, postid,comments,loadmore,loading}) => {
@@ -42,10 +42,14 @@ const CommentSection = ({ User, postid,comments,loadmore,loading}) => {
 
   
   console.log(comments);
-
+  let hasmore = true;
+  if (comments.length % 10 != 0 || hasmore === false) {
+    console.log("no more")
+    hasmore = false
+  }
   return (
     <Box>
-      <InfiniteScroll dataLength={comments.length} next={loadmore} hasMore={true} loader={<></>}>
+      <InfiniteScroll dataLength={comments.length} next={loadmore} hasMore={hasmore} loader={<CircularProgress color="inherit"></CircularProgress>}>
       {comments.map((comment,index) => (
         <Box key={index} sx={{ paddingBottom: 0.5, marginRight: 2, marginLeft: 1 }}>
           <Comment

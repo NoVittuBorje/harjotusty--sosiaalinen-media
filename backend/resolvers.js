@@ -89,10 +89,6 @@ const resolvers = {
           .limit(10)
           .populate("owner", { username: 1, avatar: 1, id: 1, active: 1 })
           .populate("feed", { feedname: 1, id: 1 });
-        console.log;
-        if (posts.length != args.offset + args.limit) {
-          console.log("ei oo enempää");
-        }
         console.log(posts);
         return posts;
       } catch (e) {
@@ -238,10 +234,11 @@ const resolvers = {
             "id",
             "user",
             "replies",
+            "post",
           ],
           populate:{
-            path:["user","replies"],
-            select:["username","id","avatar"]
+            path:["user","replies","post"],
+            select:["username","id","avatar","headline","description",],
           },
           options: {
             sort:{createdAt:-1},
@@ -285,6 +282,20 @@ const resolvers = {
         });
         return user.ownedfeeds;
       } catch (e) {
+        throw new GraphQLError(e);
+      }
+    },
+    getsearchbar: async (root, args) => {
+      try {
+        
+        const feeds = await Feed.find({
+          "$or":[
+          {"feedname": { "$regex": args.searchby, "$options": "i" }},
+          {"description": {"$regex": args.searchby, "$options":"i"}}
+          ]
+        }).limit(10)
+        return feeds
+      }catch (e) {
         throw new GraphQLError(e);
       }
     },

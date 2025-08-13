@@ -19,7 +19,21 @@ import { useNavigate } from "react-router";
 import HomeIcon from "@mui/icons-material/Home";
 import LoginIcon from "@mui/icons-material/Login";
 import LogoutIcon from "@mui/icons-material/Logout";
-
+import Drawer from "@mui/material/Drawer";
+import Button from "@mui/material/Button";
+import List from "@mui/material/List";
+import Divider from "@mui/material/Divider";
+import ListItem from "@mui/material/ListItem";
+import ListItemButton from "@mui/material/ListItemButton";
+import ListItemIcon from "@mui/material/ListItemIcon";
+import ListItemText from "@mui/material/ListItemText";
+import InboxIcon from "@mui/icons-material/MoveToInbox";
+import FeedIcon from "@mui/icons-material/Feed";
+import useGetManyFeeds from "./hooks/useGetManyFeeds";
+import { ApolloClient, useApolloClient } from "@apollo/client";
+import useGetSearch from "./hooks/useGetSearch";
+import { useDebouncedCallback } from "use-debounce";
+import { Autocomplete, Paper, Popper, Stack, TextField } from "@mui/material";
 import AddCircleOutlineIcon from "@mui/icons-material/AddCircleOutline";
 
 const Search = styled("div")(({ theme }) => ({
@@ -37,7 +51,21 @@ const Search = styled("div")(({ theme }) => ({
     width: "auto",
   },
 }));
-
+const styles = {
+  floatingSearchLabelStyle: {
+    color: "#fff",
+    fontFamily: 'Open Sans","Helvetica Neue",Helvetica,Arial,"Lucida Grande',
+  },
+  inputSearchStyleText: {
+    color: "#fff",
+  },
+  underlineSearchStyle: {
+    borderColor: "#fff",
+  },
+  hintSearchStyle: {
+    color: "#fff",
+  },
+};
 const SearchIconWrapper = styled("div")(({ theme }) => ({
   padding: theme.spacing(0, 2),
   height: "100%",
@@ -62,34 +90,31 @@ const StyledInputBase = styled(InputBase)(({ theme }) => ({
   },
 }));
 
-import Drawer from "@mui/material/Drawer";
-import Button from "@mui/material/Button";
-import List from "@mui/material/List";
-import Divider from "@mui/material/Divider";
-import ListItem from "@mui/material/ListItem";
-import ListItemButton from "@mui/material/ListItemButton";
-import ListItemIcon from "@mui/material/ListItemIcon";
-import ListItemText from "@mui/material/ListItemText";
-import InboxIcon from "@mui/icons-material/MoveToInbox";
-import FeedIcon from "@mui/icons-material/Feed";
-import useGetManyFeeds from "./hooks/useGetManyFeeds";
-import { ApolloClient, useApolloClient } from "@apollo/client";
-
 export default function PrimarySearchAppBar({ User, refetch }) {
-  console.log(User)
+  console.log(User);
   const navigate = useNavigate();
-  const apolloClient = useApolloClient()
-  const [search, setSearch] = React.useState("")
+  const apolloClient = useApolloClient();
+  const [search, setSearch] = React.useState("");
+  const [searchvalue, setSearchvalue] = React.useState("");
   const token = localStorage.getItem("token");
   const feeds = useGetManyFeeds();
   const [open, setOpen] = React.useState(false);
+
   const [anchorEl, setAnchorEl] = React.useState(null);
   const [loginanchorEl, setLoginAnchorEl] = React.useState(null);
+  const [searchanchorEl, setSearchAnchorEl] = React.useState(null)
+
   const isMenuOpen = Boolean(anchorEl);
   const isLoginMenuOpen = Boolean(loginanchorEl);
+  const isSearchPopperOpen = Boolean(searchanchorEl)
+
   const menuId = "primary-search-account-menu";
   const loginMenuId = "login-menu";
-  console.log(search)
+  const searchmenuId = "search-menu"
+
+  console.log(search);
+  const { data, loading, error, fetchmore } = useGetSearch({ search });
+
   const handleLoginMenuOpen = (event) => {
     setLoginAnchorEl(event.currentTarget);
   };
@@ -99,6 +124,9 @@ export default function PrimarySearchAppBar({ User, refetch }) {
   const handleProfileMenuOpen = (event) => {
     setAnchorEl(event.currentTarget);
   };
+const handleSearchOpen = (event) => {
+  setSearchAnchorEl(event.currentTarget)
+}
 
   const handleLoginMenuClose = () => {
     setLoginAnchorEl(null);
@@ -106,6 +134,9 @@ export default function PrimarySearchAppBar({ User, refetch }) {
   const handleMenuClose = () => {
     setAnchorEl(null);
   };
+  const handleSearchClose = () => {
+    setSearchAnchorEl(null)
+  }
 
   const handleProfileMenuClick = () => {
     console.log("profile Page");
@@ -114,7 +145,7 @@ export default function PrimarySearchAppBar({ User, refetch }) {
   };
   const handleMyaccountClick = () => {
     console.log("my acc page");
-    navigate("/myaccount")
+    navigate("/myaccount");
     handleMenuClose();
   };
   const handleLoginClick = () => {
@@ -125,9 +156,9 @@ export default function PrimarySearchAppBar({ User, refetch }) {
   const handleLogoutClick = () => {
     console.log("logout");
     handleMenuClose();
-    apolloClient.clearStore()
+    apolloClient.clearStore();
     localStorage.clear();
-    navigate("/")
+    navigate("/");
   };
   const handleRegisterClick = () => {
     console.log("register page");
@@ -142,20 +173,57 @@ export default function PrimarySearchAppBar({ User, refetch }) {
     console.log("makenewfeed");
     navigate("/makefeed");
   };
+  const debounced = useDebouncedCallback((value) => {
+    setSearch(value);
+  }, 1000);
+  
+  const SearchStatePopper = ({items}) => {
+    const searchitems = items ? items.getsearchbar : [];
+    console.log(isSearchPopperOpen)
+    console.log(items)
+    return(
+      <Popper
+        anchorEl={searchanchorEl}
+        id={searchmenuId}
+        open={isSearchPopperOpen}
+        onClose={handleSearchClose}
+                  anchorOrigin={{
+            vertical: "bottom",
+            horizontal: "left",
+          }}
+        >
+        <Menu
+        anchorEl={searchanchorEl}
+        id={searchmenuId}
+        open={isSearchPopperOpen}
+        onClose={handleSearchClose}
+                          anchorOrigin={{
+            vertical: "bottom",
+            horizontal: "left",
+          }}
+        >
+          {searchitems.map((item)=> {
+            <MenuItem>{item.feedname}</MenuItem>
+          }) }
+          
+        </Menu>
+      </Popper>
+    )
+  }
   const MenuStatelogin = ({ User }) => {
     if (User) {
       return (
         <Menu
           anchorEl={anchorEl}
           anchorOrigin={{
-            vertical: "top",
-            horizontal: "right",
+            vertical: "bottom",
+            horizontal: "left",
           }}
           id={menuId}
           keepMounted
           transformOrigin={{
-            vertical: "top",
-            horizontal: "right",
+            vertical: "bottom",
+            horizontal: "left",
           }}
           open={isMenuOpen}
           onClose={handleMenuClose}
@@ -170,14 +238,14 @@ export default function PrimarySearchAppBar({ User, refetch }) {
         <Menu
           anchorEl={loginanchorEl}
           anchorOrigin={{
-            vertical: "top",
-            horizontal: "right",
+            vertical: "bottom",
+            horizontal: "left",
           }}
           id={loginMenuId}
           keepMounted
           transformOrigin={{
-            vertical: "top",
-            horizontal: "right",
+            vertical: "bottom",
+            horizontal: "left",
           }}
           open={isLoginMenuOpen}
           onClose={handleLoginMenuClose}
@@ -188,10 +256,13 @@ export default function PrimarySearchAppBar({ User, refetch }) {
       );
     }
   };
+
   const DrawerState = ({ User }) => {
     const popularfeeds = feeds.data ? feeds.data.getfeed : [];
-    console.log(popularfeeds,feeds.loading)
-    if(feeds.loading){return <Box>loading...</Box>}
+    console.log(popularfeeds, feeds.loading);
+    if (feeds.loading) {
+      return <Box>loading...</Box>;
+    }
     if (User) {
       return (
         <Box
@@ -229,7 +300,7 @@ export default function PrimarySearchAppBar({ User, refetch }) {
               </ListItem>
             ))}
 
-          <Divider />
+            <Divider />
             <ListItem key="subscribedfeeds" disablePadding>
               <ListItemIcon>
                 <FeedIcon />
@@ -239,70 +310,70 @@ export default function PrimarySearchAppBar({ User, refetch }) {
             {User.feedsubs
               ? User.feedsubs.map((subs) => (
                   <ListItem key={subs.feedname} disablePadding>
-                    <ListItemButton onClick={() => {
-                    navigate(`/feed/${subs.feedname}`);
-                  }}>
+                    <ListItemButton
+                      onClick={() => {
+                        navigate(`/feed/${subs.feedname}`);
+                      }}
+                    >
                       <ListItemText primary={subs.feedname} />
                     </ListItemButton>
                   </ListItem>
                 ))
               : null}
-              <Divider></Divider>
-                <ListItem key="popularfeeds" disablePadding>
-                  <ListItemIcon>
-                    <FeedIcon />
-                  </ListItemIcon>
-                  <ListItemText primary={"Popular feeds"} />
+            <Divider></Divider>
+            <ListItem key="popularfeeds" disablePadding>
+              <ListItemIcon>
+                <FeedIcon />
+              </ListItemIcon>
+              <ListItemText primary={"Popular feeds"} />
+            </ListItem>
+
+            {feeds.data.getfeed.map((feed) => (
+              <ListItem key={feed.feedname} disablePadding>
+                <ListItemButton
+                  onClick={() => {
+                    navigate(`/feed/${feed.feedname}`);
+                  }}
+                >
+                  <ListItemText primary={feed.feedname} />
+                </ListItemButton>
               </ListItem>
-              
-                            {feeds.data.getfeed.map((feed) => (
-                <ListItem key={feed.feedname} disablePadding>
-                  <ListItemButton
-                    onClick={() => {
-                      navigate(`/feed/${feed.feedname}`);
-                    }}
-                  >
-                    <ListItemText primary={feed.feedname} />
-                  </ListItemButton>
-                </ListItem>
-              ))}
-              <Divider></Divider>
+            ))}
+            <Divider></Divider>
           </List>
         </Box>
       );
     } else {
-    
-        return (
-          <Box
-            sx={{ width: 250 }}
-            role="presentation"
-            onClick={toggleDrawer(false)}
-          >
-            <List>
-              <ListItem key="popularfeeds" disablePadding>
-                  <ListItemIcon>
-                    <FeedIcon />
-                  </ListItemIcon>
-                  <ListItemText primary={"Popular feeds"} />
+      return (
+        <Box
+          sx={{ width: 250 }}
+          role="presentation"
+          onClick={toggleDrawer(false)}
+        >
+          <List>
+            <ListItem key="popularfeeds" disablePadding>
+              <ListItemIcon>
+                <FeedIcon />
+              </ListItemIcon>
+              <ListItemText primary={"Popular feeds"} />
+            </ListItem>
+          </List>
+          <Divider />
+          <List>
+            {popularfeeds.map((feed) => (
+              <ListItem key={feed.feedname} disablePadding>
+                <ListItemButton
+                  onClick={() => {
+                    navigate(`/feed/${feed.feedname}`);
+                  }}
+                >
+                  <ListItemText primary={feed.feedname} />
+                </ListItemButton>
               </ListItem>
-            </List>
-            <Divider />
-            <List>
-              {popularfeeds.map((feed) => (
-                <ListItem key={feed.feedname} disablePadding>
-                  <ListItemButton
-                    onClick={() => {
-                      navigate(`/feed/${feed.feedname}`);
-                    }}
-                  >
-                    <ListItemText primary={feed.feedname} />
-                  </ListItemButton>
-                </ListItem>
-              ))}
-            </List>
-          </Box>
-        );
-      
+            ))}
+          </List>
+        </Box>
+      );
     }
   };
   const MenuState = MenuStatelogin({ User });
@@ -328,7 +399,6 @@ export default function PrimarySearchAppBar({ User, refetch }) {
     } else {
       return (
         <Box sx={{ display: { xs: "none", md: "flex" } }}>
-          
           <IconButton
             size="large"
             edge="end"
@@ -381,18 +451,22 @@ export default function PrimarySearchAppBar({ User, refetch }) {
             </SearchIconWrapper>
             <StyledInputBase
               placeholder="Search…"
-              value={search}
-              onChange={(event) => {
-                setSearch(event.target.value);
+              value={searchvalue}
+              onClick={handleSearchOpen}
+              onChange={(e) => {
+                debounced(e.target.value);
+                setSearchvalue(e.target.value);
               }}
               inputProps={{ "aria-label": "search" }}
             />
           </Search>
+            
           <Box sx={{ flexGrow: 1 }} />
           {Renderloginstate({ User, refetch, token })}
         </Toolbar>
       </AppBar>
       {MenuState}
+      {SearchStatePopper({items:data})}
     </Box>
   );
 }
