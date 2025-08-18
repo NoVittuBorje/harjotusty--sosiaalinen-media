@@ -15,18 +15,22 @@ import { createClient } from "graphql-ws";
 import { BrowserRouter } from "react-router-dom";
 import { createTheme, ThemeProvider } from "@mui/material";
 import { offsetLimitPagination } from "@apollo/client/utilities";
+import createUploadLink from "apollo-upload-client/createUploadLink.mjs"
+
+
 
 const authLink = setContext((_, { headers }) => {
   const token = localStorage.getItem("token");
   return {
     headers: {
+      'Apollo-Require-Preflight': 'true',
       ...headers,
       authorization: token ? `Bearer ${token}` : null,
     },
   };
 });
 
-const httpLink = createHttpLink({
+const httpLink = createUploadLink({
   uri: "http://localhost:4000",
 });
 const cache = new InMemoryCache({

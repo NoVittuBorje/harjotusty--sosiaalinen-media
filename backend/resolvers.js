@@ -5,8 +5,20 @@ const User = require("./models/user_model");
 const Feed = require("./models/feed_model");
 const Post = require("./models/post_model");
 const Comment = require(`./models/comment_model`);
+const AWS = require("aws-sdk");
+const GraphQLUpload = require('graphql-upload/GraphQLUpload.js');
+
+AWS.config.update({
+  accessKeyId: process.env.AWS_ACCESS_KEY_ID,
+  secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY,
+  signatureVersion: 'v4',
+  region: process.env.AWS_REGION,
+});
+
+const s3 = new AWS.S3();
 
 const resolvers = {
+  Upload: GraphQLUpload,
   Query: {
     me: (root, args, context) => {
       console.log(context, "context");
@@ -297,6 +309,35 @@ const resolvers = {
         return feeds
       }catch (e) {
         throw new GraphQLError(e);
+      }
+    },
+    getFiles: async (_, { userId }) => {
+      try {
+        const params = {
+          Bucket: process.env.AWS_S3_BUCKET_NAME,
+          Prefix: `${userId}/`,
+        };
+
+        const response = await s3.listObjectsV2(params).promise();
+        if (response.Contents.length === 0) {
+          console.log(`No images found in folder: ${userId}`);
+          return [];
+        }
+        const imageUrls = response.Contents.map((object) => {
+          // Generate a pre-signed URL for each object (image) in the folder
+          return s3.getSignedUrl("getObject", {
+            Bucket: process.env.AWS_S3_BUCKET_NAME,
+            Key: object.Key,
+            Expires: 3600,
+          });
+        });
+        console.log(
+          `Retrieved ${imageUrls.length} images from folder: ${userId}`
+        );
+        return imageUrls;
+      } catch (error) {
+        console.error("Error retrieving images:", error);
+        throw new Error("Failed to retrieve images");
       }
     },
   },
@@ -625,6 +666,44 @@ const resolvers = {
         await user.save();
         await post.save();
         return newComment;
+      }
+    },
+    singleUpload: async (_, { input: { userId, file } }) => {
+      try {
+        const { createReadStream, filename } = await file;
+        const stream = createReadStream();
+        const params = {
+          Bucket: process.env.AWS_S3_BUCKET_NAME,
+          Key: `${userId}/${filename}`,
+          Body: stream,
+        };
+        const res = await s3.upload(params).promise();
+        console.log(`File: ${filename} uploaded successfully`);
+        return `Uploaded Location: ${res.Location}`;
+      } catch (error) {
+        console.error("Error uploading file:", error);
+        throw new Error("Failed to upload file");
+      }
+    },
+    multiUpload: async (_, { input: { userId, files } }) => {
+      try {
+        const uploadPromises = files.map(async (file) => {
+          const { createReadStream, filename } = await file;
+          const stream = createReadStream();
+          const params = {
+            Bucket: process.env.AWS_S3_BUCKET_NAME,
+            Key: `${userId}/${filename}`,
+            Body: stream,
+          };
+          const res = await s3.upload(params).promise();
+          console.log(`File: ${filename} uploaded successfully`);
+          return `Uploaded Location: ${res.Location}`;
+        });
+        const response = await Promise.all(uploadPromises);
+        return JSON.stringify(response);
+      } catch (error) {
+        console.error("Error uploading files:", error);
+        throw new Error("Failed to upload files");
       }
     },
   },

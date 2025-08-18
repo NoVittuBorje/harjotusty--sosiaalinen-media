@@ -238,13 +238,13 @@ export const GET_USER_COMMENTS = gql`
         id
         avatar
       }
-      replies{
-      id
+      replies {
+        id
       }
-      post{
-      id
-      headline
-      description
+      post {
+        id
+        headline
+        description
       }
     }
   }
@@ -293,13 +293,19 @@ export const GET_USER_OWNEDFEEDS = gql`
   }
 `;
 export const GET_SEARCH_BAR = gql`
-query Getsearchbar($searchby: String!) {
-  getsearchbar(searchby: $searchby) {
-    feedname
-    description
-    active
-    createdAt
-    updatedAt
-    id
+  query Getsearchbar($searchby: String!) {
+    getsearchbar(searchby: $searchby) {
+      feedname
+      description
+      active
+      createdAt
+      updatedAt
+      id
+    }
   }
-}`
+`;
+export const GET_IMAGE_URLS = gql`
+  query Query($userId: String!) {
+    getFiles(userId: $userId)
+  }
+`;

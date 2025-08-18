@@ -60,6 +60,16 @@ const typeDefs = `#graphql
   type Token {
     value: String!
   }
+  scalar Upload
+  
+  input SingleFileInput {
+  userId: String!
+  file: Upload!
+  }
+  input MultiFileInput {
+  userId: String!
+  files: [Upload!]!
+  }
   type Query {
     me: User!
     getuser(
@@ -112,6 +122,7 @@ const typeDefs = `#graphql
     getsearchbar(
     searchby:String!
     ):[Feed]
+    getFiles(userId: String!): [String!]
   }
 
   type Mutation {
@@ -153,6 +164,8 @@ const typeDefs = `#graphql
     action:String!
     content: String!
     ):Post
+    singleUpload(input: SingleFileInput!): String!
+    multiUpload(input: MultiFileInput!): String!
   }
-`
-module.exports = typeDefs
+`;
+module.exports = typeDefs;

@@ -3,14 +3,17 @@ import { useFormik } from "formik";
 import * as yup from "yup";
 import useMakePost from "../../hooks/useMakePost";
 import { useNavigate } from "react-router";
+import FileUpload from "../../utils/upload";
+import useGetImageUrls from "../../hooks/useGetImageUrls";
 
 const validationSchema = yup.object().shape({
   headline: yup.string(),
   description: yup.string(),
   img: yup.string(),
 });
-const NewPostpage = ({ match }) => {
+const NewPostpage = ({ match,User }) => {
   const navigate = useNavigate();
+  const {data,loading,error,refetch} = useGetImageUrls({userid:User.id})
   const [mutate, result] = useMakePost();
   console.log(match);
   const handleFormSubmit = async () => {
@@ -20,6 +23,7 @@ const NewPostpage = ({ match }) => {
       navigate(`/feed/${formik.values.feedname}`);
     }
   };
+  console.log(data)
   const formik = useFormik({
     initialValues: {
       headline: "",
@@ -36,12 +40,14 @@ const NewPostpage = ({ match }) => {
     <Box sx={{ flexGrow: 1 }}>
       <Box sx={{ textAlign: "center" }}>
         <h3>{"Make post to " + match.params.postfeedname}</h3>
+        
       </Box>
       <Grid container rowSpacing={1} sx={{ flexDirection: "row" }}>
         <Grid size={{ xs: 12, md: 2 }}></Grid>
 
         <Grid size={{ xs: 12, md: 8 }}>
           <Box sx={{ border: "solid 0.1em", borderRadius: 1 }}>
+            <FileUpload userid={User.id}></FileUpload>
             <FormGroup
               sx={{
                 alignItems: "center",
@@ -78,6 +84,7 @@ const NewPostpage = ({ match }) => {
               </Button>
             </FormGroup>
           </Box>
+
         </Grid>
 
         <Grid size={{ xs: 12, md: 2 }}></Grid>

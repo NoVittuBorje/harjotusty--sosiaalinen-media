@@ -4,10 +4,9 @@ const {
 } = require("@apollo/server/plugin/drainHttpServer");
 const { expressMiddleware } = require("@apollo/server/express4");
 const { makeExecutableSchema } = require("@graphql-tools/schema");
-
 const { WebSocketServer } = require("ws");
 const { useServer } = require("graphql-ws/use/ws");
-
+const  graphqlUploadExpress  = require("graphql-upload/graphqlUploadExpress.js");
 const http = require("http");
 const express = require("express");
 const bodyParser = require("body-parser");
@@ -51,6 +50,7 @@ const start = async () => {
 
   const server = new ApolloServer({
     schema,
+    csrfPrevention:true,
     plugins: [
       ApolloServerPluginDrainHttpServer({ httpServer }),
       {
@@ -70,7 +70,8 @@ const start = async () => {
   app.use(
     "/",
     cors(),
-    express.json(),
+    express.json({ limit: "50mb" }),
+    graphqlUploadExpress({ maxFileSize: 10000000, maxFiles: 10 }),
     expressMiddleware(server, {
       context: async ({ req }) => {
         console.log(req.headers.authorization, req.body.operationName);
