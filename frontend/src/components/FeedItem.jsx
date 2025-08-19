@@ -33,7 +33,7 @@ const FeedItem = ({ item,owner, User }) => {
     const data = await edit({ action: "dislike", content: "", postid: item.id });
     console.log(data);
   };
-  console.log(User)
+
   return (
     <Box className={"feed"} key={item.id}>
       <Box sx={{ display: "flex", flexDirection: "column" }}>

@@ -21,7 +21,7 @@ const EditComment = ({ onReply, commentid, oldcomment, handleEditClick }) => {
           className={"button"}
           style={{ borderRadius: 50 }}
           onClick={() => {
-            onReply({ content: comment, commentid, action: "modify" });
+            onReply({ content: comment, commentid, action: "edit" });
             handleEditClick();
           }}
         >

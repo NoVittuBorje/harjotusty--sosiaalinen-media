@@ -109,8 +109,8 @@ week 9 : 1 Hours : total 63 /n
   </tr>
          <tr>
   <td>18</td>
-  <td>4</td>
-  <td>112</td>
+  <td>8</td>
+  <td>116</td>
   </tr>
 </table>
 

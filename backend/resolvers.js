@@ -299,12 +299,8 @@ const resolvers = {
     },
     getsearchbar: async (root, args) => {
       try {
-        
         const feeds = await Feed.find({
-          "$or":[
-          {"feedname": { "$regex": args.searchby, "$options": "i" }},
-          {"description": {"$regex": args.searchby, "$options":"i"}}
-          ]
+          "feedname": { "$regex": args.searchby, "$options": "i" },
         }).limit(10)
         return feeds
       }catch (e) {
@@ -468,14 +464,16 @@ const resolvers = {
       });
     },
     modifyComment: async (root, args, context) => {
+      console.log(args.action)
       const user = context.currentUser;
-      const comment = await Comment.findById(args.commentid);
+      const comment = await Comment.findById(args.commentid).populate({path:"user",select:["id"]});
       if (args.action === "delete" && comment.user.id === user.id) {
         comment.active = false;
         await comment.save();
         return comment;
       }
-      if (args.action === "modify" && comment.user.id == user.id) {
+      
+      if (args.action === "edit" & comment.user.id == user.id) {
         comment.content = args.content;
         await comment.save();
         return comment;
@@ -550,13 +548,13 @@ const resolvers = {
     },
     modifyPost: async (root, args, context) => {
       const user = context.currentUser;
-      const post = await Post.findById(args.postid);
+      const post = await Post.findById(args.postid).populate({path:"owner",select:["id"]});
       if (args.action === "delete" && post.owner.id === user.id) {
         post.active = false;
         await post.save();
         return post;
       }
-      if (args.action === "modify" && post.owner.id == user.id) {
+      if (args.action === "edit" && post.owner.id == user.id) {
         post.content = args.content;
         await post.save();
         return post;

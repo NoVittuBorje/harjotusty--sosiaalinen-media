@@ -33,7 +33,14 @@ import useGetManyFeeds from "./hooks/useGetManyFeeds";
 import { ApolloClient, useApolloClient } from "@apollo/client";
 import useGetSearch from "./hooks/useGetSearch";
 import { useDebouncedCallback } from "use-debounce";
-import { Autocomplete, Paper, Popper, Stack, TextField } from "@mui/material";
+import {
+  Autocomplete,
+  Chip,
+  Paper,
+  Popper,
+  Stack,
+  TextField,
+} from "@mui/material";
 import AddCircleOutlineIcon from "@mui/icons-material/AddCircleOutline";
 
 const Search = styled("div")(({ theme }) => ({
@@ -70,47 +77,49 @@ const SearchIconWrapper = styled("div")(({ theme }) => ({
   padding: theme.spacing(0, 2),
   height: "100%",
   position: "absolute",
-  pointerEvents: "none",
   display: "flex",
   alignItems: "center",
   justifyContent: "center",
 }));
-
-const StyledInputBase = styled(InputBase)(({ theme }) => ({
-  color: "inherit",
-  "& .MuiInputBase-input": {
+const StyledAutocomplete = styled(Autocomplete)(({theme}) => ({
+    color: "inherit",
+  "& .MuiAutocomplete-inputRoot": {
     padding: theme.spacing(1, 1, 1, 0),
     // vertical padding + font size from searchIcon
     paddingLeft: `calc(1em + ${theme.spacing(4)})`,
     transition: theme.transitions.create("width"),
     width: "100%",
     [theme.breakpoints.up("md")]: {
-      width: "20ch",
+      width: "25ch",
     },
   },
-}));
+}))
+
 
 export default function PrimarySearchAppBar({ User, refetch }) {
   console.log(User);
   const navigate = useNavigate();
   const apolloClient = useApolloClient();
-  const [search, setSearch] = React.useState("");
+  const [search, setSearch] = React.useState(null);
   const [searchvalue, setSearchvalue] = React.useState("");
+  const [searchOptions, setSearchoptions] = React.useState("");
   const token = localStorage.getItem("token");
   const feeds = useGetManyFeeds();
   const [open, setOpen] = React.useState(false);
 
   const [anchorEl, setAnchorEl] = React.useState(null);
   const [loginanchorEl, setLoginAnchorEl] = React.useState(null);
-  const [searchanchorEl, setSearchAnchorEl] = React.useState(null)
+  const [searchanchorEl, setSearchAnchorEl] = React.useState(null);
 
   const isMenuOpen = Boolean(anchorEl);
   const isLoginMenuOpen = Boolean(loginanchorEl);
-  const isSearchPopperOpen = Boolean(searchanchorEl)
+  const isSearchPopperOpen = Boolean(searchanchorEl);
 
   const menuId = "primary-search-account-menu";
   const loginMenuId = "login-menu";
-  const searchmenuId = "search-menu"
+
+  const searchopen = Boolean(searchanchorEl);
+  const searchmenuId = searchopen ? "search-popper" : undefined;
 
   console.log(search);
   const { data, loading, error, fetchmore } = useGetSearch({ search });
@@ -124,9 +133,9 @@ export default function PrimarySearchAppBar({ User, refetch }) {
   const handleProfileMenuOpen = (event) => {
     setAnchorEl(event.currentTarget);
   };
-const handleSearchOpen = (event) => {
-  setSearchAnchorEl(event.currentTarget)
-}
+  const handleSearchOpen = (event) => {
+    setSearchAnchorEl(event.currentTarget);
+  };
 
   const handleLoginMenuClose = () => {
     setLoginAnchorEl(null);
@@ -135,8 +144,8 @@ const handleSearchOpen = (event) => {
     setAnchorEl(null);
   };
   const handleSearchClose = () => {
-    setSearchAnchorEl(null)
-  }
+    setSearchAnchorEl(null);
+  };
 
   const handleProfileMenuClick = () => {
     console.log("profile Page");
@@ -176,40 +185,28 @@ const handleSearchOpen = (event) => {
   const debounced = useDebouncedCallback((value) => {
     setSearch(value);
   }, 1000);
-  
-  const SearchStatePopper = ({items}) => {
+
+  const SearchStatePopper = ({ items }) => {
     const searchitems = items ? items.getsearchbar : [];
-    console.log(isSearchPopperOpen)
-    console.log(items)
-    return(
+    console.log(isSearchPopperOpen);
+    console.log(searchitems);
+    return (
       <Popper
+        style={{ width: "100%" }}
         anchorEl={searchanchorEl}
         id={searchmenuId}
         open={isSearchPopperOpen}
         onClose={handleSearchClose}
-                  anchorOrigin={{
-            vertical: "bottom",
-            horizontal: "left",
-          }}
-        >
-        <Menu
-        anchorEl={searchanchorEl}
-        id={searchmenuId}
-        open={isSearchPopperOpen}
-        onClose={handleSearchClose}
-                          anchorOrigin={{
-            vertical: "bottom",
-            horizontal: "left",
-          }}
-        >
-          {searchitems.map((item)=> {
-            <MenuItem>{item.feedname}</MenuItem>
-          }) }
-          
-        </Menu>
+      >
+        <Box sx={{ border: 1, p: 1, bgcolor: "background.paper" }}>
+          <Typography>juu</Typography>
+          {searchitems.map((item) => {
+            <Typography>{item.feedname}</Typography>;
+          })}
+        </Box>
       </Popper>
-    )
-  }
+    );
+  };
   const MenuStatelogin = ({ User }) => {
     if (User) {
       return (
@@ -414,7 +411,9 @@ const handleSearchOpen = (event) => {
       );
     }
   };
+  const searchoptions = data ? data.getsearchbar : [];
 
+  console.log(searchoptions, "options");
   return (
     <Box sx={{ flexGrow: 1 }}>
       <AppBar position="static">
@@ -445,28 +444,73 @@ const handleSearchOpen = (event) => {
             <HomeIcon />
           </IconButton>
 
-          <Search>
-            <SearchIconWrapper>
-              <SearchIcon />
-            </SearchIconWrapper>
-            <StyledInputBase
-              placeholder="Search…"
-              value={searchvalue}
-              onClick={handleSearchOpen}
-              onChange={(e) => {
-                debounced(e.target.value);
-                setSearchvalue(e.target.value);
-              }}
-              inputProps={{ "aria-label": "search" }}
-            />
-          </Search>
-            
+          <StyledAutocomplete
+            disablePortal
+            options={searchoptions}
+            getOptionLabel={(option) => `f/${option.feedname}`}
+            getOptionKey={(option) => option.feedname}
+            groupBy={(option) => option.__typename}
+            freeSolo
+            filterOptions={(x) => x}
+            size="small"
+            renderOption={(option) => (
+              <li key={option.key}>
+                <Button
+                  sx={{ width: "100%", textAlign: "left", textAnchor: "left" }}
+                  onClick={(event) => {
+                    console.log(event)
+                    navigate(`/feed/${option.key}`);
+                  }}
+                >
+                  <Typography
+                    textAlign={"left"}
+                    sx={{ textAlign: "left", width: "100%" }}
+                  >
+                    {option.key}
+                  </Typography>
+                </Button>
+              </li>
+            )}
+            renderInput={(params) => {
+              console.log(params)
+              return (
+                <Search>
+                  <SearchIconWrapper>
+                    <SearchIcon></SearchIcon>
+                  </SearchIconWrapper>
+
+                  <TextField
+                    aria-label="search"
+                    variant="filled"
+                    {...params}
+                    onChange={(e) => {
+                      debounced(e.target.value);
+                      if (e.target.value == "") {
+                        setSearchvalue(null);
+                      } else {
+                        setSearchvalue(e.target.value);
+                      }
+                    }}
+                  />
+                </Search>
+              );
+            }}
+            onChange={(value) => {
+              console.log(value);
+            }}
+            onClick={(value) => {
+              console.log(value.target.value);
+            }}
+            renderValue={(value, getItemProps) => (
+              <Chip label={value.feedname} {...getItemProps()} />
+            )}
+          />
+
           <Box sx={{ flexGrow: 1 }} />
           {Renderloginstate({ User, refetch, token })}
         </Toolbar>
       </AppBar>
       {MenuState}
-      {SearchStatePopper({items:data})}
     </Box>
   );
 }
