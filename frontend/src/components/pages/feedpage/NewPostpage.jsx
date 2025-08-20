@@ -1,41 +1,46 @@
-import { Box, FormGroup, Grid, TextField, Button } from "@mui/material";
+import { Box, FormGroup, Grid, TextField, Button, Typography } from "@mui/material";
 import { useFormik } from "formik";
 import * as yup from "yup";
 import useMakePost from "../../hooks/useMakePost";
 import { useNavigate } from "react-router";
 import FileUpload from "../../utils/upload";
-import useGetImageUrls from "../../hooks/useGetImageUrls";
+import useGetImageUrls from "../../hooks/useGetImageUrl";
+import { useState } from "react";
 
 const validationSchema = yup.object().shape({
   headline: yup.string(),
   description: yup.string(),
-  img: yup.string(),
 });
 const NewPostpage = ({ match,User }) => {
   const navigate = useNavigate();
-  const {data,loading,error,refetch} = useGetImageUrls({userid:User.id})
+
   const [mutate, result] = useMakePost();
-  console.log(match);
+  const [imagepath,setImagePath] = useState("")
   const handleFormSubmit = async () => {
     console.log("submit post");
-    const data = await mutate(formik.values);
+    const data = await mutate({...formik.values,img:imagepath[0]});
     if (data.data.makePost) {
       navigate(`/feed/${formik.values.feedname}`);
     }
   };
-  console.log(data)
+  const Uploadedimages = () => {
+    if(imagepath.length != 0){
+    return(
+      <Typography>{imagepath[1]}</Typography>
+    )}
+  }
   const formik = useFormik({
     initialValues: {
       headline: "",
       description: "",
       feedname: match.params.postfeedname,
-      img: "",
     },
     onSubmit: (values) => {
-      handleFormSubmit(values);
+      handleFormSubmit(values,imagepath);
     },
     validationSchema,
   });
+  console.log(formik.values)
   return (
     <Box sx={{ flexGrow: 1 }}>
       <Box sx={{ textAlign: "center" }}>
@@ -47,7 +52,10 @@ const NewPostpage = ({ match,User }) => {
 
         <Grid size={{ xs: 12, md: 8 }}>
           <Box sx={{ border: "solid 0.1em", borderRadius: 1 }}>
-            <FileUpload userid={User.id}></FileUpload>
+            <Box sx={{display:"flex",justifyContent:"center", borderBottom:1,}}>
+            <FileUpload setImagePath={setImagePath} userid={User.id}></FileUpload>
+            {Uploadedimages()}
+            </Box>
             <FormGroup
               sx={{
                 alignItems: "center",

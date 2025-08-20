@@ -61,7 +61,7 @@ const typeDefs = `#graphql
     value: String!
   }
   scalar Upload
-  
+
   input SingleFileInput {
   userId: String!
   file: Upload!
@@ -123,6 +123,7 @@ const typeDefs = `#graphql
     searchby:String!
     ):[Feed]
     getFiles(userId: String!): [String!]
+    getImage(imageId:String!):String!
   }
 
   type Mutation {
@@ -164,7 +165,7 @@ const typeDefs = `#graphql
     action:String!
     content: String!
     ):Post
-    singleUpload(input: SingleFileInput!): String!
+    singleUpload(input: SingleFileInput!): [String!]
     multiUpload(input: MultiFileInput!): String!
   }
 `;

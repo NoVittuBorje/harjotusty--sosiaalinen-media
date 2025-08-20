@@ -7,6 +7,7 @@ import {
   IconButton,
   List,
   ListItem,
+  Stack,
   Tooltip,
   Typography,
 } from "@mui/material";
@@ -24,6 +25,8 @@ import { useNavigate } from "react-router";
 import useEditPost from "../../hooks/useEditPost";
 import Useritem from "../../Useritem";
 import useGetPostComments from "../../hooks/useGetPostComments";
+import useGetImageUrl from "../../hooks/useGetImageUrl";
+import SinglePostImage from "./SinglePostImage";
 
 const SinglePost = ({ match, User, refetchUser }) => {
   const id = match.params.id;
@@ -31,6 +34,7 @@ const SinglePost = ({ match, User, refetchUser }) => {
   const navigate = useNavigate();
   const [edit, editresult] = useEditPost();
   const { data, loading, error, refetchPost } = useGetPost({ id });
+
   const postcomments = useGetPostComments({postid:id})
   const [newcomment, result] = useMakeComment();
   const [openNewComment, setopenNewComment] = useState(false);
@@ -94,6 +98,13 @@ const SinglePost = ({ match, User, refetchUser }) => {
   const postdata = data ? data.getpost : [];
   const comments = postcomments.data ? postcomments.data.getpostcomments : []
   if (postdata.feed) {
+    const ifimage = () => {
+      if(postdata.img){
+        console.log(postdata.img)
+      return(
+<SinglePostImage img={postdata.img}></SinglePostImage>
+      )}else{return}
+    }
     return (
       <Box sx={{ flexGrow: 1 }}>
         <Grid container rowSpacing={1} sx={{ flexDirection: "row" }}>
@@ -107,6 +118,7 @@ const SinglePost = ({ match, User, refetchUser }) => {
                 time={postdata.createdAt}
                 user={postdata.owner}
               ></Useritem>
+              <Stack spacing={1}>
               <Box
                 sx={{
                   display: "flex",
@@ -116,9 +128,11 @@ const SinglePost = ({ match, User, refetchUser }) => {
                   marginBottom: 1,
                 }}
               >
+                
                 <Typography variant="h5" sx={{ textDecoration: "underline",textDecorationThickness:1 }}>
                   {postdata.headline}
                 </Typography>
+                
                 <Button>
                 <Typography
                   color="whitesmoke"
@@ -128,7 +142,10 @@ const SinglePost = ({ match, User, refetchUser }) => {
                 >{`in f/${postdata.feed.feedname}`}</Typography>
                 </Button>
               </Box>
+              {ifimage()}
+              
               <Typography variant="h7">{postdata.description}</Typography>
+              
               <Box className={"footer"}>
                 <KarmaItem
                   handleDislike={handleDislike}
@@ -147,6 +164,7 @@ const SinglePost = ({ match, User, refetchUser }) => {
               onSubmit={(comment) => handleNewComment(comment)}
             />
           </Collapse>
+          </Stack>
               <Divider></Divider>
               <CommentSection
                 item={postdata.comments}

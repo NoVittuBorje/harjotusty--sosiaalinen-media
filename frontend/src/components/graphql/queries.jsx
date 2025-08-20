@@ -309,3 +309,6 @@ export const GET_IMAGE_URLS = gql`
     getFiles(userId: $userId)
   }
 `;
+export const GET_IMAGE_URL = gql`query Query($imageId: String!) {
+  getImage(imageId: $imageId)
+}`

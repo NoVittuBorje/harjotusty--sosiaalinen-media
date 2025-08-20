@@ -43,10 +43,11 @@ const CommentSection = ({ User, postid,comments,loadmore,loading}) => {
   
   console.log(comments);
   let hasmore = true;
-  if (comments.length % 10 != 0 || hasmore === false) {
+  if (comments.length % 10 != 0 || comments.length == 0) {
     console.log("no more")
     hasmore = false
   }
+  console.log(hasmore)
   return (
     <Box>
       <InfiniteScroll dataLength={comments.length} next={loadmore} hasMore={hasmore} loader={<CircularProgress color="inherit"></CircularProgress>}>

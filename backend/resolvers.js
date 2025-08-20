@@ -6,12 +6,12 @@ const Feed = require("./models/feed_model");
 const Post = require("./models/post_model");
 const Comment = require(`./models/comment_model`);
 const AWS = require("aws-sdk");
-const GraphQLUpload = require('graphql-upload/GraphQLUpload.js');
-
+const GraphQLUpload = require("graphql-upload/GraphQLUpload.js");
+const { v4: uuidv4 } = require('uuid');
 AWS.config.update({
   accessKeyId: process.env.AWS_ACCESS_KEY_ID,
   secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY,
-  signatureVersion: 'v4',
+  signatureVersion: "v4",
   region: process.env.AWS_REGION,
 });
 
@@ -82,7 +82,7 @@ const resolvers = {
           return [feed];
         }
         if (args.querytype === "many") {
-          const feeds = await Feed.find({}).sort({subs:-1}).limit(10);
+          const feeds = await Feed.find({}).sort({ subs: -1 }).limit(10);
           return feeds;
         }
       } catch (e) {
@@ -216,13 +216,13 @@ const resolvers = {
             "owner",
           ],
           options: {
-            sort:{createdAt:-1},
+            sort: { createdAt: -1 },
             skip: args.offset,
             limit: 10,
           },
           populate: {
-            path: ["feed","owner"],
-            select: ["feedname", "id",],
+            path: ["feed", "owner"],
+            select: ["feedname", "id"],
           },
         });
         console.log(user);
@@ -248,12 +248,12 @@ const resolvers = {
             "replies",
             "post",
           ],
-          populate:{
-            path:["user","replies","post"],
-            select:["username","id","avatar","headline","description",],
+          populate: {
+            path: ["user", "replies", "post"],
+            select: ["username", "id", "avatar", "headline", "description"],
           },
           options: {
-            sort:{createdAt:-1},
+            sort: { createdAt: -1 },
             skip: args.offset,
             limit: 10,
           },
@@ -271,7 +271,7 @@ const resolvers = {
           path: "feedsubs",
           select: ["feedname", "description", "id", "active", "createdAt"],
           options: {
-            sort:{createdAt:-1},
+            sort: { createdAt: -1 },
             skip: args.offset,
             limit: 10,
           },
@@ -287,7 +287,7 @@ const resolvers = {
           path: "ownedfeeds",
           select: ["feedname", "description", "id", "active", "createdAt"],
           options: {
-            sort:{createdAt:-1},
+            sort: { createdAt: -1 },
             skip: args.offset,
             limit: 10,
           },
@@ -300,10 +300,10 @@ const resolvers = {
     getsearchbar: async (root, args) => {
       try {
         const feeds = await Feed.find({
-          "feedname": { "$regex": args.searchby, "$options": "i" },
-        }).limit(10)
-        return feeds
-      }catch (e) {
+          feedname: { $regex: args.searchby, $options: "i" },
+        }).limit(10);
+        return feeds;
+      } catch (e) {
         throw new GraphQLError(e);
       }
     },
@@ -335,6 +335,15 @@ const resolvers = {
         console.error("Error retrieving images:", error);
         throw new Error("Failed to retrieve images");
       }
+    },
+    getImage: async (root, args, context) => {
+      try {
+        return s3.getSignedUrl("getObject", {
+            Bucket: process.env.AWS_S3_BUCKET_NAME,
+            Key: args.imageId,
+            Expires: 3600,
+          });
+      } catch (error) {}
     },
   },
   Mutation: {
@@ -464,16 +473,19 @@ const resolvers = {
       });
     },
     modifyComment: async (root, args, context) => {
-      console.log(args.action)
+      console.log(args.action);
       const user = context.currentUser;
-      const comment = await Comment.findById(args.commentid).populate({path:"user",select:["id"]});
+      const comment = await Comment.findById(args.commentid).populate({
+        path: "user",
+        select: ["id"],
+      });
       if (args.action === "delete" && comment.user.id === user.id) {
         comment.active = false;
         await comment.save();
         return comment;
       }
-      
-      if (args.action === "edit" & comment.user.id == user.id) {
+
+      if ((args.action === "edit") & (comment.user.id == user.id)) {
         comment.content = args.content;
         await comment.save();
         return comment;
@@ -548,7 +560,10 @@ const resolvers = {
     },
     modifyPost: async (root, args, context) => {
       const user = context.currentUser;
-      const post = await Post.findById(args.postid).populate({path:"owner",select:["id"]});
+      const post = await Post.findById(args.postid).populate({
+        path: "owner",
+        select: ["id"],
+      });
       if (args.action === "delete" && post.owner.id === user.id) {
         post.active = false;
         await post.save();
@@ -666,31 +681,38 @@ const resolvers = {
         return newComment;
       }
     },
-    singleUpload: async (_, { input: { userId, file } }) => {
+    singleUpload: async (_, { input: { userId, file } }, context) => {
+      if (!context.currentUser) {
+        throw new GraphQLError("not logged in");
+      }
       try {
         const { createReadStream, filename } = await file;
         const stream = createReadStream();
         const params = {
           Bucket: process.env.AWS_S3_BUCKET_NAME,
-          Key: `${userId}/${filename}`,
+          Key: `images/${userId}/${uuidv4()}${filename}`,
           Body: stream,
         };
         const res = await s3.upload(params).promise();
+        console.log(res);
         console.log(`File: ${filename} uploaded successfully`);
-        return `Uploaded Location: ${res.Location}`;
+        return [res.Key,`Image: ${filename} uploaded successfully`]
       } catch (error) {
         console.error("Error uploading file:", error);
         throw new Error("Failed to upload file");
       }
     },
-    multiUpload: async (_, { input: { userId, files } }) => {
+    multiUpload: async (_, { input: { userId, files } }, context) => {
+      if (!context.currentUser) {
+        throw new GraphQLError("not logged in");
+      }
       try {
         const uploadPromises = files.map(async (file) => {
           const { createReadStream, filename } = await file;
           const stream = createReadStream();
           const params = {
             Bucket: process.env.AWS_S3_BUCKET_NAME,
-            Key: `${userId}/${filename}`,
+            Key: `images/${userId}/${uuidv4()}${filename}`,
             Body: stream,
           };
           const res = await s3.upload(params).promise();
