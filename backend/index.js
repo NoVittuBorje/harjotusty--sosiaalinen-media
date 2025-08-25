@@ -17,7 +17,6 @@ const mongoose = require("mongoose");
 mongoose.set("strictQuery", false);
 
 const User = require("./models/user_model");
-
 const typeDefs = require("./typedefs");
 const resolvers = require("./resolvers");
 

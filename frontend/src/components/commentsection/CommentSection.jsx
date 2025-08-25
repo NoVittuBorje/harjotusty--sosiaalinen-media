@@ -8,8 +8,10 @@ import InfiniteScroll from "react-infinite-scroll-component";
 const CommentSection = ({ User, postid,comments,loadmore,loading}) => {
   const [newcomment, result] = useMakeComment();
   const [edit, editresult] = useEditComment();
-  const handleDelete = ({id}) => {
-    console.log(id);
+  const handleDelete = async ({commentid,content,action}) => {
+    console.log(commentid,action);
+    const data = await edit({commentid,content,action})
+    console.log(data)
   };
   const handleModify = async ({ commentid, content, action }) => {
     const data = await edit({ commentid, content, action });

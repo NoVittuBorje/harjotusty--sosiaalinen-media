@@ -31,7 +31,7 @@ const KarmaItem = ({
             size="small"
           >
             <ArrowUpwardRoundedIcon
-              style={{ color: "green" }}
+              style={{ color: "grey" }}
             ></ArrowUpwardRoundedIcon>
           </IconButton>
         </Tooltip>
@@ -45,7 +45,7 @@ const KarmaItem = ({
             size="small"
           >
             <ArrowDownwardRoundedIcon
-              style={{ color: "red" }}
+              style={{ color: "grey" }}
             ></ArrowDownwardRoundedIcon>
           </IconButton>
         </Tooltip>

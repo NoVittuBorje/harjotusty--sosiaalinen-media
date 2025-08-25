@@ -87,7 +87,7 @@ const Comment = ({
             className={"button"}
             style={{ borderRadius: 50 }}
             onClick={() => {
-              handleDelete(comment);
+              handleDelete({commentid:comment.id,content:"",action:"delete"});
             }}
             size="small"
             variant="standard"

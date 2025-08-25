@@ -5,10 +5,26 @@ const User = require("./models/user_model");
 const Feed = require("./models/feed_model");
 const Post = require("./models/post_model");
 const Comment = require(`./models/comment_model`);
-const AWS = require("aws-sdk");
+const { Upload } = require("@aws-sdk/lib-storage");
+const {
+  S3Client,
+  ListBucketsCommand,
+  GetObjectCommand,
+  PutObjectCommand,
+  CreateMultipartUploadCommand,
+} = require("@aws-sdk/client-s3");
+var AWS = require("aws-sdk");
 const GraphQLUpload = require("graphql-upload/GraphQLUpload.js");
-const { v4: uuidv4 } = require('uuid');
+const { v4: uuidv4 } = require("uuid");
+const { getSignedUrl } = require("@aws-sdk/s3-request-presigner");
 AWS.config.update({
+  accessKeyId: process.env.AWS_ACCESS_KEY_ID,
+  secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY,
+  signatureVersion: "v4",
+  region: process.env.AWS_REGION,
+  maxAttempts: 10,
+});
+const client = new S3Client({
   accessKeyId: process.env.AWS_ACCESS_KEY_ID,
   secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY,
   signatureVersion: "v4",
@@ -338,12 +354,16 @@ const resolvers = {
     },
     getImage: async (root, args, context) => {
       try {
-        return s3.getSignedUrl("getObject", {
-            Bucket: process.env.AWS_S3_BUCKET_NAME,
-            Key: args.imageId,
-            Expires: 3600,
-          });
-      } catch (error) {}
+        console.log("getimage")
+        let command = new GetObjectCommand({
+          Bucket: process.env.AWS_S3_BUCKET_NAME,
+          Key: args.imageId,
+        });
+        
+        return await getSignedUrl(client, command, { expiresIn: 60 });
+      } catch (error) {
+        return error;
+      }
     },
   },
   Mutation: {
@@ -480,7 +500,7 @@ const resolvers = {
         select: ["id"],
       });
       if (args.action === "delete" && comment.user.id === user.id) {
-        comment.active = false;
+        comment.content = "This comment has been deleted by the user.";
         await comment.save();
         return comment;
       }
@@ -640,7 +660,6 @@ const resolvers = {
     },
     makeComment: async (root, args, context) => {
       if (args.replyto) {
-        //reply
         const user = context.currentUser;
         const post = await Post.findById(args.postid);
         console.log(post);
@@ -660,7 +679,6 @@ const resolvers = {
         await newComment.save();
         return newComment;
       } else {
-        //newComment
         console.log("newcomment");
         const user = context.currentUser;
         const post = await Post.findOne({ _id: args.postid });
@@ -688,15 +706,18 @@ const resolvers = {
       try {
         const { createReadStream, filename } = await file;
         const stream = createReadStream();
-        const params = {
-          Bucket: process.env.AWS_S3_BUCKET_NAME,
+        const uploadimage = new Upload({
+          client: client,
+          params:{          Bucket: process.env.AWS_S3_BUCKET_NAME,
           Key: `images/${userId}/${uuidv4()}${filename}`,
-          Body: stream,
-        };
-        const res = await s3.upload(params).promise();
-        console.log(res);
-        console.log(`File: ${filename} uploaded successfully`);
-        return [res.Key,`Image: ${filename} uploaded successfully`]
+          Body: stream,}
+        })
+        await uploadimage.on("httpUploadProgress",(progress) => {
+          console.log(progress)
+        })
+        await uploadimage.done()
+        console.log(uploadimage.singleUploadResult.Key)
+        return [`${uploadimage.singleUploadResult.Key}`,`Image: ${filename} uploaded successfully`]
       } catch (error) {
         console.error("Error uploading file:", error);
         throw new Error("Failed to upload file");

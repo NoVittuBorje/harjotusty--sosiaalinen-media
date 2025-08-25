@@ -9,6 +9,7 @@ week 5 : 11 hours : total 43 Hours /n
 week 6 : 8 Hours : total 51 Hours /n
 week 8 : 11 Hours : total 62 Hours /n
 week 9 : 1 Hours : total 63 /n
+
 <h5>Harjotustyö työtunnit</h5>
 <table>
   
@@ -112,8 +113,11 @@ week 9 : 1 Hours : total 63 /n
   <td>12</td>
   <td>120</td>
   </tr>
+           <tr>
+  <td>19</td>
+  <td>4</td>
+  <td>124</td>
+  </tr>
 </table>
-
-
 
 https://aws.plainenglish.io/building-graphql-api-for-effortless-file-uploads-to-aws-s3-cf9ba8b5bd12
