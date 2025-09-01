@@ -13,17 +13,10 @@ const {
   PutObjectCommand,
   CreateMultipartUploadCommand,
 } = require("@aws-sdk/client-s3");
-var AWS = require("aws-sdk");
 const GraphQLUpload = require("graphql-upload/GraphQLUpload.js");
 const { v4: uuidv4 } = require("uuid");
 const { getSignedUrl } = require("@aws-sdk/s3-request-presigner");
-AWS.config.update({
-  accessKeyId: process.env.AWS_ACCESS_KEY_ID,
-  secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY,
-  signatureVersion: "v4",
-  region: process.env.AWS_REGION,
-  maxAttempts: 10,
-});
+
 const client = new S3Client({
   accessKeyId: process.env.AWS_ACCESS_KEY_ID,
   secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY,
@@ -31,7 +24,7 @@ const client = new S3Client({
   region: process.env.AWS_REGION,
 });
 
-const s3 = new AWS.S3();
+
 
 const resolvers = {
   Upload: GraphQLUpload,
@@ -98,7 +91,7 @@ const resolvers = {
           return [feed];
         }
         if (args.querytype === "many") {
-          const feeds = await Feed.find({}).sort({ subs: -1 }).limit(10);
+          const feeds = await Feed.find({active:true}).sort({ subs: -1 }).limit(10);
           return feeds;
         }
       } catch (e) {
@@ -147,9 +140,10 @@ const resolvers = {
       console.log(comments);
       return comments;
     },
-    getpopularposts: async (root, args) => {
+    getpopularposts: async (root, args,context) => {
       console.log(args.orderBy);
       if (args.orderBy === "HOTTEST") {
+        try{
         const posts = await Post.find({ active: true })
           .sort({ karma: -1 })
           .sort({ createdAt: -1 })
@@ -158,9 +152,13 @@ const resolvers = {
           .populate("feed", { feedname: 1 })
           .populate("owner", { username: 1, id: 1, avatar: 1 });
         return posts;
+        } catch (e) {
+        throw new GraphQLError(e);
+      }
       }
       if (args.orderBy === "POPULAR") {
         console.log("popular");
+        try{
         const posts = await Post.find({ active: true })
           .sort({ karma: -1 })
           .skip(args.offset)
@@ -169,7 +167,11 @@ const resolvers = {
           .populate("owner", { username: 1, id: 1, avatar: 1 });
         console.log(posts);
         return posts;
+        } catch (e) {
+        throw new GraphQLError(e);
       }
+      }
+      if(args.orderBy === "NEWEST"){
       try {
         const posts = await Post.find({ active: true })
           .sort({ createdAt: -1 })
@@ -178,8 +180,39 @@ const resolvers = {
           .populate("feed", { feedname: 1 })
           .populate("owner", { username: 1, id: 1, avatar: 1 });
         return posts;
-      } catch (error) {
-        console.log(error);
+      } catch (e) {
+        throw new GraphQLError(e);
+      }}
+      if(args.orderBy === "SUBSCRIPTIONS"){
+        try{
+          console.log(context.currentUser.feedsubs)
+          const subs = context.currentUser.feedsubs.map(x => x._id)
+          const posts = await Post.find({feed:{$in:[...subs]}}).sort({ createdAt: -1 })
+          .skip(args.offset)
+          .limit(10)
+          .populate("feed", { feedname: 1 })
+          .populate("owner", { username: 1, id: 1, avatar: 1 });
+
+        return posts;
+        }catch(e) {
+          throw new GraphQLError(e);
+        }
+      }
+            if(args.orderBy === "OWNEDFEEDS"){
+        try{
+          console.log(context.currentUser.ownedfeeds)
+          const feeds = context.currentUser.ownedfeeds.map(x => x._id)
+          
+          const posts = await Post.find({feed:{$in:[...feeds]}}).sort({ createdAt: -1 })
+          .skip(args.offset)
+          .limit(10)
+          .populate("feed", { feedname: 1 })
+          .populate("owner", { username: 1, id: 1, avatar: 1 });
+
+        return posts;
+        }catch(e) {
+          throw new GraphQLError(e);
+        }
       }
     },
     getpost: async (root, args) => {
@@ -585,7 +618,9 @@ const resolvers = {
         select: ["id"],
       });
       if (args.action === "delete" && post.owner.id === user.id) {
-        post.active = false;
+        post.headline = "This post has been deleted by the user.";
+        post.description = "This post has been deleted by the user."
+        post.img = null
         await post.save();
         return post;
       }
@@ -657,6 +692,19 @@ const resolvers = {
           code: "UNKNOWN ACTION",
         },
       });
+    },
+    modifyUser: async (root,args,context) => {
+      if(args.type === "avatar"){
+        try{
+          console.log(args.content)
+          const user = context.currentUser
+          user.avatar = args.content
+          await user.save()
+          return user
+        }catch(e){
+          throw new GraphQLError(e);
+        }
+      }
     },
     makeComment: async (root, args, context) => {
       if (args.replyto) {

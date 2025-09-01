@@ -3,7 +3,6 @@ import { useDropzone } from "react-dropzone";
 import useUploadImage from "../hooks/useUploadImage";
 const FileUpload = ({ userid, setImagePath }) => {
   const [mutate, result] = useUploadImage();
-  console.log(result)
   const onDrop = useCallback(
     (acceptedFiles) => {
       // do something here
@@ -34,7 +33,9 @@ const FileUpload = ({ userid, setImagePath }) => {
         {isDragActive ? (
           <p>Drop the files here</p>
         ) : (
-          <p>click to select image or drop here</p>
+          <button>
+          click to select image or drop here
+          </button>
         )}
       </div>
     </>

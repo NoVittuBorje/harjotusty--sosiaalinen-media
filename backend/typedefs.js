@@ -165,6 +165,10 @@ const typeDefs = `#graphql
     action:String!
     content: String!
     ):Post
+    modifyUser(
+    type:String!
+    content: String!
+    ): User
     singleUpload(input: SingleFileInput!): [String!]
     multiUpload(input: MultiFileInput!): String!
   }

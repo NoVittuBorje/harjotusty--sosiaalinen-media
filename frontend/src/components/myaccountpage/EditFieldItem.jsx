@@ -1,46 +1,64 @@
 import { Box, Button, Stack, TextField, Typography } from "@mui/material";
 import { useState } from "react";
 
-const EditFieldItem = ({ setField, valueType, value }) => {
+const EditFieldItem = ({ valueType, value, handleSave }) => {
   const [open, setOpen] = useState(false);
+  const [fieldvalue, setValue] = useState(value);
   const EditState = () => {
     if (open) {
       return (
         <Stack>
           <TextField
             color="primary"
+            sx={{ m: 1 }}
             inputProps={{ style: { color: "white" } }}
             variant="standard"
             InputLabelProps={{ style: { color: "white" } }}
-            value={value}
+            value={fieldvalue}
+            onChange={(event) => setValue(event.target.value)}
             label={valueType}
           ></TextField>
-          <Button
-            className={"button"}
-            style={{ borderRadius: 50 }}
-            size="small"
-            variant="standard"
-            color=""
-          >
-            edit
-          </Button>
+          <Box>
+            <Button
+              className={"button"}
+              style={{ borderRadius: 50 }}
+              size="small"
+              variant="outlined"
+              color=""
+              onClick={() =>
+                handleSave({ content: fieldvalue, type: valueType })
+              }
+            >
+              save
+            </Button>
 
-          <Button             className={"button"}
-            style={{ borderRadius: 50 }}
-            size="small"
-            variant="standard"
-            color="" onClick={() => setOpen(!open)}>cancel</Button>
+            <Button
+              className={"button"}
+              style={{ borderRadius: 50 }}
+              size="small"
+              variant="outlined"
+              color=""
+              onClick={() => setOpen(!open)}
+            >
+              cancel
+            </Button>
+          </Box>
         </Stack>
       );
     } else {
       return (
-        <Box>
+        <Box padding={1}>
           <Typography>{`${valueType}: ${value}`} </Typography>
-          <Button             className={"button"}
+          <Button
+            className={"button"}
             style={{ borderRadius: 50 }}
             size="small"
-            variant="standard"
-            color="" onClick={() => setOpen(!open)}>edit</Button>
+            variant="outlined"
+            color=""
+            onClick={() => setOpen(!open)}
+          >
+            edit
+          </Button>
         </Box>
       );
     }

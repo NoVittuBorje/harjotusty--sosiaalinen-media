@@ -27,7 +27,11 @@ import Useritem from "../../Useritem";
 import useGetPostComments from "../../hooks/useGetPostComments";
 import SinglePostImage from "./SinglePostImage";
 import SettingsIcon from "@mui/icons-material/Settings";
-
+import Dialog from '@mui/material/Dialog';
+import DialogActions from '@mui/material/DialogActions';
+import DialogContent from '@mui/material/DialogContent';
+import DialogContentText from '@mui/material/DialogContentText';
+import DialogTitle from '@mui/material/DialogTitle';
 const SinglePost = ({ match, User, refetchUser }) => {
   const id = match.params.id;
   console.log(match.params.id);
@@ -39,6 +43,13 @@ const SinglePost = ({ match, User, refetchUser }) => {
   const [newcomment, result] = useMakeComment();
   const [openNewComment, setopenNewComment] = useState(false);
   const [OpenSettings, setOpenSettings] = useState(false);
+  const [open, setOpen] = useState(false);
+  const handleClickOpen = () => {
+    setOpen(true);
+  };
+  const handleClose = () => {
+    setOpen(false);
+  };
   const handleNewComment = async (content) => {
     console.log("new comment");
     const data = await newcomment({ postid: id, content: content.content });
@@ -52,7 +63,11 @@ const SinglePost = ({ match, User, refetchUser }) => {
   };
   const handleDelete = async () => {
     console.log("delete post");
+
     const data = await edit({action: "delete", content:"", postid:id})
+    console.log(data)
+    refetchPost()
+    handleClose()
     navigate(-1)
   };
 
@@ -77,7 +92,24 @@ const SinglePost = ({ match, User, refetchUser }) => {
               <SettingsIcon></SettingsIcon>
             </IconButton>
             <Stack padding={1}>
-              <Button onClick={() =>handleDelete()}>Delete post</Button>
+              <Dialog
+              open={open}
+              onClose={handleClose}
+              >
+              <DialogTitle>{"Are you sure you want to delete post?"}</DialogTitle>
+              <DialogContent>
+                <DialogContentText>
+                  This action is irreversible
+                </DialogContentText>
+              </DialogContent>
+                      <DialogActions>
+          <Button variant="outlined" color=""  sx={{borderRadius:50}} onClick={handleClose}>No</Button>
+          <Button variant="outlined" color=""  sx={{borderRadius:50}} onClick={() => handleDelete()}>
+            Yes
+          </Button>
+        </DialogActions>
+              </Dialog>
+              <Button variant="outlined" color="" className={"button"} sx={{borderRadius:50}} onClick={handleClickOpen}>Delete post</Button>
             </Stack>
           </Box>
         </Collapse>

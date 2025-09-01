@@ -34,20 +34,21 @@ const GetImage = ({img}) => {
     }
 }
 const UserAvatar = ({user}) => {
-    if(!user.img){
+    if(!user.avatar){
         return(
-        <ListItemAvatar>
+
         <Avatar
-          sx={{ width: 24, height: 24 }}
           {...stringAvatar(user.username)}
         ></Avatar>
-      </ListItemAvatar>
+
         )
     }else{
-    const data = GetImage({img:user.img})
+    const data = GetImage({img:user.avatar})
+    if(data){
     return(
-        <img src={data.getImage} style={{maxWidth:24,maxHeight:24}}></img>
-    )
+      <Avatar src={data.getImage}>
+        </Avatar>
+    )}
 }
 }
 export default UserAvatar

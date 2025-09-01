@@ -16,7 +16,7 @@ import InfiniteScroll from "react-infinite-scroll-component";
 import { useState } from "react";
 
 const Homescreen = ({ User }) => {
-  const [orderBy, setorderBy] = useState("");
+  const [orderBy, setorderBy] = useState("NEWEST");
   const variables = {
     orderBy: orderBy,
   };
@@ -24,6 +24,7 @@ const Homescreen = ({ User }) => {
   console.log(loading);
   console.log(data);
   const handleChange = (event) => {
+    console.log(event.target.value)
     setorderBy(event.target.value);
   };
   const feed = data ? data.getpopularposts : [];
@@ -31,17 +32,35 @@ const Homescreen = ({ User }) => {
   const loadmore = () => {
     fetchMore({ offset: feed.length });
   };
+  
   let hasmore = true;
   if (feed.length % 10 != 0 || hasmore === false) {
     console.log("no more")
     hasmore = false
+  }
+  const UserSubs = () => {
+    console.log(User)
+    if(User.feedsubs.length > 0){
+      return(
+        <MenuItem value={"SUBSCRIPTIONS"}>Subscriptions</MenuItem>
+      )
+    }
+    return
+  }
+  const UserFeeds = () => {
+    if(User.ownedfeeds.length > 0){
+      return(
+        <MenuItem value={"OWNEDFEEDS"}>Owned feeds</MenuItem>
+      )
+    }
+    return
   }
   return (
     <Box sx={{ flexGrow: 1 }}>
       <Grid container rowSpacing={1} sx={{ flexDirection: "row" }}>
         <Grid size={{ xs: 12, md: 2 }}></Grid>
         <Grid size={{ xs: 12, md: 8 }}>
-          <h3 style={{ textAlign: "center" }}>{orderBy} posts</h3>
+          <h3 style={{ textAlign: "center" }}>{orderBy} Posts</h3>
           <FormControl>
             <Select
               defaultValue={"NEWEST"}
@@ -53,6 +72,8 @@ const Homescreen = ({ User }) => {
               <MenuItem value={"NEWEST"}>Newest</MenuItem>
               <MenuItem value={"POPULAR"}>Popular</MenuItem>
               <MenuItem value={"HOTTEST"}>Hottest</MenuItem>
+              {UserSubs()}
+              {UserFeeds()}
             </Select>
           </FormControl>
 
