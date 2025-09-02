@@ -16,6 +16,7 @@ import EditFieldItem from "./EditFieldItem";
 import FileUpload from "../utils/upload";
 import { useState } from "react";
 import UserAvatar from "../utils/Avatar";
+import useEditUser from "../hooks/useEditUser";
 
 const MyAccountpage = ({ User }) => {
   const [imagePath, setImagePath] = useState(User.avatar);
@@ -25,22 +26,27 @@ const MyAccountpage = ({ User }) => {
   const [firstname, setFirstname] = useState(User.firstname);
   const [lastname, setLastname] = useState(User.lastname);
   const [relationship, setRelationship] = useState(User.relationship);
+  const [work, setWork] = useState(User.work);
   const [open, setOpen] = useState(false);
   const [avataredit, setavataredit] = useState(false);
+  const [edit, result] = useEditUser();
   console.log(User);
   console.log(imagePath);
   const handleRelationshipchange = (event) => {
     setRelationship(event.target.value);
   };
-  const handleSave = ({ content, type }) => {
+  const handleSave = async ({ content, type }) => {
     console.log("save");
     console.log(content, type);
+    const data = await edit({ content: content, type: type });
+    console.log(data);
   };
   const EditAvatar = () => {
     if (avataredit) {
       return (
         <Box>
           <FileUpload userid={User.id} setImagePath={setImagePath}></FileUpload>
+
           <Button
             className={"button"}
             style={{ borderRadius: 50 }}
@@ -60,24 +66,30 @@ const MyAccountpage = ({ User }) => {
             sx={{
               justifyContent: "center",
               borderTop: 1,
-              justifyItems: "center",
               display: "flex",
             }}
           >
-            <Typography>Avatar:</Typography>
-            <UserAvatar user={User}></UserAvatar>
+            <Box sx={{flexDirection:"column",paddingBottom:1}}>
+            <Box >
+              <Typography paddingRight={1}>Avatar:</Typography>
+            </Box>
+            <Box>
+              <UserAvatar width={100} height={100} user={User}></UserAvatar>
+            </Box>
+            </Box>
           </Box>
-
-          <Button
-            className={"button"}
-            style={{ borderRadius: 50 }}
-            size="small"
-            variant="outlined"
-            color=""
-            onClick={() => setavataredit(!avataredit)}
-          >
-            edit
-          </Button>
+          <Box>
+            <Button
+              className={"button"}
+              style={{ borderRadius: 50 }}
+              size="small"
+              variant="outlined"
+              color=""
+              onClick={() => setavataredit(!avataredit)}
+            >
+              edit
+            </Button>
+          </Box>
         </Stack>
       );
     }
@@ -186,6 +198,11 @@ const MyAccountpage = ({ User }) => {
             <Box sx={{ borderTop: 1, padding: 1 }}>
               <EditSelector></EditSelector>
             </Box>
+            <EditFieldItem
+              value={work}
+              valueType={"Work"}
+              handleSave={handleSave}
+            ></EditFieldItem>
           </Stack>
         </Box>
       </Grid>

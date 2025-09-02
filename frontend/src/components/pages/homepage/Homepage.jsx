@@ -39,6 +39,7 @@ const Homescreen = ({ User }) => {
     hasmore = false
   }
   const UserSubs = () => {
+    if(!User){return}
     console.log(User)
     if(User.feedsubs.length > 0){
       return(
@@ -48,6 +49,7 @@ const Homescreen = ({ User }) => {
     return
   }
   const UserFeeds = () => {
+    if(!User){return}
     if(User.ownedfeeds.length > 0){
       return(
         <MenuItem value={"OWNEDFEEDS"}>Owned feeds</MenuItem>

@@ -20,6 +20,7 @@ const NewPostpage = ({ match,User }) => {
     console.log("submit post");
     const data = await mutate({...formik.values,img:imagepath[0]});
     if (data.data.makePost) {
+
       navigate(`/feed/${formik.values.feedname}`);
     }
   };

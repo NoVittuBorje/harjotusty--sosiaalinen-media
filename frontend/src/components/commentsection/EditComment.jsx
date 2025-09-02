@@ -16,7 +16,7 @@ const EditComment = ({ onReply, commentid, oldcomment, handleEditClick }) => {
       <Box sx={{ display: "flex", paddingTop: 1 }}>
         <Button
           size="small"
-          variant="standard"
+          variant="outlined"
           color=""
           className={"button"}
           style={{ borderRadius: 50 }}
@@ -25,11 +25,11 @@ const EditComment = ({ onReply, commentid, oldcomment, handleEditClick }) => {
             handleEditClick();
           }}
         >
-          edit
+          save
         </Button>
         <Button
           size="small"
-          variant="standard"
+          variant="outlined"
           color=""
           className={"button"}
           style={{ borderRadius: 50 }}

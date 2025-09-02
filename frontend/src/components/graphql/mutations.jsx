@@ -121,3 +121,18 @@ export const EDITPOST = gql`mutation ModifyPost($postid: String!, $action: Strin
 export const SINGLEIMAGEUPLOAD = gql`mutation Mutation($input: SingleFileInput!) {
   singleUpload(input: $input)
 }`
+export const USEREDIT = gql`mutation Mutation($type: String!, $content: String!) {
+  modifyUser(type: $type, content: $content) {
+    username
+    email
+    firstname
+    lastname
+    avatar
+    relationship
+    description
+    work
+    active
+    createdAt
+    id
+  }
+}`

@@ -1,4 +1,4 @@
-import { Box, Button, Stack, TextField, Typography } from "@mui/material";
+import { Box, Button, Stack, TextField, Tooltip, Typography } from "@mui/material";
 import { useState } from "react";
 
 const EditFieldItem = ({ valueType, value, handleSave }) => {
@@ -48,7 +48,11 @@ const EditFieldItem = ({ valueType, value, handleSave }) => {
     } else {
       return (
         <Box padding={1}>
-          <Typography>{`${valueType}: ${value}`} </Typography>
+          <Box>
+          <Tooltip followCursor={true} title={value}>
+          <Typography maxWidth={400} className="feedDesc">{`${valueType}: ${value}`} </Typography>
+          </Tooltip>
+          </Box>
           <Button
             className={"button"}
             style={{ borderRadius: 50 }}

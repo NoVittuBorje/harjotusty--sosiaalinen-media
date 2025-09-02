@@ -6,7 +6,7 @@ const useGetManyFeeds = () => {
     { variables: { querytype: "many" } },
     {
       fetchPolicy: "network-only",
-      nextFetchPolicy: "network-only",
+      nextFetchPolicy: "cache-first",
     }
   );
   return { data: data, loading: loading, error: error, refetch: refetch };

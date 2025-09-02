@@ -8,6 +8,11 @@ import {
   Avatar,
   Box,
   Collapse,
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogContentText,
+  DialogTitle,
   IconButton,
   List,
   ListItem,
@@ -80,21 +85,45 @@ const Comment = ({
     }
   };
   const CommentEdit = () => {
+    const [open, setOpen] = React.useState(false);
+
+  const handleClickOpen = () => {
+    setOpen(true);
+  };
+
+  const handleClose = () => {
+    setOpen(false);
+  };
     if (User.username === comment.user.username) {
       return (
         <>
           <Button
             className={"button"}
             style={{ borderRadius: 50 }}
-            onClick={() => {
-              handleDelete({commentid:comment.id,content:"",action:"delete"});
-            }}
+            onClick={handleClickOpen}
             size="small"
-            variant="standard"
+            variant="outlined"
             color=""
           >
             delete
           </Button>
+              <Dialog
+              open={open}
+              onClose={handleClose}
+              >
+              <DialogTitle>{"Are you sure you want to delete comment?"}</DialogTitle>
+              <DialogContent>
+                <DialogContentText>
+                  This action is irreversible
+                </DialogContentText>
+              </DialogContent>
+                      <DialogActions>
+          <Button variant="outlined" color=""  sx={{borderRadius:50}} onClick={handleClose}>No</Button>
+          <Button variant="outlined" color=""  sx={{borderRadius:50}} onClick={() => {handleDelete({commentid:comment.id,content:"",action:"delete"});handleClose()}}>
+            Yes
+          </Button>
+        </DialogActions>
+              </Dialog>
           <Button
             className={"button"}
             style={{ borderRadius: 50 }}
@@ -102,7 +131,7 @@ const Comment = ({
               handleEditClick();
             }}
             size="small"
-            variant="standard"
+            variant="outlined"
             color=""
           >
             edit
@@ -147,7 +176,7 @@ const Comment = ({
             className={"button"}
             style={{ borderRadius: 50 }}
             size="small"
-            variant="standard"
+            variant="outlined"
             color=""
             onClick={handleReplyClick}
           >
@@ -194,9 +223,8 @@ const Comment = ({
             handleLike={handleLike}
             karma={comment.karma}
           ></KarmaItem>
-          {ReplySection()}
         </Box>
-
+{ReplySection()}
         <Showmorecomments></Showmorecomments>
       </Box>
     );

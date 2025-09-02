@@ -1,4 +1,4 @@
-import { Box, Button, Collapse, Divider, Grid, IconButton, List, Stack } from "@mui/material";
+import { Box, Button, Collapse, Divider, Grid, IconButton, List, Stack, Typography } from "@mui/material";
 import useGetFeed from "../../hooks/useGetFeed";
 import { useNavigate } from "react-router";
 import FeedItem from "../../FeedItem";
@@ -7,20 +7,45 @@ import InfiniteScroll from "react-infinite-scroll-component";
 import useGetFeedPosts from "../../hooks/useGetFeedPosts";
 import { useState } from "react";
 import SettingsIcon from "@mui/icons-material/Settings";
+import UserAvatar from "../../utils/Avatar";
 const FeedPage = ({ match, User, refetchUser }) => {
   console.log(match.params.feedname);
   const feedname = match.params.feedname;
   const navigate = useNavigate();
+  const feedinfo = useGetFeed({feedname})
   const { data, loading, error, fetchMore } = useGetFeedPosts({ feedname });
   const [sub, result] = useSubscribe();
   const [OpenSettings, setOpenSettings] = useState(false);
+  const [hasMore, setHasMore] = useState(true)
   const Subscribe = async ({ feedname, type }) => {
     console.log("Subscribe");
     const data = await sub({ feedname, type });
     console.log(data);
     refetchUser();
   };
+  const FeedInfo = () => {
+    if(feedinfo.loading){
+      return<Box>loading</Box>
+    }
+    let info = feedinfo.data ? feedinfo.data.getfeed : {}
+    info = info[0]
+    console.log(info)
+    return(
+        <Box sx={{display:"flex",flexDirection:"column"}}>
+        <Box>
+        <Typography>{info.feedname}</Typography>
+        </Box>
+        <Box>
+        <Typography>{info.description}</Typography>
+        </Box>
+        <Box>
+        <Typography>Owner: {info.owner.username} <UserAvatar  user={info.owner}></UserAvatar></Typography>
+        </Box>
+        </Box>
+    )
+  }
   const FeedSettings = () => {
+
     if (!OpenSettings) {
       return (
         <IconButton onClick={() => setOpenSettings(!OpenSettings)}>
@@ -35,6 +60,7 @@ const FeedPage = ({ match, User, refetchUser }) => {
               <SettingsIcon></SettingsIcon>
             </IconButton>
             <Stack padding={1} gap={1}>
+              <FeedInfo></FeedInfo>
               <SubButton User={User}></SubButton>
               <NewPostButton User={User}></NewPostButton>
             </Stack>
@@ -104,11 +130,11 @@ const FeedPage = ({ match, User, refetchUser }) => {
 
   console.log(data, loading, error);
   const feed = data ? data.getfeedposts : [];
-
   const loadmore = () => {
     console.log("loadmore");
     if (feed.length % 10 == 0) {
       fetchMore({ offset: feed.length });
+      setHasMore(false)
     }
   };
 
@@ -139,7 +165,7 @@ const FeedPage = ({ match, User, refetchUser }) => {
             <InfiniteScroll
               dataLength={feed.length}
               next={loadmore}
-              hasMore={true}
+              hasMore={hasMore}
             >
               <List>
                 {feed.map((item) => (
@@ -154,7 +180,10 @@ const FeedPage = ({ match, User, refetchUser }) => {
           </Box>
         </Grid>
         <Grid size={{ xs: 12, md: 2 }}>
+          <Box >
+          
           <FeedSettings></FeedSettings>
+          </Box>
         </Grid>
       </Grid>
     </Box>

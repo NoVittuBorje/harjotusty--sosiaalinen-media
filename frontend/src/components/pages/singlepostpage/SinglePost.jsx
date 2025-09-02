@@ -17,7 +17,7 @@ import useGetPost from "../../hooks/useGetPost";
 import ArrowUpwardRoundedIcon from "@mui/icons-material/ArrowUpwardRounded";
 import ArrowDownwardRoundedIcon from "@mui/icons-material/ArrowDownwardRounded";
 import useMakeComment from "../../hooks/useMakeComment";
-import CommentForm from "../../commentsection/CommentForm";
+import CommentForm from "./CommentForm";
 import AddCommentIcon from "@mui/icons-material/AddComment";
 import { useState } from "react";
 import KarmaItem from "../../KarmaItem";
@@ -54,7 +54,7 @@ const SinglePost = ({ match, User, refetchUser }) => {
     console.log("new comment");
     const data = await newcomment({ postid: id, content: content.content });
     setopenNewComment(false);
-    refetchUser();
+    postcomments.refetchPostComment()
   };
   const handleLike = async () => {
     console.log("like post");
@@ -77,21 +77,11 @@ const SinglePost = ({ match, User, refetchUser }) => {
     console.log(data);
     refetchUser();
   };
-  const PostSettings = () => {
-    if (!OpenSettings) {
-      return (
-        <IconButton onClick={() => setOpenSettings(!OpenSettings)}>
-          <SettingsIcon></SettingsIcon>
-        </IconButton>
-      );
-    } else {
-      return (
-        <Collapse in={OpenSettings}>
-          <Box>
-            <IconButton onClick={() => setOpenSettings(!OpenSettings)}>
-              <SettingsIcon></SettingsIcon>
-            </IconButton>
-            <Stack padding={1}>
+  const PostSettings = ({info}) => {
+    console.log(info)
+      const DeletePost = () => {
+    return(
+      <Stack padding={1}>
               <Dialog
               open={open}
               onClose={handleClose}
@@ -104,13 +94,31 @@ const SinglePost = ({ match, User, refetchUser }) => {
               </DialogContent>
                       <DialogActions>
           <Button variant="outlined" color=""  sx={{borderRadius:50}} onClick={handleClose}>No</Button>
-          <Button variant="outlined" color=""  sx={{borderRadius:50}} onClick={() => handleDelete()}>
+          <Button variant="outlined" color=""  sx={{borderRadius:50}} onClick={() => {handleDelete();handleClose()}}>
             Yes
           </Button>
         </DialogActions>
               </Dialog>
               <Button variant="outlined" color="" className={"button"} sx={{borderRadius:50}} onClick={handleClickOpen}>Delete post</Button>
             </Stack>
+    )
+  }
+    if (!OpenSettings & info.owner.username == User.username) {
+      return (
+        <IconButton onClick={() => setOpenSettings(!OpenSettings)}>
+          <SettingsIcon></SettingsIcon>
+        </IconButton>
+      );
+    } else {
+      
+      return (
+        <Collapse in={OpenSettings}>
+          <Box>
+            <IconButton onClick={() => setOpenSettings(!OpenSettings)}>
+              <SettingsIcon></SettingsIcon>
+            </IconButton>
+            
+            <DeletePost></DeletePost>
           </Box>
         </Collapse>
       );
@@ -124,11 +132,7 @@ const SinglePost = ({ match, User, refetchUser }) => {
             <IconButton
               className={"button"}
               onClick={() => {
-                if (openNewComment == false) {
-                  setopenNewComment(true);
-                } else {
-                  setopenNewComment(false);
-                }
+                setopenNewComment(!openNewComment)
               }}
             >
               <AddCommentIcon style={{ color: "white" }}></AddCommentIcon>
@@ -239,7 +243,7 @@ const SinglePost = ({ match, User, refetchUser }) => {
             </Box>
           </Grid>
           <Grid size={{ xs: 12, md: 2 }}>
-            <PostSettings></PostSettings>
+            <PostSettings info={postdata}></PostSettings>
           </Grid>
         </Grid>
       </Box>

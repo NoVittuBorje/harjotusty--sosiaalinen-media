@@ -694,11 +694,74 @@ const resolvers = {
       });
     },
     modifyUser: async (root,args,context) => {
-      if(args.type === "avatar"){
+      const user = context.currentUser
+      if(args.type === "Avatar"){
         try{
           console.log(args.content)
-          const user = context.currentUser
           user.avatar = args.content
+          await user.save()
+          return user
+        }catch(e){
+          throw new GraphQLError(e);
+        }
+      }
+      if(args.type === "Description"){
+        try{
+          user.description = args.content
+          await user.save()
+          return user
+        }catch(e){
+          throw new GraphQLError(e);
+        }
+      }
+            if(args.type === "Email"){
+        try{
+                    user.email = args.content
+          await user.save()
+          return user
+        }catch(e){
+          throw new GraphQLError(e);
+        }
+      }
+            if(args.type === "Username"){
+        try{
+          user.username = args.content
+          await user.save()
+          return user
+        }catch(e){
+          throw new GraphQLError(e);
+        }
+      }
+            if(args.type === "Firstname"){
+        try{
+          user.firstname = args.content
+          await user.save()
+          return user
+        }catch(e){
+          throw new GraphQLError(e);
+        }
+      }
+            if(args.type === "Lastname"){
+        try{
+          user.lastname = args.content
+          await user.save()
+          return user
+        }catch(e){
+          throw new GraphQLError(e);
+        }
+      }
+            if(args.type === "Relationship"){
+        try{
+          user.relationship = args.content
+          await user.save()
+          return user
+        }catch(e){
+          throw new GraphQLError(e);
+        }
+      }
+            if(args.type === "Work"){
+        try{
+          user.work = args.content
           await user.save()
           return user
         }catch(e){

@@ -1,4 +1,4 @@
-import { Avatar, ListItemAvatar } from "@mui/material";
+import { Avatar, Box, ListItemAvatar } from "@mui/material";
 import useGetImageUrl from "../hooks/useGetImageUrl"
 function stringToColor(string) {
   let hash = 0;
@@ -33,11 +33,12 @@ const GetImage = ({img}) => {
     return data
     }
 }
-const UserAvatar = ({user}) => {
+const UserAvatar = ({user,height,width}) => {
     if(!user.avatar){
         return(
-
+          
         <Avatar
+        sx={{height:height,width:width}}
           {...stringAvatar(user.username)}
         ></Avatar>
 
@@ -46,7 +47,7 @@ const UserAvatar = ({user}) => {
     const data = GetImage({img:user.avatar})
     if(data){
     return(
-      <Avatar src={data.getImage}>
+      <Avatar sx={{height:height,width:width}} src={data.getImage}>
         </Avatar>
     )}
 }
