@@ -1,11 +1,8 @@
 
-import Popover from "@mui/material/Popover";
 import Typography from "@mui/material/Typography";
 import Button from "@mui/material/Button";
 import NewComment from "./NewComment";
-import Timestamp from "../utils/Timestamp";
 import {
-  Avatar,
   Box,
   Collapse,
   Dialog,
@@ -13,18 +10,9 @@ import {
   DialogContent,
   DialogContentText,
   DialogTitle,
-  IconButton,
-  List,
-  ListItem,
-  ListItemAvatar,
-  ListItemText,
 } from "@mui/material";
-import ArrowUpwardRoundedIcon from "@mui/icons-material/ArrowUpwardRounded";
-import ArrowDownwardRoundedIcon from "@mui/icons-material/ArrowDownwardRounded";
 import MoreComments from "./MoreComments";
-import useMakeComment from "../hooks/useMakeComment";
 import KarmaItem from "../KarmaItem";
-import { Link, useNavigate } from "react-router";
 import Useritem from "../Useritem";
 import EditComment from "./EditComment";
 import { useState } from "react";
@@ -125,7 +113,7 @@ const Comment = ({
               </DialogContent>
                       <DialogActions>
           <Button variant="outlined" color=""  sx={{borderRadius:50}} onClick={handleDeleteOpen}>No</Button>
-          <Button variant="outlined" color=""  sx={{borderRadius:50}} onClick={() => {handleDelete({commentid:comment.id,content:"",action:"delete"});handleClose()}}>
+          <Button variant="outlined" color=""  sx={{borderRadius:50}} onClick={() => {handleDelete({commentid:comment.id,content:"",action:"delete"});handleDeleteOpen()}}>
             Yes
           </Button>
         </DialogActions>

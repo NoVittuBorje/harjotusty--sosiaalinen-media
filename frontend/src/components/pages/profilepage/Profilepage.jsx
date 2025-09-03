@@ -1,12 +1,9 @@
 import { Box, Grid, Stack } from "@mui/system";
-import AccountCircle from "@mui/icons-material/AccountCircle";
-import AccountBoxIcon from "@mui/icons-material/AccountBox";
-import { Avatar, Divider, FormControl, List, MenuItem, Select, Typography } from "@mui/material";
+import { Divider, FormControl, List, MenuItem, Select, Typography } from "@mui/material";
 import ProfileFeed from "./Profilefeed";
 import { useState } from "react";
 import useGetUser from "../../hooks/useGetUser";
 import UserAvatar from "../../utils/Avatar";
-import useGetImageUrl from "../../hooks/useGetImageUrl";
 
 
 const Profilepage = ({ User ,match}) => {

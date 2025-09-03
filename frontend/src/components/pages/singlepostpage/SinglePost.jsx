@@ -5,17 +5,12 @@ import {
   Divider,
   Grid,
   IconButton,
-  List,
-  ListItem,
   Stack,
   Tooltip,
   Typography,
 } from "@mui/material";
-import Comment from "../../commentsection/Comment";
 import CommentSection from "../../commentsection/CommentSection";
 import useGetPost from "../../hooks/useGetPost";
-import ArrowUpwardRoundedIcon from "@mui/icons-material/ArrowUpwardRounded";
-import ArrowDownwardRoundedIcon from "@mui/icons-material/ArrowDownwardRounded";
 import useMakeComment from "../../hooks/useMakeComment";
 import CommentForm from "./CommentForm";
 import AddCommentIcon from "@mui/icons-material/AddComment";

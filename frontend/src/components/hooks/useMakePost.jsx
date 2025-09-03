@@ -1,7 +1,5 @@
 import { useMutation } from "@apollo/client";
 import { MAKEPOST } from "../graphql/mutations";
-import { GET_FEED_POSTS } from "../graphql/queries";
-import { getOperationName } from "@apollo/client/utilities";
 
 const useMakePost = () => {
   const [mutate, result] = useMutation(MAKEPOST);

@@ -1,6 +1,4 @@
-import React, { useState } from "react";
 import Comment from "./Comment";
-import CommentForm from "../pages/singlepostpage/CommentForm";
 import useMakeComment from "../hooks/useMakeComment";
 import { Box, CircularProgress } from "@mui/material";
 import useEditComment from "../hooks/useEditComment";
