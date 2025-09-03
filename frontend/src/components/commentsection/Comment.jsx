@@ -1,4 +1,4 @@
-import * as React from "react";
+
 import Popover from "@mui/material/Popover";
 import Typography from "@mui/material/Typography";
 import Button from "@mui/material/Button";
@@ -27,6 +27,7 @@ import KarmaItem from "../KarmaItem";
 import { Link, useNavigate } from "react-router";
 import Useritem from "../Useritem";
 import EditComment from "./EditComment";
+import { useState } from "react";
 
 const Comment = ({
   comment,
@@ -40,19 +41,24 @@ const Comment = ({
   postid,
   refetchComment,
 }) => {
-  const [open, setOpen] = React.useState(false);
-  const [editopen, setEditOpen] = React.useState(false);
-  const [ShowComments, setShowComments] = React.useState(false);
+  const [replyopen, setReplyOpen] = useState(false);
+  const [editopen, setEditOpen] = useState(false);
+  const [deleteopen, setDeleteOpen] = useState(false)
+  const [ShowComments, setShowComments] = useState(false);
   const handleReplyClick = () => {
-    setOpen(!open);
+    console.log(open)
+    setReplyOpen(!replyopen);
   };
   const handleEditClick = () => {
+    console.log(editopen)
     setEditOpen(!editopen);
   };
   const handleMoreComments = () => {
     setShowComments(true);
   };
-
+  const handleDeleteOpen = () => {
+    setDeleteOpen(!deleteopen);
+  };
   const Showmorecomments = () => {
     if(comment.replies.length == 0){
       return
@@ -84,63 +90,10 @@ const Comment = ({
       );
     }
   };
-  const CommentEdit = () => {
-    const [open, setOpen] = React.useState(false);
 
-  const handleClickOpen = () => {
-    setOpen(true);
-  };
-
-  const handleClose = () => {
-    setOpen(false);
-  };
-    if (User.username === comment.user.username) {
-      return (
-        <>
-          <Button
-            className={"button"}
-            style={{ borderRadius: 50 }}
-            onClick={handleClickOpen}
-            size="small"
-            variant="outlined"
-            color=""
-          >
-            delete
-          </Button>
-              <Dialog
-              open={open}
-              onClose={handleClose}
-              >
-              <DialogTitle>{"Are you sure you want to delete comment?"}</DialogTitle>
-              <DialogContent>
-                <DialogContentText>
-                  This action is irreversible
-                </DialogContentText>
-              </DialogContent>
-                      <DialogActions>
-          <Button variant="outlined" color=""  sx={{borderRadius:50}} onClick={handleClose}>No</Button>
-          <Button variant="outlined" color=""  sx={{borderRadius:50}} onClick={() => {handleDelete({commentid:comment.id,content:"",action:"delete"});handleClose()}}>
-            Yes
-          </Button>
-        </DialogActions>
-              </Dialog>
-          <Button
-            className={"button"}
-            style={{ borderRadius: 50 }}
-            onClick={() => {
-              handleEditClick();
-            }}
-            size="small"
-            variant="outlined"
-            color=""
-          >
-            edit
-          </Button>
-        </>
-      );
-    }
-  };
   const ReplySection = () => {
+    console.log("deleteopen" ,deleteopen,"editopen", editopen,"newcommentopen",replyopen)
+
     if (!User) {
       console.log("no user");
       return;
@@ -157,9 +110,32 @@ const Comment = ({
         </Collapse>
       );
     }
-    if (open) {
+    if (deleteopen){
+      return(
+        <>
+              <Dialog
+              open={deleteopen}
+              onClose={handleDeleteOpen}
+              >
+              <DialogTitle>{"Are you sure you want to delete comment?"}</DialogTitle>
+              <DialogContent>
+                <DialogContentText>
+                  This action is irreversible
+                </DialogContentText>
+              </DialogContent>
+                      <DialogActions>
+          <Button variant="outlined" color=""  sx={{borderRadius:50}} onClick={handleDeleteOpen}>No</Button>
+          <Button variant="outlined" color=""  sx={{borderRadius:50}} onClick={() => {handleDelete({commentid:comment.id,content:"",action:"delete"});handleClose()}}>
+            Yes
+          </Button>
+        </DialogActions>
+              </Dialog>
+        </>
+      )
+    }
+    else if (replyopen) {
       return (
-        <Collapse in={open} timeout={"auto"} unmountOnExit>
+        <Collapse in={replyopen} timeout={"auto"} unmountOnExit>
           <NewComment
             handleReply={handleReply}
             handleNewComment={handleNewComment}
@@ -178,16 +154,40 @@ const Comment = ({
             size="small"
             variant="outlined"
             color=""
-            onClick={handleReplyClick}
+            onClick={() => {handleReplyClick()}}
           >
             reply
           </Button>
-          {CommentEdit()}
+                    <Button
+            className={"button"}
+            style={{ borderRadius: 50 }}
+            onClick={() => {
+              handleEditClick();
+            }}
+            size="small"
+            variant="outlined"
+            color=""
+          >
+            edit
+          </Button>
+                    <Button
+            className={"button"}
+            style={{ borderRadius: 50 }}
+            onClick={() => {
+              handleDeleteOpen()
+            }}
+            size="small"
+            variant="outlined"
+            color=""
+          >
+            delete
+          </Button>
         </Box>
       );
     }
   };
   if (comment.content || ShowComments) {
+    console.log(comment.replyto)
     return (
       <Box
         key={comment.id}
@@ -224,7 +224,8 @@ const Comment = ({
             karma={comment.karma}
           ></KarmaItem>
         </Box>
-{ReplySection()}
+        {ReplySection()}
+
         <Showmorecomments></Showmorecomments>
       </Box>
     );

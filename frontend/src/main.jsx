@@ -39,7 +39,7 @@ const cache = new InMemoryCache({
       fields: {
         getfeedposts: {
           ...offsetLimitPagination(),
-          keyArgs: ["feedname"],
+          keyArgs: ["feedname","orderBy"],
         },
         getpostcomments: {
           ...offsetLimitPagination(),

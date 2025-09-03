@@ -72,8 +72,18 @@ export const GET_FEED = gql`
   }
 `;
 export const GET_FEED_POSTS = gql`
-  query Getfeedposts($feedname: String!, $offset: Int!, $limit: Int!) {
-    getfeedposts(feedname: $feedname, offset: $offset, limit: $limit) {
+  query Getfeedposts(
+    $feedname: String!
+    $offset: Int!
+    $limit: Int!
+    $orderBy: String!
+  ) {
+    getfeedposts(
+      feedname: $feedname
+      offset: $offset
+      limit: $limit
+      orderBy: $orderBy
+    ) {
       headline
       description
       karma
@@ -152,8 +162,34 @@ export const GET_USER = gql`
       work
       active
       id
+      dislikedposts {
+        id
+      }
+      likedposts {
+        id
+      }
+      likedcomments {
+        id
+      }
+      dislikedcomments {
+        id
+      }
+              feedsubs {
+        id
+      }
+      posts {
+        id
+      }
+      ownedfeeds {
+        id
+      }
+      comments {
+        id
+      }
+      createdAt
     }
-  }
+}
+  
 `;
 
 export const GET_ALL_FEED = gql`
@@ -233,10 +269,19 @@ export const GET_USER_COMMENTS = gql`
       createdAt
       updatedAt
       id
-      user {
-        username
+      replyto {
         id
-        avatar
+        user {
+          id
+          username
+          avatar
+        }
+        content
+        active
+        karma
+        depth
+        createdAt
+        updatedAt
       }
       replies {
         id
@@ -309,6 +354,8 @@ export const GET_IMAGE_URLS = gql`
     getFiles(userId: $userId)
   }
 `;
-export const GET_IMAGE_URL = gql`query Query($imageId: String!) {
-  getImage(imageId: $imageId)
-}`
+export const GET_IMAGE_URL = gql`
+  query Query($imageId: String!) {
+    getImage(imageId: $imageId)
+  }
+`;

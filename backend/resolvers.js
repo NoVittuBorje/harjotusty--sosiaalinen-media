@@ -24,8 +24,6 @@ const client = new S3Client({
   region: process.env.AWS_REGION,
 });
 
-
-
 const resolvers = {
   Upload: GraphQLUpload,
   Query: {
@@ -64,7 +62,7 @@ const resolvers = {
               "feed",
             ],
           },
-        ]);
+        ]).populate({path:["likedposts","dislikedposts","likedcomments","dislikedcomments","feedsubs","comments"],select:["_id"],});
       console.log(user);
       return user;
     },
@@ -91,7 +89,9 @@ const resolvers = {
           return [feed];
         }
         if (args.querytype === "many") {
-          const feeds = await Feed.find({active:true}).sort({ subs: -1 }).limit(10);
+          const feeds = await Feed.find({ active: true })
+            .sort({ subs: -1 })
+            .limit(10);
           return feeds;
         }
       } catch (e) {
@@ -100,20 +100,49 @@ const resolvers = {
       }
     },
     getfeedposts: async (root, args) => {
-      console.log(args.feedname, args.offset, args.limit);
-      try {
-        const feed = await Feed.findOne({ feedname: args.feedname });
-        console.log(feed);
-        const posts = await Post.find({ feed: feed._id, active: true })
-          .sort({ createdAt: -1 })
-          .skip(args.offset)
-          .limit(10)
-          .populate("owner", { username: 1, avatar: 1, id: 1, active: 1 })
-          .populate("feed", { feedname: 1, id: 1 });
-        console.log(posts);
-        return posts;
-      } catch (e) {
-        throw new GraphQLError(e);
+      console.log(args.feedname, args.orderBy, args.offset, args.limit);
+      const feed = await Feed.findOne({ feedname: args.feedname });
+      if (args.orderBy === "HOTTEST") {
+        try {
+          const posts = await Post.find({ feed: feed._id, active: true })
+            .sort({ karma: -1 })
+            .sort({ createdAt: -1 })
+            .skip(args.offset)
+            .limit(10)
+            .populate("feed", { feedname: 1 })
+            .populate("owner", { username: 1, id: 1, avatar: 1 });
+          return posts;
+        } catch (e) {
+          throw new GraphQLError(e);
+        }
+      }
+      if (args.orderBy === "POPULAR") {
+        console.log("popular");
+        try {
+          const posts = await Post.find({ feed: feed._id, active: true })
+            .sort({ karma: -1 })
+            .skip(args.offset)
+            .limit(10)
+            .populate("feed", { feedname: 1 })
+            .populate("owner", { username: 1, id: 1, avatar: 1 });
+          console.log(posts);
+          return posts;
+        } catch (e) {
+          throw new GraphQLError(e);
+        }
+      }
+      if (args.orderBy === "NEWEST") {
+        try {
+          const posts = await Post.find({ feed: feed._id, active: true })
+            .sort({ createdAt: -1 })
+            .skip(args.offset)
+            .limit(10)
+            .populate("feed", { feedname: 1 })
+            .populate("owner", { username: 1, id: 1, avatar: 1 });
+          return posts;
+        } catch (e) {
+          throw new GraphQLError(e);
+        }
       }
     },
     getpostcomments: async (root, args) => {
@@ -140,77 +169,80 @@ const resolvers = {
       console.log(comments);
       return comments;
     },
-    getpopularposts: async (root, args,context) => {
+    getpopularposts: async (root, args, context) => {
       console.log(args.orderBy);
       if (args.orderBy === "HOTTEST") {
-        try{
-        const posts = await Post.find({ active: true })
-          .sort({ karma: -1 })
-          .sort({ createdAt: -1 })
-          .skip(args.offset)
-          .limit(10)
-          .populate("feed", { feedname: 1 })
-          .populate("owner", { username: 1, id: 1, avatar: 1 });
-        return posts;
+        try {
+          const posts = await Post.find({ active: true })
+            .sort({ karma: -1 })
+            .sort({ createdAt: -1 })
+            .skip(args.offset)
+            .limit(10)
+            .populate("feed", { feedname: 1 })
+            .populate("owner", { username: 1, id: 1, avatar: 1 });
+          return posts;
         } catch (e) {
-        throw new GraphQLError(e);
-      }
-      }
-      if (args.orderBy === "POPULAR") {
-        console.log("popular");
-        try{
-        const posts = await Post.find({ active: true })
-          .sort({ karma: -1 })
-          .skip(args.offset)
-          .limit(10)
-          .populate("feed", { feedname: 1 })
-          .populate("owner", { username: 1, id: 1, avatar: 1 });
-        console.log(posts);
-        return posts;
-        } catch (e) {
-        throw new GraphQLError(e);
-      }
-      }
-      if(args.orderBy === "NEWEST"){
-      try {
-        const posts = await Post.find({ active: true })
-          .sort({ createdAt: -1 })
-          .skip(args.offset)
-          .limit(10)
-          .populate("feed", { feedname: 1 })
-          .populate("owner", { username: 1, id: 1, avatar: 1 });
-        return posts;
-      } catch (e) {
-        throw new GraphQLError(e);
-      }}
-      if(args.orderBy === "SUBSCRIPTIONS"){
-        try{
-          console.log(context.currentUser.feedsubs)
-          const subs = context.currentUser.feedsubs.map(x => x._id)
-          const posts = await Post.find({feed:{$in:[...subs]}}).sort({ createdAt: -1 })
-          .skip(args.offset)
-          .limit(10)
-          .populate("feed", { feedname: 1 })
-          .populate("owner", { username: 1, id: 1, avatar: 1 });
-
-        return posts;
-        }catch(e) {
           throw new GraphQLError(e);
         }
       }
-            if(args.orderBy === "OWNEDFEEDS"){
-        try{
-          console.log(context.currentUser.ownedfeeds)
-          const feeds = context.currentUser.ownedfeeds.map(x => x._id)
-          
-          const posts = await Post.find({feed:{$in:[...feeds]}}).sort({ createdAt: -1 })
-          .skip(args.offset)
-          .limit(10)
-          .populate("feed", { feedname: 1 })
-          .populate("owner", { username: 1, id: 1, avatar: 1 });
+      if (args.orderBy === "POPULAR") {
+        console.log("popular");
+        try {
+          const posts = await Post.find({ active: true })
+            .sort({ karma: -1 })
+            .skip(args.offset)
+            .limit(10)
+            .populate("feed", { feedname: 1 })
+            .populate("owner", { username: 1, id: 1, avatar: 1 });
+          console.log(posts);
+          return posts;
+        } catch (e) {
+          throw new GraphQLError(e);
+        }
+      }
+      if (args.orderBy === "NEWEST") {
+        try {
+          const posts = await Post.find({ active: true })
+            .sort({ createdAt: -1 })
+            .skip(args.offset)
+            .limit(10)
+            .populate("feed", { feedname: 1 })
+            .populate("owner", { username: 1, id: 1, avatar: 1 });
+          return posts;
+        } catch (e) {
+          throw new GraphQLError(e);
+        }
+      }
+      if (args.orderBy === "SUBSCRIPTIONS") {
+        try {
+          console.log(context.currentUser.feedsubs);
+          const subs = context.currentUser.feedsubs.map((x) => x._id);
+          const posts = await Post.find({ feed: { $in: [...subs] } })
+            .sort({ createdAt: -1 })
+            .skip(args.offset)
+            .limit(10)
+            .populate("feed", { feedname: 1 })
+            .populate("owner", { username: 1, id: 1, avatar: 1 });
 
-        return posts;
-        }catch(e) {
+          return posts;
+        } catch (e) {
+          throw new GraphQLError(e);
+        }
+      }
+      if (args.orderBy === "OWNEDFEEDS") {
+        try {
+          console.log(context.currentUser.ownedfeeds);
+          const feeds = context.currentUser.ownedfeeds.map((x) => x._id);
+
+          const posts = await Post.find({ feed: { $in: [...feeds] } })
+            .sort({ createdAt: -1 })
+            .skip(args.offset)
+            .limit(10)
+            .populate("feed", { feedname: 1 })
+            .populate("owner", { username: 1, id: 1, avatar: 1 });
+
+          return posts;
+        } catch (e) {
           throw new GraphQLError(e);
         }
       }
@@ -285,6 +317,11 @@ const resolvers = {
       try {
         const user = await User.findById(args.userid).populate({
           path: "comments",
+          options: {
+            sort: { createdAt: -1 },
+            skip: args.offset,
+            limit: 10,
+          },
           select: [
             "content",
             "active",
@@ -293,19 +330,38 @@ const resolvers = {
             "createdAt",
             "updatedAt",
             "id",
-            "user",
             "replies",
+            "replyto",
             "post",
           ],
-          populate: {
-            path: ["user", "replies", "post"],
-            select: ["username", "id", "avatar", "headline", "description"],
-          },
-          options: {
-            sort: { createdAt: -1 },
-            skip: args.offset,
-            limit: 10,
-          },
+          populate: [
+            {
+              path: "replies",
+              select: ["id"],
+            },
+            {
+              path: "post",
+              select: ["id", "headline", "description"],
+            },
+            {
+              path: "replyto",
+              select: [
+                "id",
+                "content",
+                "active",
+                "karma",
+                "depth",
+                "createdAt",
+                "updatedAt",
+                "id",
+                "user",
+              ],
+              populate:[{
+                path:"user",
+                select:["id","username","avatar",],
+              }]
+            },
+          ],
         });
 
         console.log(user);
@@ -387,12 +443,12 @@ const resolvers = {
     },
     getImage: async (root, args, context) => {
       try {
-        console.log("getimage")
+        console.log("getimage");
         let command = new GetObjectCommand({
           Bucket: process.env.AWS_S3_BUCKET_NAME,
           Key: args.imageId,
         });
-        
+
         return await getSignedUrl(client, command, { expiresIn: 60 });
       } catch (error) {
         return error;
@@ -619,8 +675,8 @@ const resolvers = {
       });
       if (args.action === "delete" && post.owner.id === user.id) {
         post.headline = "This post has been deleted by the user.";
-        post.description = "This post has been deleted by the user."
-        post.img = null
+        post.description = "This post has been deleted by the user.";
+        post.img = null;
         await post.save();
         return post;
       }
@@ -693,78 +749,78 @@ const resolvers = {
         },
       });
     },
-    modifyUser: async (root,args,context) => {
-      const user = context.currentUser
-      if(args.type === "Avatar"){
-        try{
-          console.log(args.content)
-          user.avatar = args.content
-          await user.save()
-          return user
-        }catch(e){
+    modifyUser: async (root, args, context) => {
+      const user = context.currentUser;
+      if (args.type === "Avatar") {
+        try {
+          console.log(args.content);
+          user.avatar = args.content;
+          await user.save();
+          return user;
+        } catch (e) {
           throw new GraphQLError(e);
         }
       }
-      if(args.type === "Description"){
-        try{
-          user.description = args.content
-          await user.save()
-          return user
-        }catch(e){
+      if (args.type === "Description") {
+        try {
+          user.description = args.content;
+          await user.save();
+          return user;
+        } catch (e) {
           throw new GraphQLError(e);
         }
       }
-            if(args.type === "Email"){
-        try{
-                    user.email = args.content
-          await user.save()
-          return user
-        }catch(e){
+      if (args.type === "Email") {
+        try {
+          user.email = args.content;
+          await user.save();
+          return user;
+        } catch (e) {
           throw new GraphQLError(e);
         }
       }
-            if(args.type === "Username"){
-        try{
-          user.username = args.content
-          await user.save()
-          return user
-        }catch(e){
+      if (args.type === "Username") {
+        try {
+          user.username = args.content;
+          await user.save();
+          return user;
+        } catch (e) {
           throw new GraphQLError(e);
         }
       }
-            if(args.type === "Firstname"){
-        try{
-          user.firstname = args.content
-          await user.save()
-          return user
-        }catch(e){
+      if (args.type === "Firstname") {
+        try {
+          user.firstname = args.content;
+          await user.save();
+          return user;
+        } catch (e) {
           throw new GraphQLError(e);
         }
       }
-            if(args.type === "Lastname"){
-        try{
-          user.lastname = args.content
-          await user.save()
-          return user
-        }catch(e){
+      if (args.type === "Lastname") {
+        try {
+          user.lastname = args.content;
+          await user.save();
+          return user;
+        } catch (e) {
           throw new GraphQLError(e);
         }
       }
-            if(args.type === "Relationship"){
-        try{
-          user.relationship = args.content
-          await user.save()
-          return user
-        }catch(e){
+      if (args.type === "Relationship") {
+        try {
+          user.relationship = args.content;
+          await user.save();
+          return user;
+        } catch (e) {
           throw new GraphQLError(e);
         }
       }
-            if(args.type === "Work"){
-        try{
-          user.work = args.content
-          await user.save()
-          return user
-        }catch(e){
+      if (args.type === "Work") {
+        try {
+          user.work = args.content;
+          await user.save();
+          return user;
+        } catch (e) {
           throw new GraphQLError(e);
         }
       }
@@ -819,16 +875,21 @@ const resolvers = {
         const stream = createReadStream();
         const uploadimage = new Upload({
           client: client,
-          params:{          Bucket: process.env.AWS_S3_BUCKET_NAME,
-          Key: `images/${userId}/${uuidv4()}${filename}`,
-          Body: stream,}
-        })
-        await uploadimage.on("httpUploadProgress",(progress) => {
-          console.log(progress)
-        })
-        await uploadimage.done()
-        console.log(uploadimage.singleUploadResult.Key)
-        return [`${uploadimage.singleUploadResult.Key}`,`Image: ${filename} uploaded successfully`]
+          params: {
+            Bucket: process.env.AWS_S3_BUCKET_NAME,
+            Key: `images/${userId}/${uuidv4()}${filename}`,
+            Body: stream,
+          },
+        });
+        await uploadimage.on("httpUploadProgress", (progress) => {
+          console.log(progress);
+        });
+        await uploadimage.done();
+        console.log(uploadimage.singleUploadResult.Key);
+        return [
+          `${uploadimage.singleUploadResult.Key}`,
+          `Image: ${filename} uploaded successfully`,
+        ];
       } catch (error) {
         console.error("Error uploading file:", error);
         throw new Error("Failed to upload file");

@@ -4,7 +4,7 @@ import useGetUserComments from "../../hooks/useGetUserComments";
 import InfiniteScroll from "react-infinite-scroll-component";
 import KarmaItem from "../../KarmaItem";
 import CommentSection from "../../commentsection/CommentSection";
-const ProfileFeedComment = ({variables,User}) => {
+const ProfileFeedComment = ({variables,User,userdata}) => {
   console.log(variables);
   const comments = useGetUserComments(variables);
   const loadmore = () => {
@@ -14,9 +14,13 @@ const ProfileFeedComment = ({variables,User}) => {
     return <Box>loading</Box>;
   }
   console.log(comments.data.getusercomments);
+  let ecomments = comments.data.getusercomments.map((comment) =>{ console.log(comment)
+    return({...comment,user:userdata})
+  })
+  console.log(ecomments)
   return (
     <Box sx={{}}>
-      <CommentSection User={User} comments={comments.data.getusercomments} loadmore={loadmore} loading={comments.loading}></CommentSection>
+      <CommentSection User={User} comments={ecomments} loadmore={loadmore} loading={comments.loading} type={"profile"}></CommentSection>
     </Box>
   );
 };

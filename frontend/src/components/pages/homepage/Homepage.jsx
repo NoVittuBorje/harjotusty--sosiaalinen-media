@@ -13,10 +13,20 @@ import {
 import FeedItem from "../../FeedItem";
 import useGetPopularPosts from "../../hooks/useGetPopularPosts";
 import InfiniteScroll from "react-infinite-scroll-component";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 const Homescreen = ({ User }) => {
-  const [orderBy, setorderBy] = useState("NEWEST");
+  if(!localStorage.getItem("HomeorderBy")){localStorage.setItem("HomeorderBy","POPULAR")}
+  const [orderBy, setorderBy] = useState(localStorage.getItem("HomeorderBy"));
+
+  console.log(orderBy,localStorage.getItem("HomeorderBy"))
+  useEffect(() => {
+    setorderBy(localStorage.getItem("HomeorderBy"))
+  },[])
+    useEffect(() => {
+    localStorage.setItem("HomeorderBy",orderBy)
+  },[orderBy])
+
   const variables = {
     orderBy: orderBy,
   };
@@ -65,14 +75,14 @@ const Homescreen = ({ User }) => {
           <h3 style={{ textAlign: "center" }}>{orderBy} Posts</h3>
           <FormControl>
             <Select
-              defaultValue={"NEWEST"}
+              defaultValue={orderBy}
               name="orderBy"
               id="orderBy-select"
               sx={{ color: "white" }}
               onChange={handleChange}
             >
-              <MenuItem value={"NEWEST"}>Newest</MenuItem>
               <MenuItem value={"POPULAR"}>Popular</MenuItem>
+              <MenuItem value={"NEWEST"}>Newest</MenuItem>
               <MenuItem value={"HOTTEST"}>Hottest</MenuItem>
               {UserSubs()}
               {UserFeeds()}

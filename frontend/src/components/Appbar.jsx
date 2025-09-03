@@ -1,4 +1,4 @@
-import * as React from "react";
+
 import { styled, alpha } from "@mui/material/styles";
 import AppBar from "@mui/material/AppBar";
 import Box from "@mui/material/Box";
@@ -42,6 +42,7 @@ import {
   TextField,
 } from "@mui/material";
 import AddCircleOutlineIcon from "@mui/icons-material/AddCircleOutline";
+import { useState } from "react";
 
 const Search = styled("div")(({ theme }) => ({
   position: "relative",
@@ -100,16 +101,19 @@ export default function PrimarySearchAppBar({ User, refetch }) {
   console.log(User);
   const navigate = useNavigate();
   const apolloClient = useApolloClient();
-  const [search, setSearch] = React.useState(null);
-  const [searchvalue, setSearchvalue] = React.useState("");
-  const [searchOptions, setSearchoptions] = React.useState("");
   const token = localStorage.getItem("token");
-  const feeds = useGetManyFeeds();
-  const [open, setOpen] = React.useState(false);
 
-  const [anchorEl, setAnchorEl] = React.useState(null);
-  const [loginanchorEl, setLoginAnchorEl] = React.useState(null);
-  const [searchanchorEl, setSearchAnchorEl] = React.useState(null);
+  const feeds = useGetManyFeeds();
+
+    const [search, setSearch] = useState(null);
+  const { data, loading, error, fetchmore } = useGetSearch({ search });
+
+  const [open, setOpen] = useState(false);
+
+  const [searchvalue, setSearchvalue] = useState("");
+  const [anchorEl, setAnchorEl] = useState(null);
+  const [loginanchorEl, setLoginAnchorEl] = useState(null);
+  const [searchanchorEl, setSearchAnchorEl] = useState(null);
 
   const isMenuOpen = Boolean(anchorEl);
   const isLoginMenuOpen = Boolean(loginanchorEl);
@@ -121,8 +125,6 @@ export default function PrimarySearchAppBar({ User, refetch }) {
   const searchopen = Boolean(searchanchorEl);
   const searchmenuId = searchopen ? "search-popper" : undefined;
 
-  console.log(search);
-  const { data, loading, error, fetchmore } = useGetSearch({ search });
 
   const handleLoginMenuOpen = (event) => {
     setLoginAnchorEl(event.currentTarget);
@@ -133,9 +135,7 @@ export default function PrimarySearchAppBar({ User, refetch }) {
   const handleProfileMenuOpen = (event) => {
     setAnchorEl(event.currentTarget);
   };
-  const handleSearchOpen = (event) => {
-    setSearchAnchorEl(event.currentTarget);
-  };
+
 
   const handleLoginMenuClose = () => {
     setLoginAnchorEl(null);
@@ -167,6 +167,8 @@ export default function PrimarySearchAppBar({ User, refetch }) {
     handleMenuClose();
     apolloClient.clearStore();
     localStorage.clear();
+    localStorage.setItem("HomeorderBy","POPULAR")
+    localStorage.setItem("FeedorderBy","POPULAR")
     navigate("/");
   };
   const handleRegisterClick = () => {

@@ -52,7 +52,7 @@ const MakeFeedPage = () => {
                 label="Feed name"
                 variant="outlined"
                 inputProps={{ style: { color: "white" } }}
-        InputLabelProps={{style:{color:"white"}}}
+                InputLabelProps={{ style: { color: "white" } }}
                 onChange={formik.handleChange("feedname")}
               />
               <TextField
@@ -62,17 +62,19 @@ const MakeFeedPage = () => {
                 multiline
                 rows={6}
                 label="Description"
-                        inputProps={{ style: { color: "white" } }}
-        InputLabelProps={{style:{color:"white"}}}
+                inputProps={{ style: { color: "white" } }}
+                InputLabelProps={{ style: { color: "white" } }}
                 variant="filled"
                 onChange={formik.handleChange("description")}
               />
               <Button
                 sx={{ alignSelf: "left" }}
                 onClick={formik.handleSubmit}
-                variant="standard"
-                className="button"
-                style={{borderRadius:50}}
+                className={"button"}
+                style={{ borderRadius: 50 }}
+                size="small"
+                variant="outlined"
+                color=""
               >
                 Make feed
               </Button>

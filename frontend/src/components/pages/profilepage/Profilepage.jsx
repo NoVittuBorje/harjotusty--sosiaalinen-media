@@ -1,4 +1,4 @@
-import { Box, Grid } from "@mui/system";
+import { Box, Grid, Stack } from "@mui/system";
 import AccountCircle from "@mui/icons-material/AccountCircle";
 import AccountBoxIcon from "@mui/icons-material/AccountBox";
 import { Avatar, Divider, FormControl, List, MenuItem, Select, Typography } from "@mui/material";
@@ -12,7 +12,7 @@ import useGetImageUrl from "../../hooks/useGetImageUrl";
 const Profilepage = ({ User ,match}) => {
   console.log(User);
   console.log(match)
-  const imagedata = useGetImageUrl({imageId:User.avatar})
+  
 
   const [type, setType] = useState("posts")
   const id = match.params.userid;
@@ -20,30 +20,52 @@ const Profilepage = ({ User ,match}) => {
     const handleChange = (event) => {
     setType(event.target.value);
   };
-  const ProfilePicture = () => {
-    if(!imagedata.loading){
-    return(
-      <Avatar sx={{width:100,height:100}} src={imagedata.data.getImage}></Avatar>
-    )}else{
-      return <UserAvatar height={100} width={100} user={User}></UserAvatar>
-    }
-  }
+  
+
+  
   console.log(id);
   if (userdata.loading){
     return <p>loading...</p>
   }else{
   const profiledata = userdata.data ? userdata.data.getuser : []
   console.log(profiledata)
+  
   return (
     <Box sx={{ flexGrow: 1 }}>
       <Grid container rowSpacing={1} sx={{ flexDirection: "row" }}>
         <Grid size={{ xs: 12, md: 2 }} sx={{}}>
-          <Typography variant="h4" >{profiledata.username}</Typography>
-          {ProfilePicture()}
-          <Typography variant="h6">{profiledata.description}</Typography>
-          <AccountBoxIcon sx={{ fontSize: 100 }} />
+          <Stack>
+                <Typography>{`Disliked comments: ${profiledata.dislikedcomments.length}`}</Typography>
+                <Typography>{`Liked comments: ${profiledata.likedcomments.length}`}</Typography>
+                <Typography>{`Disliked posts: ${profiledata.dislikedposts.length}`}</Typography>
+                <Typography>{`Liked posts: ${profiledata.likedposts.length}`}</Typography>
+                <Typography>{`Subs:  ${profiledata.feedsubs.length}`}</Typography>
+                <Typography>{`Owned feeds: ${profiledata.ownedfeeds.length}`}</Typography>
+          </Stack>
         </Grid>
         <Grid size={{ xs: 12, md: 8 }} sx={{  }}>
+          <Box sx={{padding:1}}>
+            <Grid container rowSpacing={10} sx={{flexDirection:"row"}}>
+              <Grid size={{xs:4}}>
+                <Stack>
+                <Typography variant="h4" >{profiledata.username}</Typography>
+                <UserAvatar height={100} width={100} user={profiledata}></UserAvatar>
+                </Stack>
+                
+              </Grid>
+              <Grid size={{xs:4}}>
+                <Stack>
+
+                </Stack>
+              </Grid>
+              <Grid>
+
+              </Grid>
+            </Grid>
+          
+          
+          <Typography variant="h8">{profiledata.description}</Typography>
+          </Box>
           <Box sx={{ padding: 1 }}>
           <FormControl>
           <Select defaultValue={"posts"} name="select-info" id="select-info" sx={{color:"white"}} onChange={handleChange}>

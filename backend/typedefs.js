@@ -81,6 +81,7 @@ const typeDefs = `#graphql
     ):[Feed]
     getfeedposts(
     feedname:String!
+    orderBy:String!
     offset:Int!
     limit:Int!
     ):[Post]
