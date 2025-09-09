@@ -26,6 +26,20 @@ const client = new S3Client({
 
 const resolvers = {
   Upload: GraphQLUpload,
+  Search: {
+    __resolveType(obj, contextValue, info) {
+      if (obj.headline) {
+        return "Post";
+      }
+      if (obj.feedname) {
+        return "Feed";
+      }
+      if(obj.username){
+        return "User"
+      }
+      return null;
+    },
+  },
   Query: {
     me: (root, args, context) => {
       console.log(context, "context");
@@ -62,7 +76,18 @@ const resolvers = {
               "feed",
             ],
           },
-        ]).populate({path:["likedposts","dislikedposts","likedcomments","dislikedcomments","feedsubs","comments"],select:["_id"],});
+        ])
+        .populate({
+          path: [
+            "likedposts",
+            "dislikedposts",
+            "likedcomments",
+            "dislikedcomments",
+            "feedsubs",
+            "comments",
+          ],
+          select: ["_id"],
+        });
       console.log(user);
       return user;
     },
@@ -356,10 +381,12 @@ const resolvers = {
                 "id",
                 "user",
               ],
-              populate:[{
-                path:"user",
-                select:["id","username","avatar",],
-              }]
+              populate: [
+                {
+                  path: "user",
+                  select: ["id", "username", "avatar"],
+                },
+              ],
             },
           ],
         });
@@ -407,7 +434,16 @@ const resolvers = {
         const feeds = await Feed.find({
           feedname: { $regex: args.searchby, $options: "i" },
         }).limit(10);
-        return feeds;
+        const posts = await Post.find({
+          headline: { $regex: args.searchby, $options: "i" },
+        }).limit(10);
+        const users = await User.find({
+          username: { $regex: args.searchby, $options: "i" },
+        }).limit(10)
+        const result = [...feeds, ...posts,...users];
+        console.log(result);
+
+        return result;
       } catch (e) {
         throw new GraphQLError(e);
       }
@@ -806,7 +842,7 @@ const resolvers = {
           throw new GraphQLError(e);
         }
       }
-      if (args.type === "Relationship") {
+      if (args.type === "relationship") {
         try {
           user.relationship = args.content;
           await user.save();

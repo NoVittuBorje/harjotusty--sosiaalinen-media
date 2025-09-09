@@ -1,4 +1,3 @@
-
 import { styled, alpha } from "@mui/material/styles";
 import AppBar from "@mui/material/AppBar";
 import Box from "@mui/material/Box";
@@ -25,12 +24,11 @@ import useGetManyFeeds from "./hooks/useGetManyFeeds";
 import { useApolloClient } from "@apollo/client";
 import useGetSearch from "./hooks/useGetSearch";
 import { useDebouncedCallback } from "use-debounce";
-import {
-  Autocomplete,
-  Chip,
-  Popper,
-  TextField,
-} from "@mui/material";
+import AccountBoxIcon from "@mui/icons-material/AccountBox";
+import LogoutIcon from "@mui/icons-material/Logout";
+import LoginIcon from "@mui/icons-material/Login";
+import PersonIcon from "@mui/icons-material/Person";
+import { Autocomplete, Chip, Popper, TextField } from "@mui/material";
 import AddCircleOutlineIcon from "@mui/icons-material/AddCircleOutline";
 import { useState } from "react";
 
@@ -72,8 +70,8 @@ const SearchIconWrapper = styled("div")(({ theme }) => ({
   alignItems: "center",
   justifyContent: "center",
 }));
-const StyledAutocomplete = styled(Autocomplete)(({theme}) => ({
-    color: "inherit",
+const StyledAutocomplete = styled(Autocomplete)(({ theme }) => ({
+  color: "inherit",
   "& .MuiAutocomplete-inputRoot": {
     padding: theme.spacing(1, 1, 1, 0),
     // vertical padding + font size from searchIcon
@@ -81,11 +79,10 @@ const StyledAutocomplete = styled(Autocomplete)(({theme}) => ({
     transition: theme.transitions.create("width"),
     width: "100%",
     [theme.breakpoints.up("md")]: {
-      width: "25ch",
+      width: "30ch",
     },
   },
-}))
-
+}));
 
 export default function PrimarySearchAppBar({ User, refetch }) {
   console.log(User);
@@ -95,7 +92,7 @@ export default function PrimarySearchAppBar({ User, refetch }) {
 
   const feeds = useGetManyFeeds();
 
-    const [search, setSearch] = useState(null);
+  const [search, setSearch] = useState(null);
   const { data, loading, error, fetchmore } = useGetSearch({ search });
 
   const [open, setOpen] = useState(false);
@@ -115,7 +112,6 @@ export default function PrimarySearchAppBar({ User, refetch }) {
   const searchopen = Boolean(searchanchorEl);
   const searchmenuId = searchopen ? "search-popper" : undefined;
 
-
   const handleLoginMenuOpen = (event) => {
     setLoginAnchorEl(event.currentTarget);
   };
@@ -125,7 +121,6 @@ export default function PrimarySearchAppBar({ User, refetch }) {
   const handleProfileMenuOpen = (event) => {
     setAnchorEl(event.currentTarget);
   };
-
 
   const handleLoginMenuClose = () => {
     setLoginAnchorEl(null);
@@ -157,8 +152,8 @@ export default function PrimarySearchAppBar({ User, refetch }) {
     handleMenuClose();
     apolloClient.clearStore();
     localStorage.clear();
-    localStorage.setItem("HomeorderBy","POPULAR")
-    localStorage.setItem("FeedorderBy","POPULAR")
+    localStorage.setItem("HomeorderBy", "POPULAR");
+    localStorage.setItem("FeedorderBy", "POPULAR");
     navigate("/");
   };
   const handleRegisterClick = () => {
@@ -178,27 +173,6 @@ export default function PrimarySearchAppBar({ User, refetch }) {
     setSearch(value);
   }, 1000);
 
-  const SearchStatePopper = ({ items }) => {
-    const searchitems = items ? items.getsearchbar : [];
-    console.log(isSearchPopperOpen);
-    console.log(searchitems);
-    return (
-      <Popper
-        style={{ width: "100%" }}
-        anchorEl={searchanchorEl}
-        id={searchmenuId}
-        open={isSearchPopperOpen}
-        onClose={handleSearchClose}
-      >
-        <Box sx={{ border: 1, p: 1, bgcolor: "background.paper" }}>
-          <Typography>juu</Typography>
-          {searchitems.map((item) => {
-            <Typography>{item.feedname}</Typography>;
-          })}
-        </Box>
-      </Popper>
-    );
-  };
   const MenuStatelogin = ({ User }) => {
     if (User) {
       return (
@@ -211,15 +185,21 @@ export default function PrimarySearchAppBar({ User, refetch }) {
           id={menuId}
           keepMounted
           transformOrigin={{
-            vertical: "bottom",
+            vertical: "top",
             horizontal: "left",
           }}
           open={isMenuOpen}
           onClose={handleMenuClose}
         >
-          <MenuItem onClick={handleProfileMenuClick}>Profile</MenuItem>
-          <MenuItem onClick={handleMyaccountClick}>My account</MenuItem>
-          <MenuItem onClick={handleLogoutClick}>Logout</MenuItem>
+          <MenuItem onClick={handleProfileMenuClick}>
+            <PersonIcon></PersonIcon>Profile
+          </MenuItem>
+          <MenuItem onClick={handleMyaccountClick}>
+            <AccountBoxIcon></AccountBoxIcon>My account
+          </MenuItem>
+          <MenuItem onClick={handleLogoutClick}>
+            <LogoutIcon></LogoutIcon>Logout
+          </MenuItem>
         </Menu>
       );
     } else {
@@ -233,14 +213,18 @@ export default function PrimarySearchAppBar({ User, refetch }) {
           id={loginMenuId}
           keepMounted
           transformOrigin={{
-            vertical: "bottom",
+            vertical: "top",
             horizontal: "left",
           }}
           open={isLoginMenuOpen}
           onClose={handleLoginMenuClose}
         >
-          <MenuItem onClick={handleLoginClick}>Login</MenuItem>
-          <MenuItem onClick={handleRegisterClick}>Register</MenuItem>
+          <MenuItem onClick={handleLoginClick}>
+            <LoginIcon></LoginIcon>Login
+          </MenuItem>
+          <MenuItem onClick={handleRegisterClick}>
+            <LoginIcon></LoginIcon>Register
+          </MenuItem>
         </Menu>
       );
     }
@@ -440,31 +424,88 @@ export default function PrimarySearchAppBar({ User, refetch }) {
             disablePortal
             options={searchoptions}
             getOptionLabel={(option) => `f/${option.feedname}`}
-            getOptionKey={(option) => option.feedname}
+            getOptionKey={(option) => option}
             groupBy={(option) => option.__typename}
             freeSolo
             filterOptions={(x) => x}
             size="small"
-            renderOption={(option) => (
-              <li key={option.key}>
-                <Button
-                  sx={{ width: "100%", textAlign: "left", textAnchor: "left" }}
-                  onClick={(event) => {
-                    console.log(event)
-                    navigate(`/feed/${option.key}`);
-                  }}
-                >
-                  <Typography
-                    textAlign={"left"}
-                    sx={{ textAlign: "left", width: "100%" }}
-                  >
-                    {option.key}
-                  </Typography>
-                </Button>
-              </li>
-            )}
+            renderOption={(option) => {
+              console.log(option.key.__typename);
+              if (option.key.__typename == "Feed") {
+                return (
+                  <li key={option.key.id}>
+                    <Button
+                      sx={{
+                        width: "100%",
+                        textAlign: "left",
+                        textAnchor: "left",
+                      }}
+                      onClick={(event) => {
+                        console.log(event);
+                        navigate(`/feed/${option.key.feedname}`);
+                      }}
+                    >
+                      <Typography
+                        textAlign={"left"}
+                        sx={{ textAlign: "left", width: "100%" }}
+                      >
+                        {option.key.feedname}
+                      </Typography>
+                    </Button>
+                  </li>
+                );
+              }
+              if (option.key.__typename == "Post") {
+                return (
+                  <li key={option.key.id}>
+                    <Button
+                      sx={{
+                        width: "100%",
+                        textAlign: "left",
+                        textAnchor: "left",
+                      }}
+                      onClick={(event) => {
+                        console.log(event);
+                        navigate(`/post/${option.key.id}`);
+                      }}
+                    >
+                      <Typography
+                        textAlign={"left"}
+                        sx={{ textAlign: "left", width: "100%" }}
+                      >
+                        {option.key.headline}
+                      </Typography>
+                    </Button>
+                  </li>
+                );
+              }
+              if (option.key.__typename == "User") {
+                return (
+                  <li key={option.key.id}>
+                    <Button
+                      sx={{
+                        width: "100%",
+                        textAlign: "left",
+                        textAnchor: "left",
+                      }}
+                      onClick={(event) => {
+                        console.log(event);
+                        navigate(`/profile/${option.key.id}`);
+                      }}
+                    >
+                      <Typography
+                        textAlign={"left"}
+                        sx={{ textAlign: "left", width: "100%" }}
+                      >
+                        {option.key.username}
+                      </Typography>
+                    </Button>
+                  </li>
+                );
+              }
+            }}
             renderInput={(params) => {
-              console.log(params)
+              console.log(params);
               return (
                 <Search>
                   <SearchIconWrapper>
@@ -494,7 +535,7 @@ export default function PrimarySearchAppBar({ User, refetch }) {
               console.log(value.target.value);
             }}
             renderValue={(value, getItemProps) => (
-              <Chip label={value.feedname} {...getItemProps()} />
+              <Chip key={value.id} label={value.feedname} {...getItemProps()} />
             )}
           />
 

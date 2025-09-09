@@ -10,6 +10,7 @@ import {
   MenuItem,
   Select,
   Stack,
+  Tooltip,
   Typography,
 } from "@mui/material";
 import EditFieldItem from "./EditFieldItem";
@@ -19,14 +20,9 @@ import UserAvatar from "../utils/Avatar";
 import useEditUser from "../hooks/useEditUser";
 
 const MyAccountpage = ({ User }) => {
+
   const [imagePath, setImagePath] = useState(User.avatar);
-  const [username, setUsername] = useState(User.username);
-  const [email, setEmail] = useState(User.email);
-  const [description, setDescription] = useState(User.description);
-  const [firstname, setFirstname] = useState(User.firstname);
-  const [lastname, setLastname] = useState(User.lastname);
   const [relationship, setRelationship] = useState(User.relationship);
-  const [work, setWork] = useState(User.work);
   const [open, setOpen] = useState(false);
   const [avataredit, setavataredit] = useState(false);
   const [edit, result] = useEditUser();
@@ -40,6 +36,7 @@ const MyAccountpage = ({ User }) => {
     console.log(content, type);
     const data = await edit({ content: content, type: type });
     console.log(data);
+
   };
   const EditAvatar = () => {
     if (avataredit) {
@@ -103,9 +100,10 @@ const MyAccountpage = ({ User }) => {
             <Select
               onChange={handleRelationshipchange}
               defaultValue={User.relationship}
-              value={relationship}
+              value={User.relationship}
             >
               <MenuItem value="Single">Single</MenuItem>
+              <MenuItem value="Dating">Dating</MenuItem>
               <MenuItem value="Married">Married</MenuItem>
               <MenuItem value="Other">Other</MenuItem>
             </Select>
@@ -118,7 +116,10 @@ const MyAccountpage = ({ User }) => {
               variant="outlined"
               color=""
               onClick={() =>
+              {
                 handleSave({ content: relationship, type: "relationship" })
+                setOpen(!open)
+              }
               }
             >
               save
@@ -140,7 +141,9 @@ const MyAccountpage = ({ User }) => {
     } else {
       return (
         <Box>
-          <Typography>{`Relationship: ${User.relationship}`} </Typography>
+          <Tooltip followCursor={true} title={User.relationship}>
+          <Typography>{`Relationship: ${User.relationship}`}</Typography>
+          </Tooltip>
           <Button
             className={"button"}
             style={{ borderRadius: 50 }}
@@ -155,6 +158,11 @@ const MyAccountpage = ({ User }) => {
       );
     }
   };
+  const EditNationality = () => {
+    return(
+      
+    )
+  }
   return (
     <Box sx={{ flexGrow: 1 }}>
       <Grid container rowSpacing={1} sx={{ flexDirection: "row" }}>
@@ -169,29 +177,29 @@ const MyAccountpage = ({ User }) => {
             </Box>
 
             <EditAvatar></EditAvatar>
-
+            <EditNationality></EditNationality>
             <EditFieldItem
-              value={username}
+              value={User.username}
               valueType={"Username"}
               handleSave={handleSave}
             ></EditFieldItem>
             <EditFieldItem
-              value={email}
+              value={User.email}
               valueType={"Email"}
               handleSave={handleSave}
             ></EditFieldItem>
             <EditFieldItem
-              value={description}
+              value={User.description}
               valueType={"Description"}
               handleSave={handleSave}
             ></EditFieldItem>
             <EditFieldItem
-              value={firstname}
+              value={User.firstname}
               valueType={"Firstname"}
               handleSave={handleSave}
             ></EditFieldItem>
             <EditFieldItem
-              value={lastname}
+              value={User.lastname}
               valueType={"Lastname"}
               handleSave={handleSave}
             ></EditFieldItem>
@@ -199,7 +207,7 @@ const MyAccountpage = ({ User }) => {
               <EditSelector></EditSelector>
             </Box>
             <EditFieldItem
-              value={work}
+              value={User.work}
               valueType={"Work"}
               handleSave={handleSave}
             ></EditFieldItem>

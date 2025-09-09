@@ -6,7 +6,7 @@ const useGetSearch = ({ search }) => {
     { variables: { searchby: search } },
     {
       fetchPolicy: "network-only",
-      nextFetchPolicy: "network-only",
+      nextFetchPolicy: "cache-first",
     }
   );
   const handleFetchMore = () => {

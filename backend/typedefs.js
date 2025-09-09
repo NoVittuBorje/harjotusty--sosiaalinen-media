@@ -50,6 +50,7 @@ const typeDefs = `#graphql
     dislikedcomments:[Comment]
     work:String
     feedsubs:[Feed]
+    nationality:String
     posts:[Post]
     ownedfeeds:[Feed]
     active:Boolean
@@ -57,6 +58,7 @@ const typeDefs = `#graphql
     createdAt:String
     id: ID!
   }
+  union Search = Feed | Post | User
   type Token {
     value: String!
   }
@@ -70,6 +72,7 @@ const typeDefs = `#graphql
   userId: String!
   files: [Upload!]!
   }
+  
   type Query {
     me: User!
     getuser(
@@ -122,11 +125,11 @@ const typeDefs = `#graphql
     ):User
     getsearchbar(
     searchby:String!
-    ):[Feed]
+    ):[Search]
     getFiles(userId: String!): [String!]
     getImage(imageId:String!):String!
   }
-
+  
   type Mutation {
     subscribe(
       feedname: String!

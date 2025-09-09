@@ -10,6 +10,7 @@ export const GET_ME = gql`
       avatar
       relationship
       description
+      nationality
       work
       feedsubs {
         feedname
@@ -159,6 +160,7 @@ export const GET_USER = gql`
       avatar
       relationship
       description
+      nationality
       work
       active
       id
@@ -338,16 +340,29 @@ export const GET_USER_OWNEDFEEDS = gql`
   }
 `;
 export const GET_SEARCH_BAR = gql`
-  query Getsearchbar($searchby: String!) {
-    getsearchbar(searchby: $searchby) {
+query Getsearchbar($searchby: String!) {
+  getsearchbar(searchby: $searchby) {
+    ... on Feed {
       feedname
-      description
+      active
+      id
+    }
+    ... on Post {
+      headline
+      karma
       active
       createdAt
       updatedAt
       id
     }
+    ... on User {
+      username
+      avatar
+      id
+      active
+    }
   }
+}
 `;
 export const GET_IMAGE_URLS = gql`
   query Query($userId: String!) {

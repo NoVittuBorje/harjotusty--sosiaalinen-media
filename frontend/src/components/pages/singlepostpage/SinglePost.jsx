@@ -27,6 +27,7 @@ import DialogActions from '@mui/material/DialogActions';
 import DialogContent from '@mui/material/DialogContent';
 import DialogContentText from '@mui/material/DialogContentText';
 import DialogTitle from '@mui/material/DialogTitle';
+import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 const SinglePost = ({ match, User, refetchUser }) => {
   const id = match.params.id;
   console.log(match.params.id);
@@ -65,16 +66,20 @@ const SinglePost = ({ match, User, refetchUser }) => {
     handleClose()
     navigate(-1)
   };
-
+  const loadmore = () => {
+    console.log("loadmore");
+    console.log(postcomments.data.getpostcomments.length)
+    if (postcomments.data.getpostcomments.length % 10 == 0) {
+      postcomments.fetchMore({ offset: postcomments.data.getpostcomments.length });
+    }
+  };
   const handleDislike = async () => {
     console.log("dislikepost");
     const data = await edit({ action: "dislike", content: "", postid: id });
     console.log(data);
     refetchUser();
   };
-  const LeftPadding = () => {
-    return
-  }
+
   const PostSettings = ({info}) => {
     console.log(info)
     if(!User){return}
@@ -104,7 +109,7 @@ const SinglePost = ({ match, User, refetchUser }) => {
   }
     if (!OpenSettings & info.owner.username == User.username) {
       return (
-        <IconButton onClick={() => setOpenSettings(!OpenSettings)}>
+        <IconButton className={"button"} sx={{color:"white"}} onClick={() => setOpenSettings(!OpenSettings)}>
           <SettingsIcon></SettingsIcon>
         </IconButton>
       );
@@ -113,7 +118,7 @@ const SinglePost = ({ match, User, refetchUser }) => {
       return (
         <Collapse in={OpenSettings}>
           <Box>
-            <IconButton onClick={() => setOpenSettings(!OpenSettings)}>
+            <IconButton className={"button"} sx={{color:"white"}} onClick={() => setOpenSettings(!OpenSettings)}>
               <SettingsIcon></SettingsIcon>
             </IconButton>
             
@@ -174,6 +179,7 @@ const SinglePost = ({ match, User, refetchUser }) => {
           </Grid>
           <Grid size={{ xs: 12, md: 8 }} sx={{}}>
             <Box className={"postDesc"}>
+              <IconButton className={"button"} sx={{color:"white"}} onClick={() => {navigate(-1)}}><ArrowBackIcon></ArrowBackIcon></IconButton>
               <Useritem
                 time={postdata.createdAt}
                 user={postdata.owner}
@@ -237,7 +243,7 @@ const SinglePost = ({ match, User, refetchUser }) => {
                 item={postdata.comments}
                 User={User}
                 comments={comments}
-                loadmore={postcomments.loadmore}
+                loadmore={loadmore}
                 loading={postcomments.loading}
               ></CommentSection>
             </Box>

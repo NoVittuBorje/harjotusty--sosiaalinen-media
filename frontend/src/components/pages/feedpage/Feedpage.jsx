@@ -195,7 +195,7 @@ const FeedPage = ({ match, User, refetchUser }) => {
                 {match.params.feedname} Posts
               </h3>
             </Box>
-          <h3 style={{ textAlign: "center" }}>{orderBy} Posts</h3>
+          
           <FormControl>
             <Select
               defaultValue={orderBy}

@@ -17,6 +17,9 @@ const schema = new mongoose.Schema(
       type: String,
       required: true,
     },
+    nationality:{
+      type:String,
+    },
     firstname: {
       type: String,
     },
@@ -28,7 +31,7 @@ const schema = new mongoose.Schema(
     },
     relationship: {
       type: String,
-      enum: ["Single", "Married", "Dating"],
+      enum: ["Single", "Married", "Dating","Other"],
     },
     description: {
       type: String,

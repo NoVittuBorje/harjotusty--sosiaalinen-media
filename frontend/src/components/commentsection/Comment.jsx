@@ -135,7 +135,7 @@ const Comment = ({
       );
     } else {
       return (
-        <Box>
+        <Box >
           <Button
             className={"button"}
             style={{ borderRadius: 50 }}
@@ -146,7 +146,7 @@ const Comment = ({
           >
             reply
           </Button>
-                    <Button
+            <Button
             className={"button"}
             style={{ borderRadius: 50 }}
             onClick={() => {

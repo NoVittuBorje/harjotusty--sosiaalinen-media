@@ -26,7 +26,10 @@ const EditFieldItem = ({ valueType, value, handleSave }) => {
               variant="outlined"
               color=""
               onClick={() =>
+              {
                 handleSave({ content: fieldvalue, type: valueType })
+                setOpen(!open)
+              }
               }
             >
               save
@@ -50,7 +53,7 @@ const EditFieldItem = ({ valueType, value, handleSave }) => {
         <Box padding={1}>
           <Box>
           <Tooltip followCursor={true} title={value}>
-          <Typography maxWidth={400} className="feedDesc">{`${valueType}: ${value}`} </Typography>
+          <Typography maxWidth={400} className="feedDesc">{`${valueType}: ${value}`}</Typography>
           </Tooltip>
           </Box>
           <Button
