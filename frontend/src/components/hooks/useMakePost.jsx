@@ -1,8 +1,15 @@
 import { useMutation } from "@apollo/client";
 import { MAKEPOST } from "../graphql/mutations";
+import { GET_FEED_POSTS } from "../graphql/queries";
 
 const useMakePost = () => {
-  const [mutate, result] = useMutation(MAKEPOST);
+  const [mutate, result] = useMutation(MAKEPOST,{
+      refetchQueries: [
+    GET_FEED_POSTS, // DocumentNode object parsed with gql
+    "Getfeedposts", // Query name
+
+  ],
+  });
   const make = async ({ description, feedname, headline, img }) => {
     console.log(description);
     const data = await mutate({
@@ -12,7 +19,7 @@ const useMakePost = () => {
         feedname: feedname,
         img: img,
       },
-
+      refetchQueries: [GET_FEED_POSTS,"getfeedposts"],
     });
     return data;
   };

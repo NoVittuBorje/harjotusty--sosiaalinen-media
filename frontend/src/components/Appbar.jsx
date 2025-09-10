@@ -430,7 +430,7 @@ export default function PrimarySearchAppBar({ User, refetch }) {
             filterOptions={(x) => x}
             size="small"
             renderOption={(option) => {
-              console.log(option.key.__typename);
+              
               if (option.key.__typename == "Feed") {
                 return (
                   <li key={option.key.id}>
@@ -505,7 +505,7 @@ export default function PrimarySearchAppBar({ User, refetch }) {
               }
             }}
             renderInput={(params) => {
-              console.log(params);
+              
               return (
                 <Search>
                   <SearchIconWrapper>

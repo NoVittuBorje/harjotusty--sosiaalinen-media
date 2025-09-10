@@ -1,4 +1,5 @@
 import {
+  Autocomplete,
   Avatar,
   Box,
   Button,
@@ -7,20 +8,22 @@ import {
   Grid,
   InputLabel,
   List,
+  ListItem,
   MenuItem,
   Select,
   Stack,
+  TextField,
   Tooltip,
   Typography,
 } from "@mui/material";
 import EditFieldItem from "./EditFieldItem";
 import FileUpload from "../utils/upload";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import UserAvatar from "../utils/Avatar";
 import useEditUser from "../hooks/useEditUser";
+import { GetCountries } from "../utils/Getcountrys";
 
 const MyAccountpage = ({ User }) => {
-
   const [imagePath, setImagePath] = useState(User.avatar);
   const [relationship, setRelationship] = useState(User.relationship);
   const [open, setOpen] = useState(false);
@@ -31,12 +34,22 @@ const MyAccountpage = ({ User }) => {
   const handleRelationshipchange = (event) => {
     setRelationship(event.target.value);
   };
+  const [openNationality,setNationalityOpen] = useState(false)
+  const [countries, setCountries] = useState([]);
+  const [nationality, setNationality] = useState();
+  const hook = () => {
+    GetCountries().then((res) => {
+      console.log(res);
+      setCountries(res.data);
+    });
+  };
+  useEffect(hook, []);
+  
   const handleSave = async ({ content, type }) => {
     console.log("save");
     console.log(content, type);
     const data = await edit({ content: content, type: type });
     console.log(data);
-
   };
   const EditAvatar = () => {
     if (avataredit) {
@@ -66,13 +79,13 @@ const MyAccountpage = ({ User }) => {
               display: "flex",
             }}
           >
-            <Box sx={{flexDirection:"column",paddingBottom:1}}>
-            <Box >
-              <Typography paddingRight={1}>Avatar:</Typography>
-            </Box>
-            <Box>
-              <UserAvatar width={100} height={100} user={User}></UserAvatar>
-            </Box>
+            <Box sx={{ flexDirection: "column", paddingBottom: 1 }}>
+              <Box>
+                <Typography paddingRight={1}>Avatar:</Typography>
+              </Box>
+              <Box>
+                <UserAvatar width={100} height={100} user={User}></UserAvatar>
+              </Box>
             </Box>
           </Box>
           <Box>
@@ -88,6 +101,7 @@ const MyAccountpage = ({ User }) => {
             </Button>
           </Box>
         </Stack>
+        
       );
     }
   };
@@ -115,12 +129,10 @@ const MyAccountpage = ({ User }) => {
               size="small"
               variant="outlined"
               color=""
-              onClick={() =>
-              {
-                handleSave({ content: relationship, type: "relationship" })
-                setOpen(!open)
-              }
-              }
+              onClick={() => {
+                handleSave({ content: relationship, type: "Relationship" });
+                setOpen(!open);
+              }}
             >
               save
             </Button>
@@ -142,7 +154,7 @@ const MyAccountpage = ({ User }) => {
       return (
         <Box>
           <Tooltip followCursor={true} title={User.relationship}>
-          <Typography>{`Relationship: ${User.relationship}`}</Typography>
+            <Typography>{`Relationship: ${User.relationship}`}</Typography>
           </Tooltip>
           <Button
             className={"button"}
@@ -159,10 +171,78 @@ const MyAccountpage = ({ User }) => {
     }
   };
   const EditNationality = () => {
-    return(
-      
-    )
-  }
+    console.log(openNationality)
+    console.log(nationality);
+    const usernationality = countries.find((value)=> value.name.common == User.nationality)
+    console.log(usernationality)
+    const [selected, setSelected] = useState(usernationality)
+    if (openNationality) {
+      return (
+        <Box className={"center"} sx={{flexDirection:"column"}}>
+
+          <Autocomplete
+            disablePortal
+            value={selected}
+            options={countries}
+            getOptionLabel={(option) => `${option.name.common}`}
+            getOptionKey={(option) => option.name.common}
+            sx={{ width: 300 }}
+            renderInput={(params) => (
+              <TextField {...params} label="Countries" />
+            )}
+            onChange={(event,newValue) => {
+              console.log(newValue)
+              setSelected(newValue);
+            }}
+          />
+
+
+            <Button
+              className={"button"}
+              style={{ borderRadius: 50 }}
+              size="small"
+              variant="outlined"
+              color=""
+              onClick={() => {
+                handleSave({ content: selected.name.common, type: "Nationality" });
+                setNationalityOpen(!openNationality);
+              }}
+            >
+              save
+            </Button>
+
+            <Button
+              className={"button"}
+              style={{ borderRadius: 50 }}
+              size="small"
+              variant="outlined"
+              color=""
+              onClick={() => setNationalityOpen(!openNationality)}
+            >
+              cancel
+            </Button>
+        </Box>
+      );
+    } else {
+      return(
+        <Box>
+            <Tooltip followCursor={true} title={User.nationality}>
+            <Typography>{`Nationality: ${User.nationality}`}</Typography>
+          </Tooltip>
+          <Button
+            className={"button"}
+            style={{ borderRadius: 50 }}
+            size="small"
+            variant="outlined"
+            color=""
+            onClick={() => setNationalityOpen(!openNationality)}
+          >
+            edit
+          </Button>
+        </Box>
+      )
+    }
+  };
   return (
     <Box sx={{ flexGrow: 1 }}>
       <Grid container rowSpacing={1} sx={{ flexDirection: "row" }}>
@@ -177,7 +257,9 @@ const MyAccountpage = ({ User }) => {
             </Box>
 
             <EditAvatar></EditAvatar>
+             <Box sx={{ borderTop: 1 }} padding={1}>
             <EditNationality></EditNationality>
+            </Box>
             <EditFieldItem
               value={User.username}
               valueType={"Username"}

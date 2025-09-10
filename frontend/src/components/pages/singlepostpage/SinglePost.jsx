@@ -179,7 +179,8 @@ const SinglePost = ({ match, User, refetchUser }) => {
           </Grid>
           <Grid size={{ xs: 12, md: 8 }} sx={{}}>
             <Box className={"postDesc"}>
-              <IconButton className={"button"} sx={{color:"white"}} onClick={() => {navigate(-1)}}><ArrowBackIcon></ArrowBackIcon></IconButton>
+              <IconButton className={"button"} sx={{color:"white"}} onClick={() => {navigate(`/feed/${postdata.feed.feedname}`)}}><ArrowBackIcon></ArrowBackIcon></IconButton>
+              <PostSettings info={postdata}></PostSettings>
               <Useritem
                 time={postdata.createdAt}
                 user={postdata.owner}
@@ -242,14 +243,16 @@ const SinglePost = ({ match, User, refetchUser }) => {
               <CommentSection
                 item={postdata.comments}
                 User={User}
+                refetchComment={postcomments.refetchPostComment}
                 comments={comments}
                 loadmore={loadmore}
                 loading={postcomments.loading}
+                postid={postdata.id}
               ></CommentSection>
             </Box>
           </Grid>
-          <Grid size={{ xs: 12, md: 2 }}>
-            <PostSettings info={postdata}></PostSettings>
+          <Grid sx={{minWidth:"fit-content"}} size={{ xs: 12, md: 2 }}>
+            
           </Grid>
         </Grid>
       </Box>

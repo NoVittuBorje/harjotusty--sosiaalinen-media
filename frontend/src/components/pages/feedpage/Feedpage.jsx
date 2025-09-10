@@ -45,7 +45,7 @@ const FeedPage = ({ match, User, refetchUser }) => {
 
   const navigate = useNavigate();
   const feedinfo = useGetFeed({ feedname });
-  const { data, loading, error, fetchMore } = useGetFeedPosts(variables);
+  const { data, loading, error, fetchMore,refetch } = useGetFeedPosts(variables);
   const [sub, result] = useSubscribe();
   const [OpenSettings, setOpenSettings] = useState(false);
   const [hasMore, setHasMore] = useState(true);
@@ -70,16 +70,16 @@ const FeedPage = ({ match, User, refetchUser }) => {
     return (
       <Box sx={{ display: "flex", flexDirection: "column" }}>
         <Box>
-          <Typography>{info.feedname}</Typography>
+          <Typography>Feedname: {info.feedname}</Typography>
         </Box>
         <Box>
-          <Typography>{info.description}</Typography>
+          <Typography>Description: {info.description}</Typography>
         </Box>
         <Box>
           <Typography>
             Owner: {info.owner.username}{" "}
-            <UserAvatar user={info.owner}></UserAvatar>
           </Typography>
+          <UserAvatar user={info.owner}></UserAvatar>
         </Box>
       </Box>
     );

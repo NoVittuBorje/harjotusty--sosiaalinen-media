@@ -31,6 +31,7 @@ const MoreComments = ({
               handleDelete={handleDelete}
               handleModify={handleModify}
               refetchComment={refetchComments}
+              postid={postid}
             />
           </ListItem>
         ))}

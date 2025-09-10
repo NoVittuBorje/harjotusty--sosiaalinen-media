@@ -842,7 +842,7 @@ const resolvers = {
           throw new GraphQLError(e);
         }
       }
-      if (args.type === "relationship") {
+      if (args.type === "Relationship") {
         try {
           user.relationship = args.content;
           await user.save();
@@ -854,6 +854,15 @@ const resolvers = {
       if (args.type === "Work") {
         try {
           user.work = args.content;
+          await user.save();
+          return user;
+        } catch (e) {
+          throw new GraphQLError(e);
+        }
+      }
+      if (args.type === "Nationality") {
+        try {
+          user.nationality = args.content;
           await user.save();
           return user;
         } catch (e) {

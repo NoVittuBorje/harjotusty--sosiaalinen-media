@@ -5,7 +5,7 @@ const NewComment = ({
   handleReply,
   commentid,
   handleReplyClick,
-  refetchComment,
+
 }) => {
   const [comment, setComment] = useState("");
   const handleNewReply = (event) => {
@@ -13,7 +13,6 @@ const NewComment = ({
     handleReply({
       content: comment,
       commentid,
-      refetchComment: refetchComment,
     });
   };
   return (
@@ -29,7 +28,8 @@ const NewComment = ({
       <Box sx={{ display: "flex", paddingTop: 1 }}>
         <Button
           size="small"
-          variant="standard"
+          variant="outlined"
+          color=""
           className={"button"}
           style={{ borderRadius: 50 }}
           onClick={(event) => {
@@ -40,7 +40,8 @@ const NewComment = ({
         </Button>
         <Button
           size="small"
-          variant="standard"
+          variant="outlined"
+          color=""
           className={"button"}
           style={{ borderRadius: 50 }}
           onClick={handleReplyClick}

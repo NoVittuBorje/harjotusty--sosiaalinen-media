@@ -36,13 +36,28 @@ export const MAKEPOST = gql`
       img: $img
       description: $description
     ) {
-      headline
+    headline
+    description
+    karma
+    img
+    active
+    createdAt
+    updatedAt
+    id
+    owner {
+      username
+      email
+      avatar
+      id
+    }
+    feed {
+      feedname
       description
-      owner {
-        username
-      }
-      karma
-      img
+      active
+      createdAt
+      updatedAt
+      id
+    }
     }
   }
 `;

@@ -3,7 +3,7 @@ import useMakeComment from "../hooks/useMakeComment";
 import { Box, CircularProgress } from "@mui/material";
 import useEditComment from "../hooks/useEditComment";
 import InfiniteScroll from "react-infinite-scroll-component";
-const CommentSection = ({ User, postid,comments,loadmore,loading}) => {
+const CommentSection = ({ User, postid,comments,loadmore,loading,refetchComment}) => {
   const [newcomment, result] = useMakeComment();
   const [edit, editresult] = useEditComment();
   const handleDelete = async ({commentid,content,action}) => {
@@ -15,15 +15,13 @@ const CommentSection = ({ User, postid,comments,loadmore,loading}) => {
     const data = await edit({ commentid, content, action });
     console.log(data);
   };
-  const handleReply = async ({content, commentid,refetchComment}) => {
+  const handleReply = async ({content, commentid}) => {
     console.log(content);
-    const data = await newcomment({ postid, content: content, replyto: commentid });
+    const data = await newcomment({ postid, content: content, replyto: commentid});
     console.log(data);
     refetchComment()
   }
-  const refetchComment = () => {
 
-  }
   const handleDislike = async ({id}) => {
     console.log("dislike comment");
     console.log(id)
@@ -61,8 +59,8 @@ const CommentSection = ({ User, postid,comments,loadmore,loading}) => {
             handleLike={handleLike}
             key={comment.id}
             comment={comment}
-            handleReply={handleReply}
             refetchComment={refetchComment}
+            handleReply={handleReply}
             postid={postid}
           />
           
