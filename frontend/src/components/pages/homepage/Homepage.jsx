@@ -18,7 +18,6 @@ import { useEffect, useState } from "react";
 const Homescreen = ({ User }) => {
   if(!localStorage.getItem("HomeorderBy")){localStorage.setItem("HomeorderBy","POPULAR")}
   const [orderBy, setorderBy] = useState(localStorage.getItem("HomeorderBy"));
-
   console.log(orderBy,localStorage.getItem("HomeorderBy"))
   useEffect(() => {
     setorderBy(localStorage.getItem("HomeorderBy"))
@@ -67,19 +66,25 @@ const Homescreen = ({ User }) => {
     }
     return
   }
+  const [open, setOpen] = useState(false);
   return (
     <Box sx={{ flexGrow: 1 }}>
       <Grid container rowSpacing={1} sx={{ flexDirection: "row" }}>
         <Grid size={{ xs: 12, md: 2 }}></Grid>
         <Grid size={{ xs: 12, md: 8 }}>
           
-          <FormControl>
+          <FormControl sx={{padding:1}}
+          >
             <Select
               defaultValue={orderBy}
               name="orderBy"
               id="orderBy-select"
-              sx={{ color: "white" }}
+              sx={{ color: "white",border:"none"}}
               onChange={handleChange}
+              open={open}
+              onClose={()=> setOpen(false)}
+              onOpen={() => setOpen(true)}
+              value={orderBy}
             >
               <MenuItem value={"POPULAR"}>Popular</MenuItem>
               <MenuItem value={"NEWEST"}>Newest</MenuItem>

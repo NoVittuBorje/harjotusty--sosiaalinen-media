@@ -14,7 +14,7 @@ import useMe from "./components/hooks/useMe";
 import MyAccountpage from "./components/myaccountpage/MyAccountpage";
 
 function App() {
-  const token = localStorage.getItem("token");
+  const token = sessionStorage.getItem("token");
   const { data, loading, error, refetch } = useMe();
   console.log(data)
   let match = useMatch("/post/:id");

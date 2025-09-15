@@ -20,6 +20,7 @@ import InfiniteScroll from "react-infinite-scroll-component";
 import useGetFeedPosts from "../../hooks/useGetFeedPosts";
 import { useEffect, useState } from "react";
 import SettingsIcon from "@mui/icons-material/Settings";
+import AddBoxIcon from '@mui/icons-material/AddBox';
 import UserAvatar from "../../utils/Avatar";
 const FeedPage = ({ match, User, refetchUser }) => {
   console.log(localStorage.getItem("Feedorderby"))
@@ -77,7 +78,7 @@ const FeedPage = ({ match, User, refetchUser }) => {
         </Box>
         <Box>
           <Typography>
-            Owner: {info.owner.username}{" "}
+            Owner: <Button className="button" color="" size="small" sx={{borderRadius:50}} >{info.owner.username}</Button>
           </Typography>
           <UserAvatar user={info.owner}></UserAvatar>
         </Box>
@@ -101,7 +102,7 @@ const FeedPage = ({ match, User, refetchUser }) => {
             <Stack padding={1} gap={1}>
               <FeedInfo></FeedInfo>
               <SubButton User={User}></SubButton>
-              <NewPostButton User={User}></NewPostButton>
+              
             </Stack>
           </Box>
         </Collapse>
@@ -150,6 +151,7 @@ const FeedPage = ({ match, User, refetchUser }) => {
     } else {
       return (
         <Box>
+          
           <Button
             className={"button"}
             style={{ borderRadius: 50 }}
@@ -159,8 +161,9 @@ const FeedPage = ({ match, User, refetchUser }) => {
             onClick={() => {
               navigate(`/newpost/${feedname}`);
             }}
-          >
+          ><AddBoxIcon></AddBoxIcon>
             Make new Post
+            
           </Button>
         </Box>
       );
@@ -176,7 +179,7 @@ const FeedPage = ({ match, User, refetchUser }) => {
       setHasMore(false);
     }
   };
-
+  
   return (
     <Box sx={{ flexGrow: 1 }}>
       <Grid container rowSpacing={1} sx={{ flexDirection: "row" }}>
@@ -195,7 +198,8 @@ const FeedPage = ({ match, User, refetchUser }) => {
                 {match.params.feedname} Posts
               </h3>
             </Box>
-          
+          <Box sx={{  display: "flex",justifyContent: "space-between",}}>
+          <Box >
           <FormControl>
             <Select
               defaultValue={orderBy}
@@ -209,6 +213,12 @@ const FeedPage = ({ match, User, refetchUser }) => {
               <MenuItem value={"HOTTEST"}>Hottest</MenuItem>
             </Select>
           </FormControl>
+          </Box>
+          <Box sx={{alignContent:"center"}}>
+            
+          <NewPostButton User={User}></NewPostButton>
+          </Box>
+          </Box>
             <Divider></Divider>
 
             <InfiniteScroll

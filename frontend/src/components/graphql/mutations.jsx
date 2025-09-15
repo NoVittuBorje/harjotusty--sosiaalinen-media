@@ -146,6 +146,7 @@ export const USEREDIT = gql`mutation Mutation($type: String!, $content: String!)
     relationship
     description
     work
+    nationality
     active
     createdAt
     id

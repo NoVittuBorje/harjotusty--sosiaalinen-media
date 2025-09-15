@@ -230,11 +230,8 @@ const Comment = ({
         key={comment.id}
         sx={{
           color: "white",
-          borderRight:0,
-          borderLeft:"1px black solid",
-          borderTop:0,
-          borderBottom:"1px black solid",
-          borderBottomLeftRadius:"15px",
+          border:"1px black solid",
+          borderRadius:2,
           padding: 0.5,
           minWidth: "100%",
           maxWidth: "100%",

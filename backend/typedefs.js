@@ -86,12 +86,12 @@ const typeDefs = `#graphql
     feedname:String!
     orderBy:String!
     offset:Int!
-    limit:Int!
+
     ):[Post]
     getpostcomments(
     postid:String!
     offset:Int!
-    limit:Int!
+   
     ):[Comment]
     getpopularposts(
     offset:Int!

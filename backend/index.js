@@ -86,14 +86,14 @@ const start = async () => {
               path: "feedsubs",
               select: ["feedname", "id"],
               options: {
-                limit: 10,
+                limit: 20,
               },
             })
             .populate({
               path: "ownedfeeds",
               select: ["feedname", "id"],
               options: {
-                limit: 10,
+                limit: 20,
               },
             }).populate({path:["likedposts","dislikedposts","likedcomments","dislikedcomments"],select:["id"],})
           return { currentUser };

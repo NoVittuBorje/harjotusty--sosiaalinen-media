@@ -49,6 +49,7 @@
   align-content: center;
   text-align: center;
 }
+
 .feed:hover{
   background-color: rgb(8, 8, 8);
 }
@@ -80,7 +81,7 @@
   white-space: pre-wrap;
 }
 .button{
-  border-radius: 10px;
+  border-radius: 50px;
 }
 .button:hover {
   background-color: rgb(8, 8, 8);

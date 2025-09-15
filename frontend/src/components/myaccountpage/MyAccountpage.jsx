@@ -3,6 +3,7 @@ import {
   Avatar,
   Box,
   Button,
+  createFilterOptions,
   Divider,
   FormControl,
   Grid,
@@ -34,7 +35,7 @@ const MyAccountpage = ({ User }) => {
   const handleRelationshipchange = (event) => {
     setRelationship(event.target.value);
   };
-  const [openNationality,setNationalityOpen] = useState(false)
+  const [openNationality, setNationalityOpen] = useState(false);
   const [countries, setCountries] = useState([]);
   const [nationality, setNationality] = useState();
   const hook = () => {
@@ -44,7 +45,7 @@ const MyAccountpage = ({ User }) => {
     });
   };
   useEffect(hook, []);
-  
+
   const handleSave = async ({ content, type }) => {
     console.log("save");
     console.log(content, type);
@@ -101,7 +102,6 @@ const MyAccountpage = ({ User }) => {
             </Button>
           </Box>
         </Stack>
-        
       );
     }
   };
@@ -171,62 +171,89 @@ const MyAccountpage = ({ User }) => {
     }
   };
   const EditNationality = () => {
-    console.log(openNationality)
+    console.log(openNationality);
     console.log(nationality);
-    const usernationality = countries.find((value)=> value.name.common == User.nationality)
-    console.log(usernationality)
-    const [selected, setSelected] = useState(usernationality)
+    const usernationality = countries.find(
+      (value) => value.name.common == User.nationality
+    );
+    console.log(usernationality);
+    const [selected, setSelected] = useState(usernationality);
+    const filterOptions = createFilterOptions({
+      limit: 10,
+    });
     if (openNationality) {
       return (
-        <Box className={"center"} sx={{flexDirection:"column"}}>
+        <Box
+          sx={{ display:"flex",flexDirection: "column", alignItems: "center" }}
+        >
 
           <Autocomplete
             disablePortal
+            filterOptions={filterOptions}
             value={selected}
             options={countries}
             getOptionLabel={(option) => `${option.name.common}`}
             getOptionKey={(option) => option.name.common}
-            sx={{ width: 300 }}
-            renderInput={(params) => (
-              <TextField {...params} label="Countries" />
+            renderOption={(params, option) => (
+              <Typography {...params}>
+                {option.name.common}
+                <img
+                  style={{ objectFit: "contain" }}
+                  width={30}
+                  src={option.flags.svg}
+                ></img>
+              </Typography>
             )}
-            onChange={(event,newValue) => {
-              console.log(newValue)
+            sx={{
+              width: 300,
+              maxWidth:300,
+            }}
+            renderInput={(params) => (
+              <TextField
+                sx={{ input: { color: "white" }, label: { color: "white" }, }}
+                {...params}
+                label="Countries"
+              />
+            )}
+            onChange={(event, newValue) => {
+              console.log(newValue);
               setSelected(newValue);
             }}
           />
-
-
-            <Button
-              className={"button"}
-              style={{ borderRadius: 50 }}
-              size="small"
-              variant="outlined"
-              color=""
-              onClick={() => {
-                handleSave({ content: selected.name.common, type: "Nationality" });
-                setNationalityOpen(!openNationality);
-              }}
-            >
-              save
-            </Button>
-
-            <Button
-              className={"button"}
-              style={{ borderRadius: 50 }}
-              size="small"
-              variant="outlined"
-              color=""
-              onClick={() => setNationalityOpen(!openNationality)}
-            >
-              cancel
-            </Button>
+          <Box>
+          <Button
+            className={"button"}
+            style={{ borderRadius: 50 }}
+            size="small"
+            variant="outlined"
+            color=""
+            onClick={() => {
+              handleSave({
+                content: selected.name.common,
+                type: "Nationality",
+              });
+              setNationalityOpen(!openNationality);
+            }}
+          >
+            save
+          </Button>
+          <Button
+            className={"button"}
+            style={{ borderRadius: 50 }}
+            size="small"
+            variant="outlined"
+            color=""
+            onClick={() => setNationalityOpen(!openNationality)}
+          >
+            cancel
+          </Button>
+        </Box>
         </Box>
       );
     } else {
-      return(
+      return (
         <Box>
-            <Tooltip followCursor={true} title={User.nationality}>
+          <Tooltip followCursor={true} title={User.nationality}>
             <Typography>{`Nationality: ${User.nationality}`}</Typography>
           </Tooltip>
           <Button
@@ -240,7 +267,7 @@ const MyAccountpage = ({ User }) => {
             edit
           </Button>
         </Box>
-      )
+      );
     }
   };
   return (
@@ -257,8 +284,8 @@ const MyAccountpage = ({ User }) => {
             </Box>
 
             <EditAvatar></EditAvatar>
-             <Box sx={{ borderTop: 1 }} padding={1}>
-            <EditNationality></EditNationality>
+            <Box sx={{ borderTop: 1 }} padding={1}>
+              <EditNationality></EditNationality>
             </Box>
             <EditFieldItem
               value={User.username}

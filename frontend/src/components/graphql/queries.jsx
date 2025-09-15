@@ -76,13 +76,11 @@ export const GET_FEED_POSTS = gql`
   query Getfeedposts(
     $feedname: String!
     $offset: Int!
-    $limit: Int!
     $orderBy: String!
   ) {
     getfeedposts(
       feedname: $feedname
       offset: $offset
-      limit: $limit
       orderBy: $orderBy
     ) {
       headline
@@ -107,8 +105,8 @@ export const GET_FEED_POSTS = gql`
   }
 `;
 export const GET_POST_COMMENTS = gql`
-  query Getpostcomments($postid: String!, $offset: Int!, $limit: Int!) {
-    getpostcomments(postid: $postid, offset: $offset, limit: $limit) {
+  query Getpostcomments($postid: String!, $offset: Int!, ) {
+    getpostcomments(postid: $postid, offset: $offset,) {
       content
       active
       karma

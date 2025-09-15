@@ -31,7 +31,8 @@ import PersonIcon from "@mui/icons-material/Person";
 import { Autocomplete, Chip, Popper, TextField } from "@mui/material";
 import AddCircleOutlineIcon from "@mui/icons-material/AddCircleOutline";
 import { useState } from "react";
-
+import ArrowDropDownIcon from "@mui/icons-material/ArrowDropDown";
+import ArrowDropUpIcon from "@mui/icons-material/ArrowDropUp";
 const Search = styled("div")(({ theme }) => ({
   position: "relative",
   borderRadius: theme.shape.borderRadius,
@@ -88,7 +89,7 @@ export default function PrimarySearchAppBar({ User, refetch }) {
   console.log(User);
   const navigate = useNavigate();
   const apolloClient = useApolloClient();
-  const token = localStorage.getItem("token");
+  const token = sessionStorage.getItem("token");
 
   const feeds = useGetManyFeeds();
 
@@ -151,7 +152,6 @@ export default function PrimarySearchAppBar({ User, refetch }) {
     console.log("logout");
     handleMenuClose();
     apolloClient.clearStore();
-    localStorage.clear();
     localStorage.setItem("HomeorderBy", "POPULAR");
     localStorage.setItem("FeedorderBy", "POPULAR");
     navigate("/");
@@ -229,20 +229,156 @@ export default function PrimarySearchAppBar({ User, refetch }) {
       );
     }
   };
-
+  const MenupopularState = ({ feeds }) => {
+    const [open, setOpen] = useState(false);
+    if (open) {
+      return (
+        <>
+          <ListItem  key="popularfeeds" disablePadding>
+            <ListItemButton onClick={() => setOpen(!open)}>
+              <ListItemIcon>
+                <FeedIcon />
+              </ListItemIcon>
+              <ListItemText primary={"Popular feeds"} />
+              <ListItemIcon>
+                <ArrowDropUpIcon></ArrowDropUpIcon>
+              </ListItemIcon>
+            </ListItemButton>
+          </ListItem>
+          {feeds.data.getfeed.map((feed) => (
+            <ListItem  onClick={toggleDrawer(false)} key={feed.feedname} disablePadding>
+              <ListItemButton
+                onClick={() => {
+                  
+                  navigate(`/feed/${feed.feedname}`);
+                }}
+              >
+                <ListItemText primary={feed.feedname} />
+              </ListItemButton>
+            </ListItem>
+          ))}
+        </>
+      );
+    } else {
+      return (
+        <ListItem key="popularfeeds" disablePadding>
+          <ListItemButton onClick={() => setOpen(!open)}>
+            <ListItemIcon>
+              <FeedIcon />
+            </ListItemIcon>
+            <ListItemText primary={"Popular feeds"} />
+            <ListItemIcon>
+              <ArrowDropDownIcon></ArrowDropDownIcon>
+            </ListItemIcon>
+          </ListItemButton>
+        </ListItem>
+      );
+    }
+  };
+  const MenusubsState = ({ User }) => {
+    const [open, setOpen] = useState(false);
+    if (open) {
+      return (
+        <>
+          <ListItem key="subscribedfeeds" disablePadding>
+            <ListItemButton onClick={() => setOpen(!open)}>
+              <ListItemIcon>
+                <FeedIcon />
+              </ListItemIcon>
+              <ListItemText primary={"Subscribed feeds"} />
+              <ListItemIcon>
+                <ArrowDropUpIcon></ArrowDropUpIcon>
+              </ListItemIcon>
+            </ListItemButton>
+          </ListItem>
+          {User.feedsubs
+            ? User.feedsubs.map((subs) => (
+                <ListItem onClick={toggleDrawer(false)} key={subs.feedname} disablePadding>
+                  <ListItemButton
+                    onClick={() => {
+                      
+                      navigate(`/feed/${subs.feedname}`);
+                    }}
+                  >
+                    <ListItemText primary={subs.feedname} />
+                  </ListItemButton>
+                </ListItem>
+              ))
+            : null}
+        </>
+      );
+    } else {
+      return (
+        <ListItem key="subscribedfeeds" disablePadding>
+          <ListItemButton onClick={() => setOpen(!open)}>
+            <ListItemIcon>
+              <FeedIcon />
+            </ListItemIcon>
+            <ListItemText primary={"Subscribed feeds"} />
+            <ListItemIcon>
+              <ArrowDropDownIcon></ArrowDropDownIcon>
+            </ListItemIcon>
+          </ListItemButton>
+        </ListItem>
+      );
+    }
+  };
+  
+  const MenuOwnedState = ({ User }) => {
+    const [open, setOpen] = useState(false);
+    if (open) {
+      return (
+        <>
+          <ListItem key="ownedfeeds" disablePadding>
+            <ListItemButton onClick={() => setOpen(!open)}>
+              <ListItemIcon>
+                <FeedIcon />
+              </ListItemIcon>
+              <ListItemText primary={"Owned feeds"} />
+              <ListItemIcon>
+                <ArrowDropUpIcon></ArrowDropUpIcon>
+              </ListItemIcon>
+            </ListItemButton>
+          </ListItem>
+          {User.ownedfeeds.map((feed) => (
+            <ListItem onClick={toggleDrawer(false)} key={feed.feedname} disablePadding>
+              <ListItemButton
+                onClick={() => {
+                  navigate(`/feed/${feed.feedname}`);
+                }}
+              >
+                <ListItemText primary={feed.feedname} />
+              </ListItemButton>
+            </ListItem>
+          ))}
+        </>
+      );
+    } else {
+      return (
+        <ListItem  key="ownedfeeds" disablePadding>
+          <ListItemButton onClick={() => setOpen(!open)}>
+            <ListItemIcon>
+              <FeedIcon />
+            </ListItemIcon>
+            <ListItemText primary={"Owned feeds"} />
+            <ListItemIcon>
+              <ArrowDropDownIcon></ArrowDropDownIcon>
+            </ListItemIcon>
+          </ListItemButton>
+        </ListItem>
+      );
+    }
+  };
   const DrawerState = ({ User }) => {
     const popularfeeds = feeds.data ? feeds.data.getfeed : [];
     console.log(popularfeeds, feeds.loading);
     if (feeds.loading) {
       return <Box>loading...</Box>;
     }
+    
     if (User) {
       return (
-        <Box
-          sx={{ width: 250 }}
-          role="presentation"
-          onClick={toggleDrawer(false)}
-        >
+        <Box sx={{ width: 250 }} role="presentation">
           <List>
             <ListItem key="makefeed" disablePadding>
               <ListItemButton onClick={handleMakeNewFeedClick}>
@@ -254,64 +390,14 @@ export default function PrimarySearchAppBar({ User, refetch }) {
             </ListItem>
             <Divider />
 
-            <ListItem key="ownedfeeds" disablePadding>
-              <ListItemIcon>
-                <FeedIcon />
-              </ListItemIcon>
-              <ListItemText primary={"Owned feeds"} />
-            </ListItem>
-
-            {User.ownedfeeds.map((feed) => (
-              <ListItem key={feed.feedname} disablePadding>
-                <ListItemButton
-                  onClick={() => {
-                    navigate(`/feed/${feed.feedname}`);
-                  }}
-                >
-                  <ListItemText primary={feed.feedname} />
-                </ListItemButton>
-              </ListItem>
-            ))}
+            <MenuOwnedState User={User}></MenuOwnedState>
 
             <Divider />
-            <ListItem key="subscribedfeeds" disablePadding>
-              <ListItemIcon>
-                <FeedIcon />
-              </ListItemIcon>
-              <ListItemText primary={"Subscribed feeds"} />
-            </ListItem>
-            {User.feedsubs
-              ? User.feedsubs.map((subs) => (
-                  <ListItem key={subs.feedname} disablePadding>
-                    <ListItemButton
-                      onClick={() => {
-                        navigate(`/feed/${subs.feedname}`);
-                      }}
-                    >
-                      <ListItemText primary={subs.feedname} />
-                    </ListItemButton>
-                  </ListItem>
-                ))
-              : null}
-            <Divider></Divider>
-            <ListItem key="popularfeeds" disablePadding>
-              <ListItemIcon>
-                <FeedIcon />
-              </ListItemIcon>
-              <ListItemText primary={"Popular feeds"} />
-            </ListItem>
 
-            {feeds.data.getfeed.map((feed) => (
-              <ListItem key={feed.feedname} disablePadding>
-                <ListItemButton
-                  onClick={() => {
-                    navigate(`/feed/${feed.feedname}`);
-                  }}
-                >
-                  <ListItemText primary={feed.feedname} />
-                </ListItemButton>
-              </ListItem>
-            ))}
+            <MenusubsState User={User}></MenusubsState>
+            <Divider></Divider>
+
+            <MenupopularState feeds={feeds}></MenupopularState>
             <Divider></Divider>
           </List>
         </Box>
@@ -349,6 +435,7 @@ export default function PrimarySearchAppBar({ User, refetch }) {
       );
     }
   };
+
   const MenuState = MenuStatelogin({ User });
   const DrawerList = DrawerState({ User });
 
@@ -430,7 +517,6 @@ export default function PrimarySearchAppBar({ User, refetch }) {
             filterOptions={(x) => x}
             size="small"
             renderOption={(option) => {
-              
               if (option.key.__typename == "Feed") {
                 return (
                   <li key={option.key.id}>
@@ -505,7 +591,6 @@ export default function PrimarySearchAppBar({ User, refetch }) {
               }
             }}
             renderInput={(params) => {
-              
               return (
                 <Search>
                   <SearchIconWrapper>
@@ -519,7 +604,7 @@ export default function PrimarySearchAppBar({ User, refetch }) {
                     onChange={(e) => {
                       debounced(e.target.value);
                       if (e.target.value == "") {
-                        setSearchvalue(null);
+                        setSearchvalue("");
                       } else {
                         setSearchvalue(e.target.value);
                       }

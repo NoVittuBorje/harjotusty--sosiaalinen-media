@@ -83,9 +83,9 @@ const SinglePost = ({ match, User, refetchUser }) => {
   const PostSettings = ({info}) => {
     console.log(info)
     if(!User){return}
-      const DeletePost = () => {
+    const DeletePost = () => {
     return(
-      <Stack padding={1}>
+      <Stack>
               <Dialog
               open={open}
               onClose={handleClose}
@@ -117,7 +117,7 @@ const SinglePost = ({ match, User, refetchUser }) => {
       
       return (
         <Collapse in={OpenSettings}>
-          <Box>
+          <Box sx={{display:"flex"}}>
             <IconButton className={"button"} sx={{color:"white"}} onClick={() => setOpenSettings(!OpenSettings)}>
               <SettingsIcon></SettingsIcon>
             </IconButton>
@@ -179,8 +179,10 @@ const SinglePost = ({ match, User, refetchUser }) => {
           </Grid>
           <Grid size={{ xs: 12, md: 8 }} sx={{}}>
             <Box className={"postDesc"}>
+              <Box sx={{display:"flex",flexDirection:"row"}}>
               <IconButton className={"button"} sx={{color:"white"}} onClick={() => {navigate(`/feed/${postdata.feed.feedname}`)}}><ArrowBackIcon></ArrowBackIcon></IconButton>
               <PostSettings info={postdata}></PostSettings>
+              </Box>
               <Useritem
                 time={postdata.createdAt}
                 user={postdata.owner}

@@ -116,7 +116,7 @@ const resolvers = {
         if (args.querytype === "many") {
           const feeds = await Feed.find({ active: true })
             .sort({ subs: -1 })
-            .limit(10);
+            .limit(20);
           return feeds;
         }
       } catch (e) {
@@ -125,7 +125,7 @@ const resolvers = {
       }
     },
     getfeedposts: async (root, args) => {
-      console.log(args.feedname, args.orderBy, args.offset, args.limit);
+      console.log(args.feedname, args.orderBy, args.offset);
       const feed = await Feed.findOne({ feedname: args.feedname });
       if (args.orderBy === "HOTTEST") {
         try {
@@ -133,7 +133,7 @@ const resolvers = {
             .sort({ karma: -1 })
             .sort({ createdAt: -1 })
             .skip(args.offset)
-            .limit(10)
+            .limit(20)
             .populate("feed", { feedname: 1 })
             .populate("owner", { username: 1, id: 1, avatar: 1 });
           return posts;
@@ -147,7 +147,7 @@ const resolvers = {
           const posts = await Post.find({ feed: feed._id, active: true })
             .sort({ karma: -1 })
             .skip(args.offset)
-            .limit(10)
+            .limit(20)
             .populate("feed", { feedname: 1 })
             .populate("owner", { username: 1, id: 1, avatar: 1 });
           console.log(posts);
@@ -161,7 +161,7 @@ const resolvers = {
           const posts = await Post.find({ feed: feed._id, active: true })
             .sort({ createdAt: -1 })
             .skip(args.offset)
-            .limit(10)
+            .limit(20)
             .populate("feed", { feedname: 1 })
             .populate("owner", { username: 1, id: 1, avatar: 1 });
           return posts;
@@ -171,7 +171,7 @@ const resolvers = {
       }
     },
     getpostcomments: async (root, args) => {
-      console.log(args.postid, args.offset, args.limit);
+      console.log(args.postid, args.offset,);
       const comments = await Comment.find({
         post: args.postid,
         depth: 0,
@@ -187,10 +187,7 @@ const resolvers = {
         })
         .sort({ karma: -1 })
         .skip(args.offset)
-        .limit(10);
-      if (comments.length != args.offset + args.limit) {
-        console.log("ei oo enempää");
-      }
+        .limit(20);
       console.log(comments);
       return comments;
     },
@@ -202,7 +199,7 @@ const resolvers = {
             .sort({ karma: -1 })
             .sort({ createdAt: -1 })
             .skip(args.offset)
-            .limit(10)
+            .limit(20)
             .populate("feed", { feedname: 1 })
             .populate("owner", { username: 1, id: 1, avatar: 1 });
           return posts;
@@ -216,7 +213,7 @@ const resolvers = {
           const posts = await Post.find({ active: true })
             .sort({ karma: -1 })
             .skip(args.offset)
-            .limit(10)
+            .limit(20)
             .populate("feed", { feedname: 1 })
             .populate("owner", { username: 1, id: 1, avatar: 1 });
           console.log(posts);
@@ -230,7 +227,7 @@ const resolvers = {
           const posts = await Post.find({ active: true })
             .sort({ createdAt: -1 })
             .skip(args.offset)
-            .limit(10)
+            .limit(20)
             .populate("feed", { feedname: 1 })
             .populate("owner", { username: 1, id: 1, avatar: 1 });
           return posts;
@@ -245,7 +242,7 @@ const resolvers = {
           const posts = await Post.find({ feed: { $in: [...subs] } })
             .sort({ createdAt: -1 })
             .skip(args.offset)
-            .limit(10)
+            .limit(20)
             .populate("feed", { feedname: 1 })
             .populate("owner", { username: 1, id: 1, avatar: 1 });
 
@@ -324,7 +321,7 @@ const resolvers = {
           options: {
             sort: { createdAt: -1 },
             skip: args.offset,
-            limit: 10,
+            limit: 20,
           },
           populate: {
             path: ["feed", "owner"],
@@ -345,7 +342,7 @@ const resolvers = {
           options: {
             sort: { createdAt: -1 },
             skip: args.offset,
-            limit: 10,
+            limit: 20,
           },
           select: [
             "content",
@@ -405,7 +402,7 @@ const resolvers = {
           options: {
             sort: { createdAt: -1 },
             skip: args.offset,
-            limit: 10,
+            limit: 20,
           },
         });
         return user.feedsubs;
@@ -421,7 +418,7 @@ const resolvers = {
           options: {
             sort: { createdAt: -1 },
             skip: args.offset,
-            limit: 10,
+            limit: 20,
           },
         });
         return user.ownedfeeds;
@@ -430,6 +427,12 @@ const resolvers = {
       }
     },
     getsearchbar: async (root, args) => {
+      if (args.searchby == ""){
+        const feeds = await Feed.find({
+          feedname: { $regex: "//", $options: "i" },
+        }).limit(10);
+        return feeds
+      }
       try {
         const feeds = await Feed.find({
           feedname: { $regex: args.searchby, $options: "i" },
@@ -484,7 +487,6 @@ const resolvers = {
           Bucket: process.env.AWS_S3_BUCKET_NAME,
           Key: args.imageId,
         });
-
         return await getSignedUrl(client, command, { expiresIn: 60 });
       } catch (error) {
         return error;

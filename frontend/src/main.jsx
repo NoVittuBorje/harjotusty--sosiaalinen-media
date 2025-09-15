@@ -18,7 +18,7 @@ import createUploadLink from "apollo-upload-client/createUploadLink.mjs"
 
 
 const authLink = setContext((_, { headers }) => {
-  const token = localStorage.getItem("token");
+  const token = sessionStorage.getItem("token");
   return {
     headers: {
       'Apollo-Require-Preflight': 'true',
@@ -92,7 +92,7 @@ const theme = createTheme({
       textTransform: "none",
     },
   },
-
+  
   palette: {
     type: "dark",
     primary: {
@@ -103,7 +103,11 @@ const theme = createTheme({
       main: "#f50057",
     },
   },
+  
 });
+import { ThemeOptions } from '@mui/material/styles';
+
+
 
 ReactDOM.createRoot(document.getElementById("root")).render(
   <ThemeProvider theme={theme}>

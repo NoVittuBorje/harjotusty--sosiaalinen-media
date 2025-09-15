@@ -2,7 +2,7 @@ import { useQuery } from "@apollo/client";
 import { GET_FEED_POSTS } from "../graphql/queries";
 const useGetFeedPosts = (variables) => {
   const { data, error, loading, refetch, fetchMore,...result } = useQuery(GET_FEED_POSTS,
-    { variables: {...variables , offset:0 ,limit:10} },
+    { variables: {...variables , offset:0} },
     {
       fetchPolicy: "network-only",
       nextFetchPolicy: "network-only",
@@ -13,7 +13,6 @@ const useGetFeedPosts = (variables) => {
     fetchMore({
       variables: {
         ...variables,
-        limit:10,
         offset:offset
       },
     });
