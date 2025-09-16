@@ -10,17 +10,17 @@ const CommentForm = ({ onSubmit }) => {
         value={content}
         multiline
         label="new comment"
-        color="primary"
-        inputProps={{ style: { color: "white" } }}
+        color="inherit"
+        inputProps={{ style: { color: "inherit" } }}
         variant="standard"
-        InputLabelProps={{style:{color:"white"}}}
+        InputLabelProps={{style:{color:"inherit"}}}
         onChange={(event) => setContent(event.target.value)}
       />
       <Box sx={{ display: "flex", paddingTop: 1 }}>
         <Button
           size="small"
           variant="outlined"
-          color=""
+          color="inherit"
           className={"button"}
           style={{ borderRadius: 50 }}
           onClick={() => {

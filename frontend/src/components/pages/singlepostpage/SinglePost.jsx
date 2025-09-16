@@ -22,12 +22,12 @@ import Useritem from "../../Useritem";
 import useGetPostComments from "../../hooks/useGetPostComments";
 import SinglePostImage from "./SinglePostImage";
 import SettingsIcon from "@mui/icons-material/Settings";
-import Dialog from '@mui/material/Dialog';
-import DialogActions from '@mui/material/DialogActions';
-import DialogContent from '@mui/material/DialogContent';
-import DialogContentText from '@mui/material/DialogContentText';
-import DialogTitle from '@mui/material/DialogTitle';
-import ArrowBackIcon from '@mui/icons-material/ArrowBack';
+import Dialog from "@mui/material/Dialog";
+import DialogActions from "@mui/material/DialogActions";
+import DialogContent from "@mui/material/DialogContent";
+import DialogContentText from "@mui/material/DialogContentText";
+import DialogTitle from "@mui/material/DialogTitle";
+import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 const SinglePost = ({ match, User, refetchUser }) => {
   const id = match.params.id;
   console.log(match.params.id);
@@ -50,7 +50,7 @@ const SinglePost = ({ match, User, refetchUser }) => {
     console.log("new comment");
     const data = await newcomment({ postid: id, content: content.content });
     setopenNewComment(false);
-    postcomments.refetchPostComment()
+    postcomments.refetchPostComment();
   };
   const handleLike = async () => {
     console.log("like post");
@@ -60,17 +60,19 @@ const SinglePost = ({ match, User, refetchUser }) => {
   const handleDelete = async () => {
     console.log("delete post");
 
-    const data = await edit({action: "delete", content:"", postid:id})
-    console.log(data)
-    refetchPost()
-    handleClose()
-    navigate(-1)
+    const data = await edit({ action: "delete", content: "", postid: id });
+    console.log(data);
+    refetchPost();
+    handleClose();
+    navigate(-1);
   };
   const loadmore = () => {
     console.log("loadmore");
-    console.log(postcomments.data.getpostcomments.length)
+    console.log(postcomments.data.getpostcomments.length);
     if (postcomments.data.getpostcomments.length % 10 == 0) {
-      postcomments.fetchMore({ offset: postcomments.data.getpostcomments.length });
+      postcomments.fetchMore({
+        offset: postcomments.data.getpostcomments.length,
+      });
     }
   };
   const handleDislike = async () => {
@@ -80,48 +82,75 @@ const SinglePost = ({ match, User, refetchUser }) => {
     refetchUser();
   };
 
-  const PostSettings = ({info}) => {
-    console.log(info)
-    if(!User){return}
+  const PostSettings = ({ info }) => {
+    console.log(info);
+    if (!User) {
+      return;
+    }
     const DeletePost = () => {
-    return(
-      <Stack>
-              <Dialog
-              open={open}
-              onClose={handleClose}
-              >
-              <DialogTitle>{"Are you sure you want to delete post?"}</DialogTitle>
-              <DialogContent>
-                <DialogContentText>
-                  This action is irreversible
-                </DialogContentText>
-              </DialogContent>
-                      <DialogActions>
-          <Button variant="outlined" color=""  sx={{borderRadius:50}} onClick={handleClose}>No</Button>
-          <Button variant="outlined" color=""  sx={{borderRadius:50}} onClick={() => {handleDelete();handleClose()}}>
-            Yes
-          </Button>
-        </DialogActions>
-              </Dialog>
-              <Button variant="outlined" color="" className={"button"} sx={{borderRadius:50}} onClick={handleClickOpen}>Delete post</Button>
-            </Stack>
-    )
-  }
-    if (!OpenSettings & info.owner.username == User.username) {
       return (
-        <IconButton className={"button"} sx={{color:"white"}} onClick={() => setOpenSettings(!OpenSettings)}>
+        <Stack>
+          <Dialog open={open} onClose={handleClose}>
+            <DialogTitle>{"Are you sure you want to delete post?"}</DialogTitle>
+            <DialogContent>
+              <DialogContentText>This action is irreversible</DialogContentText>
+            </DialogContent>
+            <DialogActions>
+              <Button
+                variant="outlined"
+                color="inherit"
+                sx={{ borderRadius: 50 }}
+                onClick={handleClose}
+              >
+                No
+              </Button>
+              <Button
+                variant="outlined"
+                color="inherit"
+                sx={{ borderRadius: 50 }}
+                onClick={() => {
+                  handleDelete();
+                  handleClose();
+                }}
+              >
+                Yes
+              </Button>
+            </DialogActions>
+          </Dialog>
+          <Button
+            variant="outlined"
+            color="inherit"
+            className={"button"}
+            sx={{ borderRadius: 50 }}
+            onClick={handleClickOpen}
+          >
+            Delete post
+          </Button>
+        </Stack>
+      );
+    };
+    if (!OpenSettings & (info.owner.username == User.username)) {
+      return (
+        <IconButton
+          className={"button"}
+          sx={{ color: "inherit" }}
+          onClick={() => setOpenSettings(!OpenSettings)}
+        >
           <SettingsIcon></SettingsIcon>
         </IconButton>
       );
     } else {
-      
       return (
         <Collapse in={OpenSettings}>
-          <Box sx={{display:"flex"}}>
-            <IconButton className={"button"} sx={{color:"white"}} onClick={() => setOpenSettings(!OpenSettings)}>
+          <Box sx={{ display: "flex" }}>
+            <IconButton
+              className={"button"}
+              sx={{ color: "inherit" }}
+              onClick={() => setOpenSettings(!OpenSettings)}
+            >
               <SettingsIcon></SettingsIcon>
             </IconButton>
-            
+
             <DeletePost></DeletePost>
           </Box>
         </Collapse>
@@ -136,10 +165,10 @@ const SinglePost = ({ match, User, refetchUser }) => {
             <IconButton
               className={"button"}
               onClick={() => {
-                setopenNewComment(!openNewComment)
+                setopenNewComment(!openNewComment);
               }}
             >
-              <AddCommentIcon style={{ color: "white" }}></AddCommentIcon>
+              <AddCommentIcon style={{ color: "inherit" }}></AddCommentIcon>
             </IconButton>
           </Tooltip>
         </Box>
@@ -154,7 +183,7 @@ const SinglePost = ({ match, User, refetchUser }) => {
                 navigate("/login");
               }}
             >
-              <AddCommentIcon style={{ color: "white" }}></AddCommentIcon>
+              <AddCommentIcon style={{ color: "inherit" }}></AddCommentIcon>
             </IconButton>
           </Tooltip>
         </Box>
@@ -175,13 +204,20 @@ const SinglePost = ({ match, User, refetchUser }) => {
     return (
       <Box sx={{ flexGrow: 1 }}>
         <Grid container rowSpacing={1} sx={{ flexDirection: "row" }}>
-          <Grid size={{ xs: 12, md: 2 }}>
-          </Grid>
+          <Grid size={{ xs: 12, md: 2 }}></Grid>
           <Grid size={{ xs: 12, md: 8 }} sx={{}}>
             <Box className={"postDesc"}>
-              <Box sx={{display:"flex",flexDirection:"row"}}>
-              <IconButton className={"button"} sx={{color:"white"}} onClick={() => {navigate(`/feed/${postdata.feed.feedname}`)}}><ArrowBackIcon></ArrowBackIcon></IconButton>
-              <PostSettings info={postdata}></PostSettings>
+              <Box sx={{ display: "flex", flexDirection: "row" }}>
+                <IconButton
+                  className={"button"}
+                  sx={{ color: "inherit" }}
+                  onClick={() => {
+                    navigate(`/feed/${postdata.feed.feedname}`);
+                  }}
+                >
+                  <ArrowBackIcon></ArrowBackIcon>
+                </IconButton>
+                <PostSettings info={postdata}></PostSettings>
               </Box>
               <Useritem
                 time={postdata.createdAt}
@@ -207,9 +243,14 @@ const SinglePost = ({ match, User, refetchUser }) => {
                     {postdata.headline}
                   </Typography>
 
-                  <Button>
+                  <Button
+                    size="small"
+                    color="inherit"
+                    className="button"
+                    sx={{ borderRadius: 50 }}
+                  >
                     <Typography
-                      color="whitesmoke"
+                      color="inherit"
                       variant="h8"
                       underline="none"
                       onClick={() => {
@@ -253,9 +294,10 @@ const SinglePost = ({ match, User, refetchUser }) => {
               ></CommentSection>
             </Box>
           </Grid>
-          <Grid sx={{minWidth:"fit-content"}} size={{ xs: 12, md: 2 }}>
-            
-          </Grid>
+          <Grid
+            sx={{ minWidth: "fit-content" }}
+            size={{ xs: 12, md: 2 }}
+          ></Grid>
         </Grid>
       </Box>
     );

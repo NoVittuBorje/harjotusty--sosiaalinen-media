@@ -109,7 +109,8 @@ const resolvers = {
               populate: { path: "owner", select: ["username", "id", "avatar"] },
             })
             .populate("owner", { username: 1, id: 1 })
-            .populate("subs", { username: 1, id: 1 });
+            .populate("subs", { username: 1, id: 1 })
+            .populate("moderators",{ username: 1, id: 1 })
           console.log(feed);
           return [feed];
         }

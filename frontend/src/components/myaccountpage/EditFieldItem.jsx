@@ -11,9 +11,9 @@ const EditFieldItem = ({ valueType, value, handleSave }) => {
           <TextField
             color="primary"
             sx={{ m: 1 }}
-            inputProps={{ style: { color: "white" } }}
+            inputProps={{ style: { color: "inherit" } }}
             variant="standard"
-            InputLabelProps={{ style: { color: "white" } }}
+            InputLabelProps={{ style: { color: "inherit" } }}
             value={fieldvalue}
             onChange={(event) => setValue(event.target.value)}
             label={valueType}
@@ -24,7 +24,7 @@ const EditFieldItem = ({ valueType, value, handleSave }) => {
               style={{ borderRadius: 50 }}
               size="small"
               variant="outlined"
-              color=""
+              color="inherit"
               onClick={() =>
               {
                 handleSave({ content: fieldvalue, type: valueType })
@@ -40,7 +40,7 @@ const EditFieldItem = ({ valueType, value, handleSave }) => {
               style={{ borderRadius: 50 }}
               size="small"
               variant="outlined"
-              color=""
+              color="inherit"
               onClick={() => setOpen(!open)}
             >
               cancel
@@ -61,7 +61,7 @@ const EditFieldItem = ({ valueType, value, handleSave }) => {
             style={{ borderRadius: 50 }}
             size="small"
             variant="outlined"
-            color=""
+            color="inherit"
             onClick={() => setOpen(!open)}
           >
             edit

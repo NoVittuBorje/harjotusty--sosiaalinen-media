@@ -10,7 +10,7 @@ import {
 import ProfileFeed from "./Profilefeed";
 import { useState } from "react";
 import useGetUser from "../../hooks/useGetUser";
-import UserAvatar from "../../utils/Avatar";
+import UserAvatar from "../../utils/UserAvatar";
 
 const Profilepage = ({ User, match }) => {
   console.log(User);
@@ -57,7 +57,6 @@ const Profilepage = ({ User, match }) => {
                 <Grid size={{ xs: 4 }}>
                   <Typography>{`Liked posts: ${profiledata.likedposts.length}`}</Typography>
                   <Typography>{`Liked comments: ${profiledata.likedcomments.length}`}</Typography>
-
                   <Typography>{`Owned feeds: ${profiledata.ownedfeeds.length}`}</Typography>
                 </Grid>
               </Grid>
@@ -71,7 +70,7 @@ const Profilepage = ({ User, match }) => {
                   defaultValue={"posts"}
                   name="select-info"
                   id="select-info"
-                  sx={{ color: "white" }}
+                  sx={{ color: "inherit" }}
                   onChange={handleChange}
                 >
                   <MenuItem value={"posts"}>Posts</MenuItem>

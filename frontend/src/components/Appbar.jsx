@@ -28,11 +28,26 @@ import AccountBoxIcon from "@mui/icons-material/AccountBox";
 import LogoutIcon from "@mui/icons-material/Logout";
 import LoginIcon from "@mui/icons-material/Login";
 import PersonIcon from "@mui/icons-material/Person";
-import { Autocomplete, Chip, Popper, TextField } from "@mui/material";
+import {
+  Autocomplete,
+  Chip,
+  FormControl,
+  FormControlLabel,
+  FormLabel,
+  Popper,
+  Radio,
+  RadioGroup,
+  Select,
+  TextField,
+  useColorScheme,
+} from "@mui/material";
 import AddCircleOutlineIcon from "@mui/icons-material/AddCircleOutline";
 import { useState } from "react";
 import ArrowDropDownIcon from "@mui/icons-material/ArrowDropDown";
 import ArrowDropUpIcon from "@mui/icons-material/ArrowDropUp";
+import DarkModeIcon from "@mui/icons-material/DarkMode";
+import LightModeIcon from "@mui/icons-material/LightMode";
+
 const Search = styled("div")(({ theme }) => ({
   position: "relative",
   borderRadius: theme.shape.borderRadius,
@@ -48,21 +63,7 @@ const Search = styled("div")(({ theme }) => ({
     width: "auto",
   },
 }));
-const styles = {
-  floatingSearchLabelStyle: {
-    color: "#fff",
-    fontFamily: 'Open Sans","Helvetica Neue",Helvetica,Arial,"Lucida Grande',
-  },
-  inputSearchStyleText: {
-    color: "#fff",
-  },
-  underlineSearchStyle: {
-    borderColor: "#fff",
-  },
-  hintSearchStyle: {
-    color: "#fff",
-  },
-};
+
 const SearchIconWrapper = styled("div")(({ theme }) => ({
   padding: theme.spacing(0, 2),
   height: "100%",
@@ -78,10 +79,7 @@ const StyledAutocomplete = styled(Autocomplete)(({ theme }) => ({
     // vertical padding + font size from searchIcon
     paddingLeft: `calc(1em + ${theme.spacing(4)})`,
     transition: theme.transitions.create("width"),
-    width: "100%",
-    [theme.breakpoints.up("md")]: {
-      width: "30ch",
-    },
+    width: 200,
   },
 }));
 
@@ -154,6 +152,7 @@ export default function PrimarySearchAppBar({ User, refetch }) {
     apolloClient.clearStore();
     localStorage.setItem("HomeorderBy", "POPULAR");
     localStorage.setItem("FeedorderBy", "POPULAR");
+    sessionStorage.clear()
     navigate("/");
   };
   const handleRegisterClick = () => {
@@ -173,6 +172,27 @@ export default function PrimarySearchAppBar({ User, refetch }) {
     setSearch(value);
   }, 1000);
 
+  const ThemeState = () => {
+    const { mode, setMode } = useColorScheme();
+    console.log(mode);
+    if (!mode) {
+      return null;
+    }
+    return (
+      <Box>
+        <select
+          value={mode}
+          onChange={(event) => {
+            setMode(event.target.value);
+          }}
+        >
+          <option value="dark">Dark</option>
+          <option value="light">Light</option>
+          
+        </select>
+      </Box>
+    );
+  };
   const MenuStatelogin = ({ User }) => {
     if (User) {
       return (
@@ -234,7 +254,7 @@ export default function PrimarySearchAppBar({ User, refetch }) {
     if (open) {
       return (
         <>
-          <ListItem  key="popularfeeds" disablePadding>
+          <ListItem key="popularfeeds" disablePadding>
             <ListItemButton onClick={() => setOpen(!open)}>
               <ListItemIcon>
                 <FeedIcon />
@@ -246,10 +266,13 @@ export default function PrimarySearchAppBar({ User, refetch }) {
             </ListItemButton>
           </ListItem>
           {feeds.data.getfeed.map((feed) => (
-            <ListItem  onClick={toggleDrawer(false)} key={feed.feedname} disablePadding>
+            <ListItem
+              onClick={toggleDrawer(false)}
+              key={feed.feedname}
+              disablePadding
+            >
               <ListItemButton
                 onClick={() => {
-                  
                   navigate(`/feed/${feed.feedname}`);
                 }}
               >
@@ -293,10 +316,13 @@ export default function PrimarySearchAppBar({ User, refetch }) {
           </ListItem>
           {User.feedsubs
             ? User.feedsubs.map((subs) => (
-                <ListItem onClick={toggleDrawer(false)} key={subs.feedname} disablePadding>
+                <ListItem
+                  onClick={toggleDrawer(false)}
+                  key={subs.feedname}
+                  disablePadding
+                >
                   <ListItemButton
                     onClick={() => {
-                      
                       navigate(`/feed/${subs.feedname}`);
                     }}
                   >
@@ -323,7 +349,7 @@ export default function PrimarySearchAppBar({ User, refetch }) {
       );
     }
   };
-  
+
   const MenuOwnedState = ({ User }) => {
     const [open, setOpen] = useState(false);
     if (open) {
@@ -341,7 +367,11 @@ export default function PrimarySearchAppBar({ User, refetch }) {
             </ListItemButton>
           </ListItem>
           {User.ownedfeeds.map((feed) => (
-            <ListItem onClick={toggleDrawer(false)} key={feed.feedname} disablePadding>
+            <ListItem
+              onClick={toggleDrawer(false)}
+              key={feed.feedname}
+              disablePadding
+            >
               <ListItemButton
                 onClick={() => {
                   navigate(`/feed/${feed.feedname}`);
@@ -355,7 +385,7 @@ export default function PrimarySearchAppBar({ User, refetch }) {
       );
     } else {
       return (
-        <ListItem  key="ownedfeeds" disablePadding>
+        <ListItem key="ownedfeeds" disablePadding>
           <ListItemButton onClick={() => setOpen(!open)}>
             <ListItemIcon>
               <FeedIcon />
@@ -375,7 +405,7 @@ export default function PrimarySearchAppBar({ User, refetch }) {
     if (feeds.loading) {
       return <Box>loading...</Box>;
     }
-    
+
     if (User) {
       return (
         <Box sx={{ width: 250 }} role="presentation">
@@ -442,7 +472,7 @@ export default function PrimarySearchAppBar({ User, refetch }) {
   const Renderloginstate = ({ User }) => {
     if (!User) {
       return (
-        <Box sx={{ display: { xs: "none", md: "flex" } }}>
+        <Box sx={{ display: { md: "flex" } }}>
           <IconButton
             size="large"
             edge="end"
@@ -458,7 +488,7 @@ export default function PrimarySearchAppBar({ User, refetch }) {
       );
     } else {
       return (
-        <Box sx={{ display: { xs: "none", md: "flex" } }}>
+        <Box sx={{ display: { md: "flex" } }}>
           <IconButton
             size="large"
             edge="end"
@@ -623,7 +653,7 @@ export default function PrimarySearchAppBar({ User, refetch }) {
               <Chip key={value.id} label={value.feedname} {...getItemProps()} />
             )}
           />
-
+          <ThemeState></ThemeState>
           <Box sx={{ flexGrow: 1 }} />
           {Renderloginstate({ User, refetch, token })}
         </Toolbar>

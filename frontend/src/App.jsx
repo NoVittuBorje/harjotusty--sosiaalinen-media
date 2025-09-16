@@ -1,7 +1,7 @@
 import AppBar from "./components/Appbar";
 import "./App.css";
 import Homescreen from "./components/pages/homepage/Homepage";
-import { Box } from "@mui/material";
+import { Box, useColorScheme } from "@mui/material";
 import { Routes, Route, useMatch } from "react-router-dom";
 import Profilepage from "./components/pages/profilepage/Profilepage";
 import SinglePost from "./components/pages/singlepostpage/SinglePost";
@@ -12,9 +12,11 @@ import FeedPage from "./components/pages/feedpage/Feedpage";
 import NewPostpage from "./components/pages/feedpage/NewPostpage";
 import useMe from "./components/hooks/useMe";
 import MyAccountpage from "./components/myaccountpage/MyAccountpage";
+import { useState } from "react";
 
 function App() {
   const token = sessionStorage.getItem("token");
+
   const { data, loading, error, refetch } = useMe();
   console.log(data)
   let match = useMatch("/post/:id");
@@ -40,6 +42,9 @@ function App() {
   if(!token){
     User = null
   }
+  
+
+ 
   console.log(User,data)
   return (
     <Box>

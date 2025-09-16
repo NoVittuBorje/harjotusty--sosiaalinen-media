@@ -20,10 +20,12 @@ import InfiniteScroll from "react-infinite-scroll-component";
 import useGetFeedPosts from "../../hooks/useGetFeedPosts";
 import { useEffect, useState } from "react";
 import SettingsIcon from "@mui/icons-material/Settings";
-import AddBoxIcon from '@mui/icons-material/AddBox';
-import UserAvatar from "../../utils/Avatar";
+import AddBoxIcon from "@mui/icons-material/AddBox";
+import UserAvatar from "../../utils/UserAvatar";
+import AddCircleOutlineIcon from '@mui/icons-material/AddCircleOutline';
+import RemoveCircleOutlineIcon from '@mui/icons-material/RemoveCircleOutline';
 const FeedPage = ({ match, User, refetchUser }) => {
-  console.log(localStorage.getItem("Feedorderby"))
+  console.log(localStorage.getItem("Feedorderby"));
   if (!localStorage.getItem("FeedorderBy")) {
     localStorage.setItem("FeedorderBy", "POPULAR");
     console.log("joo");
@@ -46,12 +48,13 @@ const FeedPage = ({ match, User, refetchUser }) => {
 
   const navigate = useNavigate();
   const feedinfo = useGetFeed({ feedname });
-  const { data, loading, error, fetchMore,refetch } = useGetFeedPosts(variables);
+  const { data, loading, error, fetchMore, refetch } =
+    useGetFeedPosts(variables);
   const [sub, result] = useSubscribe();
   const [OpenSettings, setOpenSettings] = useState(false);
   const [hasMore, setHasMore] = useState(true);
   const handleorderByChange = (event) => {
-    console.log(event.target.value)
+    console.log(event.target.value);
     setorderBy(event.target.value);
   };
   const Subscribe = async ({ feedname, type }) => {
@@ -60,7 +63,7 @@ const FeedPage = ({ match, User, refetchUser }) => {
     console.log(data);
     refetchUser();
   };
-  
+
   const FeedInfo = () => {
     if (feedinfo.loading) {
       return <Box>loading</Box>;
@@ -70,18 +73,45 @@ const FeedPage = ({ match, User, refetchUser }) => {
     console.log(info);
     return (
       <Box sx={{ display: "flex", flexDirection: "column" }}>
-        <Box>
+        <Stack rowGap={2}>
           <Typography>Feedname: {info.feedname}</Typography>
-        </Box>
-        <Box>
+
           <Typography>Description: {info.description}</Typography>
-        </Box>
-        <Box>
+
           <Typography>
-            Owner: <Button className="button" color="" size="small" sx={{borderRadius:50}} >{info.owner.username}</Button>
+            Owner:
+            <Button
+              onClick={() => {
+                navigate(`/profile/${info.owner.id}`);
+              }}
+              className="button"
+              color="inherit"
+              size="small"
+              sx={{ borderRadius: 50 }}
+            >
+              <UserAvatar width={20} height={20} user={info.owner}></UserAvatar> {info.owner.username}
+            </Button>
           </Typography>
-          <UserAvatar user={info.owner}></UserAvatar>
-        </Box>
+          <Typography>
+            Moderators:
+            {info.moderators.map((mod) => {
+              return(
+                <Button
+              onClick={() => {
+                navigate(`/profile/${info.owner.id}`);
+              }}
+              className="button"
+              color="inherit"
+              size="small"
+              sx={{ borderRadius: 50 }}
+            >
+              <UserAvatar width={20} height={20} user={mod}></UserAvatar> {mod.username}
+            </Button>
+              )
+            } ) }
+          </Typography>
+          <Typography>Subs: {info.subs.length}</Typography>
+        </Stack>
       </Box>
     );
   };
@@ -101,8 +131,6 @@ const FeedPage = ({ match, User, refetchUser }) => {
             </IconButton>
             <Stack padding={1} gap={1}>
               <FeedInfo></FeedInfo>
-              <SubButton User={User}></SubButton>
-              
             </Stack>
           </Box>
         </Collapse>
@@ -121,9 +149,10 @@ const FeedPage = ({ match, User, refetchUser }) => {
             style={{ borderRadius: 50 }}
             size="small"
             variant="outlined"
-            color=""
+            color="inherit"
             onClick={() => Subscribe({ feedname, type: "sub" })}
           >
+            <AddCircleOutlineIcon></AddCircleOutlineIcon>
             Subscribe
           </Button>
         </Box>
@@ -136,9 +165,10 @@ const FeedPage = ({ match, User, refetchUser }) => {
             style={{ borderRadius: 50 }}
             size="small"
             variant="outlined"
-            color=""
+            color="inherit"
             onClick={() => Subscribe({ feedname, type: "unsub" })}
           >
+            <RemoveCircleOutlineIcon></RemoveCircleOutlineIcon>
             unSubscribe
           </Button>
         </Box>
@@ -151,20 +181,20 @@ const FeedPage = ({ match, User, refetchUser }) => {
     } else {
       return (
         <Box>
-          
           <Button
             className={"button"}
             style={{ borderRadius: 50 }}
             size="small"
             variant="outlined"
-            color=""
+            color="inherit"
             onClick={() => {
               navigate(`/newpost/${feedname}`);
             }}
-          ><AddBoxIcon></AddBoxIcon>
+          >
+            <AddBoxIcon></AddBoxIcon>
             Make new Post
-            
           </Button>
+
         </Box>
       );
     }
@@ -179,12 +209,12 @@ const FeedPage = ({ match, User, refetchUser }) => {
       setHasMore(false);
     }
   };
-  
+
   return (
     <Box sx={{ flexGrow: 1 }}>
       <Grid container rowSpacing={1} sx={{ flexDirection: "row" }}>
-        <Grid size={{ xs: 12, md: 2 }}></Grid>
-        <Grid size={{ xs: 12, md: 8 }}>
+        <Grid size={{ xs: 6, md: 2 }}></Grid>
+        <Grid size={{ xs: 10, md: 8 }}>
           <Box>
             <Box
               sx={{
@@ -198,27 +228,27 @@ const FeedPage = ({ match, User, refetchUser }) => {
                 {match.params.feedname} Posts
               </h3>
             </Box>
-          <Box sx={{  display: "flex",justifyContent: "space-between",}}>
-          <Box >
-          <FormControl>
-            <Select
-              defaultValue={orderBy}
-              name="orderBy"
-              id="orderBy-select"
-              sx={{ color: "white" }}
-              onChange={handleorderByChange}
-            >
-              <MenuItem value={"POPULAR"}>Popular</MenuItem>
-              <MenuItem value={"NEWEST"}>Newest</MenuItem>
-              <MenuItem value={"HOTTEST"}>Hottest</MenuItem>
-            </Select>
-          </FormControl>
-          </Box>
-          <Box sx={{alignContent:"center"}}>
-            
-          <NewPostButton User={User}></NewPostButton>
-          </Box>
-          </Box>
+            <Box sx={{ display: "flex", justifyContent: "space-between" }}>
+              <Box sx={{ alignContent:"center"}}>
+                <FormControl >
+                  <Select
+                    defaultValue={orderBy}
+                    name="orderBy"
+                    id="orderBy-select"
+                    sx={{ color: "inherit" }}
+                    onChange={handleorderByChange}
+                  >
+                    <MenuItem value={"POPULAR"}>Popular</MenuItem>
+                    <MenuItem value={"NEWEST"}>Newest</MenuItem>
+                    <MenuItem value={"HOTTEST"}>Hottest</MenuItem>
+                  </Select>
+                </FormControl>
+              </Box>
+              <Box sx={{ alignContent: "center",paddingBottom:1 }}>
+                <SubButton User={User}></SubButton>
+                <NewPostButton User={User}></NewPostButton>
+              </Box>
+            </Box>
             <Divider></Divider>
 
             <InfiniteScroll
@@ -238,7 +268,7 @@ const FeedPage = ({ match, User, refetchUser }) => {
             </InfiniteScroll>
           </Box>
         </Grid>
-        <Grid size={{ xs: 12, md: 2 }}>
+        <Grid size={2}>
           <Box>
             <FeedSettings></FeedSettings>
           </Box>

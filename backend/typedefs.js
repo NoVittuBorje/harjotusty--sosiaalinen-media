@@ -3,6 +3,7 @@ const typeDefs = `#graphql
     feedname:String!
     description:String!
     owner:User!
+    moderators:[User]
     subs:[User]
     posts:[Post]
     active:Boolean

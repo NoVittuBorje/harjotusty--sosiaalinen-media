@@ -15,6 +15,10 @@ const schema = new mongoose.Schema({
         type:mongoose.Schema.Types.ObjectId,
         ref:'User'
     },
+    moderators:[{
+        type:mongoose.Schema.Types.ObjectId,
+        ref:'User'
+    }],
     subs:[{
         type:mongoose.Schema.Types.ObjectId,
         unique:true,

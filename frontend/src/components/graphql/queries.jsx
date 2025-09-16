@@ -50,6 +50,12 @@ export const GET_FEED = gql`
         id
         active
       }
+      moderators {
+        username
+        avatar
+        id
+        active
+      }
       subs {
         id
       }

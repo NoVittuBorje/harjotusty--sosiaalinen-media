@@ -79,7 +79,7 @@ const Homescreen = ({ User }) => {
               defaultValue={orderBy}
               name="orderBy"
               id="orderBy-select"
-              sx={{ color: "white",border:"none"}}
+              sx={{ color: "inherit",border:"none"}}
               onChange={handleChange}
               open={open}
               onClose={()=> setOpen(false)}

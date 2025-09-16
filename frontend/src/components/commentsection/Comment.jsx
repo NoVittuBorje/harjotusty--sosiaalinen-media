@@ -92,7 +92,7 @@ const Comment = ({
         <Button
           size="small"
           variant="outlined"
-          color=""
+          color="inherit"
           onClick={handleMoreComments}
         >
           show {comment.replies.length} replies
@@ -145,7 +145,7 @@ const Comment = ({
             <DialogActions>
               <Button
                 variant="outlined"
-                color=""
+                color="inherit"
                 sx={{ borderRadius: 50 }}
                 onClick={handleDeleteOpen}
               >
@@ -153,7 +153,7 @@ const Comment = ({
               </Button>
               <Button
                 variant="outlined"
-                color=""
+                color="inherit"
                 sx={{ borderRadius: 50 }}
                 onClick={() => {
                   handleDelete({
@@ -189,7 +189,7 @@ const Comment = ({
             style={{ borderRadius: 50 }}
             size="small"
             variant="outlined"
-            color=""
+            color="inherit"
             onClick={() => {
               handleReplyClick();
             }}
@@ -204,7 +204,7 @@ const Comment = ({
             }}
             size="small"
             variant="outlined"
-            color=""
+            color="inherit"
           >
             edit
           </Button>
@@ -216,7 +216,7 @@ const Comment = ({
             }}
             size="small"
             variant="outlined"
-            color=""
+            color="inherit"
           >
             delete
           </Button>
@@ -229,7 +229,7 @@ const Comment = ({
       <Box
         key={comment.id}
         sx={{
-          color: "white",
+          color: "inherit",
           border:"1px black solid",
           borderRadius:2,
           padding: 0.5,

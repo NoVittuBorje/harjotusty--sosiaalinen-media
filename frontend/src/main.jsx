@@ -11,17 +11,16 @@ import { getMainDefinition } from "@apollo/client/utilities";
 import { GraphQLWsLink } from "@apollo/client/link/subscriptions";
 import { createClient } from "graphql-ws";
 import { BrowserRouter } from "react-router-dom";
-import { createTheme, ThemeProvider } from "@mui/material";
+import { createTheme, CssBaseline, ThemeProvider } from "@mui/material";
 import { offsetLimitPagination } from "@apollo/client/utilities";
-import createUploadLink from "apollo-upload-client/createUploadLink.mjs"
-
-
+import createUploadLink from "apollo-upload-client/createUploadLink.mjs";
+import { useState } from "react";
 
 const authLink = setContext((_, { headers }) => {
   const token = sessionStorage.getItem("token");
   return {
     headers: {
-      'Apollo-Require-Preflight': 'true',
+      "Apollo-Require-Preflight": "true",
       ...headers,
       authorization: token ? `Bearer ${token}` : null,
     },
@@ -37,7 +36,7 @@ const cache = new InMemoryCache({
       fields: {
         getfeedposts: {
           ...offsetLimitPagination(),
-          keyArgs: ["feedname","orderBy"],
+          keyArgs: ["feedname", "orderBy"],
         },
         getpostcomments: {
           ...offsetLimitPagination(),
@@ -63,7 +62,6 @@ const cache = new InMemoryCache({
           ...offsetLimitPagination(),
           keyArgs: ["userid"],
         },
-
       },
     },
   },
@@ -85,32 +83,67 @@ const client = new ApolloClient({
   cache: cache,
   link: splitLink,
 });
+
+// For a dark default theme
+const darkTheme = createTheme({
+  palette: {
+    mode: "dark",
+  },
+});
+
+// For a light default theme
+const lightTheme = createTheme({
+  palette: {
+    mode: "light",
+  },
+});
+
 const theme = createTheme({
-  cssVariables: true,
+  colorSchemes: {
+    light: {
+      palette: {
+        mode: "light",
+        background: {
+          default: "#ffffffff",
+          dark:"#f7f7f7ff",
+        },
+        secondary: {
+          main: "#000000ff",
+        },
+      },
+    },
+    dark: {
+      palette: {
+        mode: "dark",
+        background: {
+          default: "#363535ff",
+          dark:"#444343ff",
+        },
+        primary: {
+          main: "#ffffff",
+        },
+        secondary: {
+          main: "#ffffff",
+        },
+      },
+    },
+  },
+  cssVariables: {
+    colorSchemeSelector: ".theme-%s",
+  },
+
   typography: {
     button: {
       textTransform: "none",
     },
   },
-  
-  palette: {
-    type: "dark",
-    primary: {
-      main: "#3f51b5",
-      contrastText: "#f5f1f2ff",
-    },
-    secondary: {
-      main: "#f50057",
-    },
-  },
+
   
 });
 
-
-
-
 ReactDOM.createRoot(document.getElementById("root")).render(
   <ThemeProvider theme={theme}>
+    <CssBaseline></CssBaseline>
     <BrowserRouter>
       <ApolloProvider client={client}>
         <App />

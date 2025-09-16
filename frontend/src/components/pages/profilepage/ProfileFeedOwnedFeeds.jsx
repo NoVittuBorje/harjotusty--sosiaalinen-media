@@ -26,7 +26,7 @@ const ProfileFeedOwnedFeeds = (variables) => {
               <Link
                 variant="inherit"
                 underline="none"
-                color="white"
+                color="inherit"
                 onClick={() => {
                   navigate(`/feed/${item.feedname}`);
                 }}

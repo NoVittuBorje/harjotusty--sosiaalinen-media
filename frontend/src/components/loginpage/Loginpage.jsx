@@ -36,13 +36,13 @@ const LoginPage = ({setUser,User,refetch}) => {
     }
     console.log(Username,Password)
     return(
-        <Box sx={{ flexGrow: 1, backgroundColor:"grey"}}>
+        <Box sx={{ flexGrow: 1}}>
         <Grid container rowSpacing={1} sx={{flexDirection:"row"}}>
             <Grid size={{xs:12, md:4}} >
 
             </Grid>
             <Grid size={{xs:12, md:4}} >
-                <Box sx={{border:"solid 0.1em",borderRadius:3,backgroundColor:"whitesmoke",color:"black"}}>
+                <Box sx={{border:"solid 0.1em",borderRadius:3}}>
                 
                 <FormGroup sx={{alignItems:"center",verticalAlign:"center",marginTop:1}}>
                 <Typography variant="h5">Log in</Typography>

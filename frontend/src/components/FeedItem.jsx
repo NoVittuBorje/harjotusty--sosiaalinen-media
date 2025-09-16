@@ -20,31 +20,40 @@ import KarmaItem from "./KarmaItem";
 import Timestamp from "./utils/Timestamp";
 import Useritem from "./Useritem";
 import useEditPost from "./hooks/useEditPost";
-const FeedItem = ({ item,owner, User }) => {
+const FeedItem = ({ item, owner, User }) => {
   const navigate = useNavigate();
   const [edit, editresult] = useEditPost();
   const handleLike = async () => {
     console.log("likepost");
     const data = await edit({ action: "like", content: "", postid: item.id });
-
   };
   const handleDislike = async () => {
     console.log("dislikepost");
-    const data = await edit({ action: "dislike", content: "", postid: item.id });
+    const data = await edit({
+      action: "dislike",
+      content: "",
+      postid: item.id,
+    });
     console.log(data);
   };
 
   return (
-    <Box className={"feed"} key={item.id}>
+    <Box
+      className={"feed"}
+      sx={{boxShadow: 1,  '&:hover': {
+    backgroundColor: "background.dark", 
+    
+  },}}
+      key={item.id}
+    >
       <Box sx={{ display: "flex", flexDirection: "column" }}>
         <Link
-          
           onClick={() => {
             navigate(`/post/${item.id}`);
           }}
           variant="inherit"
           underline="none"
-          color="white"
+          color="inherit"
         >
           <Box sx={{ flexDirection: "column", padding: 1 }}>
             <Useritem time={item.createdAt} user={owner}></Useritem>
@@ -60,18 +69,26 @@ const FeedItem = ({ item,owner, User }) => {
                 }}
               >
                 <Typography variant="h5">{`${item.headline}`}</Typography>
-                <Button>
+                <Button
+                size="small"
+                color="inherit"
+                className="button"
+                sx={{borderRadius:50}}
+                >
                   <Typography
-                    color="whitesmoke"
+                    color="inherit"
                     variant="h8"
                     underline="none"
-                    onClick={(event) => {event.stopPropagation();navigate(`/feed/${item.feed.feedname}`)}}
-                  >{`in f/${item.feed.feedname}`}
-                  
+                    onClick={(event) => {
+                      event.stopPropagation();
+                      navigate(`/feed/${item.feed.feedname}`);
+                    }}
+                  >
+                    {`f/${item.feed.feedname}`}
                   </Typography>
-                  </Button>
+                </Button>
               </Box>
-              <Typography className="feedDesc" variant="h7" color="#c4c3c0">
+              <Typography className="feedDesc" variant="h7" color="inherit">
                 {item.description}
               </Typography>
             </Box>
@@ -88,7 +105,6 @@ const FeedItem = ({ item,owner, User }) => {
             id={item.id}
             User={User}
           ></KarmaItem>
-          
         </Box>
       </Box>
 

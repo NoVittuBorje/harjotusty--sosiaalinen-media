@@ -9,7 +9,7 @@ const EditComment = ({ onReply, commentid, oldcomment, handleEditClick }) => {
         required
         value={comment}
         multiline
-        inputProps={{ style: { color: "white" } }}
+        inputProps={{ style: { color: "inherit" } }}
         variant="standard"
         onChange={(event) => setComment(event.target.value)}
       />
@@ -17,7 +17,7 @@ const EditComment = ({ onReply, commentid, oldcomment, handleEditClick }) => {
         <Button
           size="small"
           variant="outlined"
-          color=""
+          color="inherit"
           className={"button"}
           style={{ borderRadius: 50 }}
           onClick={() => {
@@ -30,7 +30,7 @@ const EditComment = ({ onReply, commentid, oldcomment, handleEditClick }) => {
         <Button
           size="small"
           variant="outlined"
-          color=""
+          color="inherit"
           className={"button"}
           style={{ borderRadius: 50 }}
           onClick={handleEditClick}

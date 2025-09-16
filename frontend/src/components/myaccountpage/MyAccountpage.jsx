@@ -20,7 +20,7 @@ import {
 import EditFieldItem from "./EditFieldItem";
 import FileUpload from "../utils/upload";
 import { useEffect, useState } from "react";
-import UserAvatar from "../utils/Avatar";
+import UserAvatar from "../utils/UserAvatar";
 import useEditUser from "../hooks/useEditUser";
 import { GetCountries } from "../utils/Getcountrys";
 
@@ -63,7 +63,7 @@ const MyAccountpage = ({ User }) => {
             style={{ borderRadius: 50 }}
             size="small"
             variant="outlined"
-            color=""
+            color="inherit"
             onClick={() => setavataredit(!avataredit)}
           >
             cancel
@@ -95,7 +95,7 @@ const MyAccountpage = ({ User }) => {
               style={{ borderRadius: 50 }}
               size="small"
               variant="outlined"
-              color=""
+              color="inherit"
               onClick={() => setavataredit(!avataredit)}
             >
               edit
@@ -110,7 +110,7 @@ const MyAccountpage = ({ User }) => {
       return (
         <Stack>
           <FormControl variant="standard" sx={{ m: 1, minWidth: 120 }}>
-            <InputLabel color="">Relationship: </InputLabel>
+            <InputLabel color="inherit">Relationship: </InputLabel>
             <Select
               onChange={handleRelationshipchange}
               defaultValue={User.relationship}
@@ -128,7 +128,7 @@ const MyAccountpage = ({ User }) => {
               style={{ borderRadius: 50 }}
               size="small"
               variant="outlined"
-              color=""
+              color="inherit"
               onClick={() => {
                 handleSave({ content: relationship, type: "Relationship" });
                 setOpen(!open);
@@ -142,7 +142,7 @@ const MyAccountpage = ({ User }) => {
               style={{ borderRadius: 50 }}
               size="small"
               variant="outlined"
-              color=""
+              color="inherit"
               onClick={() => setOpen(!open)}
             >
               cancel
@@ -210,7 +210,7 @@ const MyAccountpage = ({ User }) => {
             }}
             renderInput={(params) => (
               <TextField
-                sx={{ input: { color: "white" }, label: { color: "white" }, }}
+                sx={{ input: { color: "inherit" }, label: { color: "inherit" }, }}
                 {...params}
                 label="Countries"
               />
@@ -226,7 +226,7 @@ const MyAccountpage = ({ User }) => {
             style={{ borderRadius: 50 }}
             size="small"
             variant="outlined"
-            color=""
+            color="inherit"
             onClick={() => {
               handleSave({
                 content: selected.name.common,
@@ -242,7 +242,7 @@ const MyAccountpage = ({ User }) => {
             style={{ borderRadius: 50 }}
             size="small"
             variant="outlined"
-            color=""
+            color="inherit"
             onClick={() => setNationalityOpen(!openNationality)}
           >
             cancel
@@ -261,7 +261,7 @@ const MyAccountpage = ({ User }) => {
             style={{ borderRadius: 50 }}
             size="small"
             variant="outlined"
-            color=""
+            color="inherit"
             onClick={() => setNationalityOpen(!openNationality)}
           >
             edit

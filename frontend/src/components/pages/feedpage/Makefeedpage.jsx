@@ -51,8 +51,8 @@ const MakeFeedPage = () => {
                 value={formik.values.feedname}
                 label="Feed name"
                 variant="outlined"
-                inputProps={{ style: { color: "white" } }}
-                InputLabelProps={{ style: { color: "white" } }}
+                inputProps={{ style: { color: "inherit" } }}
+                InputLabelProps={{ style: { color: "inherit" } }}
                 onChange={formik.handleChange("feedname")}
               />
               <TextField
@@ -62,8 +62,8 @@ const MakeFeedPage = () => {
                 multiline
                 rows={6}
                 label="Description"
-                inputProps={{ style: { color: "white" } }}
-                InputLabelProps={{ style: { color: "white" } }}
+                inputProps={{ style: { color: "inherit" } }}
+                InputLabelProps={{ style: { color: "inherit" } }}
                 variant="filled"
                 onChange={formik.handleChange("description")}
               />
@@ -74,7 +74,7 @@ const MakeFeedPage = () => {
                 style={{ borderRadius: 50 }}
                 size="small"
                 variant="outlined"
-                color=""
+                color="inherit"
               >
                 Make feed
               </Button>

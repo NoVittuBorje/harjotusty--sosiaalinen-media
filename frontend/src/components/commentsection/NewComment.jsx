@@ -22,14 +22,14 @@ const NewComment = ({
         value={comment}
         multiline
         variant="standard"
-        inputProps={{ style: { color: "white" } }}
+        inputProps={{ style: { color: "inherit" } }}
         onChange={(event) => setComment(event.target.value)}
       />
       <Box sx={{ display: "flex", paddingTop: 1 }}>
         <Button
           size="small"
           variant="outlined"
-          color=""
+          color="inherit"
           className={"button"}
           style={{ borderRadius: 50 }}
           onClick={(event) => {
@@ -41,7 +41,7 @@ const NewComment = ({
         <Button
           size="small"
           variant="outlined"
-          color=""
+          color="inherit"
           className={"button"}
           style={{ borderRadius: 50 }}
           onClick={handleReplyClick}
