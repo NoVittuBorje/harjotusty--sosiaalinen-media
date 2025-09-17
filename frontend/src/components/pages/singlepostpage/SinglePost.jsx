@@ -28,6 +28,7 @@ import DialogContent from "@mui/material/DialogContent";
 import DialogContentText from "@mui/material/DialogContentText";
 import DialogTitle from "@mui/material/DialogTitle";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
+import parse from "html-react-parser";
 const SinglePost = ({ match, User, refetchUser }) => {
   const id = match.params.id;
   console.log(match.params.id);
@@ -259,10 +260,11 @@ const SinglePost = ({ match, User, refetchUser }) => {
                     >{`in f/${postdata.feed.feedname}`}</Typography>
                   </Button>
                 </Box>
+                
+                
                 {ifimage()}
-
-                <Typography variant="h7">{postdata.description}</Typography>
-
+                {parse(postdata.description)}
+                
                 <Box className={"footer"}>
                   <KarmaItem
                     handleDislike={handleDislike}

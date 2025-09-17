@@ -158,7 +158,7 @@ const RegisterPage = () => {
                     },
                   }}
                 />
-                <Button sx={{alignSelf:"left"}} onClick={formik.handleSubmit} variant="contained">Register</Button>
+                <Button sx={{alignSelf:"left",borderRadius:50}} className="button" color="inherit" onClick={formik.handleSubmit} variant="contained">Register</Button>
                 </FormGroup>
                 </Box>
             

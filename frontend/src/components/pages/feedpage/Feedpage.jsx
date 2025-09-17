@@ -1,6 +1,7 @@
 import {
   Box,
   Button,
+  CircularProgress,
   Collapse,
   Divider,
   FormControl,
@@ -22,8 +23,10 @@ import { useEffect, useState } from "react";
 import SettingsIcon from "@mui/icons-material/Settings";
 import AddBoxIcon from "@mui/icons-material/AddBox";
 import UserAvatar from "../../utils/UserAvatar";
-import AddCircleOutlineIcon from '@mui/icons-material/AddCircleOutline';
-import RemoveCircleOutlineIcon from '@mui/icons-material/RemoveCircleOutline';
+import AddCircleOutlineIcon from "@mui/icons-material/AddCircleOutline";
+import RemoveCircleOutlineIcon from "@mui/icons-material/RemoveCircleOutline";
+import parse from "html-react-parser";
+
 const FeedPage = ({ match, User, refetchUser }) => {
   console.log(localStorage.getItem("Feedorderby"));
   if (!localStorage.getItem("FeedorderBy")) {
@@ -48,11 +51,9 @@ const FeedPage = ({ match, User, refetchUser }) => {
 
   const navigate = useNavigate();
   const feedinfo = useGetFeed({ feedname });
-  const { data, loading, error, fetchMore, refetch } =
-    useGetFeedPosts(variables);
+  const { data, loading, error, fetchMore, refetch } = useGetFeedPosts(variables);
   const [sub, result] = useSubscribe();
   const [OpenSettings, setOpenSettings] = useState(false);
-  const [hasMore, setHasMore] = useState(true);
   const handleorderByChange = (event) => {
     console.log(event.target.value);
     setorderBy(event.target.value);
@@ -64,20 +65,13 @@ const FeedPage = ({ match, User, refetchUser }) => {
     refetchUser();
   };
 
-  const FeedInfo = () => {
-    if (feedinfo.loading) {
-      return <Box>loading</Box>;
+  const FeedInfo = ({info,infoloading}) => {
+    if(infoloading){
+      return <CircularProgress color="inherit"></CircularProgress>
     }
-    let info = feedinfo.data ? feedinfo.data.getfeed : {};
-    info = info[0];
-    console.log(info);
     return (
       <Box sx={{ display: "flex", flexDirection: "column" }}>
         <Stack rowGap={2}>
-          <Typography>Feedname: {info.feedname}</Typography>
-
-          <Typography>Description: {info.description}</Typography>
-
           <Typography>
             Owner:
             <Button
@@ -89,33 +83,46 @@ const FeedPage = ({ match, User, refetchUser }) => {
               size="small"
               sx={{ borderRadius: 50 }}
             >
-              <UserAvatar width={20} height={20} user={info.owner}></UserAvatar> {info.owner.username}
+              <UserAvatar width={20} height={20} user={info.owner}></UserAvatar>{" "}
+              {info.owner.username}
             </Button>
           </Typography>
           <Typography>
             Moderators:
             {info.moderators.map((mod) => {
-              return(
+              return (
                 <Button
-              onClick={() => {
-                navigate(`/profile/${info.owner.id}`);
-              }}
-              className="button"
-              color="inherit"
-              size="small"
-              sx={{ borderRadius: 50 }}
-            >
-              <UserAvatar width={20} height={20} user={mod}></UserAvatar> {mod.username}
-            </Button>
-              )
-            } ) }
+                  onClick={() => {
+                    navigate(`/profile/${info.owner.id}`);
+                  }}
+                  className="button"
+                  color="inherit"
+                  size="small"
+                  sx={{ borderRadius: 50 }}
+                >
+                  <UserAvatar width={20} height={20} user={mod}></UserAvatar>{" "}
+                  {mod.username}
+                </Button>
+              );
+            })}
           </Typography>
           <Typography>Subs: {info.subs.length}</Typography>
         </Stack>
       </Box>
     );
   };
-  const FeedSettings = () => {
+  const FeedDescription = ({info,infoloading}) => {
+    if(infoloading){
+      return <CircularProgress color="inherit"></CircularProgress>
+    }
+    return(
+      <Box sx={{padding:1}}>
+      <Typography variant="h5">f/{info.feedname}</Typography>
+      {parse(info.description)}
+      </Box>
+    )
+  }
+  const FeedSettings = ({info,infoloading}) => {
     if (!OpenSettings) {
       return (
         <IconButton onClick={() => setOpenSettings(!OpenSettings)}>
@@ -130,7 +137,7 @@ const FeedPage = ({ match, User, refetchUser }) => {
               <SettingsIcon></SettingsIcon>
             </IconButton>
             <Stack padding={1} gap={1}>
-              <FeedInfo></FeedInfo>
+              <FeedInfo info={info} infoloading={infoloading}></FeedInfo>
             </Stack>
           </Box>
         </Collapse>
@@ -194,7 +201,6 @@ const FeedPage = ({ match, User, refetchUser }) => {
             <AddBoxIcon></AddBoxIcon>
             Make new Post
           </Button>
-
         </Box>
       );
     }
@@ -202,11 +208,19 @@ const FeedPage = ({ match, User, refetchUser }) => {
 
   console.log(data, loading, error);
   const feed = data ? data.getfeedposts : [];
+  let info = feedinfo.data ? feedinfo.data.getfeed : {};
+  let infoloading = feedinfo.loading
+  info = info[0];
+  let hasmore = true;
+  if (feed.length % 10 != 0 || hasmore === false || feed.length == 0) {
+    console.log("no more")
+    hasmore = false
+  }
   const loadmore = () => {
     console.log("loadmore");
     if (feed.length % 10 == 0) {
       fetchMore({ offset: feed.length });
-      setHasMore(false);
+      hasmore = false
     }
   };
 
@@ -216,21 +230,10 @@ const FeedPage = ({ match, User, refetchUser }) => {
         <Grid size={{ xs: 6, md: 2 }}></Grid>
         <Grid size={{ xs: 10, md: 8 }}>
           <Box>
-            <Box
-              sx={{
-                display: "flex",
-                flexDirection: "row",
-                justifyContent: "center",
-                gap: "20%",
-              }}
-            >
-              <h3 style={{ position: "center" }}>
-                {match.params.feedname} Posts
-              </h3>
-            </Box>
+            <FeedDescription infoloading={infoloading} info={info}></FeedDescription>
             <Box sx={{ display: "flex", justifyContent: "space-between" }}>
-              <Box sx={{ alignContent:"center"}}>
-                <FormControl >
+              <Box sx={{ alignContent: "center" }}>
+                <FormControl>
                   <Select
                     defaultValue={orderBy}
                     name="orderBy"
@@ -238,13 +241,13 @@ const FeedPage = ({ match, User, refetchUser }) => {
                     sx={{ color: "inherit" }}
                     onChange={handleorderByChange}
                   >
-                    <MenuItem value={"POPULAR"}>Popular</MenuItem>
-                    <MenuItem value={"NEWEST"}>Newest</MenuItem>
-                    <MenuItem value={"HOTTEST"}>Hottest</MenuItem>
+                    <MenuItem value={"POPULAR"}>Popular Posts</MenuItem>
+                    <MenuItem value={"NEWEST"}>Newest Posts</MenuItem>
+                    <MenuItem value={"HOTTEST"}>Hottest Posts</MenuItem>
                   </Select>
                 </FormControl>
               </Box>
-              <Box sx={{ alignContent: "center",paddingBottom:1 }}>
+              <Box sx={{ alignContent: "center", paddingBottom: 1 }}>
                 <SubButton User={User}></SubButton>
                 <NewPostButton User={User}></NewPostButton>
               </Box>
@@ -254,7 +257,8 @@ const FeedPage = ({ match, User, refetchUser }) => {
             <InfiniteScroll
               dataLength={feed.length}
               next={loadmore}
-              hasMore={hasMore}
+              hasMore={hasmore}
+              loader={<CircularProgress color="inherit"></CircularProgress>}
             >
               <List>
                 {feed.map((item) => (
@@ -270,7 +274,7 @@ const FeedPage = ({ match, User, refetchUser }) => {
         </Grid>
         <Grid size={2}>
           <Box>
-            <FeedSettings></FeedSettings>
+            <FeedSettings info={info} infoloading={infoloading}></FeedSettings>
           </Box>
         </Grid>
       </Grid>

@@ -6,10 +6,11 @@ import { useNavigate } from "react-router";
 import FileUpload from "../../utils/upload";
 import useGetImageUrls from "../../hooks/useGetImageUrl";
 import { useState } from "react";
+import TextEditor from "../../utils/TextEditor";
 
 const validationSchema = yup.object().shape({
-  headline: yup.string(),
-  description: yup.string(),
+  headline: yup.string().min(4).required(),
+  description: yup.string().min(50).max(20000).required(),
 });
 const NewPostpage = ({ match,User }) => {
   const navigate = useNavigate();
@@ -32,7 +33,7 @@ const NewPostpage = ({ match,User }) => {
   const formik = useFormik({
     initialValues: {
       headline: "",
-      description: "",
+      description:"",
       feedname: match.params.postfeedname,
     },
     onSubmit: (values) => {
@@ -52,41 +53,34 @@ const NewPostpage = ({ match,User }) => {
 
         <Grid size={{ xs: 12, md: 8 }}>
           <Box sx={{ border: "solid 0.1em", borderRadius: 1 }}>
-            <Box sx={{display:"flex",justifyContent:"center", borderBottom:1,}}>
-            <FileUpload setImagePath={setImagePath} userid={User.id}></FileUpload>
-            {Uploadedimages()}
-            </Box>
+
             <FormGroup
               sx={{
                 alignItems: "center",
                 verticalAlign: "center",
-                marginTop: 5,
               }}
             >
               <TextField
                 required
-                sx={{ m: 0.5, width: "70%" }}
+                sx={{ m: 0.5, }}
                 value={formik.values.headline}
                 label="Headline"
                 variant="outlined"
+                multiline
                 inputProps={{ style: { color: "inherit" } }}
                 onChange={formik.handleChange("headline")}
               />
-              <TextField
-                required
-                sx={{ m: 0.5, width: "70%" }}
-                value={formik.values.description}
-                multiline
-                rows={6}
-                inputProps={{ style: { color: "inherit" } }}
-                label="Post description"
-                variant="filled"
-                onChange={formik.handleChange("description")}
-              />
+              <Box sx={{display:"flex",justifyContent:"center", borderBottom:1,}}>
+              <Typography>Image: </Typography>
+            <FileUpload setImagePath={setImagePath} userid={User.id}></FileUpload>
+            {Uploadedimages()}
+            </Box>
+              <Typography>Description: </Typography>
+              <TextEditor html={formik.values.description} setHtml={formik.handleChange("description")}  ></TextEditor>
               <Button
-                sx={{ alignSelf: "left" }}
+                sx={{borderRadius:50}}
                 onClick={formik.handleSubmit}
-                variant="contained"
+                className="button" variant="outlined" color="inherit" 
               >
                 Make post
               </Button>

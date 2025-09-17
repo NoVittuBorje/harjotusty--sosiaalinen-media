@@ -31,7 +31,7 @@ const LoginPage = ({setUser,User,refetch}) => {
         console.log(data)
         if (data.login.value){
             refetch()
-        navigate(-1)
+        navigate("/")
         }
     }
     console.log(Username,Password)
@@ -70,7 +70,7 @@ const LoginPage = ({setUser,User,refetch}) => {
                         }
                         label="Password"
                         />
-                <Button sx={{alignSelf:"left"}} onKeyDown={e => console.log(e.key)} onClick={handleFormSubmit} variant="contained">Log in</Button>
+                <Button sx={{alignSelf:"left",borderRadius:50}} className="button" color="inherit" onClick={handleFormSubmit} variant="contained">Log in</Button>
                 </FormControl>
                 
                 

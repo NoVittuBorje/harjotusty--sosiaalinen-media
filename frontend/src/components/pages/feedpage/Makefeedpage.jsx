@@ -1,18 +1,20 @@
-import { Box, FormGroup, Grid, TextField, Button } from "@mui/material";
+import { Box, FormGroup, Grid, TextField, Button, Typography } from "@mui/material";
 import { useFormik } from "formik";
 import * as yup from "yup";
 import useMakeFeed from "../../hooks/useMakeFeed";
 import { useNavigate } from "react-router";
+import TextEditor from "../../utils/TextEditor";
+import { useState } from "react";
 const validationSchema = yup.object().shape({
-  feedname: yup.string().min(1).required(),
-  description: yup.string().min(1).required(),
+  feedname: yup.string().min(2).required(),
+  description: yup.string().min(10).required(),
 });
 const MakeFeedPage = () => {
   const [make, result] = useMakeFeed();
   const navigate = useNavigate();
   const handleFormSubmit = async () => {
     console.log("submit");
-    const data = await make(formik.values);
+    const data = await make({feedname:formik.values.feedname,description:formik.values.description});
     console.log(data);
     if (data.data.makeFeed.feedname) {
       navigate(`/feed/${data.data.makeFeed.feedname}`);
@@ -21,7 +23,7 @@ const MakeFeedPage = () => {
   const formik = useFormik({
     initialValues: {
       feedname: "",
-      description: "",
+      description:""
     },
     onSubmit: (values) => {
       handleFormSubmit(values);
@@ -42,7 +44,7 @@ const MakeFeedPage = () => {
               sx={{
                 alignItems: "center",
                 verticalAlign: "center",
-                marginTop: 5,
+                marginTop: 1,
               }}
             >
               <TextField
@@ -55,30 +57,11 @@ const MakeFeedPage = () => {
                 InputLabelProps={{ style: { color: "inherit" } }}
                 onChange={formik.handleChange("feedname")}
               />
-              <TextField
-                required
-                sx={{ m: 0.5, width: "70%" }}
-                value={formik.values.description}
-                multiline
-                rows={6}
-                label="Description"
-                inputProps={{ style: { color: "inherit" } }}
-                InputLabelProps={{ style: { color: "inherit" } }}
-                variant="filled"
-                onChange={formik.handleChange("description")}
-              />
-              <Button
-                sx={{ alignSelf: "left" }}
-                onClick={formik.handleSubmit}
-                className={"button"}
-                style={{ borderRadius: 50 }}
-                size="small"
-                variant="outlined"
-                color="inherit"
-              >
-                Make feed
-              </Button>
+                          <Typography>Description: </Typography>
+            <TextEditor html={formik.values.description} setHtml={formik.handleChange("description")}></TextEditor>
+            <Button className="button" variant="outlined" color="inherit" sx={{borderRadius:50}} onClick={formik.handleSubmit}>Make feed</Button>
             </FormGroup>
+
           </Box>
         </Grid>
 

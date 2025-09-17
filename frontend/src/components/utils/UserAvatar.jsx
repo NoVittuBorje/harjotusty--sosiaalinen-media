@@ -19,12 +19,15 @@ function stringToColor(string) {
   return color;
 }
 
-function stringAvatar(name) {
+function stringAvatar({name,width,height}) {
   return {
     sx: {
       bgcolor: stringToColor(name),
+      width:width,
+      height:height,
     },
     children: `${name.split(" ")[0][0]}`,
+    
   };
 }
 const GetImage = ({img}) => {
@@ -38,8 +41,8 @@ const UserAvatar = ({user,height,width}) => {
         return(
           
         <Avatar
-        sx={{height:height,width:width}}
-          {...stringAvatar(user.username)}
+        variant="circular"
+          {...stringAvatar({name:user.username,height,width})}
         ></Avatar>
 
         )

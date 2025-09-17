@@ -43,7 +43,7 @@ const Homescreen = ({ User }) => {
   };
   
   let hasmore = true;
-  if (feed.length % 10 != 0 || hasmore === false) {
+  if (feed.length % 10 != 0 || hasmore === false || feed.length == 0) {
     console.log("no more")
     hasmore = false
   }

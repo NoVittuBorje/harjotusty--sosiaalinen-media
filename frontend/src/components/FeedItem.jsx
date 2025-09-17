@@ -20,6 +20,7 @@ import KarmaItem from "./KarmaItem";
 import Timestamp from "./utils/Timestamp";
 import Useritem from "./Useritem";
 import useEditPost from "./hooks/useEditPost";
+import parse from "html-react-parser";
 const FeedItem = ({ item, owner, User }) => {
   const navigate = useNavigate();
   const [edit, editresult] = useEditPost();
@@ -88,9 +89,10 @@ const FeedItem = ({ item, owner, User }) => {
                   </Typography>
                 </Button>
               </Box>
-              <Typography className="feedDesc" variant="h7" color="inherit">
-                {item.description}
-              </Typography>
+              <Box className="feedDesc">
+              {parse(item.description)}
+              </Box>
+              
             </Box>
           </Box>
         </Link>

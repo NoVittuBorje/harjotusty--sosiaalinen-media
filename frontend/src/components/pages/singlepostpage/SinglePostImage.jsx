@@ -6,7 +6,7 @@ const SinglePostImage = ({img}) => {
     if(!loading){
         console.log(data)
     return(
-        <img src={data.getImage} style={{maxWidth:"80%",borderRadius:5,marginLeft:"5%"}}></img>
+        <img src={data.getImage} style={{maxWidth:"100%",}}></img>
     )}
 }
 export default SinglePostImage
