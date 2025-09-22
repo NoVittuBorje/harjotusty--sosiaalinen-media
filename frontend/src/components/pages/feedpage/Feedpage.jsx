@@ -6,8 +6,10 @@ import {
   Divider,
   FormControl,
   Grid,
+  Icon,
   IconButton,
   List,
+  ListItem,
   MenuItem,
   Select,
   Stack,
@@ -26,6 +28,7 @@ import UserAvatar from "../../utils/UserAvatar";
 import AddCircleOutlineIcon from "@mui/icons-material/AddCircleOutline";
 import RemoveCircleOutlineIcon from "@mui/icons-material/RemoveCircleOutline";
 import parse from "html-react-parser";
+import FeedModSettings from "../../utils/FeedModSettings";
 
 const FeedPage = ({ match, User, refetchUser }) => {
   console.log(localStorage.getItem("Feedorderby"));
@@ -51,9 +54,11 @@ const FeedPage = ({ match, User, refetchUser }) => {
 
   const navigate = useNavigate();
   const feedinfo = useGetFeed({ feedname });
-  const { data, loading, error, fetchMore, refetch } = useGetFeedPosts(variables);
+  const { data, loading, error, fetchMore, refetch } =
+    useGetFeedPosts(variables);
   const [sub, result] = useSubscribe();
   const [OpenSettings, setOpenSettings] = useState(false);
+
   const handleorderByChange = (event) => {
     console.log(event.target.value);
     setorderBy(event.target.value);
@@ -65,9 +70,9 @@ const FeedPage = ({ match, User, refetchUser }) => {
     refetchUser();
   };
 
-  const FeedInfo = ({info,infoloading}) => {
-    if(infoloading){
-      return <CircularProgress color="inherit"></CircularProgress>
+  const FeedInfo = ({ info, infoloading }) => {
+    if (infoloading) {
+      return <CircularProgress color="inherit"></CircularProgress>;
     }
     return (
       <Box sx={{ display: "flex", flexDirection: "column" }}>
@@ -111,18 +116,29 @@ const FeedPage = ({ match, User, refetchUser }) => {
       </Box>
     );
   };
-  const FeedDescription = ({info,infoloading}) => {
-    if(infoloading){
-      return <CircularProgress color="inherit"></CircularProgress>
+  const FeedDescription = ({ info, infoloading }) => {
+    if (infoloading) {
+      return <CircularProgress color="inherit"></CircularProgress>;
     }
-    return(
-      <Box sx={{padding:1}}>
-      <Typography variant="h5">f/{info.feedname}</Typography>
-      {parse(info.description)}
+    return (
+      <Box sx={{ padding: 1 }}>
+        <Typography variant="h5">f/{info.feedname}</Typography>
+        {parse(info.description)}
       </Box>
-    )
-  }
-  const FeedSettings = ({info,infoloading}) => {
+    );
+  };
+  const FeedSettings = ({ info, infoloading }) => {
+    if (infoloading) {
+      return;
+    }
+    const mods = [...info.moderators, info.owner.id];
+    const ModSettings = ({ mods }) => {
+      console.log(mods);
+      if (!mods) {
+        return;
+      }
+      if (mods.includes(User.id)) return <FeedModSettings></FeedModSettings>;
+    };
     if (!OpenSettings) {
       return (
         <IconButton onClick={() => setOpenSettings(!OpenSettings)}>
@@ -138,6 +154,7 @@ const FeedPage = ({ match, User, refetchUser }) => {
             </IconButton>
             <Stack padding={1} gap={1}>
               <FeedInfo info={info} infoloading={infoloading}></FeedInfo>
+              <ModSettings mods={mods}></ModSettings>
             </Stack>
           </Box>
         </Collapse>
@@ -182,6 +199,7 @@ const FeedPage = ({ match, User, refetchUser }) => {
       );
     }
   };
+
   const NewPostButton = ({ User }) => {
     if (!User) {
       return;
@@ -209,18 +227,18 @@ const FeedPage = ({ match, User, refetchUser }) => {
   console.log(data, loading, error);
   const feed = data ? data.getfeedposts : [];
   let info = feedinfo.data ? feedinfo.data.getfeed : {};
-  let infoloading = feedinfo.loading
+  let infoloading = feedinfo.loading;
   info = info[0];
   let hasmore = true;
   if (feed.length % 10 != 0 || hasmore === false || feed.length == 0) {
-    console.log("no more")
-    hasmore = false
+    console.log("no more");
+    hasmore = false;
   }
   const loadmore = () => {
     console.log("loadmore");
     if (feed.length % 10 == 0) {
       fetchMore({ offset: feed.length });
-      hasmore = false
+      hasmore = false;
     }
   };
 
@@ -230,7 +248,10 @@ const FeedPage = ({ match, User, refetchUser }) => {
         <Grid size={{ xs: 6, md: 2 }}></Grid>
         <Grid size={{ xs: 10, md: 8 }}>
           <Box>
-            <FeedDescription infoloading={infoloading} info={info}></FeedDescription>
+            <FeedDescription
+              infoloading={infoloading}
+              info={info}
+            ></FeedDescription>
             <Box sx={{ display: "flex", justifyContent: "space-between" }}>
               <Box sx={{ alignContent: "center" }}>
                 <FormControl>
@@ -265,6 +286,7 @@ const FeedPage = ({ match, User, refetchUser }) => {
                   <FeedItem
                     item={item}
                     owner={item.owner}
+                    mods={info.owner ? [...info.moderators, info.owner.id] : []}
                     User={User}
                   ></FeedItem>
                 ))}
@@ -274,7 +296,10 @@ const FeedPage = ({ match, User, refetchUser }) => {
         </Grid>
         <Grid size={2}>
           <Box>
-            <FeedSettings info={info} infoloading={infoloading}></FeedSettings>
+            <FeedSettings
+              info={info}
+              infoloading={infoloading}
+            ></FeedSettings>
           </Box>
         </Grid>
       </Grid>

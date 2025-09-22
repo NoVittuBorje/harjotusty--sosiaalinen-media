@@ -1,13 +1,18 @@
 import {
   Box,
   Button,
+  Card,
+  CardContent,
+  CardHeader,
   Chip,
+  Collapse,
   Divider,
   IconButton,
   Link,
   List,
   ListItem,
   ListItemButton,
+  Stack,
   TextareaAutosize,
   Typography,
 } from "@mui/material";
@@ -20,10 +25,15 @@ import KarmaItem from "./KarmaItem";
 import Timestamp from "./utils/Timestamp";
 import Useritem from "./Useritem";
 import useEditPost from "./hooks/useEditPost";
+import SettingsIcon from "@mui/icons-material/Settings";
 import parse from "html-react-parser";
-const FeedItem = ({ item, owner, User }) => {
+import { useState } from "react";
+import PostModSettings from "./utils/PostModSettings";
+import useGetImageUrl from "./hooks/useGetImageUrl";
+const FeedItem = ({ item, owner, User, mods }) => {
   const navigate = useNavigate();
   const [edit, editresult] = useEditPost();
+  const [open, setOpen] = useState(false);
   const handleLike = async () => {
     console.log("likepost");
     const data = await edit({ action: "like", content: "", postid: item.id });
@@ -37,14 +47,54 @@ const FeedItem = ({ item, owner, User }) => {
     });
     console.log(data);
   };
-
+  const ModSettings = () => {
+    console.log(mods);
+    if (!mods) {
+      return;
+    }
+    if (mods.includes(User.id))
+      return (
+        <IconButton
+          onClick={() => {
+            setOpen(!open);
+          }}
+        >
+          <SettingsIcon></SettingsIcon>
+        </IconButton>
+      );
+  };
+  const FeedImage = ({ img }) => {
+    const { data, loading } = useGetImageUrl({ imageId: img });
+    if (!loading) {
+      console.log(data);
+      return (
+        <img
+          src={data.getImage}
+          style={{ maxHeight: 500, maxWidth: "100%" }}
+        ></img>
+      );
+    }
+  };
+  const FeedDescription = ({ item }) => {
+    if (item.img) {
+      return (
+        <Box sx={{display:"flex",justifyContent:"center",backgroundColor:"black"}}>
+          <FeedImage img={item.img}></FeedImage>
+        </Box>
+      );
+    } else {
+      return <Box className="feedDesc">{parse(item.description)}</Box>;
+    }
+  };
   return (
     <Box
       className={"feed"}
-      sx={{boxShadow: 1,  '&:hover': {
-    backgroundColor: "background.dark", 
-    
-  },}}
+      sx={{
+        boxShadow: 1,
+        "&:hover": {
+          backgroundColor: "background.dark",
+        },
+      }}
       key={item.id}
     >
       <Box sx={{ display: "flex", flexDirection: "column" }}>
@@ -71,10 +121,10 @@ const FeedItem = ({ item, owner, User }) => {
               >
                 <Typography variant="h5">{`${item.headline}`}</Typography>
                 <Button
-                size="small"
-                color="inherit"
-                className="button"
-                sx={{borderRadius:50}}
+                  size="small"
+                  color="inherit"
+                  className="button"
+                  sx={{ borderRadius: 50 }}
                 >
                   <Typography
                     color="inherit"
@@ -89,10 +139,7 @@ const FeedItem = ({ item, owner, User }) => {
                   </Typography>
                 </Button>
               </Box>
-              <Box className="feedDesc">
-              {parse(item.description)}
-              </Box>
-              
+              <FeedDescription item={item}></FeedDescription>
             </Box>
           </Box>
         </Link>
@@ -107,10 +154,13 @@ const FeedItem = ({ item, owner, User }) => {
             id={item.id}
             User={User}
           ></KarmaItem>
+          <ModSettings></ModSettings>
         </Box>
+        <Collapse in={open}>
+          <Divider></Divider>
+          <PostModSettings item={item}></PostModSettings>
+        </Collapse>
       </Box>
-
-      <Divider></Divider>
     </Box>
   );
 };

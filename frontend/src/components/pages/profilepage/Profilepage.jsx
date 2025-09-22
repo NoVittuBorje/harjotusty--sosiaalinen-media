@@ -1,5 +1,6 @@
 import { Box, Grid, Stack } from "@mui/system";
 import {
+  CircularProgress,
   Divider,
   FormControl,
   List,
@@ -11,7 +12,7 @@ import ProfileFeed from "./Profilefeed";
 import { useState } from "react";
 import useGetUser from "../../hooks/useGetUser";
 import UserAvatar from "../../utils/UserAvatar";
-
+import parse from "html-react-parser";
 const Profilepage = ({ User, match }) => {
   console.log(User);
   console.log(match);
@@ -25,7 +26,7 @@ const Profilepage = ({ User, match }) => {
 
   console.log(id);
   if (userdata.loading) {
-    return <p>loading...</p>;
+    return <CircularProgress></CircularProgress>;
   } else {
     const profiledata = userdata.data ? userdata.data.getuser : [];
     console.log(profiledata);
@@ -36,7 +37,17 @@ const Profilepage = ({ User, match }) => {
           <Grid size={{ xs: 12, md: 2 }} sx={{}}></Grid>
           <Grid size={{ xs: 12, md: 8 }} sx={{}}>
             <Box sx={{ padding: 1 }}>
-              <Grid sx={{ flexDirection: "row" }} container size={{ xs: 12 }}>
+              <Grid
+                sx={{
+                  paddingBottom:5,
+                  flexDirection: "row",
+                  justifyItems: "center",
+                  justifyContent: "center",
+                  
+                }}
+                container
+                
+              >
                 <Grid>
                   <Stack>
                     <Typography variant="h4">{profiledata.username}</Typography>
@@ -47,22 +58,37 @@ const Profilepage = ({ User, match }) => {
                     ></UserAvatar>
                   </Stack>
                 </Grid>
-              </Grid>
-              <Grid size={{ xs: 12 }} container flexDirection={"row"}>
-                <Grid size={{ xs: 4 }}>
+                <Grid
+                  sx={{
+                    display: "flex",
+                    flexDirection: "column",
+                    justifyContent: "center",
+                    paddingLeft:5,
+                    paddingRight:5
+                  }}
+                >
                   <Typography>{`Disliked posts: ${profiledata.dislikedposts.length}`}</Typography>
                   <Typography>{`Disliked comments: ${profiledata.dislikedcomments.length}`}</Typography>
                   <Typography>{`Subs:  ${profiledata.feedsubs.length}`}</Typography>
                 </Grid>
-                <Grid size={{ xs: 4 }}>
+                <Grid
+                  sx={{
+                    display: "flex",
+                    flexDirection: "column",
+                    justifyContent: "center",
+                  }}
+                >
                   <Typography>{`Liked posts: ${profiledata.likedposts.length}`}</Typography>
                   <Typography>{`Liked comments: ${profiledata.likedcomments.length}`}</Typography>
                   <Typography>{`Owned feeds: ${profiledata.ownedfeeds.length}`}</Typography>
                 </Grid>
               </Grid>
-              <Grid></Grid>
 
-              <Typography variant="h8">{profiledata.description}</Typography>
+              <Grid size={{ xs: 12 }} container flexDirection={"row"}></Grid>
+              <Grid></Grid>
+              <Divider></Divider>
+              {parse(profiledata.description)}
+              <Divider></Divider>
             </Box>
             <Box sx={{ padding: 1 }}>
               <FormControl>

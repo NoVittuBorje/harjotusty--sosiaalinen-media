@@ -7,6 +7,11 @@ const EditFieldItem = ({ valueType, value, handleSave }) => {
   const EditState = () => {
     if (open) {
       return (
+        <Box           sx={{
+            display: "flex",
+            flexDirection: "column",
+            alignItems: "center",
+          }}>
         <Stack>
           <TextField
             color="primary"
@@ -47,10 +52,15 @@ const EditFieldItem = ({ valueType, value, handleSave }) => {
             </Button>
           </Box>
         </Stack>
+        </Box>
       );
     } else {
       return (
-        <Box padding={1}>
+        <Box padding={1} sx={{
+            display: "flex",
+            flexDirection: "column",
+            alignItems: "center",
+          }}>
           <Box>
           <Tooltip followCursor={true} title={value}>
           <Typography maxWidth={400} className="feedDesc">{`${valueType}: ${value}`}</Typography>

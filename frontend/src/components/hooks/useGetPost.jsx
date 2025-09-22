@@ -1,8 +1,8 @@
 import { useQuery } from "@apollo/client";
-import { GET_POST_MIN } from "../graphql/queries";
+import { GET_POST } from "../graphql/queries";
 const useGetPost = ({ id }) => {
   const { data, error, loading, refetch } = useQuery(
-    GET_POST_MIN,
+    GET_POST,
     { variables: { getpostId: id } },
     {
       fetchPolicy: "network-only",

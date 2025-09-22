@@ -23,6 +23,11 @@ import { useEffect, useState } from "react";
 import UserAvatar from "../utils/UserAvatar";
 import useEditUser from "../hooks/useEditUser";
 import { GetCountries } from "../utils/Getcountrys";
+import TextEditor from "../utils/TextEditor";
+import parse from "html-react-parser";
+import { useFormik } from "formik";
+import * as yup from "yup";
+
 
 const MyAccountpage = ({ User }) => {
   const [imagePath, setImagePath] = useState(User.avatar);
@@ -38,6 +43,7 @@ const MyAccountpage = ({ User }) => {
   const [openNationality, setNationalityOpen] = useState(false);
   const [countries, setCountries] = useState([]);
   const [nationality, setNationality] = useState();
+  const [description, setDescription] = useState(User.description);
   const hook = () => {
     GetCountries().then((res) => {
       console.log(res);
@@ -52,6 +58,9 @@ const MyAccountpage = ({ User }) => {
     const data = await edit({ content: content, type: type });
     console.log(data);
   };
+  const handleFormSubmit = async ({values}) => {
+
+  }
   const EditAvatar = () => {
     if (avataredit) {
       return (
@@ -184,9 +193,12 @@ const MyAccountpage = ({ User }) => {
     if (openNationality) {
       return (
         <Box
-          sx={{ display:"flex",flexDirection: "column", alignItems: "center" }}
+          sx={{
+            display: "flex",
+            flexDirection: "column",
+            alignItems: "center",
+          }}
         >
-
           <Autocomplete
             disablePortal
             filterOptions={filterOptions}
@@ -206,11 +218,14 @@ const MyAccountpage = ({ User }) => {
             )}
             sx={{
               width: 300,
-              maxWidth:300,
+              maxWidth: 300,
             }}
             renderInput={(params) => (
               <TextField
-                sx={{ input: { color: "inherit" }, label: { color: "inherit" }, }}
+                sx={{
+                  input: { color: "inherit" },
+                  label: { color: "inherit" },
+                }}
                 {...params}
                 label="Countries"
               />
@@ -221,33 +236,33 @@ const MyAccountpage = ({ User }) => {
             }}
           />
           <Box>
-          <Button
-            className={"button"}
-            style={{ borderRadius: 50 }}
-            size="small"
-            variant="outlined"
-            color="inherit"
-            onClick={() => {
-              handleSave({
-                content: selected.name.common,
-                type: "Nationality",
-              });
-              setNationalityOpen(!openNationality);
-            }}
-          >
-            save
-          </Button>
-          <Button
-            className={"button"}
-            style={{ borderRadius: 50 }}
-            size="small"
-            variant="outlined"
-            color="inherit"
-            onClick={() => setNationalityOpen(!openNationality)}
-          >
-            cancel
-          </Button>
-        </Box>
+            <Button
+              className={"button"}
+              style={{ borderRadius: 50 }}
+              size="small"
+              variant="outlined"
+              color="inherit"
+              onClick={() => {
+                handleSave({
+                  content: selected.name.common,
+                  type: "Nationality",
+                });
+                setNationalityOpen(!openNationality);
+              }}
+            >
+              save
+            </Button>
+            <Button
+              className={"button"}
+              style={{ borderRadius: 50 }}
+              size="small"
+              variant="outlined"
+              color="inherit"
+              onClick={() => setNationalityOpen(!openNationality)}
+            >
+              cancel
+            </Button>
+          </Box>
         </Box>
       );
     } else {
@@ -270,15 +285,81 @@ const MyAccountpage = ({ User }) => {
       );
     }
   };
+  const EditDescription = () => {
+    const [open, setOpen] = useState(false);
+    console.log(open)
+    const validationSchema = yup.object().shape({
+  description: yup.string().min(10).required(),
+});
+    const formik = useFormik({ 
+      initialValues: {
+        description:User.description
+      },
+      onSubmit: (values) => {
+        handleSave({content:values.description,type:"Description"});
+      },
+      validationSchema,
+    });
+    if (open) {
+      console.log(description)
+      return (
+        <Box           sx={{
+            display: "flex",
+            flexDirection: "column",
+            alignItems: "center",
+          }}>
+          <TextEditor html={formik.values.description} setHtml={formik.handleChange("description")}></TextEditor>
+          <Box sx={{display:"flex",flexDirection:"row"}}>
+          <Button className="button" variant="outlined" color="inherit" sx={{borderRadius:50}} onClick={formik.handleSubmit}>Save</Button>
+
+          <Button
+            className={"button"}
+            style={{ borderRadius: 50 }}
+            size="small"
+            variant="outlined"
+            color="inherit"
+            onClick={() => setOpen(!open)}
+          >
+            cancel
+          </Button>
+          </Box>
+        </Box>
+      );
+    } else {
+      return (
+        <Box sx={{
+            display: "flex",
+            flexDirection: "column",
+            alignItems: "center",
+          }}>
+        {parse(formik.values.description)}
+        <Button
+          className={"button"}
+          style={{ borderRadius: 50 }}
+          size="small"
+          variant="outlined"
+          color="inherit"
+          onClick={() => setOpen(!open)}
+        >
+          edit
+        </Button>
+        </Box>
+      );
+    }
+  };
+
   return (
     <Box sx={{ flexGrow: 1 }}>
       <Grid container rowSpacing={1} sx={{ flexDirection: "row" }}>
+        <Grid size={{ xs: 12, md: 2 }}></Grid>
+      <Grid size={{ xs: 12, md: 8 }} container rowSpacing={1} sx={{ flexDirection: "row" }}>
         <Box
           className={"center"}
           sx={{ textAlign: "center", border: 1, borderRadius: 5 }}
         >
           <h3>My account</h3>
           <Stack spacing={1}>
+            
             <Box sx={{ borderTop: 1 }} padding={1}>
               <Typography>Id: {User.id}</Typography>
             </Box>
@@ -297,11 +378,10 @@ const MyAccountpage = ({ User }) => {
               valueType={"Email"}
               handleSave={handleSave}
             ></EditFieldItem>
-            <EditFieldItem
-              value={User.description}
-              valueType={"Description"}
-              handleSave={handleSave}
-            ></EditFieldItem>
+            <Box sx={{ borderTop: 1 }} padding={1}>
+              <EditDescription></EditDescription>
+            </Box>
+
             <EditFieldItem
               value={User.firstname}
               valueType={"Firstname"}
@@ -322,6 +402,8 @@ const MyAccountpage = ({ User }) => {
             ></EditFieldItem>
           </Stack>
         </Box>
+      </Grid>
+      <Grid size={{ xs: 12, md: 2 }}></Grid>
       </Grid>
     </Box>
   );

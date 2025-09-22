@@ -17,6 +17,10 @@ const schema = new mongoose.Schema({
         type: mongoose.Schema.Types.ObjectId,
         ref: 'Comment',
     }],
+    locked:{
+    type: Boolean,
+    default:false
+    },
     active:{
     type: Boolean,
     default:true

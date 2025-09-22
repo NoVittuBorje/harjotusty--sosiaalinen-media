@@ -7,6 +7,8 @@ import FileUpload from "../../utils/upload";
 import useGetImageUrls from "../../hooks/useGetImageUrl";
 import { useState } from "react";
 import TextEditor from "../../utils/TextEditor";
+import SinglePost from "../singlepostpage/SinglePost";
+import SinglePostPreview from "../singlepostpage/SinglePostPreview";
 
 const validationSchema = yup.object().shape({
   headline: yup.string().min(4).required(),
@@ -14,7 +16,7 @@ const validationSchema = yup.object().shape({
 });
 const NewPostpage = ({ match,User }) => {
   const navigate = useNavigate();
-
+  const [previewOpen, setPreviewOpen] = useState(false)
   const [mutate, result] = useMakePost();
   const [imagepath,setImagePath] = useState("")
   const handleFormSubmit = async () => {
@@ -41,6 +43,23 @@ const NewPostpage = ({ match,User }) => {
     },
     validationSchema,
   });
+  if(previewOpen){
+    const postdata = {
+      headline:formik.values.headline,
+      description:formik.values.description,
+      feedname:formik.values.feedname,
+      img:imagepath[0]
+    }
+    console.log(postdata)
+    return(
+      <Box>
+        <Button onClick={() => setPreviewOpen(!previewOpen)} sx={{borderRadius:50}} className="button" variant="outlined" color="inherit">close preview</Button>
+      <SinglePostPreview postdata={postdata}></SinglePostPreview>
+      
+      </Box>
+      
+    )
+  }
   console.log(formik.values)
   return (
     <Box sx={{ flexGrow: 1 }}>
@@ -84,6 +103,7 @@ const NewPostpage = ({ match,User }) => {
               >
                 Make post
               </Button>
+              <Button onClick={() => setPreviewOpen(!previewOpen)} sx={{borderRadius:50}} className="button" variant="outlined" color="inherit">preview</Button>
             </FormGroup>
           </Box>
 

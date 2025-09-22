@@ -24,6 +24,11 @@ const schema = new mongoose.Schema({
         unique:true,
         ref:'User'
     }],
+    bannedusers:[{
+        type:mongoose.Schema.Types.ObjectId,
+        unique:true,
+        ref:'User'
+    }],
     posts:[{
         type: mongoose.Schema.Types.ObjectId,
         ref: 'Post'

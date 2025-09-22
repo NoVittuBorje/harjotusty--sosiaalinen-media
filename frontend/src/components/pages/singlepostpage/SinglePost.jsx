@@ -29,6 +29,7 @@ import DialogContentText from "@mui/material/DialogContentText";
 import DialogTitle from "@mui/material/DialogTitle";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import parse from "html-react-parser";
+import PostModSettings from "../../utils/PostModSettings";
 const SinglePost = ({ match, User, refetchUser }) => {
   const id = match.params.id;
   console.log(match.params.id);
@@ -40,6 +41,7 @@ const SinglePost = ({ match, User, refetchUser }) => {
   const [newcomment, result] = useMakeComment();
   const [openNewComment, setopenNewComment] = useState(false);
   const [OpenSettings, setOpenSettings] = useState(false);
+  const [openModSettings,setOpenModSettings] = useState(false)
   const [open, setOpen] = useState(false);
   const handleClickOpen = () => {
     setOpen(true);
@@ -83,7 +85,7 @@ const SinglePost = ({ match, User, refetchUser }) => {
     refetchUser();
   };
 
-  const PostSettings = ({ info }) => {
+  const PostSettings = ({ info,mods }) => {
     console.log(info);
     if (!User) {
       return;
@@ -130,7 +132,7 @@ const SinglePost = ({ match, User, refetchUser }) => {
         </Stack>
       );
     };
-    if (!OpenSettings & (info.owner.username == User.username)) {
+    if (!OpenSettings & (info.owner.username == User.username || mods.includes(User.id))) {
       return (
         <IconButton
           className={"button"}
@@ -151,7 +153,6 @@ const SinglePost = ({ match, User, refetchUser }) => {
             >
               <SettingsIcon></SettingsIcon>
             </IconButton>
-
             <DeletePost></DeletePost>
           </Box>
         </Collapse>
@@ -193,15 +194,33 @@ const SinglePost = ({ match, User, refetchUser }) => {
   };
   const postdata = data ? data.getpost : [];
   const comments = postcomments.data ? postcomments.data.getpostcomments : [];
+  console.log(postdata)
+
   if (postdata.feed) {
-    const ifimage = () => {
+  const mods = [postdata.feed.owner.id,...postdata.feed.moderators]
+  console.log(mods)
+    const Postimage = () => {
       if (postdata.img) {
         console.log(postdata.img);
-        return <SinglePostImage img={postdata.img}></SinglePostImage>;
+        return (
+                <Box sx={{display:"flex",justifyContent:"center",backgroundColor:"grey"}}>
+                  <SinglePostImage img={postdata.img}></SinglePostImage>
+                </Box>
+      )
       } else {
         return;
       }
     };
+    const ModSettings = () => {
+    console.log(mods)
+    if(!mods){
+      return
+    }
+    if(mods.includes(User.id))
+    return(
+      <IconButton onClick={() => {setOpenModSettings(!openModSettings)}}><SettingsIcon></SettingsIcon></IconButton>
+    )
+  }
     return (
       <Box sx={{ flexGrow: 1 }}>
         <Grid container rowSpacing={1} sx={{ flexDirection: "row" }}>
@@ -218,7 +237,7 @@ const SinglePost = ({ match, User, refetchUser }) => {
                 >
                   <ArrowBackIcon></ArrowBackIcon>
                 </IconButton>
-                <PostSettings info={postdata}></PostSettings>
+                <PostSettings mods={mods} info={postdata}></PostSettings>
               </Box>
               <Useritem
                 time={postdata.createdAt}
@@ -262,7 +281,7 @@ const SinglePost = ({ match, User, refetchUser }) => {
                 </Box>
                 
                 
-                {ifimage()}
+                <Postimage></Postimage>
                 {parse(postdata.description)}
                 
                 <Box className={"footer"}>
@@ -276,6 +295,7 @@ const SinglePost = ({ match, User, refetchUser }) => {
                     karma={postdata.karma}
                   ></KarmaItem>
                   <NewCommentform></NewCommentform>
+                  
                 </Box>
                 <Collapse in={openNewComment} timeout={"auto"} unmountOnExit>
                   <CommentForm
@@ -283,6 +303,7 @@ const SinglePost = ({ match, User, refetchUser }) => {
                     onSubmit={(comment) => handleNewComment(comment)}
                   />
                 </Collapse>
+
               </Stack>
               <Divider></Divider>
               <CommentSection
@@ -299,7 +320,13 @@ const SinglePost = ({ match, User, refetchUser }) => {
           <Grid
             sx={{ minWidth: "fit-content" }}
             size={{ xs: 12, md: 2 }}
-          ></Grid>
+          >
+            <ModSettings></ModSettings>
+                                  <Collapse in={openModSettings} >
+                      <Divider></Divider>
+                      <PostModSettings item={postdata}></PostModSettings> 
+                    </Collapse>
+          </Grid>
         </Grid>
       </Box>
     );

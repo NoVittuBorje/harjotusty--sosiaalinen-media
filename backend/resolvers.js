@@ -34,8 +34,8 @@ const resolvers = {
       if (obj.feedname) {
         return "Feed";
       }
-      if(obj.username){
-        return "User"
+      if (obj.username) {
+        return "User";
       }
       return null;
     },
@@ -110,7 +110,7 @@ const resolvers = {
             })
             .populate("owner", { username: 1, id: 1 })
             .populate("subs", { username: 1, id: 1 })
-            .populate("moderators",{ username: 1, id: 1 })
+            .populate("moderators", { username: 1, id: 1 });
           console.log(feed);
           return [feed];
         }
@@ -172,7 +172,7 @@ const resolvers = {
       }
     },
     getpostcomments: async (root, args) => {
-      console.log(args.postid, args.offset,);
+      console.log(args.postid, args.offset);
       const comments = await Comment.find({
         post: args.postid,
         depth: 0,
@@ -272,7 +272,14 @@ const resolvers = {
     },
     getpost: async (root, args) => {
       const post = await Post.find({ _id: args.id })
-        .populate("feed", { feedname: 1, id: 1 })
+        .populate({
+          path: "feed",
+          select: ["feedname", "id", "owner", "moderators"],
+          populate:{
+            path:["owner","moderators"],
+            select:["id"]
+          }
+        })
         .populate("owner", { username: 1, id: 1, avatar: 1 });
       return post[0];
     },
@@ -428,11 +435,11 @@ const resolvers = {
       }
     },
     getsearchbar: async (root, args) => {
-      if (args.searchby == ""){
+      if (args.searchby == "") {
         const feeds = await Feed.find({
           feedname: { $regex: "//", $options: "i" },
         }).limit(10);
-        return feeds
+        return feeds;
       }
       try {
         const feeds = await Feed.find({
@@ -443,8 +450,8 @@ const resolvers = {
         }).limit(10);
         const users = await User.find({
           username: { $regex: args.searchby, $options: "i" },
-        }).limit(10)
-        const result = [...feeds, ...posts,...users];
+        }).limit(10);
+        const result = [...feeds, ...posts, ...users];
         console.log(result);
 
         return result;

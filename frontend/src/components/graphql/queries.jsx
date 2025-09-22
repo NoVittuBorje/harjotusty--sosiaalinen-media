@@ -79,16 +79,8 @@ export const GET_FEED = gql`
   }
 `;
 export const GET_FEED_POSTS = gql`
-  query Getfeedposts(
-    $feedname: String!
-    $offset: Int!
-    $orderBy: String!
-  ) {
-    getfeedposts(
-      feedname: $feedname
-      offset: $offset
-      orderBy: $orderBy
-    ) {
+  query Getfeedposts($feedname: String!, $offset: Int!, $orderBy: String!) {
+    getfeedposts(feedname: $feedname, offset: $offset, orderBy: $orderBy) {
       headline
       description
       karma
@@ -111,8 +103,8 @@ export const GET_FEED_POSTS = gql`
   }
 `;
 export const GET_POST_COMMENTS = gql`
-  query Getpostcomments($postid: String!, $offset: Int!, ) {
-    getpostcomments(postid: $postid, offset: $offset,) {
+  query Getpostcomments($postid: String!, $offset: Int!) {
+    getpostcomments(postid: $postid, offset: $offset) {
       content
       active
       karma
@@ -131,7 +123,7 @@ export const GET_POST_COMMENTS = gql`
     }
   }
 `;
-export const GET_POST_MIN = gql`
+export const GET_POST = gql`
   query Getpost($getpostId: String!) {
     getpost(id: $getpostId) {
       headline
@@ -149,6 +141,12 @@ export const GET_POST_MIN = gql`
       }
       feed {
         feedname
+        owner {
+          id
+        }
+        moderators {
+          id
+        }
         id
       }
     }
@@ -180,7 +178,7 @@ export const GET_USER = gql`
       dislikedcomments {
         id
       }
-              feedsubs {
+      feedsubs {
         id
       }
       posts {
@@ -194,8 +192,7 @@ export const GET_USER = gql`
       }
       createdAt
     }
-}
-  
+  }
 `;
 
 export const GET_ALL_FEED = gql`
@@ -344,29 +341,29 @@ export const GET_USER_OWNEDFEEDS = gql`
   }
 `;
 export const GET_SEARCH_BAR = gql`
-query Getsearchbar($searchby: String!) {
-  getsearchbar(searchby: $searchby) {
-    ... on Feed {
-      feedname
-      active
-      id
-    }
-    ... on Post {
-      headline
-      karma
-      active
-      createdAt
-      updatedAt
-      id
-    }
-    ... on User {
-      username
-      avatar
-      id
-      active
+  query Getsearchbar($searchby: String!) {
+    getsearchbar(searchby: $searchby) {
+      ... on Feed {
+        feedname
+        active
+        id
+      }
+      ... on Post {
+        headline
+        karma
+        active
+        createdAt
+        updatedAt
+        id
+      }
+      ... on User {
+        username
+        avatar
+        id
+        active
+      }
     }
   }
-}
 `;
 export const GET_IMAGE_URLS = gql`
   query Query($userId: String!) {
