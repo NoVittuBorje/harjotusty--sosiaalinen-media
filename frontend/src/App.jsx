@@ -12,11 +12,10 @@ import FeedPage from "./components/pages/feedpage/Feedpage";
 import NewPostpage from "./components/pages/feedpage/NewPostpage";
 import useMe from "./components/hooks/useMe";
 import MyAccountpage from "./components/myaccountpage/MyAccountpage";
-import { useState } from "react";
+
 
 function App() {
   const token = sessionStorage.getItem("token");
-
   const { data, loading, error, refetch } = useMe();
   console.log(data)
   let match = useMatch("/post/:id");

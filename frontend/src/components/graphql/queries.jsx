@@ -152,6 +152,7 @@ export const GET_POST = gql`
     }
   }
 `;
+
 export const GET_USER = gql`
   query Getuser($getuserId: String!) {
     getuser(id: $getuserId) {
@@ -374,4 +375,9 @@ export const GET_IMAGE_URL = gql`
   query Query($imageId: String!) {
     getImage(imageId: $imageId)
   }
+`;
+export const GET_FEED_SUBS_COUNT = gql`
+query Query($feedname: String!) {
+  getSubsCount(feedname: $feedname)
+}
 `;

@@ -16,12 +16,12 @@
   padding-right: 15%;
 }
 .feed{
-  border: 2px solid black;
+  border: 1px solid black;
   margin-top: 1px;
-  border-radius: 15px;
+  border-radius: 20px;
   font-family:Arial, Helvetica, sans-serif;
   font-size: medium;
-  margin-bottom: 2px;
+  margin-bottom: 5px;
 }
 .center {
   margin: auto;
@@ -48,11 +48,7 @@
 .feed:hover{
   background-color: ""
 }
-.comment {
-  --size: 2rem;
-  display: flex;
-  gap: 0.5rem;
-}
+
 
 .avatar {
   flex: 0 0 var(--size);
@@ -89,6 +85,7 @@ h1{
     margin-top: 0;
   margin-bottom: 0;
 }
+
 h2{
   margin-top: 0;
   margin-bottom: 0;
@@ -101,4 +98,9 @@ h2{
 }
 .rsw-ce{
   width: 100%;
+}
+.imagecontainer{
+  display:flex;
+  justify-content:center;
+  border-radius: 20px;
 }

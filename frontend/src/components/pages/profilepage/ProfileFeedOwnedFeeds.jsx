@@ -1,9 +1,9 @@
-import { Box, Stack,Link, Typography } from "@mui/material";
+import { Box, Stack, Link, Typography } from "@mui/material";
 import useGetUserOwnedFeeds from "../../hooks/useGetUserOwnedFeeds";
 import InfiniteScroll from "react-infinite-scroll-component";
-import {useNavigate } from "react-router";
+import { useNavigate } from "react-router";
 import Timestamp from "../../utils/Timestamp";
-
+import parse from "html-react-parser";
 const ProfileFeedOwnedFeeds = (variables) => {
   const navigate = useNavigate();
   const ownedfeeds = useGetUserOwnedFeeds(variables);
@@ -20,7 +20,7 @@ const ProfileFeedOwnedFeeds = (variables) => {
         next={loadmore}
         hasMore={true}
       >
-        {ownedfeeds.data.getuserownedfeeds.map((item,index) => (
+        {ownedfeeds.data.getuserownedfeeds.map((item, index) => (
           <Box key={index} sx={{ display: "flex", flexDirection: "column" }}>
             <Box sx={{ flexDirection: "column", padding: 1 }}>
               <Link
@@ -31,11 +31,22 @@ const ProfileFeedOwnedFeeds = (variables) => {
                   navigate(`/feed/${item.feedname}`);
                 }}
               >
-                <Box className={"feed"} sx={{ padding: 1 }}>
+                <Box
+                  className={"feed"}
+                  sx={{
+                    padding: 1,
+                    boxShadow: 1,
+                    "&:hover": {
+                      backgroundColor: "background.dark",
+                    },
+                  }}
+                  key={item.id}
+                >
                   <Typography variant="h5">{item.feedname}</Typography>
-                  <Typography variant="h6">{item.description}</Typography>
-                  <Typography>Created :<Timestamp time={item.createdAt}></Timestamp></Typography>
-                  
+                  {parse(item.description)}
+                  <Typography>
+                    Created :<Timestamp time={item.createdAt}></Timestamp>
+                  </Typography>
                 </Box>
               </Link>
               <Stack></Stack>

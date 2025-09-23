@@ -110,7 +110,7 @@ const resolvers = {
             })
             .populate("owner", { username: 1, id: 1 })
             .populate("subs", { username: 1, id: 1 })
-            .populate("moderators", { username: 1, id: 1 });
+            .populate("moderators", { username: 1, id: 1 }).populate("bannedusers",{id:1});
           console.log(feed);
           return [feed];
         }
@@ -275,10 +275,10 @@ const resolvers = {
         .populate({
           path: "feed",
           select: ["feedname", "id", "owner", "moderators"],
-          populate:{
-            path:["owner","moderators"],
-            select:["id"]
-          }
+          populate: {
+            path: ["owner", "moderators"],
+            select: ["id"],
+          },
         })
         .populate("owner", { username: 1, id: 1, avatar: 1 });
       return post[0];
@@ -455,6 +455,16 @@ const resolvers = {
         console.log(result);
 
         return result;
+      } catch (e) {
+        throw new GraphQLError(e);
+      }
+    },
+    getSubsCount: async (root, args) => {
+      try {
+        const feed = await Feed.findOne({ feedname: args.feedname });
+        const subs = feed.subs.length;
+        console.log(subs);
+        return subs;
       } catch (e) {
         throw new GraphQLError(e);
       }
@@ -875,6 +885,35 @@ const resolvers = {
           user.nationality = args.content;
           await user.save();
           return user;
+        } catch (e) {
+          throw new GraphQLError(e);
+        }
+      }
+    },
+    modifyFeed: async (root, args, context) => {
+      const feed = await Feed.findById(args.feedid).populate("bannedusers",{id:1})
+      if (args.action === "ban") {
+        try {
+          const banneduser = await User.findById(args.content)
+          console.log(banneduser)
+          const newfeed = await Feed.findOneAndUpdate({ _id: args.feedid },
+            { $push: { bannedusers: banneduser } }
+          );
+          console.log(feed)
+          await feed.save()
+          return feed
+        } catch (e) {
+          throw new GraphQLError(e);
+        }
+      }
+      if (args.action == "lock") {
+        try {
+        } catch (e) {
+          throw new GraphQLError(e);
+        }
+      }
+      if (args.action == "delete") {
+        try {
         } catch (e) {
           throw new GraphQLError(e);
         }

@@ -1,71 +1,102 @@
 import Comment from "./Comment";
 import useMakeComment from "../hooks/useMakeComment";
-import { Box, CircularProgress } from "@mui/material";
+import { Box, CircularProgress, Collapse, IconButton } from "@mui/material";
 import useEditComment from "../hooks/useEditComment";
 import InfiniteScroll from "react-infinite-scroll-component";
-const CommentSection = ({ User, postid,comments,loadmore,loading,refetchComment}) => {
+import { useState } from "react";
+const CommentSection = ({
+  User,
+  postid,
+  comments,
+  loadmore,
+  loading,
+  refetchComment,
+}) => {
   const [newcomment, result] = useMakeComment();
   const [edit, editresult] = useEditComment();
-  const handleDelete = async ({commentid,content,action}) => {
-    console.log(commentid,action);
-    const data = await edit({commentid,content,action})
-    console.log(data)
+
+  const handleDelete = async ({ commentid, content, action }) => {
+    console.log(commentid, action);
+    const data = await edit({ commentid, content, action });
+    console.log(data);
   };
   const handleModify = async ({ commentid, content, action }) => {
     const data = await edit({ commentid, content, action });
     console.log(data);
   };
-  const handleReply = async ({content, commentid}) => {
+  const handleReply = async ({ content, commentid }) => {
     console.log(content);
-    const data = await newcomment({ postid, content: content, replyto: commentid});
+    const data = await newcomment({
+      postid,
+      content: content,
+      replyto: commentid,
+    });
     console.log(data);
-    refetchComment()
-  }
+    refetchComment();
+  };
 
-  const handleDislike = async ({id}) => {
+  const handleDislike = async ({ id }) => {
     console.log("dislike comment");
-    console.log(id)
-    const data = await edit({ commentid:id, content:"null", action:"dislike" })
-    console.log(data)
+    console.log(id);
+    const data = await edit({
+      commentid: id,
+      content: "null",
+      action: "dislike",
+    });
+    console.log(data);
   };
-  const handleLike = async ({id}) => {
+  const handleLike = async ({ id }) => {
     console.log("like comment");
-    console.log(id)
-    const data = await edit({ commentid:id, content:"null", action:"like" })
-    console.log(data)
+    console.log(id);
+    const data = await edit({ commentid: id, content: "null", action: "like" });
+    console.log(data);
   };
-  if(loading){
-    return <Box>loading...</Box>
+  if (loading) {
+    return <Box>loading...</Box>;
   }
-
-  
-  console.log(comments);
-  let hasmore = true;
-  if (comments.length % 10 != 0 || comments.length == 0) {
-    console.log("no more")
-    hasmore = false
-  }
-  console.log(hasmore)
-  return (
-    <Box>
-      <InfiniteScroll dataLength={comments.length} next={loadmore} hasMore={hasmore} loader={<CircularProgress color="inherit"></CircularProgress>}>
-      {comments.map((comment,index) => (
-        <Box key={index} sx={{ paddingBottom: 0.5, marginRight: 2, marginLeft: 1 }}>
+  const Commentitem = ({ comment, index }) => {
+    const [showComment, setShowComment] = useState(true);
+    console.log(showComment)
+    return (
+      <Collapse key={index}  in={showComment}>
           <Comment
             User={User}
             handleDelete={handleDelete}
             handleModify={handleModify}
             handleDislike={handleDislike}
             handleLike={handleLike}
+            setShowComment={setShowComment}
+            ShowComment={showComment}
             key={comment.id}
             comment={comment}
             refetchComment={refetchComment}
             handleReply={handleReply}
             postid={postid}
           />
-          
-        </Box>
-      ))}
+      </Collapse>
+    );
+  };
+
+  console.log(comments);
+  let hasmore = true;
+  if (comments.length % 10 != 0 || comments.length == 0) {
+    console.log("no more");
+    hasmore = false;
+  }
+  console.log(hasmore);
+
+  return (
+    <Box sx={{maxWidth:"100%", paddingTop:1}}>
+      <InfiniteScroll
+        dataLength={comments.length}
+        next={loadmore}
+        hasMore={hasmore}
+        loader={<CircularProgress color="inherit"></CircularProgress>}
+        style={{paddingRight:1}}
+      >
+        {comments.map((comment, index) => (
+          <Commentitem comment={comment} index={index}></Commentitem>
+        ))}
       </InfiniteScroll>
     </Box>
   );

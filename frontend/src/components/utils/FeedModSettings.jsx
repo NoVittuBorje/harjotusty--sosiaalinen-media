@@ -1,7 +1,6 @@
 import { Box, Button, Stack, Typography } from "@mui/material"
 
 const FeedModSettings = ({item}) => {
-
     return(
         <Box sx={{display:"flex",justifyContent:"center",justifyItems:"center"}}>
         <Stack direction={"column"} sx={{justifyContent:"center",justifyItems:"center"}}>

@@ -29,6 +29,7 @@ import AddCircleOutlineIcon from "@mui/icons-material/AddCircleOutline";
 import RemoveCircleOutlineIcon from "@mui/icons-material/RemoveCircleOutline";
 import parse from "html-react-parser";
 import FeedModSettings from "../../utils/FeedModSettings";
+import useGetFeedSubsCount from "../../hooks/useGetFeedSubsCount";
 
 const FeedPage = ({ match, User, refetchUser }) => {
   console.log(localStorage.getItem("Feedorderby"));
@@ -54,11 +55,10 @@ const FeedPage = ({ match, User, refetchUser }) => {
 
   const navigate = useNavigate();
   const feedinfo = useGetFeed({ feedname });
-  const { data, loading, error, fetchMore, refetch } =
-    useGetFeedPosts(variables);
+  const { data, loading, error, fetchMore, refetch } = useGetFeedPosts(variables);
   const [sub, result] = useSubscribe();
   const [OpenSettings, setOpenSettings] = useState(false);
-
+  
   const handleorderByChange = (event) => {
     console.log(event.target.value);
     setorderBy(event.target.value);
@@ -134,7 +134,7 @@ const FeedPage = ({ match, User, refetchUser }) => {
     const mods = [...info.moderators, info.owner.id];
     const ModSettings = ({ mods }) => {
       console.log(mods);
-      if (!mods) {
+      if (!mods || !User) {
         return;
       }
       if (mods.includes(User.id)) return <FeedModSettings></FeedModSettings>;

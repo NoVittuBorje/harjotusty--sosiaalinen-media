@@ -30,7 +30,14 @@ const Profilepage = ({ User, match }) => {
   } else {
     const profiledata = userdata.data ? userdata.data.getuser : [];
     console.log(profiledata);
-
+    const ProfileDesc = ({profiledata}) => {
+      if(profiledata.description){
+      return(
+        <>{parse(profiledata.description)}</>
+      )}else{
+        return
+      }
+    }
     return (
       <Box sx={{ flexGrow: 1 }}>
         <Grid container rowSpacing={1} sx={{ flexDirection: "row" }}>
@@ -87,7 +94,8 @@ const Profilepage = ({ User, match }) => {
               <Grid size={{ xs: 12 }} container flexDirection={"row"}></Grid>
               <Grid></Grid>
               <Divider></Divider>
-              {parse(profiledata.description)}
+              <ProfileDesc profiledata={profiledata}></ProfileDesc>
+              
               <Divider></Divider>
             </Box>
             <Box sx={{ padding: 1 }}>

@@ -6,6 +6,7 @@ const typeDefs = `#graphql
     moderators:[User]
     subs:[User]
     posts:[Post]
+    bannedusers:[User]
     active:Boolean
     createdAt:String
     updatedAt:String
@@ -87,47 +88,59 @@ const typeDefs = `#graphql
     feedname:String!
     orderBy:String!
     offset:Int!
-
     ):[Post]
+
     getpostcomments(
     postid:String!
     offset:Int!
-   
     ):[Comment]
+
     getpopularposts(
     offset:Int!
     orderBy:String
     ):[Post]
+
     getpost(id:String!):Post
     getcomments(
     commentid:String!
     offset:Int!
     ):[Comment]
+
     getuserposts(
     userid:String!
     offset:Int!
     ):[Post]
+
     getusercomments(
     userid:String!
     offset:Int!
     ):[Comment]
+
     getusersubs(
     userid:String!
     offset:Int!
     ):[Feed]
+
     getuserownedfeeds(
     userid:String!
     offset:Int!
     ):[Feed]
+
     getuserinfo(
     userid:String!
     offset:Int!
     type:String!
     ):User
+
     getsearchbar(
     searchby:String!
     ):[Search]
+
+    getSubsCount(
+    feedname:String!):Int!
+
     getFiles(userId: String!): [String!]
+
     getImage(imageId:String!):String!
   }
   
@@ -170,6 +183,11 @@ const typeDefs = `#graphql
     action:String!
     content: String!
     ):Post
+    modifyFeed(
+    feedid:String!
+    action:String!
+    content:String!
+    ):Feed
     modifyUser(
     type:String!
     content: String!

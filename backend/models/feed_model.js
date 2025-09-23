@@ -1,4 +1,5 @@
 const mongoose = require('mongoose')
+const uniqueValidator = require('mongoose-unique-validator');
 
 const schema = new mongoose.Schema({
     feedname: {
@@ -21,13 +22,13 @@ const schema = new mongoose.Schema({
     }],
     subs:[{
         type:mongoose.Schema.Types.ObjectId,
+        ref:'User',
         unique:true,
-        ref:'User'
     }],
     bannedusers:[{
         type:mongoose.Schema.Types.ObjectId,
+        ref:'User',
         unique:true,
-        ref:'User'
     }],
     posts:[{
         type: mongoose.Schema.Types.ObjectId,
@@ -40,6 +41,6 @@ const schema = new mongoose.Schema({
 
 },{timestamps:true})
 
-
+schema.plugin(uniqueValidator);
 
 module.exports = mongoose.model('Feed', schema)

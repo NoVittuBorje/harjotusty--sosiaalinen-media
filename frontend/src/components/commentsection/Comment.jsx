@@ -9,6 +9,8 @@ import {
   DialogContent,
   DialogContentText,
   DialogTitle,
+  Grid,
+  IconButton,
 } from "@mui/material";
 import MoreComments from "./MoreComments";
 import KarmaItem from "../KarmaItem";
@@ -17,7 +19,8 @@ import EditComment from "./EditComment";
 import { useState } from "react";
 import useMakeComment from "../hooks/useMakeComment";
 import useEditComment from "../hooks/useEditComment";
-
+import RemoveCircleOutlineIcon from "@mui/icons-material/RemoveCircleOutline";
+import AddCircleOutlineIcon from "@mui/icons-material/AddCircleOutline";
 const Comment = ({
   comment,
   handleDelete,
@@ -25,6 +28,8 @@ const Comment = ({
   handleModify,
   refetchComment,
   handleNewComment,
+  ShowComment,
+  setShowComment,
   postid,
 }) => {
   const [replyopen, setReplyOpen] = useState(false);
@@ -48,10 +53,10 @@ const Comment = ({
     refetchComment();
     setReplyOpen(!replyopen);
   };
-    const handleDel = async ({commentid,content,action}) => {
-    console.log(commentid,action);
-    const data = await edit({commentid,content,action})
-    console.log(data)
+  const handleDel = async ({ commentid, content, action }) => {
+    console.log(commentid, action);
+    const data = await edit({ commentid, content, action });
+    console.log(data);
   };
   const handleMod = async ({ commentid, content, action }) => {
     const data = await edit({ commentid, content, action });
@@ -89,14 +94,29 @@ const Comment = ({
     }
     if (ShowComments == false) {
       return (
-        <Button
-          size="small"
-          variant="outlined"
-          color="inherit"
-          onClick={handleMoreComments}
-        >
-          show {comment.replies.length} replies
-        </Button>
+        <Grid sx={{   display:"flex"              , flexDirection: "row",
+                  justifyItems: "center",
+                  }} container>
+          <Grid>
+            <IconButton size="small" onClick={() => setShowComments(!ShowComments)}>
+              <AddCircleOutlineIcon></AddCircleOutlineIcon>
+            </IconButton>
+          </Grid>
+          <Grid alignItems="center" sx={{display:"flex"}}>
+            <Box >
+            <Button
+              size="small"
+              variant="outlined"
+              className="button"
+              sx={{ borderRadius: 50 }}
+              color="inherit"
+              onClick={handleMoreComments}
+            >
+              show {comment.replies.length} replies
+            </Button>
+            </Box>
+          </Grid>
+        </Grid>
       );
     } else {
       return (
@@ -114,7 +134,99 @@ const Comment = ({
       );
     }
   };
+  const Commentitem = ({ comment, index }) => {
+    const [showComment, setShowComment] = useState(true);
+    if (!showComment) {
+      return (
+        <Box
+          sx={{
+            paddingBottom: 0.5,
+            color: "inherit",
+            border: "1px black solid",
+            borderRadius: 2,
+            padding: 0.5,
+            minWidth: "98%",
+          }}
+        >
+          <Grid container>
+            <Grid>
+              <IconButton size="small" onClick={() => setShowComment(true)}>
+                <AddCircleOutlineIcon></AddCircleOutlineIcon>
+              </IconButton>
+            </Grid>
+            <Grid>
+              <Useritem
+                time={comment.createdAt}
+                edittime={comment.updatedAt}
+                user={comment.user}
+              ></Useritem>
+            </Grid>
+          </Grid>
+        </Box>
+      );
+    }
+    return (
+      <Collapse sx={{ minWidth: "100%" }} in={showComment}>
+        <Box
+          key={index}
+          sx={{ paddingBottom: 0.5, }}
+        >
+          <Box
+            key={comment.id}
+            sx={{
+              color: "inherit",
+              border: "1px black solid",
+              borderRadius: 2,
+              padding: 0.5,
+              minWidth: "100%",
+              maxWidth: "100%",
+            }}
+          >
+            <Grid container>
+              <Grid>
+                <IconButton size="small" onClick={() => setShowComment(false)}>
+                  <RemoveCircleOutlineIcon></RemoveCircleOutlineIcon>
+                </IconButton>
+              </Grid>
+              <Grid>
+                <Useritem
+                  time={comment.createdAt}
+                  edittime={comment.updatedAt}
+                  user={comment.user}
+                ></Useritem>
+                <Box
+                  sx={{
+                    paddingLeft: 5,
+                    maxWidth: "100%",
+                    whiteSpace: "pre-wrap",
+                    paddingBottom: 2,
+                  }}
+                >
+                  <Typography style={{ wordWrap: "break-word" }}>
+                    {comment.content}
+                  </Typography>
+                </Box>
+                <Box className={"footer"}>
+                  <KarmaItem
+                    handleDislike={handleDis}
+                    User={User}
+                    likes={User ? User.likedcomments : []}
+                    dislikes={User ? User.dislikedcomments : []}
+                    id={comment.id}
+                    handleLike={handleLi}
+                    karma={comment.karma}
+                  ></KarmaItem>
+                </Box>
+                {ReplySection()}
+              </Grid>
+            </Grid>
 
+            <Showmorecomments></Showmorecomments>
+          </Box>
+        </Box>
+      </Collapse>
+    );
+  };
   const ReplySection = () => {
     if (!User) {
       console.log("no user");
@@ -145,6 +257,7 @@ const Comment = ({
             <DialogActions>
               <Button
                 variant="outlined"
+                
                 color="inherit"
                 sx={{ borderRadius: 50 }}
                 onClick={handleDeleteOpen}
@@ -225,51 +338,7 @@ const Comment = ({
     }
   };
   if (comment.content || ShowComments) {
-    return (
-      <Box
-        key={comment.id}
-        sx={{
-          color: "inherit",
-          border:"1px black solid",
-          borderRadius:2,
-          padding: 0.5,
-          minWidth: "100%",
-          maxWidth: "100%",
-        }}
-      >
-        <Useritem
-          time={comment.createdAt}
-          edittime={comment.updatedAt}
-          user={comment.user}
-        ></Useritem>
-        <Box
-          sx={{
-            paddingLeft: 7,
-            maxWidth: "100%",
-            whiteSpace: "pre-wrap",
-            paddingBottom: 2,
-          }}
-        >
-          <Typography style={{ wordWrap: "break-word" }}>
-            {comment.content}
-          </Typography>
-        </Box>
-        <Box className={"footer"}>
-          <KarmaItem
-            handleDislike={handleDis}
-            User={User}
-            likes={User ? User.likedcomments : []}
-            dislikes={User ? User.dislikedcomments : []}
-            id={comment.id}
-            handleLike={handleLi}
-            karma={comment.karma}
-          ></KarmaItem>
-        </Box>
-        {ReplySection()}
-
-        <Showmorecomments></Showmorecomments>
-      </Box>
-    );
+    return <Commentitem comment={comment}></Commentitem>;
   } else {
     return <></>;
   }

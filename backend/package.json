@@ -26,6 +26,7 @@
     "jsonwebtoken": "^9.0.2",
     "mongoose": "^8.13.2",
     "mongoose-autopopulate": "^1.1.0",
+    "mongoose-unique-validator": "^5.0.0",
     "uuid": "^11.1.0",
     "ws": "^8.18.1"
   },

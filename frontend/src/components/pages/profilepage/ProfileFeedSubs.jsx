@@ -2,7 +2,7 @@ import InfiniteScroll from "react-infinite-scroll-component";
 import useGetUserSubs from "../../hooks/useGetUserSubs";
 import { Box, Link, List, Stack, Typography } from "@mui/material";
 import { useNavigate } from "react-router";
-
+import parse from "html-react-parser";
 const ProfileFeedSubs = (variables) => {
   const navigate = useNavigate();
   const subs = useGetUserSubs(variables);
@@ -31,9 +31,19 @@ const ProfileFeedSubs = (variables) => {
                   navigate(`/feed/${item.feedname}`);
                 }}
               >
-                <Box className={"feed"} sx={{ padding: 1 }}>
+                <Box
+                  className={"feed"}
+                  sx={{
+                    padding:1,
+                    boxShadow: 1,
+                    "&:hover": {
+                      backgroundColor: "background.dark",
+                    },
+                  }}
+                  key={item.id}
+                >
                   <Typography variant="h5">{item.feedname}</Typography>
-                  <Typography variant="h6">{item.description}</Typography>
+                  {parse(item.description)}
                 </Box>
               </Link>
               <Stack></Stack>

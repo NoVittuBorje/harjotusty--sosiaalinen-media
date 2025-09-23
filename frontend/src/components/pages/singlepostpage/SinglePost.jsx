@@ -203,7 +203,7 @@ const SinglePost = ({ match, User, refetchUser }) => {
       if (postdata.img) {
         console.log(postdata.img);
         return (
-                <Box sx={{display:"flex",justifyContent:"center",backgroundColor:"grey"}}>
+                <Box className="imagecontainer">
                   <SinglePostImage img={postdata.img}></SinglePostImage>
                 </Box>
       )
@@ -212,8 +212,8 @@ const SinglePost = ({ match, User, refetchUser }) => {
       }
     };
     const ModSettings = () => {
-    console.log(mods)
-    if(!mods){
+    
+    if(!mods || !User){
       return
     }
     if(mods.includes(User.id))

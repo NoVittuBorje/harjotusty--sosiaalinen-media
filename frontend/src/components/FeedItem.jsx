@@ -48,8 +48,7 @@ const FeedItem = ({ item, owner, User, mods }) => {
     console.log(data);
   };
   const ModSettings = () => {
-    console.log(mods);
-    if (!mods) {
+    if (!mods | !User) {
       return;
     }
     if (mods.includes(User.id))
@@ -70,7 +69,7 @@ const FeedItem = ({ item, owner, User, mods }) => {
       return (
         <img
           src={data.getImage}
-          style={{ maxHeight: 500, maxWidth: "100%" }}
+          style={{ maxHeight: 500, maxWidth: "100%",borderRadius:15 }}
         ></img>
       );
     }
@@ -78,7 +77,7 @@ const FeedItem = ({ item, owner, User, mods }) => {
   const FeedDescription = ({ item }) => {
     if (item.img) {
       return (
-        <Box sx={{display:"flex",justifyContent:"center",backgroundColor:"black"}}>
+        <Box className="imagecontainer" >
           <FeedImage img={item.img}></FeedImage>
         </Box>
       );
