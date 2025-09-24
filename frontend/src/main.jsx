@@ -105,7 +105,8 @@ const theme = createTheme({
         mode: "light",
         background: {
           default: "#ffffffff",
-          dark:"#f7f7f7ff",
+          hover:"#f7f7f7ff",
+          button:"#e2e2e2ff",
         },
         secondary: {
           main: "#000000ff",
@@ -117,10 +118,12 @@ const theme = createTheme({
         mode: "dark",
         background: {
           default: "#363535ff",
-          dark:"#444343ff",
+          hover:"#444343ff",
+          button:"#3d3c3cff",
         },
         primary: {
           main: "#ffffff",
+          button:"#3d3c3cff",
         },
         secondary: {
           main: "#ffffff",

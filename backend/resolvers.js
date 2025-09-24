@@ -110,7 +110,8 @@ const resolvers = {
             })
             .populate("owner", { username: 1, id: 1 })
             .populate("subs", { username: 1, id: 1 })
-            .populate("moderators", { username: 1, id: 1 }).populate("bannedusers",{id:1});
+            .populate("moderators", { username: 1, id: 1 })
+            .populate("bannedusers", { id: 1 });
           console.log(feed);
           return [feed];
         }
@@ -637,6 +638,145 @@ const resolvers = {
         console.log(error);
       });
     },
+    likeComment: async (root, args, context) => {
+      const user = context.currentUser;
+      console.log(user)
+      const comment = await Comment.findById(args.id)
+      console.log(comment)
+      const likecommentids = user.likedcomments.map((comment) =>
+        comment._id.toString()
+      );
+      const dislikecommentids = user.dislikedcomments.map((comment) =>
+        comment._id.toString()
+      );
+      if (likecommentids.includes(comment._id.toString())) {
+        comment.karma = comment.karma - 1;
+        const newuser = await User.findOneAndUpdate(
+          { _id: context.currentUser._id },
+          { $pull: { likedcomments: comment._id } }
+        ).populate("likedcomments",{id:1,karma:1}).populate("dislikedcomments",{id:1,karma:1})
+        await comment.save();
+        return newuser
+      } else {
+        if (dislikecommentids.includes(comment._id.toString())) {
+          comment.karma = comment.karma + 1;
+          const newuser = await User.findOneAndUpdate(
+            { _id: context.currentUser._id },
+            { $pull: { dislikedcomments: comment._id } }
+          )
+        }
+        comment.karma = comment.karma + 1;
+        const newuser = await User.findOneAndUpdate(
+          { _id: context.currentUser._id },
+          { $push: { likedcomments: comment._id } }
+        ).populate("likedcomments",{id:1,karma:1}).populate("dislikedcomments",{id:1,karma:1})
+        await comment.save();
+        return newuser
+      }
+    },
+    dislikeComment: async (root, args, context) => {
+      const user = context.currentUser;
+      const comment = await Comment.findById(args.id).populate({
+        path: "user",
+        select: ["id"],
+      });
+      const dislikecommentids = user.dislikedcomments.map((comment) =>
+        comment._id.toString()
+      );
+      const likecommentids = user.likedcomments.map((comment) =>
+        comment._id.toString()
+      );
+      if (dislikecommentids.includes(comment._id.toString())) {
+        comment.karma = comment.karma + 1;
+        const newuser = await User.findOneAndUpdate(
+          { _id: context.currentUser._id },
+          { $pull: { dislikedcomments: comment._id } }
+        ).populate("dislikedcomments",{id:1,karma:1}).populate("likedcomments",{id:1,karma:1});
+        await comment.save()
+        return newuser;
+      } else {
+        if (likecommentids.includes(comment._id.toString())) {
+          comment.karma = comment.karma - 1;
+          const newuser = await User.findOneAndUpdate(
+            { _id: context.currentUser._id },
+            { $pull: { likedcomments: comment._id } }
+          )
+        }
+        comment.karma = comment.karma - 1;
+        const newuser = await User.findOneAndUpdate(
+          { _id: context.currentUser._id },
+          { $push: { dislikedcomments: comment._id } }
+        ).populate("dislikedcomments",{id:1,karma:1}).populate("likedcomments",{id:1,karma:1})
+        await comment.save();
+        return newuser;
+      }
+    },
+    likePost: async (root, args, context) => {
+      const user = context.currentUser;
+      const post = await Post.findById(args.id).populate({
+        path: "owner",
+        select: ["id"],
+      });
+      const likeids = user.likedposts.map((post) => post._id.toString());
+      const dislikedids = user.dislikedposts.map((post) => post._id.toString());
+      if (likeids.includes(post._id.toString())) {
+        post.karma = post.karma - 1;
+        const newuser = await User.findOneAndUpdate(
+          { _id: context.currentUser._id },
+          { $pull: { likedposts: post._id } }
+        ).populate("likedposts",{id:1,karma:1}).populate("dislikedposts",{id:1,karma:1});
+        await post.save();
+        return newuser;
+      } else {
+        if (dislikedids.includes(post._id.toString())) {
+          post.karma = post.karma + 1;
+          const newuser = await User.findOneAndUpdate(
+            { _id: context.currentUser._id },
+            { $pull: { dislikedposts: post._id } }
+          )
+
+        }
+        post.karma = post.karma + 1;
+        const newuser = await User.findOneAndUpdate(
+          { _id: context.currentUser._id },
+          { $push: { likedposts: post._id } }
+        ).populate("likedposts",{id:1,karma:1}).populate("dislikedposts",{id:1,karma:1});;
+        await post.save();
+        return newuser;
+      }
+    },
+
+    dislikePost: async (root, args, context) => {
+      const user = context.currentUser;
+      const post = await Post.findById(args.id)
+      const dislikeids = user.dislikedposts.map((post) => post._id.toString());
+      const likeids = user.likedposts.map((post) => post._id.toString());
+      if (dislikeids.includes(post._id.toString())) {
+        post.karma = post.karma + 1;
+        const newuser = await User.findOneAndUpdate(
+          { _id: context.currentUser._id },
+          { $pull: { dislikedposts: post._id } }
+        ).populate("dislikedposts",{id:1,karma:1}).populate("likedposts",{id:1,karma:1});
+        await post.save();
+        return newuser;
+      } else {
+        if (likeids.includes(post._id.toString())) {
+          post.karma = post.karma - 1;
+          const newuser = await User.findOneAndUpdate(
+            { _id: context.currentUser._id },
+            { $pull: { likedposts: post._id } }
+          );
+        }
+        post.karma = post.karma - 1;
+        const newuser = await User.findOneAndUpdate(
+          { _id: context.currentUser._id },
+          { $push: { dislikedposts: post._id } }
+        ).populate("dislikedposts",{id:1,karma:1}).populate("likedposts",{id:1,karma:1});
+
+        await post.save();
+        return newuser;
+      }
+    },
     modifyComment: async (root, args, context) => {
       console.log(args.action);
       const user = context.currentUser;
@@ -654,68 +794,6 @@ const resolvers = {
         comment.content = args.content;
         await comment.save();
         return comment;
-      }
-      if (args.action === "like") {
-        const likecommentids = user.likedcomments.map((comment) =>
-          comment._id.toString()
-        );
-        const dislikecommentids = user.dislikedcomments.map((comment) =>
-          comment._id.toString()
-        );
-        if (likecommentids.includes(comment._id.toString())) {
-          comment.karma = comment.karma - 1;
-          const newuser = await User.findOneAndUpdate(
-            { _id: context.currentUser._id },
-            { $pull: { likedcomments: comment._id } }
-          );
-          await newuser.save();
-          await comment.save();
-          return comment;
-        } else {
-          if (dislikecommentids.includes(comment._id.toString())) {
-            comment.karma = comment.karma + 1;
-            const newuser = await User.findOneAndUpdate(
-              { _id: context.currentUser._id },
-              { $pull: { dislikedcomments: comment._id } }
-            );
-          }
-          comment.karma = comment.karma + 1;
-          user.likedcomments = [...user.likedcomments, comment];
-          await user.save();
-          await comment.save();
-          return comment;
-        }
-      }
-      if (args.action === "dislike") {
-        const dislikecommentids = user.dislikedcomments.map((comment) =>
-          comment._id.toString()
-        );
-        const likecommentids = user.likedcomments.map((comment) =>
-          comment._id.toString()
-        );
-        if (dislikecommentids.includes(comment._id.toString())) {
-          comment.karma = comment.karma + 1;
-          const newuser = await User.findOneAndUpdate(
-            { _id: context.currentUser._id },
-            { $pull: { dislikedcomments: comment._id } }
-          );
-          await newuser.save();
-          await comment.save();
-          return comment;
-        } else {
-          if (likecommentids.includes(comment._id.toString())) {
-            comment.karma = comment.karma - 1;
-            const newuser = await User.findOneAndUpdate(
-              { _id: context.currentUser._id },
-              { $pull: { likedcomments: comment._id } }
-            );
-          }
-          comment.karma = comment.karma - 1;
-          user.dislikedcomments = [...user.dislikedcomments, comment];
-          await user.save();
-          await comment.save();
-          return comment;
-        }
       }
       throw new GraphQLError("unknown operation", {
         extensions: {
@@ -742,62 +820,8 @@ const resolvers = {
         return post;
       }
       if (args.action === "like") {
-        const likeids = user.likedposts.map((post) => post._id.toString());
-        const dislikedids = user.dislikedposts.map((post) =>
-          post._id.toString()
-        );
-        if (likeids.includes(post._id.toString())) {
-          post.karma = post.karma - 1;
-          const newuser = await User.findOneAndUpdate(
-            { _id: context.currentUser._id },
-            { $pull: { likedposts: post._id } }
-          );
-          await newuser.save();
-          await post.save();
-          return post;
-        } else {
-          if (dislikedids.includes(post._id.toString())) {
-            post.karma = post.karma + 1;
-            const newuser = await User.findOneAndUpdate(
-              { _id: context.currentUser._id },
-              { $pull: { dislikedposts: post._id } }
-            );
-          }
-          post.karma = post.karma + 1;
-          user.likedposts = [...user.likedposts, post];
-          await user.save();
-          await post.save();
-          return post;
-        }
       }
       if (args.action === "dislike") {
-        const dislikeids = user.dislikedposts.map((post) =>
-          post._id.toString()
-        );
-        const likeids = user.likedposts.map((post) => post._id.toString());
-        if (dislikeids.includes(post._id.toString())) {
-          post.karma = post.karma + 1;
-          const newuser = await User.findOneAndUpdate(
-            { _id: context.currentUser._id },
-            { $pull: { dislikedposts: post._id } }
-          );
-          await newuser.save();
-          await post.save();
-          return post;
-        } else {
-          if (likeids.includes(post._id.toString())) {
-            post.karma = post.karma - 1;
-            const newuser = await User.findOneAndUpdate(
-              { _id: context.currentUser._id },
-              { $pull: { likedposts: post._id } }
-            );
-          }
-          post.karma = post.karma - 1;
-          user.dislikedposts = [...user.dislikedposts, post];
-          await user.save();
-          await post.save();
-          return post;
-        }
       }
       throw new GraphQLError("unknown operation", {
         extensions: {
@@ -891,17 +915,20 @@ const resolvers = {
       }
     },
     modifyFeed: async (root, args, context) => {
-      const feed = await Feed.findById(args.feedid).populate("bannedusers",{id:1})
+      const feed = await Feed.findById(args.feedid).populate("bannedusers", {
+        id: 1,
+      });
       if (args.action === "ban") {
         try {
-          const banneduser = await User.findById(args.content)
-          console.log(banneduser)
-          const newfeed = await Feed.findOneAndUpdate({ _id: args.feedid },
+          const banneduser = await User.findById(args.content);
+          console.log(banneduser);
+          const newfeed = await Feed.findOneAndUpdate(
+            { _id: args.feedid },
             { $push: { bannedusers: banneduser } }
           );
-          console.log(feed)
-          await feed.save()
-          return feed
+          console.log(feed);
+          await feed.save();
+          return feed;
         } catch (e) {
           throw new GraphQLError(e);
         }

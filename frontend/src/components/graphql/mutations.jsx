@@ -152,3 +152,51 @@ export const USEREDIT = gql`mutation Mutation($type: String!, $content: String!)
     id
   }
 }`
+export const LIKECOMMENT = gql`mutation LikeComment($likeCommentId: String!) {
+  likeComment(id: $likeCommentId) {
+    likedcomments {
+      id
+      karma
+    }
+    dislikedcomments {
+      id
+      karma
+    }
+  }
+}`
+export const DISLIKECOMMENT = gql`mutation DislikeComment($dislikeCommentId: String!) {
+  dislikeComment(id: $dislikeCommentId) {
+    dislikedcomments {
+      id
+      karma
+    }
+    likedcomments {
+      id
+      karma
+    }
+  }
+}`
+export const LIKEPOST = gql`mutation LikePost($likePostId: String!) {
+  likePost(id: $likePostId) {
+    likedposts {
+      id
+      karma
+    }
+    dislikedposts {
+      karma
+      id
+    }
+  }
+}`
+export const DISLIKEPOST = gql`mutation DislikePost($dislikePostId: String!) {
+  dislikePost(id: $dislikePostId) {
+    dislikedposts {
+      id
+      karma
+    }
+    likedposts {
+      id
+      karma
+    }
+  }
+}`

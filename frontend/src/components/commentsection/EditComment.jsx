@@ -19,7 +19,7 @@ const EditComment = ({ onReply, commentid, oldcomment, handleEditClick }) => {
           variant="outlined"
           color="inherit"
           className={"button"}
-          style={{ borderRadius: 50 }}
+          style={{ borderRadius: 50 ,backgroundColor:"background.button"}}
           onClick={() => {
             onReply({ content: comment, commentid, action: "edit" });
             handleEditClick();
@@ -32,7 +32,7 @@ const EditComment = ({ onReply, commentid, oldcomment, handleEditClick }) => {
           variant="outlined"
           color="inherit"
           className={"button"}
-          style={{ borderRadius: 50 }}
+          style={{ borderRadius: 50 ,backgroundColor:"background.button"}}
           onClick={handleEditClick}
         >
           cancel

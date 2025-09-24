@@ -55,11 +55,7 @@ const SinglePost = ({ match, User, refetchUser }) => {
     setopenNewComment(false);
     postcomments.refetchPostComment();
   };
-  const handleLike = async () => {
-    console.log("like post");
-    const data = await edit({ action: "like", content: "", postid: id });
-    refetchUser();
-  };
+
   const handleDelete = async () => {
     console.log("delete post");
 
@@ -78,12 +74,7 @@ const SinglePost = ({ match, User, refetchUser }) => {
       });
     }
   };
-  const handleDislike = async () => {
-    console.log("dislikepost");
-    const data = await edit({ action: "dislike", content: "", postid: id });
-    console.log(data);
-    refetchUser();
-  };
+
 
   const PostSettings = ({ info,mods }) => {
     console.log(info);
@@ -212,7 +203,6 @@ const SinglePost = ({ match, User, refetchUser }) => {
       }
     };
     const ModSettings = () => {
-    
     if(!mods || !User){
       return
     }
@@ -286,12 +276,9 @@ const SinglePost = ({ match, User, refetchUser }) => {
                 
                 <Box className={"footer"}>
                   <KarmaItem
-                    handleDislike={handleDislike}
-                    handleLike={handleLike}
                     id={postdata.id}
                     User={User}
-                    likes={User ? User.likedposts : []}
-                    dislikes={User ? User.dislikedposts : []}
+                    type={"post"}
                     karma={postdata.karma}
                   ></KarmaItem>
                   <NewCommentform></NewCommentform>

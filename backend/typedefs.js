@@ -192,6 +192,23 @@ const typeDefs = `#graphql
     type:String!
     content: String!
     ): User
+
+    dislikePost(
+    id:String!
+    ):User
+
+    likePost(
+    id:String!
+    ):User
+
+    dislikeComment(
+    id:String!
+    ):User
+
+    likeComment(
+    id:String!
+    ):User
+    
     singleUpload(input: SingleFileInput!): [String!]
     multiUpload(input: MultiFileInput!): String!
   }

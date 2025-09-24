@@ -286,7 +286,7 @@ const FeedPage = ({ match, User, refetchUser }) => {
                   <FeedItem
                     item={item}
                     owner={item.owner}
-                    mods={info.owner ? [...info.moderators, info.owner.id] : []}
+                    mods={info ? [...info.moderators, info.owner.id] : []}
                     User={User}
                   ></FeedItem>
                 ))}

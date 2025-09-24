@@ -34,20 +34,9 @@ const FeedItem = ({ item, owner, User, mods }) => {
   const navigate = useNavigate();
   const [edit, editresult] = useEditPost();
   const [open, setOpen] = useState(false);
-  const handleLike = async () => {
-    console.log("likepost");
-    const data = await edit({ action: "like", content: "", postid: item.id });
-  };
-  const handleDislike = async () => {
-    console.log("dislikepost");
-    const data = await edit({
-      action: "dislike",
-      content: "",
-      postid: item.id,
-    });
-    console.log(data);
-  };
+
   const ModSettings = () => {
+    
     if (!mods | !User) {
       return;
     }
@@ -65,7 +54,7 @@ const FeedItem = ({ item, owner, User, mods }) => {
   const FeedImage = ({ img }) => {
     const { data, loading } = useGetImageUrl({ imageId: img });
     if (!loading) {
-      console.log(data);
+      
       return (
         <img
           src={data.getImage}
@@ -86,12 +75,12 @@ const FeedItem = ({ item, owner, User, mods }) => {
     }
   };
   return (
+    <Box>
     <Box
       className={"feed"}
       sx={{
-        boxShadow: 1,
         "&:hover": {
-          backgroundColor: "background.dark",
+          backgroundColor: "background.hover",
         },
       }}
       key={item.id}
@@ -142,24 +131,25 @@ const FeedItem = ({ item, owner, User, mods }) => {
             </Box>
           </Box>
         </Link>
-        <Divider></Divider>
+        
         <Box className={"footer"}>
           <KarmaItem
-            handleDislike={handleDislike}
-            handleLike={handleLike}
-            likes={User ? User.likedposts : []}
-            dislikes={User ? User.dislikedposts : []}
+            type={"post"}
             karma={item.karma}
             id={item.id}
             User={User}
           ></KarmaItem>
           <ModSettings></ModSettings>
         </Box>
+        
         <Collapse in={open}>
           <Divider></Divider>
           <PostModSettings item={item}></PostModSettings>
         </Collapse>
       </Box>
+     
+    </Box>
+    <Divider ></Divider>
     </Box>
   );
 };

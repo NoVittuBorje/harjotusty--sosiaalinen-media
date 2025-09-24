@@ -31,7 +31,7 @@ const NewComment = ({
           variant="outlined"
           color="inherit"
           className={"button"}
-          style={{ borderRadius: 50 }}
+          style={{ borderRadius: 50,backgroundColor:"background.button" }}
           onClick={(event) => {
             handleNewReply(event);
           }}
@@ -43,7 +43,7 @@ const NewComment = ({
           variant="outlined"
           color="inherit"
           className={"button"}
-          style={{ borderRadius: 50 }}
+          style={{ borderRadius: 50,backgroundColor:"background.button" }}
           onClick={handleReplyClick}
         >
           cancel

@@ -28,8 +28,7 @@ const Comment = ({
   handleModify,
   refetchComment,
   handleNewComment,
-  ShowComment,
-  setShowComment,
+
   postid,
 }) => {
   const [replyopen, setReplyOpen] = useState(false);
@@ -39,45 +38,27 @@ const Comment = ({
   const [newcomment, result] = useMakeComment();
   const [edit, editresult] = useEditComment();
   const handleReplyClick = () => {
-    console.log(open);
+    
     setReplyOpen(!replyopen);
   };
   const handleReply = async ({ content, commentid }) => {
-    console.log(content);
     const data = await newcomment({
       postid,
       content: content,
       replyto: commentid,
     });
-    console.log(data);
+    
     refetchComment();
     setReplyOpen(!replyopen);
   };
   const handleDel = async ({ commentid, content, action }) => {
-    console.log(commentid, action);
     const data = await edit({ commentid, content, action });
-    console.log(data);
+    
   };
   const handleMod = async ({ commentid, content, action }) => {
     const data = await edit({ commentid, content, action });
-    console.log(data);
   };
-  const handleDis = async ({ id }) => {
-    console.log("dislike comment");
-    console.log(id);
-    const data = await edit({
-      commentid: id,
-      content: "null",
-      action: "dislike",
-    });
-    console.log(data);
-  };
-  const handleLi = async ({ id }) => {
-    console.log("like comment");
-    console.log(id);
-    const data = await edit({ commentid: id, content: "null", action: "like" });
-    console.log(data);
-  };
+
   const handleEditClick = () => {
     console.log(editopen);
     setEditOpen(!editopen);
@@ -94,26 +75,30 @@ const Comment = ({
     }
     if (ShowComments == false) {
       return (
-        <Grid sx={{   display:"flex"              , flexDirection: "row",
-                  justifyItems: "center",
-                  }} container>
+        <Grid
+          sx={{ display: "flex", flexDirection: "row", justifyItems: "center" }}
+          container
+        >
           <Grid>
-            <IconButton size="small" onClick={() => setShowComments(!ShowComments)}>
+            <IconButton
+              size="small"
+              onClick={() => setShowComments(!ShowComments)}
+            >
               <AddCircleOutlineIcon></AddCircleOutlineIcon>
             </IconButton>
           </Grid>
-          <Grid alignItems="center" sx={{display:"flex"}}>
-            <Box >
-            <Button
-              size="small"
-              variant="outlined"
-              className="button"
-              sx={{ borderRadius: 50 }}
-              color="inherit"
-              onClick={handleMoreComments}
-            >
-              show {comment.replies.length} replies
-            </Button>
+          <Grid alignItems="center" sx={{ display: "flex" }}>
+            <Box>
+              <Button
+                size="small"
+                variant="outlined"
+                className="button"
+                sx={{ borderRadius: 50 }}
+                color="inherit"
+                onClick={handleMoreComments}
+              >
+                show {comment.replies.length} replies
+              </Button>
             </Box>
           </Grid>
         </Grid>
@@ -123,8 +108,6 @@ const Comment = ({
         <MoreComments
           handleModify={handleMod}
           handleDelete={handleDel}
-          handleDislike={handleDis}
-          handleLike={handleLi}
           handleReply={handleReply}
           comment={comment}
           ShowComments={ShowComments}
@@ -148,7 +131,7 @@ const Comment = ({
             minWidth: "98%",
           }}
         >
-          <Grid container>
+          <Grid flexDirection={"row"} container>
             <Grid>
               <IconButton size="small" onClick={() => setShowComment(true)}>
                 <AddCircleOutlineIcon></AddCircleOutlineIcon>
@@ -167,10 +150,7 @@ const Comment = ({
     }
     return (
       <Collapse sx={{ minWidth: "100%" }} in={showComment}>
-        <Box
-          key={index}
-          sx={{ paddingBottom: 0.5, }}
-        >
+        <Box key={index} sx={{ paddingBottom: 0.5 }}>
           <Box
             key={comment.id}
             sx={{
@@ -182,45 +162,59 @@ const Comment = ({
               maxWidth: "100%",
             }}
           >
-            <Grid container>
-              <Grid>
+            <Box sx={{ display: "flex", flexDirection: "row" }}>
+              <Box>
                 <IconButton size="small" onClick={() => setShowComment(false)}>
                   <RemoveCircleOutlineIcon></RemoveCircleOutlineIcon>
                 </IconButton>
-              </Grid>
-              <Grid>
+              </Box>
+              <Box>
                 <Useritem
                   time={comment.createdAt}
                   edittime={comment.updatedAt}
                   user={comment.user}
                 ></Useritem>
+
                 <Box
                   sx={{
-                    paddingLeft: 5,
+                    
                     maxWidth: "100%",
                     whiteSpace: "pre-wrap",
-                    paddingBottom: 2,
+                    
                   }}
                 >
                   <Typography style={{ wordWrap: "break-word" }}>
                     {comment.content}
                   </Typography>
-                </Box>
-                <Box className={"footer"}>
-                  <KarmaItem
-                    handleDislike={handleDis}
-                    User={User}
-                    likes={User ? User.likedcomments : []}
-                    dislikes={User ? User.dislikedcomments : []}
-                    id={comment.id}
-                    handleLike={handleLi}
-                    karma={comment.karma}
-                  ></KarmaItem>
-                </Box>
-                {ReplySection()}
-              </Grid>
-            </Grid>
 
+                  <Box className={"footer"}>
+                    <KarmaItem
+                      User={User}
+                      id={comment.id}
+                      type={"comment"}
+                      karma={comment.karma}
+                    ></KarmaItem>
+                    {ReplySection()}
+                  </Box>
+                </Box>
+                <Collapse in={editopen} timeout={"auto"} unmountOnExit>
+                  <EditComment
+                    onReply={handleModify}
+                    commentid={comment.id}
+                    oldcomment={comment.content}
+                    handleEditClick={handleEditClick}
+                  ></EditComment>
+                </Collapse>
+                <Collapse in={replyopen} timeout={"auto"} unmountOnExit>
+                  <NewComment
+                    handleReply={handleReply}
+                    handleNewComment={handleNewComment}
+                    commentid={comment.id}
+                    handleReplyClick={handleReplyClick}
+                  ></NewComment>
+                </Collapse>
+              </Box>
+            </Box>
             <Showmorecomments></Showmorecomments>
           </Box>
         </Box>
@@ -231,18 +225,6 @@ const Comment = ({
     if (!User) {
       console.log("no user");
       return;
-    }
-    if (editopen) {
-      return (
-        <Collapse in={editopen} timeout={"auto"} unmountOnExit>
-          <EditComment
-            onReply={handleModify}
-            commentid={comment.id}
-            oldcomment={comment.content}
-            handleEditClick={handleEditClick}
-          ></EditComment>
-        </Collapse>
-      );
     }
     if (deleteopen) {
       return (
@@ -257,8 +239,8 @@ const Comment = ({
             <DialogActions>
               <Button
                 variant="outlined"
-                
                 color="inherit"
+                className="button"
                 sx={{ borderRadius: 50 }}
                 onClick={handleDeleteOpen}
               >
@@ -267,6 +249,7 @@ const Comment = ({
               <Button
                 variant="outlined"
                 color="inherit"
+                className="button"
                 sx={{ borderRadius: 50 }}
                 onClick={() => {
                   handleDelete({
@@ -282,17 +265,6 @@ const Comment = ({
             </DialogActions>
           </Dialog>
         </>
-      );
-    } else if (replyopen) {
-      return (
-        <Collapse in={replyopen} timeout={"auto"} unmountOnExit>
-          <NewComment
-            handleReply={handleReply}
-            handleNewComment={handleNewComment}
-            commentid={comment.id}
-            handleReplyClick={handleReplyClick}
-          ></NewComment>
-        </Collapse>
       );
     } else {
       return (

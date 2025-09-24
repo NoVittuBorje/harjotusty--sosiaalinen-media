@@ -56,7 +56,6 @@ const CommentSection = ({
   }
   const Commentitem = ({ comment, index }) => {
     const [showComment, setShowComment] = useState(true);
-    console.log(showComment)
     return (
       <Collapse key={index}  in={showComment}>
           <Comment
