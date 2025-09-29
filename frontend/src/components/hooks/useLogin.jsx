@@ -10,7 +10,7 @@ const useLogin = () => {
       const data = await mutate({variables:{password:Password,username:Username}})
       if (data){
       console.log(data.data.login.value)
-      await sessionStorage.setItem("token", data.data.login.value)
+      sessionStorage.setItem("token", data.data.login.value)
       }
       return data
     };

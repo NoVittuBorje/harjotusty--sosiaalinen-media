@@ -11,6 +11,7 @@ const CommentSection = ({
   loadmore,
   loading,
   refetchComment,
+  refetchUser,
 }) => {
   const [newcomment, result] = useMakeComment();
   const [edit, editresult] = useEditComment();
@@ -25,7 +26,7 @@ const CommentSection = ({
     console.log(data);
   };
   const handleReply = async ({ content, commentid }) => {
-    console.log(content);
+    console.log(content,commentid);
     const data = await newcomment({
       postid,
       content: content,
@@ -56,8 +57,10 @@ const CommentSection = ({
   }
   const Commentitem = ({ comment, index }) => {
     const [showComment, setShowComment] = useState(true);
+    const [OpenedDepth, setOpenedDepth] = useState(0)
+    console.log(OpenedDepth)
     return (
-      <Collapse key={index}  in={showComment}>
+      <Collapse key={index} mountOnEnter  in={showComment}>
           <Comment
             User={User}
             handleDelete={handleDelete}
@@ -69,8 +72,11 @@ const CommentSection = ({
             key={comment.id}
             comment={comment}
             refetchComment={refetchComment}
+            refetchUser={refetchUser}
             handleReply={handleReply}
             postid={postid}
+            OpenedDepth={OpenedDepth}
+            setOpenedDepth={setOpenedDepth}
           />
       </Collapse>
     );

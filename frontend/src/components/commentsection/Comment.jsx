@@ -16,7 +16,7 @@ import MoreComments from "./MoreComments";
 import KarmaItem from "../KarmaItem";
 import Useritem from "../Useritem";
 import EditComment from "./EditComment";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import useMakeComment from "../hooks/useMakeComment";
 import useEditComment from "../hooks/useEditComment";
 import RemoveCircleOutlineIcon from "@mui/icons-material/RemoveCircleOutline";
@@ -28,8 +28,9 @@ const Comment = ({
   handleModify,
   refetchComment,
   handleNewComment,
-
   postid,
+  OpenedDepth,
+  setOpenedDepth,
 }) => {
   const [replyopen, setReplyOpen] = useState(false);
   const [editopen, setEditOpen] = useState(false);
@@ -37,23 +38,28 @@ const Comment = ({
   const [ShowComments, setShowComments] = useState(false);
   const [newcomment, result] = useMakeComment();
   const [edit, editresult] = useEditComment();
+  useEffect(() => {
+    if (OpenedDepth > comment.depth) {
+      setShowComments(true);
+    }
+
+  }, [comment.depth, OpenedDepth]);
   const handleReplyClick = () => {
-    
     setReplyOpen(!replyopen);
   };
+  console.log(comment);
   const handleReply = async ({ content, commentid }) => {
     const data = await newcomment({
       postid,
       content: content,
       replyto: commentid,
     });
-    
+
     refetchComment();
     setReplyOpen(!replyopen);
   };
   const handleDel = async ({ commentid, content, action }) => {
     const data = await edit({ commentid, content, action });
-    
   };
   const handleMod = async ({ commentid, content, action }) => {
     const data = await edit({ commentid, content, action });
@@ -65,15 +71,19 @@ const Comment = ({
   };
   const handleMoreComments = () => {
     setShowComments(true);
+    setOpenedDepth(comment.depth+1);
   };
   const handleDeleteOpen = () => {
     setDeleteOpen(!deleteopen);
   };
   const Showmorecomments = () => {
+    console.log(comment.replies);
     if (comment.replies.length == 0) {
       return;
     }
-    if (ShowComments == false) {
+    console.log(ShowComments, OpenedDepth);
+
+    if (!ShowComments) {
       return (
         <Grid
           sx={{ display: "flex", flexDirection: "row", justifyItems: "center" }}
@@ -82,7 +92,9 @@ const Comment = ({
           <Grid>
             <IconButton
               size="small"
-              onClick={() => setShowComments(!ShowComments)}
+              onClick={() => {
+                handleMoreComments();
+              }}
             >
               <AddCircleOutlineIcon></AddCircleOutlineIcon>
             </IconButton>
@@ -95,7 +107,9 @@ const Comment = ({
                 className="button"
                 sx={{ borderRadius: 50 }}
                 color="inherit"
-                onClick={handleMoreComments}
+                onClick={() => {
+                  handleMoreComments();
+                }}
               >
                 show {comment.replies.length} replies
               </Button>
@@ -113,6 +127,8 @@ const Comment = ({
           ShowComments={ShowComments}
           User={User}
           postid={postid}
+          OpenedDepth={OpenedDepth}
+          setOpenedDepth={setOpenedDepth}
         ></MoreComments>
       );
     }
@@ -133,7 +149,12 @@ const Comment = ({
         >
           <Grid flexDirection={"row"} container>
             <Grid>
-              <IconButton size="small" onClick={() => setShowComment(true)}>
+              <IconButton
+                size="small"
+                onClick={() => {
+                  setShowComment(true);
+                }}
+              >
                 <AddCircleOutlineIcon></AddCircleOutlineIcon>
               </IconButton>
             </Grid>
@@ -177,10 +198,8 @@ const Comment = ({
 
                 <Box
                   sx={{
-                    
                     maxWidth: "100%",
                     whiteSpace: "pre-wrap",
-                    
                   }}
                 >
                   <Typography style={{ wordWrap: "break-word" }}>
@@ -267,8 +286,49 @@ const Comment = ({
         </>
       );
     } else {
-      return (
-        <Box>
+      if (User.id == comment.user.id) {
+        return (
+          <Box>
+            <Button
+              className={"button"}
+              style={{ borderRadius: 50 }}
+              size="small"
+              variant="outlined"
+              color="inherit"
+              onClick={() => {
+                handleReplyClick();
+              }}
+            >
+              reply
+            </Button>
+            <Button
+              className={"button"}
+              style={{ borderRadius: 50 }}
+              onClick={() => {
+                handleEditClick();
+              }}
+              size="small"
+              variant="outlined"
+              color="inherit"
+            >
+              edit
+            </Button>
+            <Button
+              className={"button"}
+              style={{ borderRadius: 50 }}
+              onClick={() => {
+                handleDeleteOpen();
+              }}
+              size="small"
+              variant="outlined"
+              color="inherit"
+            >
+              delete
+            </Button>
+          </Box>
+        );
+      } else {
+        return (
           <Button
             className={"button"}
             style={{ borderRadius: 50 }}
@@ -281,32 +341,8 @@ const Comment = ({
           >
             reply
           </Button>
-          <Button
-            className={"button"}
-            style={{ borderRadius: 50 }}
-            onClick={() => {
-              handleEditClick();
-            }}
-            size="small"
-            variant="outlined"
-            color="inherit"
-          >
-            edit
-          </Button>
-          <Button
-            className={"button"}
-            style={{ borderRadius: 50 }}
-            onClick={() => {
-              handleDeleteOpen();
-            }}
-            size="small"
-            variant="outlined"
-            color="inherit"
-          >
-            delete
-          </Button>
-        </Box>
-      );
+        );
+      }
     }
   };
   if (comment.content || ShowComments) {

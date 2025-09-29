@@ -2,7 +2,6 @@ import { Stack, Box, Link, Paper, List, Tooltip, Typography } from "@mui/materia
 import Comment from "../../commentsection/Comment";
 import useGetUserComments from "../../hooks/useGetUserComments";
 import InfiniteScroll from "react-infinite-scroll-component";
-import KarmaItem from "../../KarmaItem";
 import CommentSection from "../../commentsection/CommentSection";
 const ProfileFeedComment = ({variables,User,userdata}) => {
   console.log(variables);

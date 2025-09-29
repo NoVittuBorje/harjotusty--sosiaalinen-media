@@ -12,59 +12,69 @@ import useDislikePost from "./hooks/useDislikePost";
 
 const KarmaItem = ({ type, id, karma, User }) => {
   const navigate = useNavigate();
-
-  const [likesid, setlikesid] = useState([]);
-  const [dislikesid, setdislikesid] = useState([]);
   const [likecomment, likecommentresult] = useLikeComment();
   const [dislikecomment, dislikecommentresult] = useDislikeComment();
   const [likepost, likepostresult] = useLikePost();
   const [dislikepost, dislikepostresult] = useDislikePost();
-  var dislikes = dislikesid.map((l) => l.id);
-  var likes = likesid.map((l) => l.id);
-  console.log(dislikes, likes);
+  
   const [liked, setLiked] = useState(false);
   const [disliked, setDisliked] = useState(false);
   useEffect(() => {
     if (!User) {
       return;
     }
-    if (type == "comment") {
-      setdislikesid([...User.dislikedcomments]);
-      setlikesid([...User.likedcomments]);
-    } else {
-      setdislikesid([...User.dislikedposts]);
-      setlikesid([...User.likedposts]);
+
+    if (type == "post") {
+      var likesid = User.likedposts.map((i) => i.id);
+      var dislikesid = User.dislikedposts.map((i) => i.id);
+      if (likesid.includes(id)) {
+        setLiked(true);
+        setDisliked(false);
+      }else {
+        setLiked(false);
+      }
+      if (dislikesid.includes(id)) {
+        setLiked(false);
+        setDisliked(true);
+      }else {
+        setDisliked(false);
+      }
     }
-  }, [User, type]);
+    if (type == "comment") {
+      var likesid2 = User.likedcomments.map((i) => i.id);
+      var dislikesid2 = User.dislikedcomments.map((i) => i.id);
+      if (likesid2.includes(id)) {
+        setLiked(true);
+        setDisliked(false);
+      } else {
+        setLiked(false);
+      }
+      if (dislikesid2.includes(id)) {
+        setLiked(false);
+        setDisliked(true);
+      } else {
+        setDisliked(false);
+      }
+    }
+  }, [User, type, id]);
 
   const handleDislikeComment = async ({ id }) => {
     console.log("dislike comment");
     const data = await dislikecomment({ id: id });
-    setdislikesid(data.dislikeComment.dislikedcomments.map(i => i.id))
-    setlikesid(data.dislikeComment.likedcomments.map(i => i.id))
-    
+    console.log(data);
   };
   const handleLikeComment = async ({ id }) => {
     console.log("like comment");
     const data = await likecomment({ id: id });
-        if(data.dislikePost){
-      setdislikesid(data.dislikeComment.dislikedcomments.map(i => i.id))
-      setlikesid(data.dislikeComment.likedcomments.map(i => i.id))
-    }
+    console.log(data);
   };
   const handleLikePost = async () => {
     const data = await likepost({ id: id });
-        if(data.dislikePost){
-      setdislikesid(data.dislikePost.dislikedposts.map(i => i.id))
-      setlikesid(data.dislikePost.likedposts.map(i => i.id))
-    }
+    console.log(data);
   };
   const handleDislikePost = async () => {
     const data = await dislikepost({ id: id });
-        if(data.dislikePost){
-      setdislikesid(data.dislikePost.dislikedposts.map(i => i.id))
-      setlikesid(data.dislikePost.likedposts.map(i => i.id))
-    }
+    console.log(data);
   };
   if (!User) {
     return (
@@ -101,34 +111,22 @@ const KarmaItem = ({ type, id, karma, User }) => {
     );
   }
 
-  console.log(liked, disliked);
+  
 
   const LikeButton = ({
     handleLikePost,
     handleLikeComment,
     id,
     likeActive,
-    dislikeActive,
-    setLiked,
-    setDisliked,
   }) => {
-    const handleClick = () => {
-      setLiked(!likeActive);
-      if (dislikeActive) {
-        setDisliked(!dislikeActive);
-      }
-    };
-
     if (likeActive) {
       return (
         <IconButton
           onClick={() => {
             if (type == "post") {
               handleLikePost({ id });
-              handleClick();
             } else {
               handleLikeComment({ id });
-              handleClick();
             }
           }}
           size="small"
@@ -146,10 +144,8 @@ const KarmaItem = ({ type, id, karma, User }) => {
         onClick={() => {
           if (type == "post") {
             handleLikePost({ id });
-            handleClick();
           } else {
             handleLikeComment({ id });
-            handleClick();
           }
         }}
         size="small"
@@ -166,18 +162,9 @@ const KarmaItem = ({ type, id, karma, User }) => {
     handleDislikePost,
     handleDislikeComment,
     id,
-    likeActive,
     dislikeActive,
-    setLiked,
-    setDisliked,
   }) => {
-    const handleClick = () => {
-      setDisliked(!dislikeActive);
-      if (likeActive) {
-        setLiked(!likeActive);
-      }
-    };
-
+    
     if (dislikeActive) {
       return (
         <IconButton
@@ -185,10 +172,8 @@ const KarmaItem = ({ type, id, karma, User }) => {
           onClick={() => {
             if (type == "post") {
               handleDislikePost({ id });
-              handleClick();
             } else {
               handleDislikeComment({ id });
-              handleClick();
             }
           }}
           size="small"
@@ -207,10 +192,8 @@ const KarmaItem = ({ type, id, karma, User }) => {
         onClick={() => {
           if (type == "post") {
             handleDislikePost({ id });
-            handleClick();
           } else {
             handleDislikeComment({ id });
-            handleClick();
           }
         }}
         size="small"

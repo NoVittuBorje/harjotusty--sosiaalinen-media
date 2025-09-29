@@ -1,7 +1,6 @@
-import { Box, List, ListItem } from "@mui/material";
+import { List, ListItem } from "@mui/material";
 import useGetComments from "../hooks/useGetComments";
 import Comment from "./Comment";
-import useMakeComment from "../hooks/useMakeComment";
 
 const MoreComments = ({
   comment,
@@ -12,10 +11,14 @@ const MoreComments = ({
   handleLike,
   handleDislike,
   handleReply,
+  OpenedDepth,
+  setOpenedDepth,
 }) => {
   const { data, error, loading, refetchComments } = useGetComments({
     commentid: comment.id,
   });
+  console.log("juu")
+
   if (!loading) {
     const morecomments = data.getcomments[0];
     return (
@@ -30,6 +33,8 @@ const MoreComments = ({
               handleDislike={handleDislike}
               handleDelete={handleDelete}
               handleModify={handleModify}
+              OpenedDepth={OpenedDepth}
+              setOpenedDepth={setOpenedDepth}
               refetchComment={refetchComments}
               postid={postid}
             />

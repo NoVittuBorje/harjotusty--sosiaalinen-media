@@ -557,17 +557,33 @@ const resolvers = {
       const post = new Post({
         headline: args.headline,
         description: args.description,
-        feed: feed,
+        feed: feed._id,
         karma: 0,
         owner: context.currentUser,
         img: args.img,
       });
+      await post.save();
       console.log(post);
-      feed.posts = [...feed.posts, post];
-      user.posts = [...user.posts, post];
-      await feed.save();
-      await user.save();
-      return post.save();
+      const newpost = await Post.findById(post._id).populate({
+        path: "feed",
+        select: [
+          "feedname",
+          "description",
+          "active",
+          "createdAt",
+          "updatedAt",
+          "id",
+        ],
+      }).populate({path:"owner",select:["id","username","avatar"]});
+      const newfeed = await Feed.findByIdAndUpdate(
+        { _id: feed._id },
+        { $push: { posts: newpost._id } }
+      );
+      const newuser = await User.findByIdAndUpdate(
+        { _id: user._id },
+        { $push: { posts: newpost._id } }
+      );
+      return newpost;
     },
     createUser: async (root, args) => {
       const salt_rounds = 10;
@@ -629,20 +645,26 @@ const resolvers = {
         description: args.description,
         owner: context.currentUser,
       });
+      await newfeed.save()
       const user = context.currentUser;
       console.log(user);
       user.ownedfeeds = [...user.ownedfeeds, newfeed];
+      const newuser = await User.findByIdAndUpdate({_id:user._id},{$push:{ownedfeeds:newfeed._id}})
       console.log(user);
       await user.save();
-      return newfeed.save().catch((error) => {
-        console.log(error);
-      });
+      return newfeed
     },
     likeComment: async (root, args, context) => {
       const user = context.currentUser;
-      console.log(user)
+      console.log(user);
       const comment = await Comment.findById(args.id)
-      console.log(comment)
+        .populate({
+          path: "user",
+          select: ["id"],
+        })
+        .populate({ path: "replies", select: ["id"] })
+        .populate({ path: "replyto", select: ["id"] });
+      console.log(comment);
       const likecommentids = user.likedcomments.map((comment) =>
         comment._id.toString()
       );
@@ -654,32 +676,39 @@ const resolvers = {
         const newuser = await User.findOneAndUpdate(
           { _id: context.currentUser._id },
           { $pull: { likedcomments: comment._id } }
-        ).populate("likedcomments",{id:1,karma:1}).populate("dislikedcomments",{id:1,karma:1})
+        )
+          .populate("likedcomments", { id: 1, karma: 1 })
+          .populate("dislikedcomments", { id: 1, karma: 1 });
         await comment.save();
-        return newuser
+        return comment;
       } else {
         if (dislikecommentids.includes(comment._id.toString())) {
           comment.karma = comment.karma + 1;
           const newuser = await User.findOneAndUpdate(
             { _id: context.currentUser._id },
             { $pull: { dislikedcomments: comment._id } }
-          )
+          );
         }
         comment.karma = comment.karma + 1;
         const newuser = await User.findOneAndUpdate(
           { _id: context.currentUser._id },
           { $push: { likedcomments: comment._id } }
-        ).populate("likedcomments",{id:1,karma:1}).populate("dislikedcomments",{id:1,karma:1})
+        )
+          .populate("likedcomments", { id: 1, karma: 1 })
+          .populate("dislikedcomments", { id: 1, karma: 1 });
         await comment.save();
-        return newuser
+        return comment;
       }
     },
     dislikeComment: async (root, args, context) => {
       const user = context.currentUser;
-      const comment = await Comment.findById(args.id).populate({
-        path: "user",
-        select: ["id"],
-      });
+      const comment = await Comment.findById(args.id)
+        .populate({
+          path: "user",
+          select: ["id"],
+        })
+        .populate({ path: "replies", select: ["id"] })
+        .populate({ path: "replyto", select: ["id"] });
       const dislikecommentids = user.dislikedcomments.map((comment) =>
         comment._id.toString()
       );
@@ -691,24 +720,27 @@ const resolvers = {
         const newuser = await User.findOneAndUpdate(
           { _id: context.currentUser._id },
           { $pull: { dislikedcomments: comment._id } }
-        ).populate("dislikedcomments",{id:1,karma:1}).populate("likedcomments",{id:1,karma:1});
-        await comment.save()
-        return newuser;
+        )
+          .populate("dislikedcomments", { id: 1, karma: 1 })
+          .populate("likedcomments", { id: 1, karma: 1 })
+          .populate({ path: ["replyto", "replies"], populate: ["id"] });
+        await comment.save();
+        return comment;
       } else {
         if (likecommentids.includes(comment._id.toString())) {
           comment.karma = comment.karma - 1;
           const newuser = await User.findOneAndUpdate(
             { _id: context.currentUser._id },
             { $pull: { likedcomments: comment._id } }
-          )
+          );
         }
         comment.karma = comment.karma - 1;
         const newuser = await User.findOneAndUpdate(
           { _id: context.currentUser._id },
           { $push: { dislikedcomments: comment._id } }
-        ).populate("dislikedcomments",{id:1,karma:1}).populate("likedcomments",{id:1,karma:1})
+        );
         await comment.save();
-        return newuser;
+        return comment;
       }
     },
     likePost: async (root, args, context) => {
@@ -724,31 +756,30 @@ const resolvers = {
         const newuser = await User.findOneAndUpdate(
           { _id: context.currentUser._id },
           { $pull: { likedposts: post._id } }
-        ).populate("likedposts",{id:1,karma:1}).populate("dislikedposts",{id:1,karma:1});
+        );
         await post.save();
-        return newuser;
+        return post;
       } else {
         if (dislikedids.includes(post._id.toString())) {
           post.karma = post.karma + 1;
           const newuser = await User.findOneAndUpdate(
             { _id: context.currentUser._id },
             { $pull: { dislikedposts: post._id } }
-          )
-
+          );
         }
         post.karma = post.karma + 1;
         const newuser = await User.findOneAndUpdate(
           { _id: context.currentUser._id },
           { $push: { likedposts: post._id } }
-        ).populate("likedposts",{id:1,karma:1}).populate("dislikedposts",{id:1,karma:1});;
+        ).populate("likedposts", { id: 1, karma: 1 });
         await post.save();
-        return newuser;
+        return post;
       }
     },
 
     dislikePost: async (root, args, context) => {
       const user = context.currentUser;
-      const post = await Post.findById(args.id)
+      const post = await Post.findById(args.id);
       const dislikeids = user.dislikedposts.map((post) => post._id.toString());
       const likeids = user.likedposts.map((post) => post._id.toString());
       if (dislikeids.includes(post._id.toString())) {
@@ -756,9 +787,11 @@ const resolvers = {
         const newuser = await User.findOneAndUpdate(
           { _id: context.currentUser._id },
           { $pull: { dislikedposts: post._id } }
-        ).populate("dislikedposts",{id:1,karma:1}).populate("likedposts",{id:1,karma:1});
+        )
+          .populate("dislikedposts", { id: 1, karma: 1 })
+          .populate("likedposts", { id: 1, karma: 1 });
         await post.save();
-        return newuser;
+        return post;
       } else {
         if (likeids.includes(post._id.toString())) {
           post.karma = post.karma - 1;
@@ -771,10 +804,12 @@ const resolvers = {
         const newuser = await User.findOneAndUpdate(
           { _id: context.currentUser._id },
           { $push: { dislikedposts: post._id } }
-        ).populate("dislikedposts",{id:1,karma:1}).populate("likedposts",{id:1,karma:1});
+        )
+          .populate("dislikedposts", { id: 1, karma: 1 })
+          .populate("likedposts", { id: 1, karma: 1 });
 
         await post.save();
-        return newuser;
+        return post;
       }
     },
     modifyComment: async (root, args, context) => {
@@ -957,20 +992,30 @@ const resolvers = {
           content: args.content,
           post: post,
           user: user,
-          replyto: replyto,
+          replyto: replyto._id,
           depth: replyto.depth + 1,
         });
-        replyto.replies.push(newComment);
-        user.comments.push(newComment);
-        await replyto.save();
-        await user.save();
         await newComment.save();
-        return newComment;
+        const newreplyto = await Comment.findByIdAndUpdate(
+          { _id: args.replyto },
+          { $push: { replies: newComment._id } }
+        )
+          .populate({
+            path: "user",
+            select: ["username", "id", "avatar"],
+          })
+          .populate({ path: "post", select: ["id"] })
+          .populate({ path: "replyto", select: ["id"] });
+
+        const newuser = await User.findByIdAndUpdate(
+          { _id: user.id },
+          { $push: { comments: newComment._id } }
+        );
+        return newreplyto;
       } else {
         console.log("newcomment");
         const user = context.currentUser;
         const post = await Post.findOne({ _id: args.postid });
-
         const newComment = new Comment({
           content: args.content,
           post: post,
@@ -978,12 +1023,16 @@ const resolvers = {
           karma: 0,
           depth: 0,
         });
-        console.log(user, post);
-        post.comments.push(newComment);
-        user.comments.push(newComment);
         await newComment.save();
-        await user.save();
-        await post.save();
+        console.log(user, post);
+        const newpost = await Post.findByIdAndUpdate(
+          { _id: args.postid },
+          { $push: { comments: newComment._id } }
+        );
+        const newuser = await User.findByIdAndUpdate(
+          { _id: user.id },
+          { $push: { comments: newComment._id } }
+        );
         return newComment;
       }
     },

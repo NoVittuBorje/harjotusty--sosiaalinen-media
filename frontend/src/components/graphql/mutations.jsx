@@ -46,7 +46,6 @@ export const MAKEPOST = gql`
     id
     owner {
       username
-      email
       avatar
       id
     }
@@ -94,7 +93,6 @@ export const MAKECOMMENT = gql`
       }
       replyto {
         id
-        content
       }
       replies {
         content
@@ -103,6 +101,7 @@ export const MAKECOMMENT = gql`
           id
           username
         }
+        id
       }
       user {
         avatar
@@ -154,49 +153,59 @@ export const USEREDIT = gql`mutation Mutation($type: String!, $content: String!)
 }`
 export const LIKECOMMENT = gql`mutation LikeComment($likeCommentId: String!) {
   likeComment(id: $likeCommentId) {
-    likedcomments {
-      id
-      karma
+    content
+    active
+    karma
+    depth
+    createdAt
+    updatedAt
+    id
+    replies{
+    id
     }
-    dislikedcomments {
-      id
-      karma
+    replyto{
+    id
     }
   }
 }`
 export const DISLIKECOMMENT = gql`mutation DislikeComment($dislikeCommentId: String!) {
   dislikeComment(id: $dislikeCommentId) {
-    dislikedcomments {
-      id
-      karma
+    content
+    active
+    karma
+    depth
+    createdAt
+    updatedAt
+    id
+    replies{
+    id
     }
-    likedcomments {
-      id
-      karma
+    replyto{
+    id
     }
   }
 }`
 export const LIKEPOST = gql`mutation LikePost($likePostId: String!) {
   likePost(id: $likePostId) {
-    likedposts {
-      id
-      karma
-    }
-    dislikedposts {
-      karma
-      id
-    }
+    headline
+    description
+    karma
+    img
+    active
+    createdAt
+    updatedAt
+    id
   }
 }`
 export const DISLIKEPOST = gql`mutation DislikePost($dislikePostId: String!) {
   dislikePost(id: $dislikePostId) {
-    dislikedposts {
-      id
-      karma
-    }
-    likedposts {
-      id
-      karma
-    }
+    headline
+    description
+    karma
+    img
+    active
+    createdAt
+    updatedAt
+    id
   }
 }`

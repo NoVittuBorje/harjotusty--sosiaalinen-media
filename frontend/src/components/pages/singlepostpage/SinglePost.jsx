@@ -297,6 +297,7 @@ const SinglePost = ({ match, User, refetchUser }) => {
                 item={postdata.comments}
                 User={User}
                 refetchComment={postcomments.refetchPostComment}
+                refetchUser={refetchUser}
                 comments={comments}
                 loadmore={loadmore}
                 loading={postcomments.loading}

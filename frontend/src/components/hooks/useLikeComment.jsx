@@ -1,6 +1,7 @@
 import { useMutation } from "@apollo/client";
 
 import { LIKECOMMENT } from "../graphql/mutations";
+import { GET_ME } from "../graphql/queries";
 
 const useLikeComment = () => {
   const [mutate, result] = useMutation(LIKECOMMENT);
@@ -8,7 +9,8 @@ const useLikeComment = () => {
     const data = await mutate({
         variables:{
             likeCommentId:id
-        }
+        },
+        refetchQueries: [GET_ME],
     });
     return data;
   };

@@ -1,5 +1,6 @@
 import { useMutation } from "@apollo/client";
 import { DISLIKECOMMENT } from "../graphql/mutations";
+import { GET_ME } from "../graphql/queries";
 
 
 const useDislikeComment = () => {
@@ -8,7 +9,8 @@ const useDislikeComment = () => {
     const data = await mutate({
         variables:{
             dislikeCommentId:id
-        }
+        },
+        refetchQueries: [GET_ME],
     });
     return data;
   };

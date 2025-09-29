@@ -23,7 +23,6 @@ const schema = new mongoose.Schema({
     subs:[{
         type:mongoose.Schema.Types.ObjectId,
         ref:'User',
-        unique:true,
     }],
     bannedusers:[{
         type:mongoose.Schema.Types.ObjectId,

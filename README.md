@@ -38,7 +38,7 @@
     <td>8</td>
     <td>51</td>
   </tr>
-        <tr>
+  <tr>
     <td>7</td>
     <td>0</td>
     <td>51</td>
@@ -48,7 +48,7 @@
     <td>11</td>
     <td>62</td>
   </tr>
-    <tr>
+  <tr>
     <td>9</td>
     <td>4</td>
     <td>66</td>
@@ -58,32 +58,32 @@
   <td>8</td>
   <td>74</td>
   </tr>
-    <tr>
+  <tr>
   <td>11</td>
   <td>8</td>
   <td>82</td>
   </tr>
-      <tr>
+  <tr>
   <td>12</td>
   <td>2</td>
   <td>84</td>
   </tr>
-        <tr>
+  <tr>
   <td>13</td>
   <td>0</td>
   <td>84</td>
   </tr>
-        <tr>
+  <tr>
   <td>14</td>
   <td>0</td>
   <td>84</td>
   </tr>
-          <tr>
+  <tr>
   <td>14</td>
   <td>0</td>
   <td>84</td>
   </tr>
-     <tr>
+  <tr>
   <td>15</td>
   <td>0</td>
   <td>84</td>
@@ -93,40 +93,45 @@
   <td>12</td>
   <td>96</td>
   </tr>
-       <tr>
+  <tr>
   <td>17</td>
   <td>12</td>
   <td>108</td>
   </tr>
-         <tr>
+  <tr>
   <td>18</td>
   <td>12</td>
   <td>120</td>
   </tr>
-           <tr>
+  <tr>
   <td>19</td>
   <td>4</td>
   <td>124</td>
   </tr>
-             <tr>
+  <tr>
   <td>20</td>
   <td>12</td>
   <td>136</td>
   </tr>
-               <tr>
+  <tr>
   <td>21</td>
   <td>8</td>
   <td>144</td>
   </tr>
-                 <tr>
+  <tr>
   <td>22</td>
   <td>12</td>
   <td>156</td>
   </tr>
-                   <tr>
+  <tr>
   <td>23</td>
-  <td>8</td>
-  <td>164</td>
+  <td>12</td>
+  <td>168</td>
+  </tr>
+  <tr>
+  <td>24</td>
+  <td>4</td>
+  <td>172</td>
   </tr>
 </table>
 

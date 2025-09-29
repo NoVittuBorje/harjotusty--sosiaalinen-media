@@ -36,7 +36,6 @@ const FeedItem = ({ item, owner, User, mods }) => {
   const [open, setOpen] = useState(false);
 
   const ModSettings = () => {
-    
     if (!mods | !User) {
       return;
     }
@@ -54,11 +53,10 @@ const FeedItem = ({ item, owner, User, mods }) => {
   const FeedImage = ({ img }) => {
     const { data, loading } = useGetImageUrl({ imageId: img });
     if (!loading) {
-      
       return (
         <img
           src={data.getImage}
-          style={{ maxHeight: 500, maxWidth: "100%",borderRadius:15 }}
+          style={{ maxHeight: 500, maxWidth: "100%", borderRadius: 15 }}
         ></img>
       );
     }
@@ -66,7 +64,7 @@ const FeedItem = ({ item, owner, User, mods }) => {
   const FeedDescription = ({ item }) => {
     if (item.img) {
       return (
-        <Box className="imagecontainer" >
+        <Box className="imagecontainer">
           <FeedImage img={item.img}></FeedImage>
         </Box>
       );
@@ -76,80 +74,79 @@ const FeedItem = ({ item, owner, User, mods }) => {
   };
   return (
     <Box>
-    <Box
-      className={"feed"}
-      sx={{
-        "&:hover": {
-          backgroundColor: "background.hover",
-        },
-      }}
-      key={item.id}
-    >
-      <Box sx={{ display: "flex", flexDirection: "column" }}>
-        <Link
-          onClick={() => {
-            navigate(`/post/${item.id}`);
-          }}
-          variant="inherit"
-          underline="none"
-          color="inherit"
-        >
-          <Box sx={{ flexDirection: "column", padding: 1 }}>
-            <Useritem time={item.createdAt} user={owner}></Useritem>
+      <Box
+        className={"feed"}
+        sx={{
+          "&:hover": {
+            backgroundColor: "background.hover",
+          },
+        }}
+        key={item.id}
+      >
+        <Box sx={{ display: "flex", flexDirection: "column" }}>
+          <Link
+            onClick={() => {
+              navigate(`/post/${item.id}`);
+            }}
+            variant="inherit"
+            underline="none"
+            color="inherit"
+          >
+            <Box sx={{ flexDirection: "column", padding: 1 }}>
+              <Useritem time={item.createdAt} user={owner}></Useritem>
 
-            <Box>
-              <Box
-                sx={{
-                  display: "flex",
-                  flexDirection: "row",
-                  alignItems: "center",
-                  gap: 1,
-                  marginBottom: 1,
-                }}
-              >
-                <Typography variant="h5">{`${item.headline}`}</Typography>
-                <Button
-                  size="small"
-                  color="inherit"
-                  className="button"
-                  sx={{ borderRadius: 50 }}
+              <Box>
+                <Box
+                  sx={{
+                    display: "flex",
+                    flexDirection: "row",
+                    alignItems: "center",
+                    gap: 1,
+                    marginBottom: 1,
+                  }}
                 >
-                  <Typography
+                  <Typography variant="h5">{`${item.headline}`}</Typography>
+                  <Button
+                    size="small"
                     color="inherit"
-                    variant="h8"
-                    underline="none"
-                    onClick={(event) => {
-                      event.stopPropagation();
-                      navigate(`/feed/${item.feed.feedname}`);
-                    }}
+                    className="button"
+                    sx={{ borderRadius: 50 }}
                   >
-                    {`f/${item.feed.feedname}`}
-                  </Typography>
-                </Button>
+                    <Typography
+                      color="inherit"
+                      variant="h8"
+                      underline="none"
+                      onClick={(event) => {
+                        event.stopPropagation();
+                        navigate(`/feed/${item.feed.feedname}`);
+                      }}
+                    >
+                      {`f/${item.feed.feedname}`}
+                    </Typography>
+                  </Button>
+                </Box>
+                <FeedDescription item={item}></FeedDescription>
               </Box>
-              <FeedDescription item={item}></FeedDescription>
             </Box>
+          </Link>
+
+          <Box className={"footer"}>
+            <KarmaItem
+              type={"post"}
+              karma={item.karma}
+              id={item.id}
+              User={User}
+            ></KarmaItem>
+            <ModSettings></ModSettings>
           </Box>
-        </Link>
-        
-        <Box className={"footer"}>
-          <KarmaItem
-            type={"post"}
-            karma={item.karma}
-            id={item.id}
-            User={User}
-          ></KarmaItem>
-          <ModSettings></ModSettings>
+
+          <Collapse in={open}>
+            <Divider></Divider>
+            <PostModSettings item={item}></PostModSettings>
+          </Collapse>
         </Box>
-        
-        <Collapse in={open}>
-          <Divider></Divider>
-          <PostModSettings item={item}></PostModSettings>
-        </Collapse>
       </Box>
-     
-    </Box>
-    <Divider ></Divider>
+      <Divider></Divider>
     </Box>
   );
 };

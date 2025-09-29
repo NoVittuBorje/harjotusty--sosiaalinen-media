@@ -4,8 +4,7 @@ import ProfileFeedComment from "./ProfileFeedComment";
 import { useNavigate } from "react-router";
 import useGetUserPosts from "../../hooks/useGetUserPosts";
 import InfiniteScroll from "react-infinite-scroll-component";
-import Timestamp from "../../utils/Timestamp";
-import KarmaItem from "../../KarmaItem";
+
 const ProfileFeedPosts = ({variables,userdata,User}) => {
   console.log(variables)
   const navigate = useNavigate();

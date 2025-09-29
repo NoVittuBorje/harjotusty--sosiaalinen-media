@@ -9,7 +9,7 @@ import useMe from './hooks/useMe';
 const Renderloginstate = ({loginMenuId,handleLoginMenuOpen,handleProfileMenuOpen,menuId}) => {
     const {data,loading,error,refetch} = useMe()
     const [User, setUser] = React.useState(null)
-    const token = localStorage.getItem("token")
+    const token = sessionStorage.getItem("token")
     console.log(data,loading,error)
     if (!User && token && !loading){
         console.log(User,token,data)

@@ -140,7 +140,7 @@ const typeDefs = `#graphql
     feedname:String!):Int!
 
     getFiles(userId: String!): [String!]
-
+    
     getImage(imageId:String!):String!
   }
   
@@ -195,19 +195,19 @@ const typeDefs = `#graphql
 
     dislikePost(
     id:String!
-    ):User
+    ):Post
 
     likePost(
     id:String!
-    ):User
+    ):Post
 
     dislikeComment(
     id:String!
-    ):User
+    ):Comment
 
     likeComment(
     id:String!
-    ):User
+    ):Comment
     
     singleUpload(input: SingleFileInput!): [String!]
     multiUpload(input: MultiFileInput!): String!

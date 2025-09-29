@@ -291,9 +291,10 @@ const MyAccountpage = ({ User }) => {
     const validationSchema = yup.object().shape({
   description: yup.string().min(10).required(),
 });
+  const description = User.description ? User.description : ""
     const formik = useFormik({ 
       initialValues: {
-        description:User.description
+        description:description
       },
       onSubmit: (values) => {
         handleSave({content:values.description,type:"Description"});
@@ -332,7 +333,8 @@ const MyAccountpage = ({ User }) => {
             flexDirection: "column",
             alignItems: "center",
           }}>
-        {parse(formik.values.description)}
+        <Typography paddingRight={1}>Description:</Typography>
+        {parse(description)}
         <Button
           className={"button"}
           style={{ borderRadius: 50 }}

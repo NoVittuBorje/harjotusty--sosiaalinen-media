@@ -12,7 +12,7 @@ import SinglePostPreview from "../singlepostpage/SinglePostPreview";
 
 const validationSchema = yup.object().shape({
   headline: yup.string().min(4).required(),
-  description: yup.string().min(50).max(20000).required(),
+  description: yup.string().min(10).max(20000).required(),
 });
 const NewPostpage = ({ match,User }) => {
   const navigate = useNavigate();

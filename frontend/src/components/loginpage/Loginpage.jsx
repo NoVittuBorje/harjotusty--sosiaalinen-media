@@ -30,7 +30,7 @@ const LoginPage = ({setUser,User,refetch}) => {
         const { data } = await login({ Username, Password });
         console.log(data)
         if (data.login.value){
-            refetch()
+        refetch()
         navigate("/")
         }
     }

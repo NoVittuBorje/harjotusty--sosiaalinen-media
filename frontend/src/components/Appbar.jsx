@@ -153,6 +153,7 @@ export default function PrimarySearchAppBar({ User, refetch }) {
     localStorage.setItem("HomeorderBy", "POPULAR");
     localStorage.setItem("FeedorderBy", "POPULAR");
     sessionStorage.clear()
+    
     navigate("/");
   };
   const handleRegisterClick = () => {
