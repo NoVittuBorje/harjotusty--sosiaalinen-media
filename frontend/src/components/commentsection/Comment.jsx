@@ -26,11 +26,10 @@ const Comment = ({
   handleDelete,
   User,
   handleModify,
-  refetchComment,
+
   handleNewComment,
   postid,
-  OpenedDepth,
-  setOpenedDepth,
+
 }) => {
   const [replyopen, setReplyOpen] = useState(false);
   const [editopen, setEditOpen] = useState(false);
@@ -39,23 +38,21 @@ const Comment = ({
   const [newcomment, result] = useMakeComment();
   const [edit, editresult] = useEditComment();
   useEffect(() => {
-    if (OpenedDepth > comment.depth) {
+    if (sessionStorage.getItem(comment.id) === "true" & !ShowComments) {
       setShowComments(true);
     }
-
-  }, [comment.depth, OpenedDepth]);
+    
+  }, [comment,ShowComments]);
   const handleReplyClick = () => {
     setReplyOpen(!replyopen);
   };
-  console.log(comment);
+  
   const handleReply = async ({ content, commentid }) => {
     const data = await newcomment({
       postid,
       content: content,
       replyto: commentid,
     });
-
-    refetchComment();
     setReplyOpen(!replyopen);
   };
   const handleDel = async ({ commentid, content, action }) => {
@@ -64,26 +61,27 @@ const Comment = ({
   const handleMod = async ({ commentid, content, action }) => {
     const data = await edit({ commentid, content, action });
   };
-
+  console.log(sessionStorage.getItem(comment.id),comment.content,ShowComments)
   const handleEditClick = () => {
     console.log(editopen);
     setEditOpen(!editopen);
   };
   const handleMoreComments = () => {
-    setShowComments(true);
-    setOpenedDepth(comment.depth+1);
+    setShowComments(true)
+    sessionStorage.setItem(comment.id,true)
   };
   const handleDeleteOpen = () => {
     setDeleteOpen(!deleteopen);
   };
   const Showmorecomments = () => {
-    console.log(comment.replies);
+    
     if (comment.replies.length == 0) {
       return;
     }
-    console.log(ShowComments, OpenedDepth);
+    
 
     if (!ShowComments) {
+
       return (
         <Grid
           sx={{ display: "flex", flexDirection: "row", justifyItems: "center" }}
@@ -127,8 +125,6 @@ const Comment = ({
           ShowComments={ShowComments}
           User={User}
           postid={postid}
-          OpenedDepth={OpenedDepth}
-          setOpenedDepth={setOpenedDepth}
         ></MoreComments>
       );
     }

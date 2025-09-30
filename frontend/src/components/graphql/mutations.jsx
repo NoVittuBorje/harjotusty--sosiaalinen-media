@@ -120,6 +120,43 @@ export const EDITCOMMENT = gql`mutation ModifyComment($commentid: String!, $cont
     id
   }
 }`
+export const EDITFEED = gql`mutation ModifyFeed($feedid: String!, $action: String!, $content: String!) {
+  modifyFeed(feedid: $feedid, action: $action, content: $content) {
+    ... on Feed {
+      feedname
+      description
+      active
+      createdAt
+      updatedAt
+      id
+      owner {
+        avatar
+        username
+        id
+      }
+      moderators {
+        username
+        avatar
+        id
+      }
+      bannedusers {
+        username
+        avatar
+        id
+      }
+    }
+    ... on Post {
+      headline
+      description
+      karma
+      img
+      active
+      createdAt
+      updatedAt
+      id
+    }
+  }
+}`
 export const EDITPOST = gql`mutation ModifyPost($postid: String!, $action: String!, $content: String!) {
   modifyPost(postid: $postid, action: $action, content: $content) {
     headline

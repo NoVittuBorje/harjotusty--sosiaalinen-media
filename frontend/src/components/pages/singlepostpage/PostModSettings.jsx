@@ -1,0 +1,20 @@
+import { Box, Button, Stack, Typography } from "@mui/material"
+import useEditFeed from "../../hooks/useEditFeed";
+const PostModSettings = ({item}) => {
+    console.log("on mod")
+    console.log(item)
+    const [editfeed, editfeedresult] = useEditFeed()
+    const mods = item.feed.moderators
+    const owner = item.feed.owner
+    return(
+        <Box sx={{display:"flex",justifyContent:"center",justifyItems:"center"}}>
+        <Stack direction={"column"} sx={{justifyContent:"center",justifyItems:"center"}}>
+        <Typography>Mod settings:</Typography>
+        <Button className="button" sx={{borderRadius:50}} onClick={() => editfeed({feedid:item.feed.id,action:"ban",content:owner.id})} size="small" variant="outlined" color="inherit">Ban poster</Button>
+        <Button className="button" sx={{borderRadius:50}} onClick={() => editfeed({feedid:item.feed.id,action:"deletepost",content:item.id})} size="small" variant="outlined" color="inherit">Delete post</Button>
+        <Button className="button" sx={{borderRadius:50}} onClick={() => editfeed({feedid:item.feed.id,action:"lockpost",content:item.id})} size="small" variant="outlined" color="inherit">Lock post</Button>
+        </Stack>
+      </Box>
+    )
+}
+export default PostModSettings

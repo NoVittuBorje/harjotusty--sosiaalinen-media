@@ -187,7 +187,7 @@ const typeDefs = `#graphql
     feedid:String!
     action:String!
     content:String!
-    ):Feed
+    ):Search
     modifyUser(
     type:String!
     content: String!

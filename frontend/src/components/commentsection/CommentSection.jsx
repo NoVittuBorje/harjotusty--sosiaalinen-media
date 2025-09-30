@@ -3,7 +3,7 @@ import useMakeComment from "../hooks/useMakeComment";
 import { Box, CircularProgress, Collapse, IconButton } from "@mui/material";
 import useEditComment from "../hooks/useEditComment";
 import InfiniteScroll from "react-infinite-scroll-component";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 const CommentSection = ({
   User,
   postid,
@@ -15,7 +15,7 @@ const CommentSection = ({
 }) => {
   const [newcomment, result] = useMakeComment();
   const [edit, editresult] = useEditComment();
-
+  
   const handleDelete = async ({ commentid, content, action }) => {
     console.log(commentid, action);
     const data = await edit({ commentid, content, action });
@@ -57,8 +57,6 @@ const CommentSection = ({
   }
   const Commentitem = ({ comment, index }) => {
     const [showComment, setShowComment] = useState(true);
-    const [OpenedDepth, setOpenedDepth] = useState(0)
-    console.log(OpenedDepth)
     return (
       <Collapse key={index} mountOnEnter  in={showComment}>
           <Comment
@@ -75,20 +73,18 @@ const CommentSection = ({
             refetchUser={refetchUser}
             handleReply={handleReply}
             postid={postid}
-            OpenedDepth={OpenedDepth}
-            setOpenedDepth={setOpenedDepth}
           />
       </Collapse>
     );
   };
 
-  console.log(comments);
+  
   let hasmore = true;
   if (comments.length % 10 != 0 || comments.length == 0) {
     console.log("no more");
     hasmore = false;
   }
-  console.log(hasmore);
+  
 
   return (
     <Box sx={{maxWidth:"100%", paddingTop:1}}>

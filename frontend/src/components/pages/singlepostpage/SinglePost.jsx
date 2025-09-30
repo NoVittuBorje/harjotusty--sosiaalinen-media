@@ -29,14 +29,16 @@ import DialogContentText from "@mui/material/DialogContentText";
 import DialogTitle from "@mui/material/DialogTitle";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import parse from "html-react-parser";
-import PostModSettings from "../../utils/PostModSettings";
+import PostModSettings from "./PostModSettings";
+
+
 const SinglePost = ({ match, User, refetchUser }) => {
   const id = match.params.id;
   console.log(match.params.id);
   const navigate = useNavigate();
   const [edit, editresult] = useEditPost();
   const { data, loading, error, refetchPost } = useGetPost({ id });
-
+  
   const postcomments = useGetPostComments({ postid: id });
   const [newcomment, result] = useMakeComment();
   const [openNewComment, setopenNewComment] = useState(false);

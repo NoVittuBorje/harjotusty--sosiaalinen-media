@@ -402,7 +402,7 @@ export default function PrimarySearchAppBar({ User, refetch }) {
   };
   const DrawerState = ({ User }) => {
     const popularfeeds = feeds.data ? feeds.data.getfeed : [];
-    console.log(popularfeeds, feeds.loading);
+    
     if (feeds.loading) {
       return <Box>loading...</Box>;
     }

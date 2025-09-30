@@ -28,8 +28,9 @@ import UserAvatar from "../../utils/UserAvatar";
 import AddCircleOutlineIcon from "@mui/icons-material/AddCircleOutline";
 import RemoveCircleOutlineIcon from "@mui/icons-material/RemoveCircleOutline";
 import parse from "html-react-parser";
-import FeedModSettings from "../../utils/FeedModSettings";
-import useGetFeedSubsCount from "../../hooks/useGetFeedSubsCount";
+
+import useEditFeed from "../../hooks/useEditFeed";
+import EditFeedDesc from "./EditFeedDesc";
 
 const FeedPage = ({ match, User, refetchUser }) => {
   console.log(localStorage.getItem("Feedorderby"));
@@ -55,10 +56,25 @@ const FeedPage = ({ match, User, refetchUser }) => {
 
   const navigate = useNavigate();
   const feedinfo = useGetFeed({ feedname });
-  const { data, loading, error, fetchMore, refetch } = useGetFeedPosts(variables);
-  const [sub, result] = useSubscribe();
+  const { data, loading, error, fetchMore, refetch } =
+    useGetFeedPosts(variables);
+  const [editfeed, resultedit] = useEditFeed();
+  const [sub, resultsub] = useSubscribe();
   const [OpenSettings, setOpenSettings] = useState(false);
-  
+  const [FeedEditOpen, setFeedEditOpen] = useState(false);
+  const handleSave = async ({ content, feedid, action }) => {
+    console.log("save");
+    console.log(feedid);
+    const data = await editfeed({
+      content,
+      feedid,
+      action,
+    });
+    console.log(data);
+    if (data.modifyFeed) {
+      setFeedEditOpen(false);
+    }
+  };
   const handleorderByChange = (event) => {
     console.log(event.target.value);
     setorderBy(event.target.value);
@@ -77,6 +93,7 @@ const FeedPage = ({ match, User, refetchUser }) => {
     return (
       <Box sx={{ display: "flex", flexDirection: "column" }}>
         <Stack rowGap={2}>
+          <Typography>Feed info: </Typography>
           <Typography>
             Owner:
             <Button
@@ -116,17 +133,26 @@ const FeedPage = ({ match, User, refetchUser }) => {
       </Box>
     );
   };
-  const FeedDescription = ({ info, infoloading }) => {
+  const FeedDescription = ({ info, infoloading, FeedEditOpen }) => {
     if (infoloading) {
       return <CircularProgress color="inherit"></CircularProgress>;
     }
+
     return (
       <Box sx={{ padding: 1 }}>
         <Typography variant="h5">f/{info.feedname}</Typography>
         {parse(info.description)}
+        <Collapse in={FeedEditOpen}>
+          <EditFeedDesc
+            setOpen={setFeedEditOpen}
+            handleSave={handleSave}
+            feed={info}
+          ></EditFeedDesc>
+        </Collapse>
       </Box>
     );
   };
+
   const FeedSettings = ({ info, infoloading }) => {
     if (infoloading) {
       return;
@@ -137,29 +163,50 @@ const FeedPage = ({ match, User, refetchUser }) => {
       if (!mods || !User) {
         return;
       }
-      if (mods.includes(User.id)) return <FeedModSettings></FeedModSettings>;
+      if (mods.includes(User.id)) {
+        return (
+          <Box
+            sx={{
+              display: "flex",
+              justifyContent: "center",
+              justifyItems: "center",
+            }}
+          >
+            <Stack
+              direction={"column"}
+              sx={{ justifyContent: "center", justifyItems: "center" }}
+            >
+              <Typography>Mod settings:</Typography>
+              <Button
+                className="button"
+                sx={{ borderRadius: 50 }}
+                size="small"
+                variant="outlined"
+                color="inherit"
+                onClick={() => setFeedEditOpen(true)}
+              >
+                Edit feed description
+              </Button>
+            </Stack>
+          </Box>
+        );
+      }
     };
-    if (!OpenSettings) {
-      return (
+    return (
+      <Box>
         <IconButton onClick={() => setOpenSettings(!OpenSettings)}>
           <SettingsIcon></SettingsIcon>
         </IconButton>
-      );
-    } else {
-      return (
         <Collapse in={OpenSettings}>
-          <Box>
-            <IconButton onClick={() => setOpenSettings(!OpenSettings)}>
-              <SettingsIcon></SettingsIcon>
-            </IconButton>
             <Stack padding={1} gap={1}>
+              <Divider></Divider>
               <FeedInfo info={info} infoloading={infoloading}></FeedInfo>
+              <Divider></Divider>
               <ModSettings mods={mods}></ModSettings>
             </Stack>
-          </Box>
         </Collapse>
-      );
-    }
+      </Box>
+    );
   };
   const SubButton = ({ User }) => {
     if (!User) {
@@ -246,11 +293,13 @@ const FeedPage = ({ match, User, refetchUser }) => {
     <Box sx={{ flexGrow: 1 }}>
       <Grid container rowSpacing={1} sx={{ flexDirection: "row" }}>
         <Grid size={{ xs: 6, md: 2 }}></Grid>
-        <Grid size={{ xs: 10, md: 8 }}>
+        <Grid size={{ xs: 10, md: 8 }} container>
           <Box>
             <FeedDescription
               infoloading={infoloading}
               info={info}
+              feed={feed}
+              FeedEditOpen={FeedEditOpen}
             ></FeedDescription>
             <Box sx={{ display: "flex", justifyContent: "space-between" }}>
               <Box sx={{ alignContent: "center" }}>
@@ -294,13 +343,9 @@ const FeedPage = ({ match, User, refetchUser }) => {
             </InfiniteScroll>
           </Box>
         </Grid>
-        <Grid size={2}>
-          <Box>
-            <FeedSettings
-              info={info}
-              infoloading={infoloading}
-            ></FeedSettings>
-          </Box>
+        <Grid             sx={{ minWidth: "fit-content" }}
+            size={{ xs: 12, md: 2 }}>
+          <FeedSettings info={info} infoloading={infoloading}></FeedSettings>
         </Grid>
       </Grid>
     </Box>

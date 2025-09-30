@@ -28,7 +28,7 @@ import useEditPost from "./hooks/useEditPost";
 import SettingsIcon from "@mui/icons-material/Settings";
 import parse from "html-react-parser";
 import { useState } from "react";
-import PostModSettings from "./utils/PostModSettings";
+import PostModSettings from "./pages/singlepostpage/PostModSettings";
 import useGetImageUrl from "./hooks/useGetImageUrl";
 const FeedItem = ({ item, owner, User, mods }) => {
   const navigate = useNavigate();

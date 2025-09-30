@@ -517,35 +517,34 @@ const resolvers = {
       if (!context.currentUser) {
         throw new GraphQLError("not logged in");
       }
+      const feed = await Feed.findOne({ feedname: args.feedname });
       if (args.type === "sub") {
-        const feed = await Feed.findOne({ feedname: args.feedname });
-        const user = context.currentUser;
-        feed.subs = [...feed.subs, user];
-        user.feedsubs = [...user.feedsubs, feed];
-        console.log(feed, user);
-        await user.save();
-        await feed.save();
-        return user;
-      }
-      if (args.type === "unsub") {
-        console.log("juu");
-        const feed = await Feed.findOneAndUpdate(
-          { feedname: args.feedname },
-          { $pull: { subs: context.currentUser._id } }
+        const newfeed = await Feed.findOneAndUpdate(
+          { _id: feed._id },
+          { $push: { subs: context.currentUser._id } }
         );
-        console.log(feed);
-        const user = await User.findOneAndUpdate(
+        const newuser = await User.findOneAndUpdate(
           { _id: context.currentUser._id },
-          { $pull: { feedsubs: feed._id } }
-        );
-        console.log(feed, user);
-
-        await feed.save();
-        await user.save();
-        const res = await User.findById(context.currentUser._id)
+          { $push: { feedsubs: feed._id } }
+        )
           .populate("ownedfeeds", { feedname: 1, id: 1 })
           .populate("feedsubs", { id: 1, feedname: 1 });
-        return res;
+        console.log(feed, newuser);
+        return newuser;
+      }
+      if (args.type === "unsub") {
+        const newfeed = await Feed.findOneAndUpdate(
+          { _id: feed._id },
+          { $pull: { subs: context.currentUser._id } }
+        );
+        const newuser = await User.findOneAndUpdate(
+          { _id: context.currentUser._id },
+          { $pull: { feedsubs: feed._id } }
+        )
+          .populate("ownedfeeds", { feedname: 1, id: 1 })
+          .populate("feedsubs", { id: 1, feedname: 1 });
+        console.log(feed, newuser);
+        return newuser;
       }
     },
     makePost: async (root, args, context) => {
@@ -564,17 +563,19 @@ const resolvers = {
       });
       await post.save();
       console.log(post);
-      const newpost = await Post.findById(post._id).populate({
-        path: "feed",
-        select: [
-          "feedname",
-          "description",
-          "active",
-          "createdAt",
-          "updatedAt",
-          "id",
-        ],
-      }).populate({path:"owner",select:["id","username","avatar"]});
+      const newpost = await Post.findById(post._id)
+        .populate({
+          path: "feed",
+          select: [
+            "feedname",
+            "description",
+            "active",
+            "createdAt",
+            "updatedAt",
+            "id",
+          ],
+        })
+        .populate({ path: "owner", select: ["id", "username", "avatar"] });
       const newfeed = await Feed.findByIdAndUpdate(
         { _id: feed._id },
         { $push: { posts: newpost._id } }
@@ -645,14 +646,13 @@ const resolvers = {
         description: args.description,
         owner: context.currentUser,
       });
-      await newfeed.save()
+      await newfeed.save();
       const user = context.currentUser;
-      console.log(user);
-      user.ownedfeeds = [...user.ownedfeeds, newfeed];
-      const newuser = await User.findByIdAndUpdate({_id:user._id},{$push:{ownedfeeds:newfeed._id}})
-      console.log(user);
-      await user.save();
-      return newfeed
+      const newuser = await User.findByIdAndUpdate(
+        { _id: user._id },
+        { $push: { ownedfeeds: newfeed._id } }
+      );
+      return newfeed;
     },
     likeComment: async (root, args, context) => {
       const user = context.currentUser;
@@ -842,21 +842,22 @@ const resolvers = {
         path: "owner",
         select: ["id"],
       });
+
+
       if (args.action === "delete" && post.owner.id === user.id) {
-        post.headline = "This post has been deleted by the user.";
-        post.description = "This post has been deleted by the user.";
+        post.headline = "Post has been deleted by the owner!";
+        post.description = "<u>This post has been deleted by <b>Owner</b></u>";
         post.img = null;
         await post.save();
         return post;
       }
       if (args.action === "edit" && post.owner.id == user.id) {
+      if(post.active == false){
+        throw new GraphQLError("Post is locked cant modify post")
+      }
         post.content = args.content;
         await post.save();
         return post;
-      }
-      if (args.action === "like") {
-      }
-      if (args.action === "dislike") {
       }
       throw new GraphQLError("unknown operation", {
         extensions: {
@@ -950,41 +951,168 @@ const resolvers = {
       }
     },
     modifyFeed: async (root, args, context) => {
-      const feed = await Feed.findById(args.feedid).populate("bannedusers", {
-        id: 1,
-      });
-      if (args.action === "ban") {
-        try {
-          const banneduser = await User.findById(args.content);
-          console.log(banneduser);
-          const newfeed = await Feed.findOneAndUpdate(
-            { _id: args.feedid },
-            { $push: { bannedusers: banneduser } }
-          );
-          console.log(feed);
-          await feed.save();
-          return feed;
-        } catch (e) {
-          throw new GraphQLError(e);
+      const feed = await Feed.findById(args.feedid)
+        .populate("bannedusers", {
+          id: 1,
+        })
+        .populate("moderators", { id: 1 })
+        .populate("owner", { id: 1 });
+      const mods = feed.moderators.map((i) => i._id.toString());
+      console.log(mods);
+      const bannedusers = feed.bannedusers.map((i) => i._id.toString());
+      const user = context.currentUser;
+      console.log(feed.owner._id.toString() == user._id.toString());
+      if (
+        mods.includes(user._id.toString()) ||
+        feed.owner._id.toString() == user._id.toString()
+      ) {
+        if (
+          (args.action == "mod") &
+          (feed.owner._id.toString() == user._id.toString())
+        ) {
+          try {
+            const newmod = await User.findById(args.content);
+            const newfeed = await Feed.findOneAndUpdate(
+              { _id: feed._id },
+              { $push: { moderators: newmod._id } }
+            );
+            
+            const res = await Feed.findById(feed._id)
+              .populate("bannedusers", {
+                id: 1,
+                username: 1,
+              })
+              .populate("moderators", { id: 1, username: 1 })
+              .populate("owner", { id: 1, username: 1 });
+            return res;
+          } catch (e) {
+            throw new GraphQLError(e);
+          }
         }
-      }
-      if (args.action == "lock") {
-        try {
-        } catch (e) {
-          throw new GraphQLError(e);
+        if (
+          (args.action == "unmod") &
+          (feed.owner._id.toString() == user._id.toString())
+        ) {
+          try {
+            const newmod = await User.findById(args.content);
+            const newfeed = await Feed.findOneAndUpdate(
+              { _id: feed._id },
+              { $pull: { moderators: newmod._id } }
+            );
+           
+            const res = await Feed.findById(feed._id)
+              .populate("bannedusers", {
+                id: 1,
+                username: 1,
+              })
+              .populate("moderators", { id: 1, username: 1 })
+              .populate("owner", { id: 1, username: 1 });
+            return res;
+          } catch (e) {
+            throw new GraphQLError(e);
+          }
         }
-      }
-      if (args.action == "delete") {
-        try {
-        } catch (e) {
-          throw new GraphQLError(e);
+        if (args.action === "ban") {
+          try {
+            const banneduser = await User.findById(args.content);
+            console.log(banneduser);
+            if (bannedusers.includes(banneduser._id.toString())) {
+              throw new GraphQLError("User already banned");
+            }
+            const newfeed = await Feed.findOneAndUpdate(
+              { _id: feed._id },
+              { $push: { bannedusers: banneduser._id } }
+            );
+
+            
+            const res = await Feed.findById(feed._id)
+              .populate("bannedusers", {
+                id: 1,
+                username: 1,
+              })
+              .populate("moderators", { id: 1, username: 1 })
+              .populate("owner", { id: 1, username: 1 });
+            return res;
+          } catch (e) {
+            throw new GraphQLError(e);
+          }
         }
+        if (args.action == "unban") {
+          try {
+            const unbanneduser = await User.findById(args.content);
+            console.log(unbanneduser);
+            const newfeed = await Feed.findOneAndUpdate(
+              { _id: feed._id },
+              { $pull: { bannedusers: unbanneduser._id } }
+            );
+            
+            const res = await Feed.findById(feed._id)
+              .populate("bannedusers", {
+                id: 1,
+                username: 1,
+              })
+              .populate("moderators", { id: 1, username: 1 })
+              .populate("owner", { id: 1, username: 1 });
+            return res;
+          } catch (e) {
+            throw new GraphQLError(e);
+          }
+        }
+        if (args.action == "editdesc") {
+          try {
+            const newfeed = await Feed.findOneAndUpdate(
+              { _id: feed._id },
+              { $set: { description: args.content } }
+            );
+            
+            const res = await Feed.findById(feed._id)
+              .populate("bannedusers", {
+                id: 1,
+                username: 1,
+              })
+              .populate("moderators", { id: 1, username: 1 })
+              .populate("owner", { id: 1, username: 1 });
+            return res;
+          } catch (e) {
+            throw new GraphQLError(e);
+          }
+        }
+        if (args.action == "lockpost") {
+          try {
+            const post = await Post.findById(args.content).populate("feed",{id:1,owner:1,mods:1})
+            if(post.feed._id.toString() == feed._id){
+              const newpost = await Post.findByIdAndUpdate({_id:post._id},{$set:{active:false}})
+              const res = await Post.findById(post._id)
+              return res
+            }
+          } catch (e) {
+            throw new GraphQLError(e);
+          }
+        }
+        if (args.action == "deletepost") {
+          try {
+            const post = await Post.findById(args.content).populate("feed",{id:1,owner:1,mods:1})
+            if(post.feed._id.toString() == feed._id){
+              const newpost = await Post.findByIdAndUpdate({_id:post._id},{$set:{headline:"Post has been deleted by moderation!",description:"<u>This post has been deleted by <b>Mods</b></u>",img:null}})
+              const res = await Post.findById(post._id)
+              return res
+            }
+          } catch (e) {
+            throw new GraphQLError(e);
+          }
+        }
+      } else {
+        console.log("notmod");
       }
     },
     makeComment: async (root, args, context) => {
+      const post = await Post.findById(args.postid);
+      if(post.active == false){
+        throw new GraphQLError("Post is locked cant create comment")
+      }
       if (args.replyto) {
         const user = context.currentUser;
-        const post = await Post.findById(args.postid);
+        
         console.log(post);
         const replyto = await Comment.findById(args.replyto);
         console.log(replyto);
@@ -1015,7 +1143,6 @@ const resolvers = {
       } else {
         console.log("newcomment");
         const user = context.currentUser;
-        const post = await Post.findOne({ _id: args.postid });
         const newComment = new Comment({
           content: args.content,
           post: post,
