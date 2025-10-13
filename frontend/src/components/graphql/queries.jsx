@@ -131,6 +131,7 @@ export const GET_POST = gql`
       karma
       img
       active
+      locked
       createdAt
       updatedAt
       id
@@ -366,6 +367,14 @@ export const GET_SEARCH_BAR = gql`
     }
   }
 `;
+export const GET_SEARCH_USERS = gql`
+query Getsearchusers($searchby: String) {
+  getsearchusers(searchby: $searchby) {
+    username
+    id
+  }
+}
+`
 export const GET_IMAGE_URLS = gql`
   query Query($userId: String!) {
     getFiles(userId: $userId)

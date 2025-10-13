@@ -58,9 +58,7 @@ const MyAccountpage = ({ User }) => {
     const data = await edit({ content: content, type: type });
     console.log(data);
   };
-  const handleFormSubmit = async ({values}) => {
 
-  }
   const EditAvatar = () => {
     if (avataredit) {
       return (
@@ -216,10 +214,7 @@ const MyAccountpage = ({ User }) => {
                 ></img>
               </Typography>
             )}
-            sx={{
-              width: 300,
-              maxWidth: 300,
-            }}
+
             renderInput={(params) => (
               <TextField
                 sx={{

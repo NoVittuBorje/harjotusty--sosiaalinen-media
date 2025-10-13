@@ -26,7 +26,7 @@ const Comment = ({
   handleDelete,
   User,
   handleModify,
-
+  type,
   handleNewComment,
   postid,
 

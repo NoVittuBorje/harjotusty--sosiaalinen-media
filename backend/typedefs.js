@@ -34,6 +34,7 @@ const typeDefs = `#graphql
     feed:Feed!
     comments:[Comment]
     active:Boolean
+    locked:Boolean
     createdAt:String
     updatedAt:String
     id:ID!
@@ -136,6 +137,10 @@ const typeDefs = `#graphql
     searchby:String!
     ):[Search]
 
+    getsearchusers(
+    searchby:String
+    ):[User]
+    
     getSubsCount(
     feedname:String!):Int!
 

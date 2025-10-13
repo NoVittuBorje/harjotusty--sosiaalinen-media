@@ -12,6 +12,7 @@ const CommentSection = ({
   loading,
   refetchComment,
   refetchUser,
+  type,
 }) => {
   const [newcomment, result] = useMakeComment();
   const [edit, editresult] = useEditComment();
@@ -73,6 +74,7 @@ const CommentSection = ({
             refetchUser={refetchUser}
             handleReply={handleReply}
             postid={postid}
+            type={type}
           />
       </Collapse>
     );

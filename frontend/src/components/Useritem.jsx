@@ -14,7 +14,9 @@ const Useritem = ({ user, time, edittime }) => {
         marginBottom: 1,
       }}
     >
+      
       <UserAvatar width={40} height={40} user={user}></UserAvatar>
+      
       <Button size="small" color="inherit" className="button" sx={{ borderRadius: 50 }}>
         <Typography
           onClick={(event) => {

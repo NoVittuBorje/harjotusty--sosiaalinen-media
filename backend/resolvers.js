@@ -460,6 +460,22 @@ const resolvers = {
         throw new GraphQLError(e);
       }
     },
+    getsearchusers: async (root,args) => {
+      if (args.searchby == "") {
+        const users = await User.find({
+          username: { $regex: "//", $options: "i" },
+        }).limit(10);
+        return users;
+      }
+      try {
+        const users = await User.find({
+          username: { $regex: args.searchby, $options: "i" },
+        }).limit(10);
+        return users;
+      } catch (e) {
+        throw new GraphQLError(e);
+      }
+    },
     getSubsCount: async (root, args) => {
       try {
         const feed = await Feed.findOne({ feedname: args.feedname });
@@ -553,6 +569,11 @@ const resolvers = {
       }
       const feed = await Feed.findOne({ feedname: args.feedname });
       const user = context.currentUser;
+      const bannedusers = feed.bannedusers.map((i) => i._id.toString());
+      console.log(bannedusers,bannedusers.includes(user._id.toString()))
+      if(bannedusers.includes(user._id.toString())){
+        return new GraphQLError("User is banned")
+      }else{
       const post = new Post({
         headline: args.headline,
         description: args.description,
@@ -585,6 +606,7 @@ const resolvers = {
         { $push: { posts: newpost._id } }
       );
       return newpost;
+    }
     },
     createUser: async (root, args) => {
       const salt_rounds = 10;
@@ -852,7 +874,7 @@ const resolvers = {
         return post;
       }
       if (args.action === "edit" && post.owner.id == user.id) {
-      if(post.active == false){
+      if(post.locked == true){
         throw new GraphQLError("Post is locked cant modify post")
       }
         post.content = args.content;
@@ -1081,7 +1103,19 @@ const resolvers = {
           try {
             const post = await Post.findById(args.content).populate("feed",{id:1,owner:1,mods:1})
             if(post.feed._id.toString() == feed._id){
-              const newpost = await Post.findByIdAndUpdate({_id:post._id},{$set:{active:false}})
+              const newpost = await Post.findByIdAndUpdate({_id:post._id},{$set:{locked:true}})
+              const res = await Post.findById(post._id)
+              return res
+            }
+          } catch (e) {
+            throw new GraphQLError(e);
+          }
+        }
+        if (args.action == "unlockpost") {
+          try {
+            const post = await Post.findById(args.content).populate("feed",{id:1,owner:1,mods:1})
+            if(post.feed._id.toString() == feed._id){
+              const newpost = await Post.findByIdAndUpdate({_id:post._id},{$set:{locked:false}})
               const res = await Post.findById(post._id)
               return res
             }
@@ -1093,7 +1127,7 @@ const resolvers = {
           try {
             const post = await Post.findById(args.content).populate("feed",{id:1,owner:1,mods:1})
             if(post.feed._id.toString() == feed._id){
-              const newpost = await Post.findByIdAndUpdate({_id:post._id},{$set:{headline:"Post has been deleted by moderation!",description:"<u>This post has been deleted by <b>Mods</b></u>",img:null}})
+              const newpost = await Post.findByIdAndUpdate({_id:post._id},{$set:{headline:"Post has been deleted by moderation!",description:"<u>This post has been deleted by <b>Mods</b></u>",img:null,active:false}})
               const res = await Post.findById(post._id)
               return res
             }

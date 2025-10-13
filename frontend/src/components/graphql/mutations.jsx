@@ -151,6 +151,7 @@ export const EDITFEED = gql`mutation ModifyFeed($feedid: String!, $action: Strin
       karma
       img
       active
+      locked
       createdAt
       updatedAt
       id

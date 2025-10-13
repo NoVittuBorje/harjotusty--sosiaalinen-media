@@ -32,14 +32,13 @@ const ProfileFeedSubs = (variables) => {
                 }}
               >
                 <Box
-                  className={"feed"}
-                  sx={{
-                    padding:1,
-                    boxShadow: 1,
-                    "&:hover": {
-                      backgroundColor: "background.dark",
-                    },
-                  }}
+        className={"feed"}
+        sx={{
+          padding:1,
+          "&:hover": {
+            backgroundColor: "background.hover",
+          },
+        }}
                   key={item.id}
                 >
                   <Typography variant="h5">{item.feedname}</Typography>

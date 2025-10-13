@@ -4,6 +4,7 @@ import {
   Collapse,
   Divider,
   Grid,
+  Icon,
   IconButton,
   Stack,
   Tooltip,
@@ -30,7 +31,7 @@ import DialogTitle from "@mui/material/DialogTitle";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import parse from "html-react-parser";
 import PostModSettings from "./PostModSettings";
-
+import LockIcon from '@mui/icons-material/Lock';
 
 const SinglePost = ({ match, User, refetchUser }) => {
   const id = match.params.id;
@@ -192,6 +193,14 @@ const SinglePost = ({ match, User, refetchUser }) => {
   if (postdata.feed) {
   const mods = [postdata.feed.owner.id,...postdata.feed.moderators]
   console.log(mods)
+  const Locked = ({locked}) => {
+    if(locked){
+    return(
+      <Tooltip title="This post is locked!"><LockIcon></LockIcon></Tooltip>
+    )}else{
+      return
+    }
+  }
     const Postimage = () => {
       if (postdata.img) {
         console.log(postdata.img);
@@ -216,8 +225,8 @@ const SinglePost = ({ match, User, refetchUser }) => {
     return (
       <Box sx={{ flexGrow: 1 }}>
         <Grid container rowSpacing={1} sx={{ flexDirection: "row" }}>
-          <Grid size={{ xs: 12, md: 2 }}></Grid>
-          <Grid size={{ xs: 12, md: 8 }} sx={{}}>
+          <Grid size={{ xs: 12, md: 2 ,sm:0}}></Grid>
+          <Grid size={{ xs: 12, md: 8, sm:10}} sx={{}}>
             <Box className={"postDesc"}>
               <Box sx={{ display: "flex", flexDirection: "row" }}>
                 <IconButton
@@ -236,6 +245,7 @@ const SinglePost = ({ match, User, refetchUser }) => {
                 user={postdata.owner}
               ></Useritem>
               <Stack spacing={1}>
+                
                 <Box
                   sx={{
                     display: "flex",
@@ -245,6 +255,7 @@ const SinglePost = ({ match, User, refetchUser }) => {
                     marginBottom: 1,
                   }}
                 >
+                  
                   <Typography
                     variant="h5"
                     sx={{
@@ -270,6 +281,7 @@ const SinglePost = ({ match, User, refetchUser }) => {
                       }}
                     >{`in f/${postdata.feed.feedname}`}</Typography>
                   </Button>
+                  <Locked locked={postdata.locked}></Locked>
                 </Box>
                 
                 
@@ -308,8 +320,8 @@ const SinglePost = ({ match, User, refetchUser }) => {
             </Box>
           </Grid>
           <Grid
-            sx={{ minWidth: "fit-content" }}
-            size={{ xs: 12, md: 2 }}
+            
+            size={{ xs: 12, md: 2 ,sm:2}}
           >
             <ModSettings></ModSettings>
                                   <Collapse in={openModSettings} >

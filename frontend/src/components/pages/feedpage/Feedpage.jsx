@@ -1,4 +1,5 @@
 import {
+  Autocomplete,
   Box,
   Button,
   CircularProgress,
@@ -13,6 +14,7 @@ import {
   MenuItem,
   Select,
   Stack,
+  TextField,
   Typography,
 } from "@mui/material";
 import useGetFeed from "../../hooks/useGetFeed";
@@ -31,6 +33,7 @@ import parse from "html-react-parser";
 
 import useEditFeed from "../../hooks/useEditFeed";
 import EditFeedDesc from "./EditFeedDesc";
+import FeedModSettings from "./FeedModSettings";
 
 const FeedPage = ({ match, User, refetchUser }) => {
   console.log(localStorage.getItem("Feedorderby"));
@@ -92,7 +95,7 @@ const FeedPage = ({ match, User, refetchUser }) => {
     }
     return (
       <Box sx={{ display: "flex", flexDirection: "column" }}>
-        <Stack rowGap={2}>
+        <Stack spacing={1}>
           <Typography>Feed info: </Typography>
           <Typography>
             Owner:
@@ -158,51 +161,18 @@ const FeedPage = ({ match, User, refetchUser }) => {
       return;
     }
     const mods = [...info.moderators, info.owner.id];
-    const ModSettings = ({ mods }) => {
-      console.log(mods);
-      if (!mods || !User) {
-        return;
-      }
-      if (mods.includes(User.id)) {
-        return (
-          <Box
-            sx={{
-              display: "flex",
-              justifyContent: "center",
-              justifyItems: "center",
-            }}
-          >
-            <Stack
-              direction={"column"}
-              sx={{ justifyContent: "center", justifyItems: "center" }}
-            >
-              <Typography>Mod settings:</Typography>
-              <Button
-                className="button"
-                sx={{ borderRadius: 50 }}
-                size="small"
-                variant="outlined"
-                color="inherit"
-                onClick={() => setFeedEditOpen(true)}
-              >
-                Edit feed description
-              </Button>
-            </Stack>
-          </Box>
-        );
-      }
-    };
+    
     return (
       <Box>
         <IconButton onClick={() => setOpenSettings(!OpenSettings)}>
           <SettingsIcon></SettingsIcon>
         </IconButton>
         <Collapse in={OpenSettings}>
-            <Stack padding={1} gap={1}>
+            <Stack >
               <Divider></Divider>
               <FeedInfo info={info} infoloading={infoloading}></FeedInfo>
               <Divider></Divider>
-              <ModSettings mods={mods}></ModSettings>
+              <FeedModSettings mods={mods} User={User} setFeedEditOpen={setFeedEditOpen} item={info}></FeedModSettings>
             </Stack>
         </Collapse>
       </Box>
@@ -292,8 +262,8 @@ const FeedPage = ({ match, User, refetchUser }) => {
   return (
     <Box sx={{ flexGrow: 1 }}>
       <Grid container rowSpacing={1} sx={{ flexDirection: "row" }}>
-        <Grid size={{ xs: 6, md: 2 }}></Grid>
-        <Grid size={{ xs: 10, md: 8 }} container>
+        <Grid size={{ xs: 12, md: 2, sm:0 }}></Grid>
+        <Grid size={{ xs: 12, md: 8 ,sm:9}}>
           <Box>
             <FeedDescription
               infoloading={infoloading}
@@ -311,9 +281,10 @@ const FeedPage = ({ match, User, refetchUser }) => {
                     sx={{ color: "inherit" }}
                     onChange={handleorderByChange}
                   >
-                    <MenuItem value={"POPULAR"}>Popular Posts</MenuItem>
-                    <MenuItem value={"NEWEST"}>Newest Posts</MenuItem>
-                    <MenuItem value={"HOTTEST"}>Hottest Posts</MenuItem>
+                    <Typography sx={{paddingLeft:2}}>Sort by</Typography>
+                    <MenuItem value={"POPULAR"}>Popular</MenuItem>
+                    <MenuItem value={"NEWEST"}>Newest</MenuItem>
+                    <MenuItem value={"HOTTEST"}>Hottest</MenuItem>
                   </Select>
                 </FormControl>
               </Box>
@@ -343,8 +314,8 @@ const FeedPage = ({ match, User, refetchUser }) => {
             </InfiniteScroll>
           </Box>
         </Grid>
-        <Grid             sx={{ minWidth: "fit-content" }}
-            size={{ xs: 12, md: 2 }}>
+        <Grid
+            size={{ xs: 12, md: 2, sm:3 }}>
           <FeedSettings info={info} infoloading={infoloading}></FeedSettings>
         </Grid>
       </Grid>

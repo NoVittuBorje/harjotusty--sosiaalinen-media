@@ -8,6 +8,7 @@ import {
   FormControl,
   Button,
   CircularProgress,
+  Typography,
 } from "@mui/material";
 
 import FeedItem from "../../FeedItem";
@@ -86,6 +87,7 @@ const Homescreen = ({ User }) => {
               onOpen={() => setOpen(true)}
               value={orderBy}
             >
+              <Typography sx={{paddingLeft:2}}>Sort by</Typography>
               <MenuItem value={"POPULAR"}>Popular</MenuItem>
               <MenuItem value={"NEWEST"}>Newest</MenuItem>
               <MenuItem value={"HOTTEST"}>Hottest</MenuItem>
