@@ -118,7 +118,7 @@ const FeedPage = ({ match, User, refetchUser }) => {
               return (
                 <Button
                   onClick={() => {
-                    navigate(`/profile/${info.owner.id}`);
+                    navigate(`/profile/${mod.id}`);
                   }}
                   className="button"
                   color="inherit"
@@ -157,21 +157,30 @@ const FeedPage = ({ match, User, refetchUser }) => {
   };
 
   const FeedSettings = ({ info, infoloading }) => {
-    if (infoloading) {
-      return;
-    }
-    const mods = [...info.moderators, info.owner.id];
-    
-    return (
-      <Box>
+    const ModSettingIcon = ({mods,User}) => {
+    if (!mods || !User) {
+        return;
+      }
+      if (mods.includes(User.id))
+      return(
         <IconButton onClick={() => setOpenSettings(!OpenSettings)}>
           <SettingsIcon></SettingsIcon>
         </IconButton>
+      )
+    }
+    if (infoloading) {
+      return;
+    }
+    const mods = [...info.moderators.map(mod => mod.id), info.owner.id];
+    console.log(mods)
+    return (
+      <Box>
+        <ModSettingIcon mods={mods} User={User}></ModSettingIcon>
         <Collapse in={OpenSettings}>
-            <Stack >
-              <Divider></Divider>
+            <Stack sx={{backgroundColor:"background.dark",borderRadius:5, padding:1,border:"1px solid"}}>
+              
               <FeedInfo info={info} infoloading={infoloading}></FeedInfo>
-              <Divider></Divider>
+              
               <FeedModSettings mods={mods} User={User} setFeedEditOpen={setFeedEditOpen} item={info}></FeedModSettings>
             </Stack>
         </Collapse>
@@ -279,6 +288,7 @@ const FeedPage = ({ match, User, refetchUser }) => {
                     name="orderBy"
                     id="orderBy-select"
                     sx={{ color: "inherit" }}
+                    size="small"
                     onChange={handleorderByChange}
                   >
                     <Typography sx={{paddingLeft:2}}>Sort by</Typography>
@@ -301,7 +311,7 @@ const FeedPage = ({ match, User, refetchUser }) => {
               hasMore={hasmore}
               loader={<CircularProgress color="inherit"></CircularProgress>}
             >
-              <List>
+              
                 {feed.map((item) => (
                   <FeedItem
                     item={item}
@@ -310,7 +320,7 @@ const FeedPage = ({ match, User, refetchUser }) => {
                     User={User}
                   ></FeedItem>
                 ))}
-              </List>
+              
             </InfiniteScroll>
           </Box>
         </Grid>

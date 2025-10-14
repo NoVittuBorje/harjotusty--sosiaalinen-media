@@ -20,7 +20,7 @@ const validationSchema = yup.object().shape({
     Password: yup.string().required().min(6),
     confirmPassword: yup.string().oneOf([yup.ref('Password'), null], 'Passwords must match'),
   });
-const RegisterPage = () => {
+const RegisterPage = ({refetch}) => {
     const [register,regresult] = useRegister()
     const [login,loginresult] = useLogin()
     const navigate = useNavigate()
@@ -36,6 +36,8 @@ const RegisterPage = () => {
         if(data.createUser){
             const logindata = await login({Username:formik.values.Username,Password:formik.values.Password})
             if (logindata.data.login.value){
+              sessionStorage.setItem("token",logindata.data.login.value)
+              refetch()
             navigate("/")
             }
         }

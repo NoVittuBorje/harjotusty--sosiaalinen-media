@@ -31,20 +31,20 @@ import DialogTitle from "@mui/material/DialogTitle";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import parse from "html-react-parser";
 import PostModSettings from "./PostModSettings";
-import LockIcon from '@mui/icons-material/Lock';
+import Locked from "../../utils/Locked";
 
 const SinglePost = ({ match, User, refetchUser }) => {
   const id = match.params.id;
   console.log(match.params.id);
   const navigate = useNavigate();
-  const [edit, editresult] = useEditPost();
+  const [edit] = useEditPost();
   const { data, loading, error, refetchPost } = useGetPost({ id });
-  
+
   const postcomments = useGetPostComments({ postid: id });
   const [newcomment, result] = useMakeComment();
   const [openNewComment, setopenNewComment] = useState(false);
   const [OpenSettings, setOpenSettings] = useState(false);
-  const [openModSettings,setOpenModSettings] = useState(false)
+  const [openModSettings, setOpenModSettings] = useState(false);
   const [open, setOpen] = useState(false);
   const handleClickOpen = () => {
     setOpen(true);
@@ -78,8 +78,7 @@ const SinglePost = ({ match, User, refetchUser }) => {
     }
   };
 
-
-  const PostSettings = ({ info,mods }) => {
+  const PostSettings = ({ info, mods }) => {
     console.log(info);
     if (!User) {
       return;
@@ -126,7 +125,10 @@ const SinglePost = ({ match, User, refetchUser }) => {
         </Stack>
       );
     };
-    if (!OpenSettings & (info.owner.username == User.username || mods.includes(User.id))) {
+    if (
+      !OpenSettings &
+      (info.owner.username == User.username || mods.includes(User.id))
+    ) {
       return (
         <IconButton
           className={"button"}
@@ -188,45 +190,43 @@ const SinglePost = ({ match, User, refetchUser }) => {
   };
   const postdata = data ? data.getpost : [];
   const comments = postcomments.data ? postcomments.data.getpostcomments : [];
-  console.log(postdata)
-
+  console.log(postdata);
   if (postdata.feed) {
-  const mods = [postdata.feed.owner.id,...postdata.feed.moderators]
-  console.log(mods)
-  const Locked = ({locked}) => {
-    if(locked){
-    return(
-      <Tooltip title="This post is locked!"><LockIcon></LockIcon></Tooltip>
-    )}else{
-      return
-    }
-  }
+    const mods = [postdata.feed.owner.id, ...postdata.feed.moderators];
+    console.log(mods);
+
     const Postimage = () => {
       if (postdata.img) {
         console.log(postdata.img);
         return (
-                <Box className="imagecontainer">
-                  <SinglePostImage img={postdata.img}></SinglePostImage>
-                </Box>
-      )
+          <Box className="imagecontainer">
+            <SinglePostImage img={postdata.img}></SinglePostImage>
+          </Box>
+        );
       } else {
         return;
       }
     };
     const ModSettings = () => {
-    if(!mods || !User){
-      return
-    }
-    if(mods.includes(User.id))
-    return(
-      <IconButton onClick={() => {setOpenModSettings(!openModSettings)}}><SettingsIcon></SettingsIcon></IconButton>
-    )
-  }
+      if (!mods || !User) {
+        return;
+      }
+      if (mods.includes(User.id))
+        return (
+          <IconButton
+            onClick={() => {
+              setOpenModSettings(!openModSettings);
+            }}
+          >
+            <SettingsIcon></SettingsIcon>
+          </IconButton>
+        );
+    };
     return (
       <Box sx={{ flexGrow: 1 }}>
         <Grid container rowSpacing={1} sx={{ flexDirection: "row" }}>
-          <Grid size={{ xs: 12, md: 2 ,sm:0}}></Grid>
-          <Grid size={{ xs: 12, md: 8, sm:10}} sx={{}}>
+          <Grid size={{ xs: 12, md: 2, sm: 0 }}></Grid>
+          <Grid size={{ xs: 12, md: 8, sm: 10 }} sx={{}}>
             <Box className={"postDesc"}>
               <Box sx={{ display: "flex", flexDirection: "row" }}>
                 <IconButton
@@ -245,7 +245,6 @@ const SinglePost = ({ match, User, refetchUser }) => {
                 user={postdata.owner}
               ></Useritem>
               <Stack spacing={1}>
-                
                 <Box
                   sx={{
                     display: "flex",
@@ -255,7 +254,6 @@ const SinglePost = ({ match, User, refetchUser }) => {
                     marginBottom: 1,
                   }}
                 >
-                  
                   <Typography
                     variant="h5"
                     sx={{
@@ -283,11 +281,9 @@ const SinglePost = ({ match, User, refetchUser }) => {
                   </Button>
                   <Locked locked={postdata.locked}></Locked>
                 </Box>
-                
-                
+
                 <Postimage></Postimage>
-                {parse(postdata.description)}
-                
+                <Box sx={{padding:1}}>{parse(postdata.description)}</Box>
                 <Box className={"footer"}>
                   <KarmaItem
                     id={postdata.id}
@@ -296,7 +292,6 @@ const SinglePost = ({ match, User, refetchUser }) => {
                     karma={postdata.karma}
                   ></KarmaItem>
                   <NewCommentform></NewCommentform>
-                  
                 </Box>
                 <Collapse in={openNewComment} timeout={"auto"} unmountOnExit>
                   <CommentForm
@@ -304,7 +299,6 @@ const SinglePost = ({ match, User, refetchUser }) => {
                     onSubmit={(comment) => handleNewComment(comment)}
                   />
                 </Collapse>
-
               </Stack>
               <Divider></Divider>
               <CommentSection
@@ -319,15 +313,19 @@ const SinglePost = ({ match, User, refetchUser }) => {
               ></CommentSection>
             </Box>
           </Grid>
-          <Grid
-            
-            size={{ xs: 12, md: 2 ,sm:2}}
-          >
+          <Grid size={{ xs: 12, md: 2, sm: 2 }}>
             <ModSettings></ModSettings>
-                                  <Collapse in={openModSettings} >
-                      <Divider></Divider>
-                      <PostModSettings item={postdata}></PostModSettings> 
-                    </Collapse>
+            <Collapse
+              in={openModSettings}
+              sx={{
+                backgroundColor: "background.dark",
+                borderRadius: 5,
+                padding: 1,
+                border: "1px solid",
+              }}
+            >
+              <PostModSettings item={postdata}></PostModSettings>
+            </Collapse>
           </Grid>
         </Grid>
       </Box>

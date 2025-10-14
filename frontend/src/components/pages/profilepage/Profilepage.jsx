@@ -16,7 +16,6 @@ import parse from "html-react-parser";
 const Profilepage = ({ User, match }) => {
   console.log(User);
   console.log(match);
-
   const [type, setType] = useState("posts");
   const id = match.params.userid;
   const userdata = useGetUser({ id: id });
@@ -104,9 +103,11 @@ const Profilepage = ({ User, match }) => {
                   defaultValue={"posts"}
                   name="select-info"
                   id="select-info"
+                  size="small"
                   sx={{ color: "inherit" }}
                   onChange={handleChange}
                 >
+                  <Typography sx={{paddingLeft:2}}>Sort by</Typography>
                   <MenuItem value={"posts"}>Posts</MenuItem>
                   <MenuItem value={"subs"}>Subs</MenuItem>
                   <MenuItem value={"comments"}>Comments</MenuItem>

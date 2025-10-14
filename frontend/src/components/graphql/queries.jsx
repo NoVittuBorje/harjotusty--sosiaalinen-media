@@ -65,6 +65,7 @@ export const GET_FEED = gql`
         karma
         img
         active
+        locked
         createdAt
         updatedAt
         id
@@ -86,6 +87,7 @@ export const GET_FEED_POSTS = gql`
       karma
       img
       active
+      locked
       createdAt
       updatedAt
       id
@@ -249,6 +251,7 @@ export const GET_POPULAR_POSTS = gql`
       karma
       img
       active
+      locked
       createdAt
       updatedAt
       id
@@ -306,6 +309,7 @@ export const GET_USER_POSTS = gql`
       description
       karma
       img
+      locked
       active
       createdAt
       updatedAt

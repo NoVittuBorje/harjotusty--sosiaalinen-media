@@ -1,6 +1,6 @@
 # harjotusty--sosiaalinen-media
 
-<h5>Harjotustyö työtunnit</h5>
+<h5>Record of working hours</h5>
 <table>
   
   <tr>
@@ -140,10 +140,12 @@
   </tr>
     <tr>
   <td>26</td>
-  <td>4</td>
-  <td>180</td>
+  <td>8</td>
+  <td>184</td>
   </tr>
 </table>
+
+
 
 https://aws.plainenglish.io/building-graphql-api-for-effortless-file-uploads-to-aws-s3-cf9ba8b5bd12
 https://restcountries.com/#endpoints-name

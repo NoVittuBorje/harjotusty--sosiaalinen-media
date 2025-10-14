@@ -13,6 +13,8 @@ import { useState } from "react";
 import { useDebouncedCallback } from "use-debounce";
 import useGetSearchUsers from "../../hooks/useGetSearchUsers";
 import useEditFeed from "../../hooks/useEditFeed";
+import ExpandIcon from "../../utils/ExpandIcon";
+
 
 const FeedModSettings = ({ mods, item, setFeedEditOpen, User }) => {
   console.log(mods);
@@ -21,27 +23,83 @@ const FeedModSettings = ({ mods, item, setFeedEditOpen, User }) => {
 
   const [OpenUnban, setOpenUnban] = useState(false);
   const [OpenBan, setOpenBan] = useState(false);
-   const [OpenUnMod, setOpenUnMod] = useState(false);
+  const [OpenUnMod, setOpenUnMod] = useState(false);
   const [OpenMod, setOpenMod] = useState(false);
+  const [OpenOwnership, setOpenOwnership] = useState(false)
 
-  const UserSearchItem = ({action,}) => {
-  const [SearchUsers, setSearchUsers] = useState("");
-  const [SearchValue, setSearchValue] = useState("");
-  const [SelectedUser, setSelectedUser] = useState(null);
-  const {data,error,loading} = useGetSearchUsers({
-    search: SearchUsers,
-  });
+  const OwnerSettings = () => {
+    if(item.owner.id == User.id){
+    return(
+      <>
+            <Button
+              className="button"
+              sx={{ borderRadius: 50 }}
+              onClick={() => setOpenMod(!OpenMod)}
+              size="small"
+              variant="outlined"
+              color="inherit"
+            >
+              Mod User
+              <ExpandIcon Open={OpenMod}></ExpandIcon>
+            </Button>
+            
+
+            <Collapse in={OpenMod}>
+              <UserSearchItem buttontext={"Mod selected"} action={"mod"}></UserSearchItem>
+            </Collapse>
+
+            <Button
+              className="button"
+              sx={{ borderRadius: 50 }}
+              onClick={() => setOpenUnMod(!OpenUnMod)}
+              size="small"
+              variant="outlined"
+              color="inherit"
+            >
+              
+              UnMod User
+              <ExpandIcon Open={OpenUnMod}></ExpandIcon>
+            </Button>
+            <Collapse in={OpenUnMod}>
+              <UserSearchItem buttontext={"UnMod selected"} action={"unmod"}></UserSearchItem>
+            </Collapse>
+
+                        <Button
+              className="button"
+              sx={{ borderRadius: 50 }}
+              onClick={() => setOpenOwnership(!OpenOwnership)}
+              size="small"
+              variant="outlined"
+              color="inherit"
+            >
+              
+              Give ownership to User
+              <ExpandIcon Open={OpenOwnership}></ExpandIcon>
+            </Button>
+            <Collapse in={OpenOwnership}>
+              <UserSearchItem buttontext={"Give Ownership to selected"} action={"makeowner"}></UserSearchItem>
+            </Collapse>
+        </>
+    )
+  }else{return}
+  }
+  const UserSearchItem = ({ action,buttontext }) => {
+    const [SearchUsers, setSearchUsers] = useState("");
+    
+    const [SelectedUser, setSelectedUser] = useState(null);
+    const { data, error, loading } = useGetSearchUsers({
+      search: SearchUsers,
+    });
     const filterOptions = createFilterOptions({
-    limit: 10,
-  });
+      limit: 10,
+    });
     const debounced = useDebouncedCallback((value) => {
-    setSearchUsers(value);
-  }, 1000);
-  const searchoptions = data
-    ? data.getsearchusers
-    : [];
+      setSearchUsers(value);
+    }, 1000);
+
+    const searchoptions = data ? data.getsearchusers : [];
     return (
-      <Box>
+      <Box sx={{display:"flex",flexDirection:"column",alignItems:"center"}}>
         <Autocomplete
           disablePortal
           filterOptions={filterOptions}
@@ -55,6 +113,7 @@ const FeedModSettings = ({ mods, item, setFeedEditOpen, User }) => {
           renderInput={(params) => (
             <TextField
               sx={{
+                minWidth:200,
                 input: { color: "inherit" },
                 label: { color: "inherit" },
               }}
@@ -82,7 +141,7 @@ const FeedModSettings = ({ mods, item, setFeedEditOpen, User }) => {
           variant="outlined"
           color="inherit"
         >
-          {action} selected
+          {buttontext}
         </Button>
       </Box>
     );
@@ -96,14 +155,14 @@ const FeedModSettings = ({ mods, item, setFeedEditOpen, User }) => {
       <Box
         width={200}
         minWidth={200}
-        sx={{ justifyContent: "center", justifyItems: "center" }}
+        sx={{ display:"flex",justifyContent: "center", justifyItems: "center" }}
       >
         <Stack
           spacing={1}
           direction={"column"}
-          sx={{ justifyContent: "center", justifyItems: "center" }}
         >
           <Typography>Mod settings:</Typography>
+
           <Button
             className="button"
             sx={{ borderRadius: 50 }}
@@ -114,7 +173,6 @@ const FeedModSettings = ({ mods, item, setFeedEditOpen, User }) => {
           >
             Edit feed description
           </Button>
-          <Box>
             <Button
               className="button"
               sx={{ borderRadius: 50 }}
@@ -123,21 +181,32 @@ const FeedModSettings = ({ mods, item, setFeedEditOpen, User }) => {
               variant="outlined"
               color="inherit"
             >
-              Unban User
+              UnBan User
+              <ExpandIcon Open={OpenUnban}></ExpandIcon>
+            </Button>
+            <Collapse in={OpenUnban}>
+              <UserSearchItem buttontext={"UnBan selected"} action={"unban"}></UserSearchItem>
+            </Collapse>
+
+            <Button
+              className="button"
+              sx={{ borderRadius: 50 }}
+              onClick={() => setOpenBan(!OpenBan)}
+              size="small"
+              variant="outlined"
+              color="inherit"
+            >
+              Ban User
+              <ExpandIcon Open={OpenBan}></ExpandIcon>
             </Button>
             <Collapse in={OpenBan}>
-            <UserSearchItem action={"ban"}></UserSearchItem>
+              <UserSearchItem buttontext={"Ban selected"} action={"ban"}></UserSearchItem>
             </Collapse>
-            <Collapse in={OpenUnban}>
-               <UserSearchItem action={"unban"}></UserSearchItem>
-            </Collapse>
-            <Collapse in={OpenMod}>
-                           <UserSearchItem action={"mod"}></UserSearchItem>
-                           </Collapse>
-                           <Collapse in={OpenUnMod}>
-               <UserSearchItem action={"unmod"}></UserSearchItem>
-               </Collapse>
-          </Box>
+
+            <OwnerSettings></OwnerSettings>
+              
+
+
         </Stack>
         <Divider></Divider>
       </Box>

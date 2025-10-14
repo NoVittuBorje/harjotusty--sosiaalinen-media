@@ -45,8 +45,8 @@ import AddCircleOutlineIcon from "@mui/icons-material/AddCircleOutline";
 import { useState } from "react";
 import ArrowDropDownIcon from "@mui/icons-material/ArrowDropDown";
 import ArrowDropUpIcon from "@mui/icons-material/ArrowDropUp";
-import DarkModeIcon from "@mui/icons-material/DarkMode";
-import LightModeIcon from "@mui/icons-material/LightMode";
+import UserAvatar from "./utils/UserAvatar";
+
 
 const Search = styled("div")(({ theme }) => ({
   position: "relative",
@@ -86,7 +86,7 @@ const StyledAutocomplete = styled(Autocomplete)(({ theme }) => ({
 export default function PrimarySearchAppBar({ User, refetch }) {
   console.log(User);
   const navigate = useNavigate();
-  const apolloClient = useApolloClient();
+  
   const token = sessionStorage.getItem("token");
 
   const feeds = useGetManyFeeds();
@@ -149,7 +149,7 @@ export default function PrimarySearchAppBar({ User, refetch }) {
   const handleLogoutClick = () => {
     console.log("logout");
     handleMenuClose();
-    apolloClient.clearStore();
+    
     localStorage.setItem("HomeorderBy", "POPULAR");
     localStorage.setItem("FeedorderBy", "POPULAR");
     sessionStorage.clear()
@@ -475,7 +475,7 @@ export default function PrimarySearchAppBar({ User, refetch }) {
       return (
         <Box sx={{ display: { md: "flex" } }}>
           <IconButton
-            size="large"
+            size="medium"
             edge="end"
             aria-label="login"
             aria-controls={loginMenuId}
@@ -483,7 +483,8 @@ export default function PrimarySearchAppBar({ User, refetch }) {
             onClick={handleLoginMenuOpen}
             color="inherit"
           >
-            <AccountCircle />
+            <AccountCircle/>
+            
           </IconButton>
         </Box>
       );
@@ -491,7 +492,7 @@ export default function PrimarySearchAppBar({ User, refetch }) {
       return (
         <Box sx={{ display: { md: "flex" } }}>
           <IconButton
-            size="large"
+            size="medium"
             edge="end"
             aria-label="account of current user"
             aria-controls={menuId}
@@ -499,7 +500,7 @@ export default function PrimarySearchAppBar({ User, refetch }) {
             onClick={handleProfileMenuOpen}
             color="inherit"
           >
-            <AccountCircle />
+            <UserAvatar user={User} height={24} width={24}></UserAvatar>
           </IconButton>
         </Box>
       );
@@ -514,7 +515,7 @@ export default function PrimarySearchAppBar({ User, refetch }) {
         <Toolbar>
           <IconButton
             onClick={toggleDrawer(true)}
-            size="large"
+            size="medium"
             edge="start"
             color="inherit"
             aria-label="open drawer"
@@ -528,7 +529,7 @@ export default function PrimarySearchAppBar({ User, refetch }) {
           </Drawer>
 
           <IconButton
-            size="large"
+            size="medium"
             edge="start"
             color="inherit"
             aria-label="Home button"

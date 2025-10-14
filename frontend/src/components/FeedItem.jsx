@@ -1,28 +1,14 @@
 import {
   Box,
   Button,
-  Card,
-  CardContent,
-  CardHeader,
-  Chip,
   Collapse,
   Divider,
   IconButton,
   Link,
-  List,
-  ListItem,
-  ListItemButton,
-  Stack,
-  TextareaAutosize,
   Typography,
 } from "@mui/material";
-import ThumbUpIcon from "@mui/icons-material/ThumbUp";
-import ThumbDownIcon from "@mui/icons-material/ThumbDown";
-import ArrowUpwardRoundedIcon from "@mui/icons-material/ArrowUpwardRounded";
-import ArrowDownwardRoundedIcon from "@mui/icons-material/ArrowDownwardRounded";
 import { useNavigate } from "react-router";
 import KarmaItem from "./KarmaItem";
-import Timestamp from "./utils/Timestamp";
 import Useritem from "./Useritem";
 import useEditPost from "./hooks/useEditPost";
 import SettingsIcon from "@mui/icons-material/Settings";
@@ -30,6 +16,7 @@ import parse from "html-react-parser";
 import { useState } from "react";
 import PostModSettings from "./pages/singlepostpage/PostModSettings";
 import useGetImageUrl from "./hooks/useGetImageUrl";
+import Locked from "./utils/Locked";
 const FeedItem = ({ item, owner, User, mods }) => {
   const navigate = useNavigate();
   const [edit, editresult] = useEditPost();
@@ -77,6 +64,7 @@ const FeedItem = ({ item, owner, User, mods }) => {
       <Box
         className={"feed"}
         sx={{
+          backgroundColor:"background.dark",
           "&:hover": {
             backgroundColor: "background.hover",
           },
@@ -123,7 +111,9 @@ const FeedItem = ({ item, owner, User, mods }) => {
                     >
                       {`f/${item.feed.feedname}`}
                     </Typography>
+                    
                   </Button>
+                  <Locked locked={item.locked}></Locked>
                 </Box>
                 <FeedDescription item={item}></FeedDescription>
               </Box>

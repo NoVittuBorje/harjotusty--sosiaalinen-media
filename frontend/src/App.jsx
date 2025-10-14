@@ -56,7 +56,7 @@ function App() {
           element={<SinglePost match={match} User={User} refetchUser={refetch}/>}
         />
         <Route path="/login" element={<LoginPage  User={User} refetch={refetch}/>} />
-        <Route path="/register" element={<RegisterPage />} />
+        <Route path="/register" element={<RegisterPage refetch={refetch}/>} />
         <Route path="/makefeed" element={<MakeFeedPage User={User} />} />
         <Route
           path="/feed/:feedname"

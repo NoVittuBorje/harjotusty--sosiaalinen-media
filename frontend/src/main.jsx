@@ -105,6 +105,7 @@ const theme = createTheme({
         mode: "light",
         background: {
           default: "#ffffffff",
+          dark:"#f0f0f0ff",
           hover:"#f7f7f7ff",
           button:"#e2e2e2ff",
         },
@@ -118,6 +119,7 @@ const theme = createTheme({
         mode: "dark",
         background: {
           default: "#363535ff",
+          dark:"#2c2c2cff",
           hover:"#444343ff",
           button:"#3d3c3cff",
         },

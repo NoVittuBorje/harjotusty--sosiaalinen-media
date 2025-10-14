@@ -17,9 +17,7 @@ const PostModSettings = ({item}) => {
         )
       }
     }
-    const BanState = () => {
-      
-    }
+
     return(
         <Box sx={{display:"flex",justifyContent:"center",justifyItems:"center"}}>
         <Stack direction={"column"} sx={{justifyContent:"center",justifyItems:"center"}}>
