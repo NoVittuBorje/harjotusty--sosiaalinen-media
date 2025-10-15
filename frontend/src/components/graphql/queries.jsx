@@ -44,6 +44,7 @@ export const GET_FEED = gql`
       description
       active
       id
+      feedavatar
       owner {
         username
         avatar
@@ -59,23 +60,7 @@ export const GET_FEED = gql`
       subs {
         id
       }
-      posts {
-        headline
-        description
-        karma
-        img
-        active
-        locked
-        createdAt
-        updatedAt
-        id
-        owner {
-          username
-          avatar
-          id
-          active
-        }
-      }
+      subsCount
     }
   }
 `;
@@ -88,6 +73,7 @@ export const GET_FEED_POSTS = gql`
       img
       active
       locked
+      commentsCount
       createdAt
       updatedAt
       id
@@ -144,6 +130,7 @@ export const GET_POST = gql`
       }
       feed {
         feedname
+        feedavatar
         owner {
           id
         }
@@ -329,6 +316,7 @@ export const GET_USER_SUBS = gql`
     getusersubs(userid: $userid, offset: $offset) {
       feedname
       description
+      feedavatar
       active
       createdAt
       id
@@ -340,6 +328,7 @@ export const GET_USER_OWNEDFEEDS = gql`
     getuserownedfeeds(userid: $userid, offset: $offset) {
       feedname
       description
+      feedavatar
       active
       createdAt
       id

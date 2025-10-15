@@ -17,11 +17,13 @@ import { useState } from "react";
 import PostModSettings from "./pages/singlepostpage/PostModSettings";
 import useGetImageUrl from "./hooks/useGetImageUrl";
 import Locked from "./utils/Locked";
+import PostCommentItem from "./utils/PostCommentItem"
+
 const FeedItem = ({ item, owner, User, mods }) => {
   const navigate = useNavigate();
   const [edit, editresult] = useEditPost();
   const [open, setOpen] = useState(false);
-
+  console.log(item)
   const ModSettings = () => {
     if (!mods | !User) {
       return;
@@ -64,6 +66,7 @@ const FeedItem = ({ item, owner, User, mods }) => {
       <Box
         className={"feed"}
         sx={{
+          boxShadow: 3,
           backgroundColor:"background.dark",
           "&:hover": {
             backgroundColor: "background.hover",
@@ -127,6 +130,9 @@ const FeedItem = ({ item, owner, User, mods }) => {
               id={item.id}
               User={User}
             ></KarmaItem>
+            <PostCommentItem comments={item.commentsCount}></PostCommentItem>
+
+            
             <ModSettings></ModSettings>
           </Box>
 
@@ -136,7 +142,7 @@ const FeedItem = ({ item, owner, User, mods }) => {
           </Collapse>
         </Box>
       </Box>
-      <Divider></Divider>
+      
     </Box>
   );
 };

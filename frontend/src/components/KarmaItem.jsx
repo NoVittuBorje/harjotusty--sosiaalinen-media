@@ -9,6 +9,7 @@ import useLikeComment from "./hooks/useLikeComment";
 import useDislikeComment from "./hooks/useDislikeComment";
 import useLikePost from "./hooks/useLikePost";
 import useDislikePost from "./hooks/useDislikePost";
+import formatNumber from "./utils/FormatNumber";
 
 const KarmaItem = ({ type, id, karma, User }) => {
   const navigate = useNavigate();
@@ -224,7 +225,7 @@ const KarmaItem = ({ type, id, karma, User }) => {
         ></LikeButton>
       </Tooltip>
       <Tooltip title="karma">
-        <a style={{ paddingTop: 0, textAlignVertical: "top" }}>{karma}</a>
+        <a style={{ paddingTop: 0, textAlignVertical: "top" }}>{formatNumber(karma)}</a>
       </Tooltip>
       <Tooltip title="Dislike">
         <DislikeButton

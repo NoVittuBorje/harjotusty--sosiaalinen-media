@@ -34,6 +34,8 @@ import parse from "html-react-parser";
 import useEditFeed from "../../hooks/useEditFeed";
 import EditFeedDesc from "./EditFeedDesc";
 import FeedModSettings from "./FeedModSettings";
+import FeedAvatar from "../../utils/FeedAvatar";
+import ExpandIcon from "../../utils/ExpandIcon";
 
 const FeedPage = ({ match, User, refetchUser }) => {
   console.log(localStorage.getItem("Feedorderby"));
@@ -87,14 +89,26 @@ const FeedPage = ({ match, User, refetchUser }) => {
     const data = await sub({ feedname, type });
     console.log(data);
     refetchUser();
+    feedinfo.refetch()
   };
 
   const FeedInfo = ({ info, infoloading }) => {
+    const [OpenModeratorShow, setOpenModeratorShow] = useState(false);
     if (infoloading) {
       return <CircularProgress color="inherit"></CircularProgress>;
     }
+
     return (
-      <Box sx={{ display: "flex", flexDirection: "column" }}>
+      <Box
+        sx={{
+          display: "flex",
+          flexDirection: "column",
+          backgroundColor: "background.dark",
+          borderRadius: 5,
+          padding: 1,
+          border: "1px solid",
+        }}
+      >
         <Stack spacing={1}>
           <Typography>Feed info: </Typography>
           <Typography>
@@ -114,22 +128,44 @@ const FeedPage = ({ match, User, refetchUser }) => {
           </Typography>
           <Typography>
             Moderators:
-            {info.moderators.map((mod) => {
-              return (
-                <Button
-                  onClick={() => {
-                    navigate(`/profile/${mod.id}`);
-                  }}
-                  className="button"
-                  color="inherit"
-                  size="small"
-                  sx={{ borderRadius: 50 }}
-                >
-                  <UserAvatar width={20} height={20} user={mod}></UserAvatar>{" "}
-                  {mod.username}
-                </Button>
-              );
-            })}
+            <Button
+              onClick={() => {
+                setOpenModeratorShow(!OpenModeratorShow);
+              }}
+              className="button"
+              color="inherit"
+              size="small"
+              sx={{ borderRadius: 50 }}
+            >
+              show {info.moderators.length}
+              <ExpandIcon Open={OpenModeratorShow}></ExpandIcon>
+            </Button>
+            <Collapse in={OpenModeratorShow}>
+              <Stack>
+                {info.moderators.map((mod) => {
+                  return (
+                    <Box>
+                      <Button
+                        onClick={() => {
+                          navigate(`/profile/${mod.id}`);
+                        }}
+                        className="button"
+                        color="inherit"
+                        size="small"
+                        sx={{ borderRadius: 50 }}
+                      >
+                        <UserAvatar
+                          width={20}
+                          height={20}
+                          user={mod}
+                        ></UserAvatar>{" "}
+                        {mod.username}
+                      </Button>
+                    </Box>
+                  );
+                })}
+              </Stack>
+            </Collapse>
           </Typography>
           <Typography>Subs: {info.subs.length}</Typography>
         </Stack>
@@ -143,8 +179,13 @@ const FeedPage = ({ match, User, refetchUser }) => {
 
     return (
       <Box sx={{ padding: 1 }}>
-        <Typography variant="h5">f/{info.feedname}</Typography>
-        {parse(info.description)}
+        <Stack direction={"column"}>
+          <Stack direction={"row"} alignItems={"center"} gap={2} padding={1}>
+            <FeedAvatar width={100} height={100} feed={info}></FeedAvatar>
+            <Typography variant="h5">f/{info.feedname}</Typography>
+          </Stack>
+          <Box>{parse(info.description)}</Box>
+        </Stack>
         <Collapse in={FeedEditOpen}>
           <EditFeedDesc
             setOpen={setFeedEditOpen}
@@ -157,32 +198,44 @@ const FeedPage = ({ match, User, refetchUser }) => {
   };
 
   const FeedSettings = ({ info, infoloading }) => {
-    const ModSettingIcon = ({mods,User}) => {
-    if (!mods || !User) {
+    const ModSettingIcon = ({ mods, User }) => {
+      if (!mods || !User) {
         return;
       }
       if (mods.includes(User.id))
-      return(
-        <IconButton onClick={() => setOpenSettings(!OpenSettings)}>
-          <SettingsIcon></SettingsIcon>
-        </IconButton>
-      )
-    }
+        return (
+          <IconButton
+            className={"button"}
+            sx={{ color: "inherit" }}
+            onClick={() => setOpenSettings(!OpenSettings)}
+          >
+            <SettingsIcon></SettingsIcon>
+          </IconButton>
+        );
+    };
     if (infoloading) {
       return;
     }
-    const mods = [...info.moderators.map(mod => mod.id), info.owner.id];
-    console.log(mods)
+    const mods = [...info.moderators.map((mod) => mod.id), info.owner.id];
+    console.log(mods);
     return (
       <Box>
         <ModSettingIcon mods={mods} User={User}></ModSettingIcon>
-        <Collapse in={OpenSettings}>
-            <Stack sx={{backgroundColor:"background.dark",borderRadius:5, padding:1,border:"1px solid"}}>
-              
-              <FeedInfo info={info} infoloading={infoloading}></FeedInfo>
-              
-              <FeedModSettings mods={mods} User={User} setFeedEditOpen={setFeedEditOpen} item={info}></FeedModSettings>
-            </Stack>
+        <Collapse
+          sx={{
+            backgroundColor: "background.dark",
+            borderRadius: 5,
+            padding: 1,
+            border: "1px solid",
+          }}
+          in={OpenSettings}
+        >
+          <FeedModSettings
+            mods={mods}
+            User={User}
+            setFeedEditOpen={setFeedEditOpen}
+            item={info}
+          ></FeedModSettings>
         </Collapse>
       </Box>
     );
@@ -271,8 +324,8 @@ const FeedPage = ({ match, User, refetchUser }) => {
   return (
     <Box sx={{ flexGrow: 1 }}>
       <Grid container rowSpacing={1} sx={{ flexDirection: "row" }}>
-        <Grid size={{ xs: 12, md: 2, sm:0 }}></Grid>
-        <Grid size={{ xs: 12, md: 8 ,sm:9}}>
+        <Grid size={{ xs: 12, md: 2, sm: 0 }}></Grid>
+        <Grid size={{ xs: 12, md: 8, sm: 9 }}>
           <Box>
             <FeedDescription
               infoloading={infoloading}
@@ -291,7 +344,7 @@ const FeedPage = ({ match, User, refetchUser }) => {
                     size="small"
                     onChange={handleorderByChange}
                   >
-                    <Typography sx={{paddingLeft:2}}>Sort by</Typography>
+                    <Typography sx={{ paddingLeft: 2 }}>Sort by</Typography>
                     <MenuItem value={"POPULAR"}>Popular</MenuItem>
                     <MenuItem value={"NEWEST"}>Newest</MenuItem>
                     <MenuItem value={"HOTTEST"}>Hottest</MenuItem>
@@ -311,21 +364,19 @@ const FeedPage = ({ match, User, refetchUser }) => {
               hasMore={hasmore}
               loader={<CircularProgress color="inherit"></CircularProgress>}
             >
-              
-                {feed.map((item) => (
-                  <FeedItem
-                    item={item}
-                    owner={item.owner}
-                    mods={info ? [...info.moderators, info.owner.id] : []}
-                    User={User}
-                  ></FeedItem>
-                ))}
-              
+              {feed.map((item) => (
+                <FeedItem
+                  item={item}
+                  owner={item.owner}
+                  mods={info ? [...info.moderators, info.owner.id] : []}
+                  User={User}
+                ></FeedItem>
+              ))}
             </InfiniteScroll>
           </Box>
         </Grid>
-        <Grid
-            size={{ xs: 12, md: 2, sm:3 }}>
+        <Grid size={{ xs: 12, md: 2, sm: 3 }}>
+          <FeedInfo info={info} infoloading={infoloading}></FeedInfo>
           <FeedSettings info={info} infoloading={infoloading}></FeedSettings>
         </Grid>
       </Grid>

@@ -140,8 +140,8 @@
   </tr>
     <tr>
   <td>26</td>
-  <td>8</td>
-  <td>184</td>
+  <td>12</td>
+  <td>188</td>
   </tr>
 </table>
 

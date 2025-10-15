@@ -181,9 +181,13 @@ const Comment = ({
           >
             <Box sx={{ display: "flex", flexDirection: "row" }}>
               <Box>
-                <IconButton size="small" onClick={() => setShowComment(false)}>
+
+
+                  
+                <IconButton size="small" onClick={() => {setShowComment(false);sessionStorage.setItem(comment.id,false)}}>
                   <RemoveCircleOutlineIcon></RemoveCircleOutlineIcon>
                 </IconButton>
+
               </Box>
               <Box>
                 <Useritem

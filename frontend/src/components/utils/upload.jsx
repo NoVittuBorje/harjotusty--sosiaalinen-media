@@ -1,7 +1,7 @@
 import React, { useCallback } from "react";
 import { useDropzone } from "react-dropzone";
 import useUploadImage from "../hooks/useUploadImage";
-const FileUpload = ({ userid, setImagePath }) => {
+const FileUpload = ({ userid, setImagePath,type }) => {
   const [mutate, result] = useUploadImage();
   const onDrop = useCallback(
     (acceptedFiles) => {
@@ -9,6 +9,7 @@ const FileUpload = ({ userid, setImagePath }) => {
       console.log(acceptedFiles);
       const variables = {
         userId: userid,
+        type:type,
         file: acceptedFiles,
       };
       const handleupload = async (variables) => {
@@ -17,7 +18,7 @@ const FileUpload = ({ userid, setImagePath }) => {
       };
       handleupload(variables);
     },
-    [mutate, setImagePath, userid]
+    [mutate, setImagePath, userid,type]
   );
   const { getRootProps, getInputProps, isDragActive } = useDropzone({
     onDrop,

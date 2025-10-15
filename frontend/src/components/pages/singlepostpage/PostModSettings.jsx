@@ -1,8 +1,6 @@
 import { Box, Button, Stack, Typography } from "@mui/material"
 import useEditFeed from "../../hooks/useEditFeed";
 const PostModSettings = ({item}) => {
-    console.log("on mod")
-    console.log(item)
     const [editfeed, editfeedresult] = useEditFeed()
     const mods = item.feed.moderators
     const owner = item.feed.owner

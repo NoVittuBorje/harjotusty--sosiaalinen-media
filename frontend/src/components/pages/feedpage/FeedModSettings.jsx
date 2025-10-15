@@ -14,7 +14,7 @@ import { useDebouncedCallback } from "use-debounce";
 import useGetSearchUsers from "../../hooks/useGetSearchUsers";
 import useEditFeed from "../../hooks/useEditFeed";
 import ExpandIcon from "../../utils/ExpandIcon";
-
+import FileUpload from "../../utils/upload";
 
 const FeedModSettings = ({ mods, item, setFeedEditOpen, User }) => {
   console.log(mods);
@@ -25,67 +25,133 @@ const FeedModSettings = ({ mods, item, setFeedEditOpen, User }) => {
   const [OpenBan, setOpenBan] = useState(false);
   const [OpenUnMod, setOpenUnMod] = useState(false);
   const [OpenMod, setOpenMod] = useState(false);
-  const [OpenOwnership, setOpenOwnership] = useState(false)
+  const [OpenOwnership, setOpenOwnership] = useState(false);
+  const [OpenAvatar, setOpenAvatar] = useState(false);
+  const [imagepath, setImagePath] = useState("");
+
+  const Uploadedimages = () => {
+    if (imagepath.length != 0) {
+      return <Typography>{imagepath[1]}</Typography>;
+    }
+  };
 
   const OwnerSettings = () => {
-    if(item.owner.id == User.id){
-    return(
-      <>
-            <Button
-              className="button"
-              sx={{ borderRadius: 50 }}
-              onClick={() => setOpenMod(!OpenMod)}
-              size="small"
-              variant="outlined"
-              color="inherit"
-            >
-              Mod User
-              <ExpandIcon Open={OpenMod}></ExpandIcon>
-            </Button>
-            
+    if (item.owner.id == User.id) {
+      return (
+        <Stack direction={"column"} spacing={1}>
+          <Typography>Owner settings:</Typography>
+          <Box>
+          <Button
+            className="button"
+            sx={{ borderRadius: 50 }}
+            onClick={() => setOpenMod(!OpenMod)}
+            size="small"
+            variant="outlined"
+            color="inherit"
+          >
+            Mod User
+            <ExpandIcon Open={OpenMod}></ExpandIcon>
+          </Button>
 
-            <Collapse in={OpenMod}>
-              <UserSearchItem buttontext={"Mod selected"} action={"mod"}></UserSearchItem>
-            </Collapse>
-
-            <Button
-              className="button"
-              sx={{ borderRadius: 50 }}
-              onClick={() => setOpenUnMod(!OpenUnMod)}
-              size="small"
-              variant="outlined"
-              color="inherit"
+          <Collapse in={OpenMod}>
+            <UserSearchItem
+              buttontext={"Mod selected"}
+              action={"mod"}
+            ></UserSearchItem>
+          </Collapse>
+</Box>
+<Box>
+          <Button
+            className="button"
+            sx={{ borderRadius: 50 }}
+            onClick={() => setOpenUnMod(!OpenUnMod)}
+            size="small"
+            variant="outlined"
+            color="inherit"
+          >
+            UnMod User
+            <ExpandIcon Open={OpenUnMod}></ExpandIcon>
+          </Button>
+          <Collapse in={OpenUnMod}>
+            <UserSearchItem
+              buttontext={"UnMod selected"}
+              action={"unmod"}
+            ></UserSearchItem>
+          </Collapse>
+          </Box>
+          <Box>
+          <Button
+            className="button"
+            sx={{ borderRadius: 50 }}
+            onClick={() => setOpenAvatar(!OpenAvatar)}
+            size="small"
+            variant="outlined"
+            color="inherit"
+          >
+            Change feed avatar
+            <ExpandIcon Open={OpenAvatar}></ExpandIcon>
+          </Button>
+          <Collapse in={OpenAvatar}>
+            <Box
+              sx={{
+                display: "flex",
+                justifyContent: "center",
+                flexDirection:"column",
+              }}
             >
-              
-              UnMod User
-              <ExpandIcon Open={OpenUnMod}></ExpandIcon>
-            </Button>
-            <Collapse in={OpenUnMod}>
-              <UserSearchItem buttontext={"UnMod selected"} action={"unmod"}></UserSearchItem>
-            </Collapse>
-
-                        <Button
-              className="button"
-              sx={{ borderRadius: 50 }}
-              onClick={() => setOpenOwnership(!OpenOwnership)}
-              size="small"
-              variant="outlined"
-              color="inherit"
-            >
-              
-              Give ownership to User
-              <ExpandIcon Open={OpenOwnership}></ExpandIcon>
-            </Button>
-            <Collapse in={OpenOwnership}>
-              <UserSearchItem buttontext={"Give Ownership to selected"} action={"makeowner"}></UserSearchItem>
-            </Collapse>
-        </>
-    )
-  }else{return}
-  }
-  const UserSearchItem = ({ action,buttontext }) => {
+              <Typography>Image: </Typography>
+              <FileUpload
+                setImagePath={setImagePath}
+                userid={item.id}
+              ></FileUpload>
+              {Uploadedimages()}
+                      <Button
+          className="button"
+          sx={{ borderRadius: 50 }}
+          onClick={() =>
+            editfeed({
+              feedid: item.id,
+              action: "changeavatar",
+              content: imagepath[0],
+            })
+          }
+          size="small"
+          variant="outlined"
+          color="inherit"
+        >
+          Save avatar
+        </Button>
+            </Box>
+          </Collapse>
+          </Box>
+          <Box>
+          <Button
+            className="button"
+            sx={{ borderRadius: 50 }}
+            onClick={() => setOpenOwnership(!OpenOwnership)}
+            size="small"
+            variant="outlined"
+            color="inherit"
+          >
+            Give ownership to User
+            <ExpandIcon Open={OpenOwnership}></ExpandIcon>
+          </Button>
+          <Collapse in={OpenOwnership}>
+            <UserSearchItem
+              buttontext={"Give Ownership to selected"}
+              action={"makeowner"}
+            ></UserSearchItem>
+          </Collapse>
+          </Box>
+        </Stack>
+      );
+    } else {
+      return;
+    }
+  };
+  const UserSearchItem = ({ action, buttontext }) => {
     const [SearchUsers, setSearchUsers] = useState("");
-    
+
     const [SelectedUser, setSelectedUser] = useState(null);
     const { data, error, loading } = useGetSearchUsers({
       search: SearchUsers,
@@ -99,7 +165,9 @@ const FeedModSettings = ({ mods, item, setFeedEditOpen, User }) => {
 
     const searchoptions = data ? data.getsearchusers : [];
     return (
-      <Box sx={{display:"flex",flexDirection:"column",alignItems:"center"}}>
+      <Box
+        sx={{ display: "flex", flexDirection: "column", alignItems: "center" }}
+      >
         <Autocomplete
           disablePortal
           filterOptions={filterOptions}
@@ -113,7 +181,7 @@ const FeedModSettings = ({ mods, item, setFeedEditOpen, User }) => {
           renderInput={(params) => (
             <TextField
               sx={{
-                minWidth:200,
+                minWidth: 200,
                 input: { color: "inherit" },
                 label: { color: "inherit" },
               }}
@@ -155,17 +223,19 @@ const FeedModSettings = ({ mods, item, setFeedEditOpen, User }) => {
       <Box
         width={200}
         minWidth={200}
-        sx={{ display:"flex",justifyContent: "center", justifyItems: "center" }}
+        sx={{
+          display: "flex",
+          justifyContent: "center",
+          justifyItems: "center",
+        }}
       >
-        <Stack
-          spacing={1}
-          direction={"column"}
-        >
+        <Box>
+        <Stack spacing={1} direction={"column"}>
           <Typography>Mod settings:</Typography>
-
+          <Box>
           <Button
             className="button"
-            sx={{ borderRadius: 50 }}
+            sx={{ borderRadius: 50}}
             size="small"
             variant="outlined"
             color="inherit"
@@ -173,42 +243,52 @@ const FeedModSettings = ({ mods, item, setFeedEditOpen, User }) => {
           >
             Edit feed description
           </Button>
-            <Button
-              className="button"
-              sx={{ borderRadius: 50 }}
-              onClick={() => setOpenUnban(!OpenUnban)}
-              size="small"
-              variant="outlined"
-              color="inherit"
-            >
-              UnBan User
-              <ExpandIcon Open={OpenUnban}></ExpandIcon>
-            </Button>
-            <Collapse in={OpenUnban}>
-              <UserSearchItem buttontext={"UnBan selected"} action={"unban"}></UserSearchItem>
-            </Collapse>
+</Box>
+<Box>
+          <Button
+            className="button"
+            sx={{ borderRadius: 50 }}
+            onClick={() => setOpenUnban(!OpenUnban)}
+            size="small"
+            variant="outlined"
+            color="inherit"
+          >
+            UnBan User
+            <ExpandIcon Open={OpenUnban}></ExpandIcon>
+          </Button>
+          <Collapse in={OpenUnban}>
+            <UserSearchItem
+              buttontext={"UnBan selected"}
+              action={"unban"}
+            ></UserSearchItem>
+          </Collapse>
+</Box>
+<Box>
+          <Button
+            className="button"
+            sx={{ borderRadius: 50 }}
+            onClick={() => setOpenBan(!OpenBan)}
+            size="small"
+            variant="outlined"
+            color="inherit"
+          >
+            Ban User
+            <ExpandIcon Open={OpenBan}></ExpandIcon>
+          </Button>
+          <Collapse in={OpenBan}>
+            <UserSearchItem
+              buttontext={"Ban selected"}
+              action={"ban"}
+            ></UserSearchItem>
+          </Collapse>
+</Box>
 
-            <Button
-              className="button"
-              sx={{ borderRadius: 50 }}
-              onClick={() => setOpenBan(!OpenBan)}
-              size="small"
-              variant="outlined"
-              color="inherit"
-            >
-              Ban User
-              <ExpandIcon Open={OpenBan}></ExpandIcon>
-            </Button>
-            <Collapse in={OpenBan}>
-              <UserSearchItem buttontext={"Ban selected"} action={"ban"}></UserSearchItem>
-            </Collapse>
-
-            <OwnerSettings></OwnerSettings>
-              
-
-
+          
         </Stack>
         <Divider></Divider>
+        {OwnerSettings()}
+        
+        </Box>
       </Box>
     );
   }

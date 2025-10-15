@@ -214,6 +214,8 @@ const SinglePost = ({ match, User, refetchUser }) => {
       if (mods.includes(User.id))
         return (
           <IconButton
+                    className={"button"}
+          sx={{ color: "inherit" }}
             onClick={() => {
               setOpenModSettings(!openModSettings);
             }}

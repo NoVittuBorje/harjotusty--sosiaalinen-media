@@ -2,6 +2,8 @@ const typeDefs = `#graphql
   type Feed {
     feedname:String!
     description:String!
+    feedavatar:String
+    subsCount:Int!
     owner:User!
     moderators:[User]
     subs:[User]
@@ -32,6 +34,7 @@ const typeDefs = `#graphql
     karma:Int!
     img:String
     feed:Feed!
+    commentsCount:Int
     comments:[Comment]
     active:Boolean
     locked:Boolean
@@ -141,6 +144,9 @@ const typeDefs = `#graphql
     searchby:String
     ):[User]
     
+    getCommentsCount(
+    feedname:String!):Int!
+
     getSubsCount(
     feedname:String!):Int!
 

@@ -23,32 +23,28 @@ const ProfileFeedOwnedFeeds = (variables) => {
         {ownedfeeds.data.getuserownedfeeds.map((item, index) => (
           <Box key={index} sx={{ display: "flex", flexDirection: "column" }}>
             <Box sx={{ flexDirection: "column", padding: 1 }}>
-              <Link
-                variant="inherit"
-                underline="none"
-                color="inherit"
+              <Box
+                className={"feed"}
+                sx={{
+                  padding:1,
+                  boxShadow: 3,
+                  backgroundColor: "background.dark",
+                  "&:hover": {
+                    backgroundColor: "background.hover",
+                  },
+                }}
+                key={item.id}
                 onClick={() => {
                   navigate(`/feed/${item.feedname}`);
                 }}
               >
-                <Box
-                  className={"feed"}
-                  sx={{
-                    padding: 1,
-                    boxShadow: 1,
-                    "&:hover": {
-                      backgroundColor: "background.dark",
-                    },
-                  }}
-                  key={item.id}
-                >
-                  <Typography variant="h5">{item.feedname}</Typography>
-                  {parse(item.description)}
-                  <Typography>
-                    Created :<Timestamp time={item.createdAt}></Timestamp>
-                  </Typography>
-                </Box>
-              </Link>
+                <Typography variant="h5">{item.feedname}</Typography>
+                {parse(item.description)}
+                <Typography>
+                  Created :<Timestamp time={item.createdAt}></Timestamp>
+                </Typography>
+              </Box>
+
               <Stack></Stack>
             </Box>
           </Box>

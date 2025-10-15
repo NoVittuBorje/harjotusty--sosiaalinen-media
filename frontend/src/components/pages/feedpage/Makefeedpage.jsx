@@ -4,13 +4,15 @@ import * as yup from "yup";
 import useMakeFeed from "../../hooks/useMakeFeed";
 import { useNavigate } from "react-router";
 import TextEditor from "../../utils/TextEditor";
-import { useState } from "react";
+
+
 const validationSchema = yup.object().shape({
   feedname: yup.string().min(2).required(),
   description: yup.string().min(10).required(),
 });
 const MakeFeedPage = () => {
   const [make, result] = useMakeFeed();
+
   const navigate = useNavigate();
   const handleFormSubmit = async () => {
     console.log("submit");
@@ -20,6 +22,7 @@ const MakeFeedPage = () => {
       navigate(`/feed/${data.data.makeFeed.feedname}`);
     }
   };
+
   const formik = useFormik({
     initialValues: {
       feedname: "",
