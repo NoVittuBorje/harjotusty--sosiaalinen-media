@@ -143,6 +143,11 @@
   <td>12</td>
   <td>188</td>
   </tr>
+      <tr>
+  <td>27</td>
+  <td>4</td>
+  <td>192</td>
+  </tr>
 </table>
 
 

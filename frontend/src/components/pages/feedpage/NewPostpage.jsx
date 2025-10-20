@@ -11,8 +11,8 @@ import SinglePost from "../singlepostpage/SinglePost";
 import SinglePostPreview from "../singlepostpage/SinglePostPreview";
 
 const validationSchema = yup.object().shape({
-  headline: yup.string().min(4).required(),
-  description: yup.string().min(10).max(20000).required(),
+  headline: yup.string().min(4).max(100).required(),
+  description: yup.string().min(10).max(5000).required(),
 });
 const NewPostpage = ({ match,User }) => {
   const navigate = useNavigate();
@@ -83,8 +83,12 @@ const NewPostpage = ({ match,User }) => {
                 required
                 sx={{ m: 0.5, }}
                 value={formik.values.headline}
+                error={formik.errors.headline}
                 label="Headline"
                 variant="outlined"
+                helperText={
+                  formik.errors.headline ? formik.errors.headline : ""
+                }
                 multiline
                 inputProps={{ style: { color: "inherit" } }}
                 onChange={formik.handleChange("headline")}
@@ -95,6 +99,7 @@ const NewPostpage = ({ match,User }) => {
             {Uploadedimages()}
             </Box>
               <Typography>Description: </Typography>
+              <Box sx={{}} className="error">{formik.errors.description ? formik.errors.description : ""}</Box>
               <TextEditor html={formik.values.description} setHtml={formik.handleChange("description")}  ></TextEditor>
               <Button
                 sx={{borderRadius:50}}

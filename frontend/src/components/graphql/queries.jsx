@@ -45,6 +45,7 @@ export const GET_FEED = gql`
       active
       id
       feedavatar
+      createdAt
       owner {
         username
         avatar
@@ -239,6 +240,7 @@ export const GET_POPULAR_POSTS = gql`
       img
       active
       locked
+      commentsCount
       createdAt
       updatedAt
       id
@@ -297,6 +299,7 @@ export const GET_USER_POSTS = gql`
       karma
       img
       locked
+      commentsCount
       active
       createdAt
       updatedAt

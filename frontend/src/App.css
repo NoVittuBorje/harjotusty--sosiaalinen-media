@@ -106,3 +106,6 @@ h2{
   justify-content:center;
   border-radius: 20px;
 }
+.error{
+  color: var(--mui-palette-error-main)
+}

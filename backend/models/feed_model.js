@@ -6,8 +6,9 @@ const schema = new mongoose.Schema(
     feedname: {
       type: String,
       required: true,
-      minlength: 1,
+      minLength: 3,
       unique: true,
+      maxLength: 20,
     },
     description: {
       type: String,

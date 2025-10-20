@@ -19,6 +19,7 @@ import { useEffect, useState } from "react";
 const Homescreen = ({ User }) => {
   if(!localStorage.getItem("HomeorderBy")){localStorage.setItem("HomeorderBy","POPULAR")}
   const [orderBy, setorderBy] = useState(localStorage.getItem("HomeorderBy"));
+  const [open, setOpen] = useState(false);
   console.log(orderBy,localStorage.getItem("HomeorderBy"))
   useEffect(() => {
     setorderBy(localStorage.getItem("HomeorderBy"))
@@ -39,6 +40,7 @@ const Homescreen = ({ User }) => {
   };
   const feed = data ? data.getpopularposts : [];
   console.log(data, error, loading);
+
   const loadmore = () => {
     fetchMore({ offset: feed.length });
   };
@@ -48,6 +50,7 @@ const Homescreen = ({ User }) => {
     console.log("no more")
     hasmore = false
   }
+  
   const UserSubs = () => {
     if(!User){return}
     console.log(User)
@@ -67,7 +70,7 @@ const Homescreen = ({ User }) => {
     }
     return
   }
-  const [open, setOpen] = useState(false);
+  
   return (
     <Box sx={{ flexGrow: 1 }}>
       <Grid container rowSpacing={1} sx={{ flexDirection: "row" }}>
@@ -84,9 +87,6 @@ const Homescreen = ({ User }) => {
               
               sx={{ color: "inherit"}}
               onChange={handleChange}
-              open={open}
-              onClose={()=> setOpen(false)}
-              onOpen={() => setOpen(true)}
               value={orderBy}
             >
               <Typography sx={{paddingLeft:2}}>Sort by</Typography>

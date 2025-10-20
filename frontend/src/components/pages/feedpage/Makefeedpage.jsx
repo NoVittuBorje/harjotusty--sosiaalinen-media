@@ -7,8 +7,8 @@ import TextEditor from "../../utils/TextEditor";
 
 
 const validationSchema = yup.object().shape({
-  feedname: yup.string().min(2).required(),
-  description: yup.string().min(10).required(),
+  feedname: yup.string().min(2).max(20).required(),
+  description: yup.string().min(10).max(1000).required(),
 });
 const MakeFeedPage = () => {
   const [make, result] = useMakeFeed();
@@ -54,13 +54,18 @@ const MakeFeedPage = () => {
                 required
                 sx={{ m: 0.5, width: "30%" }}
                 value={formik.values.feedname}
+                error={formik.errors.feedname}
                 label="Feed name"
                 variant="outlined"
                 inputProps={{ style: { color: "inherit" } }}
                 InputLabelProps={{ style: { color: "inherit" } }}
+                helperText={
+                  formik.errors.feedname ? formik.errors.feedname : ""
+                }
                 onChange={formik.handleChange("feedname")}
               />
                           <Typography>Description: </Typography>
+                          <Box sx={{}} className="error">{formik.errors.description ? formik.errors.description : ""}</Box>
             <TextEditor html={formik.values.description} setHtml={formik.handleChange("description")}></TextEditor>
             <Button className="button" variant="outlined" color="inherit" sx={{borderRadius:50}} onClick={formik.handleSubmit}>Make feed</Button>
             </FormGroup>

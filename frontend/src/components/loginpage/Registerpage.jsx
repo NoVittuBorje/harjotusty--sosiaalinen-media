@@ -21,7 +21,7 @@ import { useNavigate } from "react-router";
 import useLogin from "../hooks/useLogin";
 
 const validationSchema = yup.object().shape({
-  Username: yup.string().min(6).max(20).required(),
+  Username: yup.string().min(3).max(20).required().matches(/^\S*$/, "Username without spaces"),
   Email: yup.string().email().required(),
   Password: yup.string().required().min(6),
   confirmPassword: yup

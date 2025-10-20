@@ -126,6 +126,7 @@ export const EDITFEED = gql`mutation ModifyFeed($feedid: String!, $action: Strin
       feedname
       description
       active
+      feedavatar
       createdAt
       updatedAt
       id

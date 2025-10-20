@@ -137,7 +137,7 @@ const resolvers = {
             .skip(args.offset)
             .limit(20)
             .populate("feed", { feedname: 1 })
-            .populate("owner", { username: 1, id: 1, avatar: 1 }).populate("comments",{_id:1});
+            .populate("owner", { username: 1, id: 1, avatar: 1 })
           return posts;
         } catch (e) {
           throw new GraphQLError(e);
@@ -151,7 +151,7 @@ const resolvers = {
             .skip(args.offset)
             .limit(20)
             .populate("feed", { feedname: 1 })
-            .populate("owner", { username: 1, id: 1, avatar: 1 }).populate("comments",{_id:1});
+            .populate("owner", { username: 1, id: 1, avatar: 1 })
           console.log(posts);
           return posts;
         } catch (e) {
@@ -165,7 +165,7 @@ const resolvers = {
             .skip(args.offset)
             .limit(20)
             .populate("feed", { feedname: 1 })
-            .populate("owner", { username: 1, id: 1, avatar: 1 }).populate("comments",{id:1});
+            .populate("owner", { username: 1, id: 1, avatar: 1 })
           return posts;
         } catch (e) {
           throw new GraphQLError(e);
@@ -198,6 +198,7 @@ const resolvers = {
       if (args.orderBy === "HOTTEST") {
         try {
           const posts = await Post.find({ active: true })
+          .sort({commentsCount: -1})
             .sort({ karma: -1 })
             .sort({ createdAt: -1 })
             .skip(args.offset)
@@ -321,6 +322,7 @@ const resolvers = {
             "description",
             "karma",
             "img",
+            "commentsCount",
             "active",
             "createdAt",
             "updatedAt",
@@ -610,6 +612,9 @@ const resolvers = {
       }
     },
     createUser: async (root, args) => {
+      if(args.username.match(/^\S*$/) > 0){
+        throw new GraphQLError("Username not allowed characters.")
+      }
       const salt_rounds = 10;
       const passwordHash = await bcrypt.hash(args.password, salt_rounds);
       const user = new User({
@@ -1170,8 +1175,8 @@ const resolvers = {
                 id: 1,
                 username: 1,
               })
-              .populate("moderators", { id: 1, username: 1 })
-              .populate("owner", { id: 1, username: 1 });
+              .populate("moderators", { id: 1, username: 1,avatar:1 })
+              .populate("owner", { id: 1, username: 1,avatar:1 });
             return res;
           } catch (e) {
             throw new GraphQLError(e);

@@ -78,7 +78,7 @@ const SinglePost = ({ match, User, refetchUser }) => {
     }
   };
 
-  const PostSettings = ({ info, mods }) => {
+  const PostSettings = ({ info,User}) => {
     console.log(info);
     if (!User) {
       return;
@@ -127,7 +127,7 @@ const SinglePost = ({ match, User, refetchUser }) => {
     };
     if (
       !OpenSettings &
-      (info.owner.username == User.username || mods.includes(User.id))
+      (info.owner.username == User.username)
     ) {
       return (
         <IconButton
@@ -235,12 +235,12 @@ const SinglePost = ({ match, User, refetchUser }) => {
                   className={"button"}
                   sx={{ color: "inherit" }}
                   onClick={() => {
-                    navigate(`/feed/${postdata.feed.feedname}`);
+                    navigate(-1);
                   }}
                 >
                   <ArrowBackIcon></ArrowBackIcon>
                 </IconButton>
-                <PostSettings mods={mods} info={postdata}></PostSettings>
+                <PostSettings User={User} info={postdata}></PostSettings>
               </Box>
               <Useritem
                 time={postdata.createdAt}

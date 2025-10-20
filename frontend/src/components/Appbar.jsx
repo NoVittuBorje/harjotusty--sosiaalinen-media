@@ -56,7 +56,7 @@ const Search = styled("div")(({ theme }) => ({
     backgroundColor: alpha(theme.palette.common.white, 0.25),
   },
   marginRight: theme.spacing(2),
-  marginLeft: 0,
+  marginLeft:0,
   width: "100%",
   [theme.breakpoints.up("sm")]: {
     marginLeft: theme.spacing(3),
@@ -74,6 +74,7 @@ const SearchIconWrapper = styled("div")(({ theme }) => ({
 }));
 const StyledAutocomplete = styled(Autocomplete)(({ theme }) => ({
   color: "inherit",
+
   "& .MuiAutocomplete-inputRoot": {
     padding: theme.spacing(1, 1, 1, 0),
     // vertical padding + font size from searchIcon
@@ -198,6 +199,7 @@ export default function PrimarySearchAppBar({ User, refetch }) {
     if (User) {
       return (
         <Menu
+        sx={{borderRadius:5}}
           anchorEl={anchorEl}
           anchorOrigin={{
             vertical: "bottom",
@@ -212,13 +214,13 @@ export default function PrimarySearchAppBar({ User, refetch }) {
           open={isMenuOpen}
           onClose={handleMenuClose}
         >
-          <MenuItem onClick={handleProfileMenuClick}>
+          <MenuItem sx={{borderRadius:5}} onClick={handleProfileMenuClick}>
             <PersonIcon></PersonIcon>Profile
           </MenuItem>
-          <MenuItem onClick={handleMyaccountClick}>
+          <MenuItem sx={{borderRadius:5}} onClick={handleMyaccountClick}>
             <AccountBoxIcon></AccountBoxIcon>My account
           </MenuItem>
-          <MenuItem onClick={handleLogoutClick}>
+          <MenuItem sx={{borderRadius:5}} onClick={handleLogoutClick}>
             <LogoutIcon></LogoutIcon>Logout
           </MenuItem>
         </Menu>
@@ -273,6 +275,7 @@ export default function PrimarySearchAppBar({ User, refetch }) {
               disablePadding
             >
               <ListItemButton
+              sx={{borderRadius:5}}
                 onClick={() => {
                   navigate(`/feed/${feed.feedname}`);
                 }}
@@ -323,6 +326,7 @@ export default function PrimarySearchAppBar({ User, refetch }) {
                   disablePadding
                 >
                   <ListItemButton
+                  sx={{borderRadius:5}}
                     onClick={() => {
                       navigate(`/feed/${subs.feedname}`);
                     }}
@@ -374,6 +378,7 @@ export default function PrimarySearchAppBar({ User, refetch }) {
               disablePadding
             >
               <ListItemButton
+              sx={{borderRadius:5}}
                 onClick={() => {
                   navigate(`/feed/${feed.feedname}`);
                 }}
@@ -453,6 +458,7 @@ export default function PrimarySearchAppBar({ User, refetch }) {
             {popularfeeds.map((feed) => (
               <ListItem key={feed.feedname} disablePadding>
                 <ListItemButton
+                sx={{borderRadius:5}}
                   onClick={() => {
                     navigate(`/feed/${feed.feedname}`);
                   }}
@@ -475,7 +481,7 @@ export default function PrimarySearchAppBar({ User, refetch }) {
       return (
         <Box sx={{ display: { md: "flex" } }}>
           <IconButton
-            size="medium"
+            size="small"
             edge="end"
             aria-label="login"
             aria-controls={loginMenuId}
@@ -483,7 +489,7 @@ export default function PrimarySearchAppBar({ User, refetch }) {
             onClick={handleLoginMenuOpen}
             color="inherit"
           >
-            <AccountCircle/>
+            <AccountCircle fontSize="large"/>
             
           </IconButton>
         </Box>
@@ -492,7 +498,7 @@ export default function PrimarySearchAppBar({ User, refetch }) {
       return (
         <Box sx={{ display: { md: "flex" } }}>
           <IconButton
-            size="medium"
+            size="small"
             edge="end"
             aria-label="account of current user"
             aria-controls={menuId}
@@ -500,7 +506,7 @@ export default function PrimarySearchAppBar({ User, refetch }) {
             onClick={handleProfileMenuOpen}
             color="inherit"
           >
-            <UserAvatar user={User} height={24} width={24}></UserAvatar>
+            <UserAvatar user={User} height={35} width={35}></UserAvatar>
           </IconButton>
         </Box>
       );
@@ -513,6 +519,8 @@ export default function PrimarySearchAppBar({ User, refetch }) {
     <Box sx={{ flexGrow: 1 }}>
       <AppBar position="static">
         <Toolbar>
+          
+          <Box key={"appbar-left"} sx={{display:"flex"}}>
           <IconButton
             onClick={toggleDrawer(true)}
             size="medium"
@@ -538,7 +546,8 @@ export default function PrimarySearchAppBar({ User, refetch }) {
           >
             <HomeIcon />
           </IconButton>
-
+          </Box>
+          <Box key={"appbar-center"} sx={{display:"flex",flexDirection:"row",alignItems:"center"}}>
           <StyledAutocomplete
             disablePortal
             options={searchoptions}
@@ -656,7 +665,10 @@ export default function PrimarySearchAppBar({ User, refetch }) {
             )}
           />
           <ThemeState></ThemeState>
-          <Box sx={{ flexGrow: 1 }} />
+          </Box>
+
+
+          <Box key={"appbar-right"} sx={{display:"flex", flexGrow: 1}} />
           {Renderloginstate({ User, refetch, token })}
         </Toolbar>
       </AppBar>

@@ -1,4 +1,4 @@
-import { Box, IconButton, Tooltip } from "@mui/material";
+import { Box, IconButton, Tooltip, Typography } from "@mui/material";
 import ArrowUpwardRoundedIcon from "@mui/icons-material/ArrowUpwardRounded";
 import ArrowDownwardRoundedIcon from "@mui/icons-material/ArrowDownwardRounded";
 import { useNavigate } from "react-router";
@@ -225,7 +225,7 @@ const KarmaItem = ({ type, id, karma, User }) => {
         ></LikeButton>
       </Tooltip>
       <Tooltip title="karma">
-        <a style={{ paddingTop: 0, textAlignVertical: "top" }}>{formatNumber(karma)}</a>
+        <Typography style={{ paddingTop: 0, textAlignVertical: "top" }}>{formatNumber(karma)}</Typography>
       </Tooltip>
       <Tooltip title="Dislike">
         <DislikeButton

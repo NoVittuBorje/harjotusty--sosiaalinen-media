@@ -23,10 +23,10 @@ const ProfileFeedPosts = ({variables,userdata,User}) => {
         next={loadmore}
         hasMore={true}
       >
-        {posts.data.getuserposts.map((item,index) => (
-          <Box key={index}>
+        {posts.data.getuserposts.map((item) => (
+          
         <FeedItem item={item} owner={userdata} User={User}></FeedItem>
-        </Box>
+        
         ))}
       </InfiniteScroll>
     </Box>

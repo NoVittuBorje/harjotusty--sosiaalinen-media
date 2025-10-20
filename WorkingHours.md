@@ -364,6 +364,14 @@
   <td>Oct 15, 2025</td>
   <td>4</td>
   <td>188</td>
+  <td>26</td>
   <td>Added feed avatars,some style changes, fixed a couple of bugs and subs and comments counters</td>
+  </tr>
+          <tr>
+  <td>Oct 20, 2025</td>
+  <td>4</td>
+  <td>192</td>
+  <td>27</td>
+  <td>Made little progress, thinking of new stuff to add and some little fixes and changes.</td>
   </tr>
 </table>

@@ -36,6 +36,7 @@ import EditFeedDesc from "./EditFeedDesc";
 import FeedModSettings from "./FeedModSettings";
 import FeedAvatar from "../../utils/FeedAvatar";
 import ExpandIcon from "../../utils/ExpandIcon";
+import Timestamp from "../../utils/Timestamp";
 
 const FeedPage = ({ match, User, refetchUser }) => {
   console.log(localStorage.getItem("Feedorderby"));
@@ -49,6 +50,7 @@ const FeedPage = ({ match, User, refetchUser }) => {
   useEffect(() => {
     setorderBy(localStorage.getItem("FeedorderBy"));
   }, []);
+
   useEffect(() => {
     localStorage.setItem("FeedorderBy", orderBy);
   }, [orderBy]);
@@ -89,7 +91,7 @@ const FeedPage = ({ match, User, refetchUser }) => {
     const data = await sub({ feedname, type });
     console.log(data);
     refetchUser();
-    feedinfo.refetch()
+    feedinfo.refetch();
   };
 
   const FeedInfo = ({ info, infoloading }) => {
@@ -125,6 +127,9 @@ const FeedPage = ({ match, User, refetchUser }) => {
               <UserAvatar width={20} height={20} user={info.owner}></UserAvatar>{" "}
               {info.owner.username}
             </Button>
+          </Typography>
+          <Typography>
+            Created :<Timestamp time={info.createdAt}></Timestamp>
           </Typography>
           <Typography>
             Moderators:

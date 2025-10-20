@@ -84,19 +84,7 @@ const client = new ApolloClient({
   link: splitLink,
 });
 
-// For a dark default theme
-const darkTheme = createTheme({
-  palette: {
-    mode: "dark",
-  },
-});
 
-// For a light default theme
-const lightTheme = createTheme({
-  palette: {
-    mode: "light",
-  },
-});
 
 const theme = createTheme({
   colorSchemes: {
@@ -105,8 +93,8 @@ const theme = createTheme({
         mode: "light",
         background: {
           default: "#ffffffff",
-          dark:"#f0f0f0ff",
-          hover:"#f7f7f7ff",
+          dark:"#f7f7f7ff",
+          hover:"#f0f0f0ff",
           button:"#e2e2e2ff",
         },
         secondary: {
@@ -126,6 +114,7 @@ const theme = createTheme({
         primary: {
           main: "#ffffff",
           button:"#3d3c3cff",
+          error:"#d32f2f",
         },
         secondary: {
           main: "#ffffff",
