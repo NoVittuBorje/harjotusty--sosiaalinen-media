@@ -13,6 +13,8 @@ const CommentSection = ({
   refetchComment,
   refetchUser,
   type,
+  setmessage,
+  setseverity
 }) => {
   const [newcomment, result] = useMakeComment();
   const [edit, editresult] = useEditComment();
@@ -75,6 +77,8 @@ const CommentSection = ({
             handleReply={handleReply}
             postid={postid}
             type={type}
+            setmessage={setmessage}
+            setseverity={setseverity}
           />
       </Collapse>
     );

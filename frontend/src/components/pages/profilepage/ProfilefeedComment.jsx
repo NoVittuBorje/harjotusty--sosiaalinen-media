@@ -4,7 +4,7 @@ import useGetUserComments from "../../hooks/useGetUserComments";
 import InfiniteScroll from "react-infinite-scroll-component";
 import CommentSection from "../../commentsection/CommentSection";
 import { useState } from "react";
-const ProfileFeedComment = ({variables,User,userdata}) => {
+const ProfileFeedComment = ({variables,User,userdata,setmessage,setseverity}) => {
   console.log(variables);
   const comments = useGetUserComments(variables);
   const loadmore = () => {
@@ -25,7 +25,8 @@ const ProfileFeedComment = ({variables,User,userdata}) => {
   return (
     <Box sx={{}}>
       
-      <CommentSection User={User} comments={ecomments} loadmore={loadmore} loading={comments.loading} type={"profile"}></CommentSection>
+      <CommentSection User={User}             setmessage={setmessage}
+            setseverity={setseverity} comments={ecomments} loadmore={loadmore} loading={comments.loading} type={"profile"}></CommentSection>
     </Box>
   );
 };

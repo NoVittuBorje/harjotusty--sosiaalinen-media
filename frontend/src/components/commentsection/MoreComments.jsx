@@ -12,6 +12,8 @@ const MoreComments = ({
   handleLike,
   handleDislike,
   handleReply,
+  setmessage,
+  setseverity
 }) => {
   const { data, error, loading, refetchComments } = useGetComments({
     commentid: comment.id,
@@ -35,6 +37,8 @@ const MoreComments = ({
               handleModify={handleModify}
               refetchComment={refetchComments}
               postid={postid}
+              setmessage={setmessage}
+              setseverity={setseverity}
             />
           </ListItem>
         ))}

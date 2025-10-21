@@ -38,7 +38,7 @@ import FeedAvatar from "../../utils/FeedAvatar";
 import ExpandIcon from "../../utils/ExpandIcon";
 import Timestamp from "../../utils/Timestamp";
 
-const FeedPage = ({ match, User, refetchUser }) => {
+const FeedPage = ({ match, User, refetchUser,setmessage,setseverity }) => {
   console.log(localStorage.getItem("Feedorderby"));
   if (!localStorage.getItem("FeedorderBy")) {
     localStorage.setItem("FeedorderBy", "POPULAR");
@@ -372,6 +372,8 @@ const FeedPage = ({ match, User, refetchUser }) => {
               {feed.map((item) => (
                 <FeedItem
                   item={item}
+                    setmessage={setmessage}
+            setseverity={setseverity}
                   owner={item.owner}
                   mods={info ? [...info.moderators, info.owner.id] : []}
                   User={User}

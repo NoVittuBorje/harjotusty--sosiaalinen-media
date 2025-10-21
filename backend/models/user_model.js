@@ -6,7 +6,7 @@ const schema = new mongoose.Schema(
       type: String,
       required: true,
       minLength: 3,
-      maxLength:20,
+      maxLength: 20,
       unique: true,
     },
     email: {
@@ -18,8 +18,8 @@ const schema = new mongoose.Schema(
       type: String,
       required: true,
     },
-    nationality:{
-      type:String,
+    nationality: {
+      type: String,
     },
     firstname: {
       type: String,
@@ -30,9 +30,10 @@ const schema = new mongoose.Schema(
     avatar: {
       type: String,
     },
+    userKarma: { type: Number, default: 0 },
     relationship: {
       type: String,
-      enum: ["Single", "Married", "Dating","Other"],
+      enum: ["Single", "Married", "Dating", "Other"],
     },
     description: {
       type: String,
@@ -45,7 +46,7 @@ const schema = new mongoose.Schema(
       {
         type: mongoose.Schema.Types.ObjectId,
         ref: "Post",
-        unique:true,
+        unique: true,
       },
     ],
     dislikedposts: [
@@ -53,7 +54,7 @@ const schema = new mongoose.Schema(
         type: mongoose.Schema.Types.ObjectId,
         ref: "Post",
 
-        unique:true,
+        unique: true,
       },
     ],
     likedcomments: [
@@ -61,14 +62,14 @@ const schema = new mongoose.Schema(
         type: mongoose.Schema.Types.ObjectId,
         ref: "Comment",
 
-        unique:true,
+        unique: true,
       },
     ],
     dislikedcomments: [
       {
         type: mongoose.Schema.Types.ObjectId,
         ref: "Comment",
-        unique:true,
+        unique: true,
       },
     ],
     feedsubs: [

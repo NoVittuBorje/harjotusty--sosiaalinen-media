@@ -19,11 +19,10 @@ import useGetImageUrl from "./hooks/useGetImageUrl";
 import Locked from "./utils/Locked";
 import PostCommentItem from "./utils/PostCommentItem"
 
-const FeedItem = ({ item, owner, User, mods }) => {
+const FeedItem = ({ item, owner, User, mods,setmessage,setseverity }) => {
   const navigate = useNavigate();
-  const [edit, editresult] = useEditPost();
   const [open, setOpen] = useState(false);
-  console.log(item)
+  
   const ModSettings = () => {
     if (!mods | !User) {
       return;
@@ -125,6 +124,8 @@ const FeedItem = ({ item, owner, User, mods }) => {
 
           <Box className={"footer"}>
             <KarmaItem
+            setmessage={setmessage}
+            setseverity={setseverity}
               type={"post"}
               karma={item.karma}
               id={item.id}

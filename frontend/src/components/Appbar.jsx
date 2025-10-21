@@ -31,6 +31,7 @@ import PersonIcon from "@mui/icons-material/Person";
 import {
   Autocomplete,
   Chip,
+  CircularProgress,
   FormControl,
   FormControlLabel,
   FormLabel,
@@ -268,7 +269,7 @@ export default function PrimarySearchAppBar({ User, refetch }) {
               </ListItemIcon>
             </ListItemButton>
           </ListItem>
-          {feeds.data.getfeed.map((feed) => (
+          {feeds.map((feed) => (
             <ListItem
               onClick={toggleDrawer(false)}
               key={feed.feedname}
@@ -409,7 +410,7 @@ export default function PrimarySearchAppBar({ User, refetch }) {
     const popularfeeds = feeds.data ? feeds.data.getfeed : [];
     
     if (feeds.loading) {
-      return <Box>loading...</Box>;
+      return <CircularProgress color="inherit"></CircularProgress>
     }
 
     if (User) {
@@ -433,7 +434,7 @@ export default function PrimarySearchAppBar({ User, refetch }) {
             <MenusubsState User={User}></MenusubsState>
             <Divider></Divider>
 
-            <MenupopularState feeds={feeds}></MenupopularState>
+            <MenupopularState feeds={popularfeeds}></MenupopularState>
             <Divider></Divider>
           </List>
         </Box>
@@ -443,31 +444,10 @@ export default function PrimarySearchAppBar({ User, refetch }) {
         <Box
           sx={{ width: 250 }}
           role="presentation"
-          onClick={toggleDrawer(false)}
+          
         >
-          <List>
-            <ListItem key="popularfeeds" disablePadding>
-              <ListItemIcon>
-                <FeedIcon />
-              </ListItemIcon>
-              <ListItemText primary={"Popular feeds"} />
-            </ListItem>
-          </List>
-          <Divider />
-          <List>
-            {popularfeeds.map((feed) => (
-              <ListItem key={feed.feedname} disablePadding>
-                <ListItemButton
-                sx={{borderRadius:5}}
-                  onClick={() => {
-                    navigate(`/feed/${feed.feedname}`);
-                  }}
-                >
-                  <ListItemText primary={feed.feedname} />
-                </ListItemButton>
-              </ListItem>
-            ))}
-          </List>
+          <MenupopularState feeds={popularfeeds}></MenupopularState>
+          <Divider></Divider>
         </Box>
       );
     }
@@ -516,8 +496,8 @@ export default function PrimarySearchAppBar({ User, refetch }) {
 
   console.log(searchoptions, "options");
   return (
-    <Box sx={{ flexGrow: 1 }}>
-      <AppBar position="static">
+    
+      <AppBar position="fixed" sx={{marginBottom:"64px"}}>
         <Toolbar>
           
           <Box key={"appbar-left"} sx={{display:"flex"}}>
@@ -671,8 +651,9 @@ export default function PrimarySearchAppBar({ User, refetch }) {
           <Box key={"appbar-right"} sx={{display:"flex", flexGrow: 1}} />
           {Renderloginstate({ User, refetch, token })}
         </Toolbar>
+        {MenuState}
       </AppBar>
-      {MenuState}
-    </Box>
+      
+    
   );
 }

@@ -279,7 +279,7 @@ const resolvers = {
           select: ["feedname", "id", "owner", "moderators","feedavatar"],
           populate: {
             path: ["owner", "moderators"],
-            select: ["id"],
+            select: ["id","username","avatar"],
           },
         })
         .populate("owner", { username: 1, id: 1, avatar: 1 });
@@ -652,8 +652,15 @@ const resolvers = {
           ? false
           : await bcrypt.compare(args.password, user.password_hash);
 
-      if (!user || !password_correct) {
-        throw new GraphQLError("wrong credentials", {
+      if (!user) {
+        throw new GraphQLError("Wrong Username!", {
+          extensions: {
+            code: "BAD_USER_INPUT",
+          },
+        });
+      }
+      if(!password_correct){
+          throw new GraphQLError("Wrong Password!", {
           extensions: {
             code: "BAD_USER_INPUT",
           },
@@ -692,6 +699,9 @@ const resolvers = {
         })
         .populate({ path: "replies", select: ["id"] })
         .populate({ path: "replyto", select: ["id"] });
+      if(comment.user.id == user.id){
+        throw new GraphQLError("Cant give karma to yourself.")
+      }
       console.log(comment);
       const likecommentids = user.likedcomments.map((comment) =>
         comment._id.toString()
@@ -701,6 +711,7 @@ const resolvers = {
       );
       if (likecommentids.includes(comment._id.toString())) {
         comment.karma = comment.karma - 1;
+        const commentOwner = await User.findByIdAndUpdate({_id:comment.user.id},{$inc:{userKarma: -1}})
         const newuser = await User.findOneAndUpdate(
           { _id: context.currentUser._id },
           { $pull: { likedcomments: comment._id } }
@@ -710,12 +721,14 @@ const resolvers = {
       } else {
         if (dislikecommentids.includes(comment._id.toString())) {
           comment.karma = comment.karma + 1;
+          const commentOwner = await User.findByIdAndUpdate({_id:comment.user.id},{$inc:{userKarma: +1}})
           const newuser = await User.findOneAndUpdate(
             { _id: context.currentUser._id },
             { $pull: { dislikedcomments: comment._id } }
           );
         }
         comment.karma = comment.karma + 1;
+        const commentOwner = await User.findByIdAndUpdate({_id:comment.user.id},{$inc:{userKarma: +1}})
         const newuser = await User.findOneAndUpdate(
           { _id: context.currentUser._id },
           { $push: { likedcomments: comment._id } }
@@ -734,6 +747,9 @@ const resolvers = {
         })
         .populate({ path: "replies", select: ["id"] })
         .populate({ path: "replyto", select: ["id"] });
+      if(comment.user.id == user.id){
+        throw new GraphQLError("Cant give karma to yourself.")
+      }
       const dislikecommentids = user.dislikedcomments.map((comment) =>
         comment._id.toString()
       );
@@ -742,6 +758,7 @@ const resolvers = {
       );
       if (dislikecommentids.includes(comment._id.toString())) {
         comment.karma = comment.karma + 1;
+        const commentOwner = await User.findByIdAndUpdate({_id:comment.user.id},{$inc:{userKarma: +1}})
         const newuser = await User.findOneAndUpdate(
           { _id: context.currentUser._id },
           { $pull: { dislikedcomments: comment._id } }
@@ -752,12 +769,14 @@ const resolvers = {
       } else {
         if (likecommentids.includes(comment._id.toString())) {
           comment.karma = comment.karma - 1;
+          const commentOwner = await User.findByIdAndUpdate({_id:comment.user.id},{$inc:{userKarma: -1}})
           const newuser = await User.findOneAndUpdate(
             { _id: context.currentUser._id },
             { $pull: { likedcomments: comment._id } }
           );
         }
         comment.karma = comment.karma - 1;
+        const commentOwner = await User.findByIdAndUpdate({_id:comment.user.id},{$inc:{userKarma: -1}})
         const newuser = await User.findOneAndUpdate(
           { _id: context.currentUser._id },
           { $push: { dislikedcomments: comment._id } }
@@ -772,10 +791,14 @@ const resolvers = {
         path: "owner",
         select: ["id"],
       });
+      if(post.owner.id == user.id){
+        throw new GraphQLError("Cant give karma to yourself.")
+      }
       const likeids = user.likedposts.map((post) => post._id.toString());
       const dislikedids = user.dislikedposts.map((post) => post._id.toString());
       if (likeids.includes(post._id.toString())) {
         post.karma = post.karma - 1;
+        const postOwner = await User.findByIdAndUpdate({_id:post.owner.id},{$inc:{userKarma: -1}})
         const newuser = await User.findOneAndUpdate(
           { _id: context.currentUser._id },
           { $pull: { likedposts: post._id } }
@@ -785,12 +808,14 @@ const resolvers = {
       } else {
         if (dislikedids.includes(post._id.toString())) {
           post.karma = post.karma + 1;
+          const postOwner = await User.findByIdAndUpdate({_id:post.owner.id},{$inc:{userKarma: +1}})
           const newuser = await User.findOneAndUpdate(
             { _id: context.currentUser._id },
             { $pull: { dislikedposts: post._id } }
           );
         }
         post.karma = post.karma + 1;
+        const postOwner = await User.findByIdAndUpdate({_id:post.owner.id},{$inc:{userKarma: +1}})
         const newuser = await User.findOneAndUpdate(
           { _id: context.currentUser._id },
           { $push: { likedposts: post._id } }
@@ -802,11 +827,15 @@ const resolvers = {
 
     dislikePost: async (root, args, context) => {
       const user = context.currentUser;
-      const post = await Post.findById(args.id);
+      const post = await Post.findById(args.id).populate("owner",{id:1});
+      if(post.owner.id == user.id){
+        throw new GraphQLError("Cant give karma to yourself.")
+      }
       const dislikeids = user.dislikedposts.map((post) => post._id.toString());
       const likeids = user.likedposts.map((post) => post._id.toString());
       if (dislikeids.includes(post._id.toString())) {
         post.karma = post.karma + 1;
+        const postOwner = await User.findByIdAndUpdate({_id:post.owner.id},{$inc:{userKarma: +1}})
         const newuser = await User.findOneAndUpdate(
           { _id: context.currentUser._id },
           { $pull: { dislikedposts: post._id } }
@@ -818,12 +847,14 @@ const resolvers = {
       } else {
         if (likeids.includes(post._id.toString())) {
           post.karma = post.karma - 1;
+          const postOwner = await User.findByIdAndUpdate({_id:post.owner.id},{$inc:{userKarma: -1}})
           const newuser = await User.findOneAndUpdate(
             { _id: context.currentUser._id },
             { $pull: { likedposts: post._id } }
           );
         }
         post.karma = post.karma - 1;
+        const postOwner = await User.findByIdAndUpdate({_id:post.owner.id},{$inc:{userKarma: -1}})
         const newuser = await User.findOneAndUpdate(
           { _id: context.currentUser._id },
           { $push: { dislikedposts: post._id } }

@@ -2,6 +2,7 @@ import {
   Box,
   Button,
   FormGroup,
+  FormHelperText,
   Grid,
   TextField,
   Typography,
@@ -24,7 +25,7 @@ const LoginPage = ({ setUser, User, refetch }) => {
   const [Username, setUsername] = React.useState("");
   const [Password, setPassword] = React.useState("");
   const handleClickShowPassword = () => setShowPassword((show) => !show);
-  console.log(result);
+  
   const handleMouseDownPassword = (event) => {
     event.preventDefault();
   };
@@ -34,16 +35,38 @@ const LoginPage = ({ setUser, User, refetch }) => {
 
   const handleFormSubmit = async () => {
     console.log("login");
-    const { data } = await login({ Username, Password });
+    try{
+    const data = await login({ Username, Password });
     console.log(data);
-    if (data.login.value) {
+    if (data.data.login.value) {
       refetch();
       navigate("/");
     }
+  }catch(error){
+    console.log(error.message)
+    setUsernameError(false)
+    setUsernameErrorMsg(null)
+    setPasswordError(false)
+    setPasswordErrorMsg(null)
+  if(error.message == "Wrong Username!"){
+    
+    setUsernameErrorMsg(error.message)
+    setUsernameError(true)
+    }
+
+  if(error.message == "Wrong Password!"){
+    setPasswordErrorMsg(error.message)
+  setPasswordError(true)}
+  
   };
-  console.log(Username, Password);
+  }
+  const [usernameError,setUsernameError] = React.useState(false)
+  const [usernameErrorMsg, setUsernameErrorMsg] = React.useState(null)
+    const [passwordError,setPasswordError] = React.useState(false)
+  const [passwordErrorMsg, setPasswordErrorMsg] = React.useState(null)
+  console.log(usernameError)
   return (
-    <Box sx={{ flexGrow: 1 }}>
+    
       <Grid container rowSpacing={1} sx={{ flexDirection: "row" }}>
         <Grid size={{ xs: 12, md: 4 }}></Grid>
         <Grid size={{ xs: 12, md: 4 }}>
@@ -62,10 +85,15 @@ const LoginPage = ({ setUser, User, refetch }) => {
                 label="Username"
                 variant="outlined"
                 onChange={(event) => setUsername(event.target.value)}
+                error={usernameError}
+                helperText={usernameErrorMsg ? usernameErrorMsg : ""}
               />
-              <FormControl sx={{ m: 0.5, width: '30ch' }}  variant="outlined">
+
+              <FormControl sx={{ m: 0.5, width: '30ch' }} error={passwordError}  variant="outlined">
                 <InputLabel htmlFor="password">Password</InputLabel>
+                
                 <OutlinedInput
+                
                   id="password"
                   onChange={(event) => setPassword(event.target.value)}
                   type={showPassword ? "text" : "password"}
@@ -89,7 +117,7 @@ const LoginPage = ({ setUser, User, refetch }) => {
                   label="Password"
                 />
                 
-
+<FormHelperText>{passwordErrorMsg ? passwordErrorMsg : ""}</FormHelperText>
               </FormControl>
                 <Button
                   sx={{  borderRadius: 50 }}
@@ -97,6 +125,7 @@ const LoginPage = ({ setUser, User, refetch }) => {
                   color="inherit"
                   onClick={handleFormSubmit}
                   variant="contained"
+                  
                 >
                   Log in
                 </Button>
@@ -111,7 +140,7 @@ const LoginPage = ({ setUser, User, refetch }) => {
         </Grid>
         <Grid size={{ xs: 12, md: 4 }}></Grid>
       </Grid>
-    </Box>
+    
   );
 };
 export default LoginPage;

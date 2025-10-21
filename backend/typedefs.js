@@ -44,7 +44,7 @@ const typeDefs = `#graphql
   }
   type User {
     username: String!
-    email:String!
+    email:String
     firstname:String
     lastname:String
     avatar:String
@@ -59,6 +59,7 @@ const typeDefs = `#graphql
     nationality:String
     posts:[Post]
     ownedfeeds:[Feed]
+    userKarma:Int
     active:Boolean
     comments:[Comment]
     createdAt:String

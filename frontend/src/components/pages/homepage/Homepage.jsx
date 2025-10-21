@@ -16,7 +16,7 @@ import useGetPopularPosts from "../../hooks/useGetPopularPosts";
 import InfiniteScroll from "react-infinite-scroll-component";
 import { useEffect, useState } from "react";
 
-const Homescreen = ({ User }) => {
+const Homescreen = ({ User,setmessage,setseverity }) => {
   if(!localStorage.getItem("HomeorderBy")){localStorage.setItem("HomeorderBy","POPULAR")}
   const [orderBy, setorderBy] = useState(localStorage.getItem("HomeorderBy"));
   const [open, setOpen] = useState(false);
@@ -106,7 +106,7 @@ const Homescreen = ({ User }) => {
             loader={<CircularProgress color="inherit"></CircularProgress>}
           >
             {feed.map((item) => (
-              <FeedItem item={item} owner={item.owner} User={User}></FeedItem>
+              <FeedItem item={item} setseverity={setseverity} setmessage={setmessage} owner={item.owner} User={User}></FeedItem>
             ))}
           </InfiniteScroll>
         </Grid>

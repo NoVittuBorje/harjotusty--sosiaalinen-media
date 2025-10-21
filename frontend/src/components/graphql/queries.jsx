@@ -12,6 +12,7 @@ export const GET_ME = gql`
       description
       nationality
       work
+      userKarma
       feedsubs {
         feedname
         id
@@ -152,6 +153,7 @@ export const GET_USER = gql`
       firstname
       lastname
       avatar
+      userKarma
       relationship
       description
       nationality

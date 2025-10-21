@@ -1,4 +1,4 @@
-import { Box, IconButton, Tooltip, Typography } from "@mui/material";
+import { Alert, Box, IconButton, Tooltip, Typography } from "@mui/material";
 import ArrowUpwardRoundedIcon from "@mui/icons-material/ArrowUpwardRounded";
 import ArrowDownwardRoundedIcon from "@mui/icons-material/ArrowDownwardRounded";
 import { useNavigate } from "react-router";
@@ -11,13 +11,13 @@ import useLikePost from "./hooks/useLikePost";
 import useDislikePost from "./hooks/useDislikePost";
 import formatNumber from "./utils/FormatNumber";
 
-const KarmaItem = ({ type, id, karma, User }) => {
+const KarmaItem = ({ type, id, karma, User, setmessage, setseverity }) => {
   const navigate = useNavigate();
   const [likecomment, likecommentresult] = useLikeComment();
   const [dislikecomment, dislikecommentresult] = useDislikeComment();
   const [likepost, likepostresult] = useLikePost();
   const [dislikepost, dislikepostresult] = useDislikePost();
-  
+
   const [liked, setLiked] = useState(false);
   const [disliked, setDisliked] = useState(false);
   useEffect(() => {
@@ -31,13 +31,13 @@ const KarmaItem = ({ type, id, karma, User }) => {
       if (likesid.includes(id)) {
         setLiked(true);
         setDisliked(false);
-      }else {
+      } else {
         setLiked(false);
       }
       if (dislikesid.includes(id)) {
         setLiked(false);
         setDisliked(true);
-      }else {
+      } else {
         setDisliked(false);
       }
     }
@@ -60,22 +60,43 @@ const KarmaItem = ({ type, id, karma, User }) => {
   }, [User, type, id]);
 
   const handleDislikeComment = async ({ id }) => {
-    console.log("dislike comment");
-    const data = await dislikecomment({ id: id });
-    console.log(data);
+    try {
+      console.log("dislike comment");
+      const data = await dislikecomment({ id: id });
+      console.log(data);
+    } catch (error) {
+      setmessage(error.message);
+      setseverity("error");
+    }
   };
   const handleLikeComment = async ({ id }) => {
-    console.log("like comment");
-    const data = await likecomment({ id: id });
-    console.log(data);
+    try {
+      console.log("like comment");
+      const data = await likecomment({ id: id });
+      console.log(data);
+    } catch (error) {
+      setmessage(error.message);
+      setseverity("error");
+    }
   };
   const handleLikePost = async () => {
-    const data = await likepost({ id: id });
-    console.log(data);
+    try {
+      const data = await likepost({ id: id });
+      console.log(data);
+    } catch (error) {
+      setmessage(error.message);
+      setseverity("error");
+    }
   };
   const handleDislikePost = async () => {
-    const data = await dislikepost({ id: id });
-    console.log(data);
+    try {
+      const data = await dislikepost({ id: id });
+      console.log(data);
+      console.log(data.errors);
+    } catch (error) {
+      setmessage(error.message);
+      setseverity("error");
+    }
   };
   if (!User) {
     return (
@@ -94,8 +115,10 @@ const KarmaItem = ({ type, id, karma, User }) => {
             ></ArrowUpwardRoundedIcon>
           </IconButton>
         </Tooltip>
-        <Tooltip title="karma">
-          <a style={{ paddingTop: 0, textAlignVertical: "top" }}>{karma}</a>
+        <Tooltip title={`${karma} karma`}>
+          <Typography style={{ paddingTop: 0, textAlignVertical: "top" }}>
+            {formatNumber(karma)}
+          </Typography>
         </Tooltip>
         <Tooltip title="Login to dislike">
           <IconButton
@@ -111,8 +134,6 @@ const KarmaItem = ({ type, id, karma, User }) => {
       </Box>
     );
   }
-
-  
 
   const LikeButton = ({
     handleLikePost,
@@ -165,7 +186,6 @@ const KarmaItem = ({ type, id, karma, User }) => {
     id,
     dislikeActive,
   }) => {
-    
     if (dislikeActive) {
       return (
         <IconButton
@@ -224,8 +244,10 @@ const KarmaItem = ({ type, id, karma, User }) => {
           setDisliked={setDisliked}
         ></LikeButton>
       </Tooltip>
-      <Tooltip title="karma">
-        <Typography style={{ paddingTop: 0, textAlignVertical: "top" }}>{formatNumber(karma)}</Typography>
+      <Tooltip title={`${karma} karma`}>
+        <Typography style={{ paddingTop: 0, textAlignVertical: "top" }}>
+          {formatNumber(karma)}
+        </Typography>
       </Tooltip>
       <Tooltip title="Dislike">
         <DislikeButton

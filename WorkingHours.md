@@ -374,4 +374,11 @@
   <td>27</td>
   <td>Made little progress, thinking of new stuff to add and some little fixes and changes.</td>
   </tr>
+            <tr>
+  <td>Oct 20, 2025</td>
+  <td>4</td>
+  <td>196</td>
+  <td>27</td>
+  <td>Added alerts and user karma, and lots of little changes like making appbar static, login now shows errors to fields, and made liking own post/comment from same acc disabled.</td>
+  </tr>
 </table>

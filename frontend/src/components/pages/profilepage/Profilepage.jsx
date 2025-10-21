@@ -13,7 +13,8 @@ import { useState } from "react";
 import useGetUser from "../../hooks/useGetUser";
 import UserAvatar from "../../utils/UserAvatar";
 import parse from "html-react-parser";
-const Profilepage = ({ User, match }) => {
+import formatNumber from "../../utils/FormatNumber";
+const Profilepage = ({ User, match,setmessage,setseverity }) => {
   console.log(User);
   console.log(match);
   const [type, setType] = useState("posts");
@@ -43,6 +44,7 @@ const Profilepage = ({ User, match }) => {
           <Grid size={{ xs: 12, md: 2 }} sx={{}}></Grid>
           <Grid size={{ xs: 12, md: 8 }} sx={{}}>
             <Box sx={{ padding: 1 }}>
+              
               <Grid
                 sx={{
                   paddingBottom:5,
@@ -54,6 +56,7 @@ const Profilepage = ({ User, match }) => {
                 container
                 
               >
+                
                 <Grid>
                   <Stack>
                     <Typography variant="h4">{profiledata.username}</Typography>
@@ -62,8 +65,10 @@ const Profilepage = ({ User, match }) => {
                       width={100}
                       user={profiledata}
                     ></UserAvatar>
+                    <Typography>{`User karma: ${formatNumber(profiledata.userKarma)}`}</Typography>
                   </Stack>
                 </Grid>
+                
                 <Grid
                   sx={{
                     display: "flex",
@@ -73,9 +78,11 @@ const Profilepage = ({ User, match }) => {
                     paddingRight:5
                   }}
                 >
+                  
                   <Typography>{`Disliked posts: ${profiledata.dislikedposts.length}`}</Typography>
                   <Typography>{`Disliked comments: ${profiledata.dislikedcomments.length}`}</Typography>
                   <Typography>{`Subs:  ${profiledata.feedsubs.length}`}</Typography>
+                  
                 </Grid>
                 <Grid
                   sx={{
@@ -87,9 +94,11 @@ const Profilepage = ({ User, match }) => {
                   <Typography>{`Liked posts: ${profiledata.likedposts.length}`}</Typography>
                   <Typography>{`Liked comments: ${profiledata.likedcomments.length}`}</Typography>
                   <Typography>{`Owned feeds: ${profiledata.ownedfeeds.length}`}</Typography>
+                  
                 </Grid>
+                
               </Grid>
-
+                  
               <Grid size={{ xs: 12 }} container flexDirection={"row"}></Grid>
               <Grid></Grid>
               <Divider></Divider>
@@ -123,6 +132,8 @@ const Profilepage = ({ User, match }) => {
                   User={User}
                   userdata={userdata.data.getuser}
                   type={type}
+                              setmessage={setmessage}
+            setseverity={setseverity}
                 ></ProfileFeed>
               </List>
             </Box>

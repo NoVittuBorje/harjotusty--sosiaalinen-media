@@ -79,8 +79,8 @@ const RegisterPage = ({ refetch }) => {
 
   console.log(formik.errors);
   return (
-    <Box sx={{ flexGrow: 1 }}>
-      <Box sx={{ textAlign: "center" }}></Box>
+    
+      
 
       <Grid container rowSpacing={1} sx={{ flexDirection: "row" }}>
         <Grid size={{ xs: 12, md: 4 }} sx={{}}></Grid>
@@ -208,7 +208,7 @@ const RegisterPage = ({ refetch }) => {
 
         <Grid size={{ xs: 12, md: 4 }} sx={{}}></Grid>
       </Grid>
-    </Box>
+    
   );
 };
 export default RegisterPage;

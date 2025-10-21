@@ -33,7 +33,7 @@ import parse from "html-react-parser";
 import PostModSettings from "./PostModSettings";
 import Locked from "../../utils/Locked";
 
-const SinglePost = ({ match, User, refetchUser }) => {
+const SinglePost = ({ match, User, refetchUser,setmessage,setseverity }) => {
   const id = match.params.id;
   console.log(match.params.id);
   const navigate = useNavigate();
@@ -292,6 +292,8 @@ const SinglePost = ({ match, User, refetchUser }) => {
                     User={User}
                     type={"post"}
                     karma={postdata.karma}
+                                setmessage={setmessage}
+            setseverity={setseverity}
                   ></KarmaItem>
                   <NewCommentform></NewCommentform>
                 </Box>
@@ -312,6 +314,8 @@ const SinglePost = ({ match, User, refetchUser }) => {
                 loadmore={loadmore}
                 loading={postcomments.loading}
                 postid={postdata.id}
+                            setmessage={setmessage}
+            setseverity={setseverity}
               ></CommentSection>
             </Box>
           </Grid>

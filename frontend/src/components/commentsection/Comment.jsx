@@ -29,7 +29,8 @@ const Comment = ({
   type,
   handleNewComment,
   postid,
-
+  setmessage,
+  setseverity,
 }) => {
   const [replyopen, setReplyOpen] = useState(false);
   const [editopen, setEditOpen] = useState(false);
@@ -125,6 +126,8 @@ const Comment = ({
           ShowComments={ShowComments}
           User={User}
           postid={postid}
+              setmessage={setmessage}
+            setseverity={setseverity}
         ></MoreComments>
       );
     }
@@ -209,6 +212,8 @@ const Comment = ({
                   <Box className={"footer"}>
                     <KarmaItem
                       User={User}
+                                  setmessage={setmessage}
+            setseverity={setseverity}
                       id={comment.id}
                       type={"comment"}
                       karma={comment.karma}
