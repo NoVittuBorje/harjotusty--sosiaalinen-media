@@ -1,0 +1,29 @@
+name: Deployment pipeline BlogList
+jobs:
+  Deploy_fly_backend:
+    runs-on: ubuntu-latest
+    concurrency: deploy-group
+    steps:
+      - uses: actions/checkout@v4
+      - uses: superfly/flyctl-actions/setup-flyctl@master
+      - name: Install dependencies 
+        run: npm install 
+      - name: build and deploy
+        run: npm run build
+      - run: flyctl deploy --remote-only
+        env:
+          FLY_API_TOKEN: ${{ secrets.FLY_DEPLOY_KEY }}
+  Deploy_fly_fronend:
+    needs: [Deploy_fly_backend]
+    runs-on: ubuntu-latest
+    concurrency: deploy-group
+    steps:
+      - uses: actions/checkout@v4
+      - uses: superfly/flyctl-actions/setup-flyctl@master
+      - name: Install dependencies 
+        run: npm install 
+      - name: build and deploy
+        run: npm run build
+      - run: flyctl deploy --remote-only
+        env:
+          FLY_API_TOKEN: ${{ secrets.FLY_DEPLOY_KEY }}
