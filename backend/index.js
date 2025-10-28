@@ -121,8 +121,8 @@ const start = async () => {
 
   const PORT = 3000;
 
-  httpServer.listen(PORT,hostname () =>
-    console.log(`Server is now running on http://localhost:${PORT}`)
+  httpServer.listen(PORT,hostname, () =>
+    console.log(`Server is now running on http://${hostname}:${PORT}`)
   );
 };
 

@@ -1,9 +1,7 @@
-import { Stack, Box, Link, Paper, List, Tooltip, Typography } from "@mui/material";
-import Comment from "../../commentsection/Comment";
+import { Box,} from "@mui/material";
 import useGetUserComments from "../../hooks/useGetUserComments";
-import InfiniteScroll from "react-infinite-scroll-component";
 import CommentSection from "../../commentsection/CommentSection";
-import { useState } from "react";
+
 const ProfileFeedComment = ({variables,User,userdata,setmessage,setseverity}) => {
   console.log(variables);
   const comments = useGetUserComments(variables);
