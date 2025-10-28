@@ -1,4 +1,8 @@
 name: Deployment pipeline BlogList
+on:
+  push:
+    branches:
+      - master
 jobs:
   Deploy_fly_backend:
     runs-on: ubuntu-latest
