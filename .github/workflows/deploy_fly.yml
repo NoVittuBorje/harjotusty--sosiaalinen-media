@@ -10,8 +10,9 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - uses: superfly/flyctl-actions/setup-flyctl@master
-      - name: Install dependencies 
+      - name: "Goto file"
         run: cd backend
+      - name: Install dependencies 
         run: npm install 
       - name: build and deploy
         run: npm run build
@@ -25,8 +26,9 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - uses: superfly/flyctl-actions/setup-flyctl@master
-      - name: Install dependencies 
+      - name: "Goto file"
         run: cd frontend
+      - name: Install dependencies 
         run: npm install
       - name: build and deploy
         run: npm run build
