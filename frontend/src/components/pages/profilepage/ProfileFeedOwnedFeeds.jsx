@@ -1,4 +1,4 @@
-import { Box, Stack, Link, Typography } from "@mui/material";
+import { Box, Stack,Typography } from "@mui/material";
 import useGetUserOwnedFeeds from "../../hooks/useGetUserOwnedFeeds";
 import InfiniteScroll from "react-infinite-scroll-component";
 import { useNavigate } from "react-router";

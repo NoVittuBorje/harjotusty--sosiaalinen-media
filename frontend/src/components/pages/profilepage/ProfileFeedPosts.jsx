@@ -1,6 +1,6 @@
-import { Box, Divider, Link, Typography } from "@mui/material";
+import { Box} from "@mui/material";
 import FeedItem from "../../FeedItem";
-import ProfileFeedComment from "./ProfileFeedComment";
+
 import { useNavigate } from "react-router";
 import useGetUserPosts from "../../hooks/useGetUserPosts";
 import InfiniteScroll from "react-infinite-scroll-component";
