@@ -46,7 +46,9 @@ const start = async () => {
 
   const schema = makeExecutableSchema({ typeDefs, resolvers });
   const serverCleanup = useServer({ schema }, wsServer);
-
+  const corsOptions = {
+    origin: "https://frontend-harjotus-sosi.fly.dev/"
+  }
   const server = new ApolloServer({
     schema,
     csrfPrevention:true,
@@ -68,7 +70,7 @@ const start = async () => {
 
   app.use(
     "/",
-    cors(),
+    cors(corsOptions),
     express.json({ limit: "50mb" }),
     graphqlUploadExpress({ maxFileSize: 10000000, maxFiles: 10 }),
     expressMiddleware(server, {
@@ -102,7 +104,7 @@ const start = async () => {
     })
   );
 
-  const PORT = 4000;
+  const PORT = 3000;
 
   httpServer.listen(PORT, () =>
     console.log(`Server is now running on http://localhost:${PORT}`)

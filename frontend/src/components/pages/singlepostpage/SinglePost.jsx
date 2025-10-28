@@ -320,6 +320,7 @@ const SinglePost = ({ match, User, refetchUser,setmessage,setseverity }) => {
             </Box>
           </Grid>
           <Grid size={{ xs: 12, md: 2, sm: 2 }}>
+            <Box sx={{margin:1}}>
             <ModSettings></ModSettings>
             <Collapse
               in={openModSettings}
@@ -332,6 +333,7 @@ const SinglePost = ({ match, User, refetchUser,setmessage,setseverity }) => {
             >
               <PostModSettings item={postdata}></PostModSettings>
             </Collapse>
+            </Box>
           </Grid>
         </Grid>
       </Box>

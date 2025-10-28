@@ -16,9 +16,9 @@ import useEditFeed from "../../hooks/useEditFeed";
 import ExpandIcon from "../../utils/ExpandIcon";
 import FileUpload from "../../utils/upload";
 
-const FeedModSettings = ({ mods, item, setFeedEditOpen, User }) => {
-  console.log(mods);
-  console.log(item);
+const FeedModSettings = ({ infoloading,info, item, setFeedEditOpen, User }) => {
+  if(infoloading){return}
+  const mods = [...info.moderators.map((mod) => mod.id), info.owner.id];
   const [editfeed, editfeedresult] = useEditFeed();
 
   const [OpenUnban, setOpenUnban] = useState(false);
@@ -38,9 +38,9 @@ const FeedModSettings = ({ mods, item, setFeedEditOpen, User }) => {
   const OwnerSettings = () => {
     if (item.owner.id == User.id) {
       return (
-        <Stack direction={"column"} spacing={1}>
-          <Typography>Owner settings:</Typography>
-          <Box>
+        <Box sx={{display:"flex",justifyContent:"center",justifyItems:"center"}}>
+        <Stack direction={"column"} sx={{justifyContent:"center",justifyItems:"center"}}>
+          <Typography variant="h6">Owner settings:</Typography>
           <Button
             className="button"
             sx={{ borderRadius: 50 }}
@@ -59,8 +59,6 @@ const FeedModSettings = ({ mods, item, setFeedEditOpen, User }) => {
               action={"mod"}
             ></UserSearchItem>
           </Collapse>
-</Box>
-<Box>
           <Button
             className="button"
             sx={{ borderRadius: 50 }}
@@ -78,8 +76,6 @@ const FeedModSettings = ({ mods, item, setFeedEditOpen, User }) => {
               action={"unmod"}
             ></UserSearchItem>
           </Collapse>
-          </Box>
-          <Box>
           <Button
             className="button"
             sx={{ borderRadius: 50 }}
@@ -97,6 +93,7 @@ const FeedModSettings = ({ mods, item, setFeedEditOpen, User }) => {
                 display: "flex",
                 justifyContent: "center",
                 flexDirection:"column",
+                
               }}
             >
               <Typography>Image: </Typography>
@@ -123,8 +120,6 @@ const FeedModSettings = ({ mods, item, setFeedEditOpen, User }) => {
         </Button>
             </Box>
           </Collapse>
-          </Box>
-          <Box>
           <Button
             className="button"
             sx={{ borderRadius: 50 }}
@@ -142,8 +137,8 @@ const FeedModSettings = ({ mods, item, setFeedEditOpen, User }) => {
               action={"makeowner"}
             ></UserSearchItem>
           </Collapse>
-          </Box>
         </Stack>
+        </Box>
       );
     } else {
       return;
@@ -220,19 +215,11 @@ const FeedModSettings = ({ mods, item, setFeedEditOpen, User }) => {
   }
   if (mods.includes(User.id)) {
     return (
-      <Box
-        width={200}
-        minWidth={200}
-        sx={{
-          display: "flex",
-          justifyContent: "center",
-          justifyItems: "center",
-        }}
-      >
-        <Box>
-        <Stack spacing={1} direction={"column"}>
+      <Box>
+        <Box sx={{display:"flex",justifyContent:"center",justifyItems:"center"}}>
+        <Stack direction={"column"} sx={{justifyContent:"center",justifyItems:"center"}}>
           <Typography>Mod settings:</Typography>
-          <Box>
+          
           <Button
             className="button"
             sx={{ borderRadius: 50}}
@@ -243,8 +230,7 @@ const FeedModSettings = ({ mods, item, setFeedEditOpen, User }) => {
           >
             Edit feed description
           </Button>
-</Box>
-<Box>
+
           <Button
             className="button"
             sx={{ borderRadius: 50 }}
@@ -262,8 +248,7 @@ const FeedModSettings = ({ mods, item, setFeedEditOpen, User }) => {
               action={"unban"}
             ></UserSearchItem>
           </Collapse>
-</Box>
-<Box>
+
           <Button
             className="button"
             sx={{ borderRadius: 50 }}
@@ -281,14 +266,15 @@ const FeedModSettings = ({ mods, item, setFeedEditOpen, User }) => {
               action={"ban"}
             ></UserSearchItem>
           </Collapse>
-</Box>
+
 
           
         </Stack>
         <Divider></Divider>
-        {OwnerSettings()}
+        
         
         </Box>
+        {OwnerSettings()}
       </Box>
     );
   }

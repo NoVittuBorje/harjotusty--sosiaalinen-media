@@ -67,7 +67,7 @@ function App() {
 
 
       <Box sx={{marginTop:"64px"}}>
-        <Routes>
+        <Routes >
           <Route
             path="/"
             element={

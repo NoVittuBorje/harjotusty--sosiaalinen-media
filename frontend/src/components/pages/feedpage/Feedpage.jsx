@@ -38,7 +38,7 @@ import FeedAvatar from "../../utils/FeedAvatar";
 import ExpandIcon from "../../utils/ExpandIcon";
 import Timestamp from "../../utils/Timestamp";
 
-const FeedPage = ({ match, User, refetchUser,setmessage,setseverity }) => {
+const FeedPage = ({ match, User, refetchUser, setmessage, setseverity }) => {
   console.log(localStorage.getItem("Feedorderby"));
   if (!localStorage.getItem("FeedorderBy")) {
     localStorage.setItem("FeedorderBy", "POPULAR");
@@ -112,7 +112,7 @@ const FeedPage = ({ match, User, refetchUser,setmessage,setseverity }) => {
         }}
       >
         <Stack spacing={1}>
-          <Typography>Feed info: </Typography>
+          <Typography variant="h6">Feed info: </Typography>
           <Typography>
             Owner:
             <Button
@@ -201,49 +201,23 @@ const FeedPage = ({ match, User, refetchUser,setmessage,setseverity }) => {
       </Box>
     );
   };
-
-  const FeedSettings = ({ info, infoloading }) => {
-    const ModSettingIcon = ({ mods, User }) => {
-      if (!mods || !User) {
-        return;
-      }
-      if (mods.includes(User.id))
-        return (
-          <IconButton
-            className={"button"}
-            sx={{ color: "inherit" }}
-            onClick={() => setOpenSettings(!OpenSettings)}
-          >
-            <SettingsIcon></SettingsIcon>
-          </IconButton>
-        );
-    };
-    if (infoloading) {
+  const ModSettingIcon = ({ info,infoloading, User }) => {
+    if(infoloading){return}
+    const mods = [...info.moderators.map((mod) => mod.id), info.owner.id];
+    if (!mods || !User) {
       return;
     }
-    const mods = [...info.moderators.map((mod) => mod.id), info.owner.id];
-    console.log(mods);
-    return (
-      <Box>
-        <ModSettingIcon mods={mods} User={User}></ModSettingIcon>
-        <Collapse
-          sx={{
-            backgroundColor: "background.dark",
-            borderRadius: 5,
-            padding: 1,
-            border: "1px solid",
-          }}
-          in={OpenSettings}
+    if (mods.includes(User.id)){
+      return (
+        <IconButton
+          className={"button"}
+          sx={{ color: "inherit" }}
+          onClick={() => setOpenSettings(!OpenSettings)}
         >
-          <FeedModSettings
-            mods={mods}
-            User={User}
-            setFeedEditOpen={setFeedEditOpen}
-            item={info}
-          ></FeedModSettings>
-        </Collapse>
-      </Box>
-    );
+          <SettingsIcon></SettingsIcon>
+        </IconButton>
+      );}
+      else{return}
   };
   const SubButton = ({ User }) => {
     if (!User) {
@@ -314,6 +288,8 @@ const FeedPage = ({ match, User, refetchUser,setmessage,setseverity }) => {
   let infoloading = feedinfo.loading;
   info = info[0];
   let hasmore = true;
+  
+
   if (feed.length % 10 != 0 || hasmore === false || feed.length == 0) {
     console.log("no more");
     hasmore = false;
@@ -330,7 +306,7 @@ const FeedPage = ({ match, User, refetchUser,setmessage,setseverity }) => {
     <Box sx={{ flexGrow: 1 }}>
       <Grid container rowSpacing={1} sx={{ flexDirection: "row" }}>
         <Grid size={{ xs: 12, md: 2, sm: 0 }}></Grid>
-        <Grid size={{ xs: 12, md: 8, sm: 9 }}>
+        <Grid size={{ xs: 12, md: 7, sm: 9 }}>
           <Box>
             <FeedDescription
               infoloading={infoloading}
@@ -372,8 +348,8 @@ const FeedPage = ({ match, User, refetchUser,setmessage,setseverity }) => {
               {feed.map((item) => (
                 <FeedItem
                   item={item}
-                    setmessage={setmessage}
-            setseverity={setseverity}
+                  setmessage={setmessage}
+                  setseverity={setseverity}
                   owner={item.owner}
                   mods={info ? [...info.moderators, info.owner.id] : []}
                   User={User}
@@ -382,9 +358,29 @@ const FeedPage = ({ match, User, refetchUser,setmessage,setseverity }) => {
             </InfiniteScroll>
           </Box>
         </Grid>
-        <Grid size={{ xs: 12, md: 2, sm: 3 }}>
-          <FeedInfo info={info} infoloading={infoloading}></FeedInfo>
-          <FeedSettings info={info} infoloading={infoloading}></FeedSettings>
+        <Grid size={{ xs: 12, md: 3, sm: 3 }}>
+          <Box sx={{ margin: 1 }}>
+            <FeedInfo info={info} infoloading={infoloading}></FeedInfo>
+
+            <ModSettingIcon info={info} infoloading={infoloading}  User={User}></ModSettingIcon>
+            <Collapse
+              sx={{
+                backgroundColor: "background.dark",
+                borderRadius: 5,
+                padding: 1,
+                border: "1px solid",
+              }}
+              in={OpenSettings}
+            >
+              <FeedModSettings
+                info={info}
+                infoloading={infoloading}
+                User={User}
+                setFeedEditOpen={setFeedEditOpen}
+                item={info}
+              ></FeedModSettings>
+            </Collapse>
+          </Box>
         </Grid>
       </Grid>
     </Box>

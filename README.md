@@ -145,8 +145,13 @@
   </tr>
       <tr>
   <td>27</td>
+  <td>8</td>
+  <td>196</td>
+  </tr>
+        <tr>
+  <td>28</td>
   <td>4</td>
-  <td>192</td>
+  <td>200</td>
   </tr>
 </table>
 

@@ -26,9 +26,13 @@ const authLink = setContext((_, { headers }) => {
     },
   };
 });
-
+var linktobackend = "http://localhost:3000"
+const deployment = false
+if(deployment){
+  linktobackend = "https://backend-harjotus-sosi.fly.dev"
+}
 const httpLink = createUploadLink({
-  uri: "http://localhost:4000",
+  uri: `${linktobackend}`,
 });
 const cache = new InMemoryCache({
   typePolicies: {
@@ -66,7 +70,7 @@ const cache = new InMemoryCache({
     },
   },
 });
-const wsLink = new GraphQLWsLink(createClient({ url: "ws://localhost:4000" }));
+const wsLink = new GraphQLWsLink(createClient({ url: `ws://${linktobackend}` }));
 const splitLink = split(
   ({ query }) => {
     const definition = getMainDefinition(query);
