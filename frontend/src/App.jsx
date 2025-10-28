@@ -1,7 +1,7 @@
 import AppBar from "./components/Appbar";
 import "./App.css";
 import Homescreen from "./components/pages/homepage/Homepage";
-import { Alert, Box, Snackbar, SnackbarContent, useColorScheme } from "@mui/material";
+import { Box,} from "@mui/material";
 import { Routes, Route, useMatch } from "react-router-dom";
 import Profilepage from "./components/pages/profilepage/Profilepage";
 import SinglePost from "./components/pages/singlepostpage/SinglePost";
@@ -17,7 +17,7 @@ import { useEffect, useState } from "react";
 
 function App() {
   const token = sessionStorage.getItem("token");
-  const { data, loading, error, refetch } = useMe();
+  const { data, loading, refetch } = useMe();
   const [message, setmessage] = useState(null);
   const [severity, setseverity] = useState(null);
   const [open, setOpen] = useState(false);

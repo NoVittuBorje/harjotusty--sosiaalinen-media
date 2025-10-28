@@ -25,7 +25,15 @@ require("dotenv").config();
 const MONGODB_URI = process.env.MONGODB_URI;
 
 console.log("connecting to", MONGODB_URI);
+var linktofrontend = "http://localhost:5173"
 
+const deployment = false
+if(process.env.NODE_ENV == "production"){
+  deployment = true
+}
+if(deployment){
+  linktofrontend = "frontend-harjotus-sosi.fly.dev"
+}
 mongoose
   .connect(MONGODB_URI)
   .then(() => {
@@ -37,6 +45,14 @@ mongoose
 
 const start = async () => {
   const app = express();
+   const corsOptions = {
+    origin: 'https://frontend-harjotus-sosi.fly.dev/',
+    methods: "POST",
+    accessControlAllowOrigin: '*',
+    accessControlAllowCredentials: true,
+}
+  app.use(cors(corsOptions))
+ 
   const httpServer = http.createServer(app);
 
   const wsServer = new WebSocketServer({
@@ -46,9 +62,8 @@ const start = async () => {
 
   const schema = makeExecutableSchema({ typeDefs, resolvers });
   const serverCleanup = useServer({ schema }, wsServer);
-  const corsOptions = {
-    origin: "https://frontend-harjotus-sosi.fly.dev/"
-  }
+
+  
   const server = new ApolloServer({
     schema,
     csrfPrevention:true,
@@ -70,7 +85,6 @@ const start = async () => {
 
   app.use(
     "/",
-    cors(corsOptions),
     express.json({ limit: "50mb" }),
     graphqlUploadExpress({ maxFileSize: 10000000, maxFiles: 10 }),
     expressMiddleware(server, {

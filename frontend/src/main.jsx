@@ -14,7 +14,7 @@ import { BrowserRouter } from "react-router-dom";
 import { createTheme, CssBaseline, ThemeProvider } from "@mui/material";
 import { offsetLimitPagination } from "@apollo/client/utilities";
 import createUploadLink from "apollo-upload-client/createUploadLink.mjs";
-import { useState } from "react";
+
 
 const authLink = setContext((_, { headers }) => {
   const token = sessionStorage.getItem("token");
@@ -26,10 +26,11 @@ const authLink = setContext((_, { headers }) => {
     },
   };
 });
+
 var linktobackend = "http://localhost:3000"
-const deployment = false
+const deployment = true
 if(deployment){
-  linktobackend = "https://backend-harjotus-sosi.fly.dev"
+  linktobackend = "https://backend-harjotus-sosi.fly.dev/"
 }
 const httpLink = createUploadLink({
   uri: `${linktobackend}`,

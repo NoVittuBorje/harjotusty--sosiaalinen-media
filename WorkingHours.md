@@ -388,4 +388,11 @@
   <td>28</td>
   <td>Launched and deployed to fly.io https://frontend-harjotus-sosi.fly.dev/</td>
   </tr>
+    <tr>
+  <td>Oct 28, 2025</td>
+  <td>2</td>
+  <td>202</td>
+  <td>28</td>
+  <td>Fixed nginx routing for fly</td>
+  </tr>
 </table>
