@@ -26,7 +26,7 @@ const ProfileFeedOwnedFeeds = (variables) => {
               <Box
                 className={"feed"}
                 sx={{
-                  padding:1,
+                  padding: 1,
                   boxShadow: 3,
                   backgroundColor: "background.dark",
                   "&:hover": {

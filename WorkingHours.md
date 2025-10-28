@@ -390,9 +390,9 @@
   </tr>
     <tr>
   <td>Oct 28, 2025</td>
-  <td>2</td>
+  <td>4</td>
   <td>202</td>
   <td>28</td>
-  <td>Fixed nginx routing for fly</td>
+  <td>Fixed nginx routing for fly,and added automatic deploy to github.</td>
   </tr>
 </table>
