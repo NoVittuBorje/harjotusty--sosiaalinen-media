@@ -1,8 +1,9 @@
 
-import ProfileFeedPosts from "./ProfileFeedPosts";
-import ProfileFeedOwnedFeeds from "./ProfileFeedOwnedFeeds";
-import ProfileFeedSubs from "./ProfileFeedSubs";
-import ProfileFeedComment from "./ProfileFeedComment";
+import ProfileFeedPosts from "./ProfileFeedPosts.jsx";
+import ProfileFeedOwnedFeeds from "./ProfileFeedOwnedFeeds.jsx";
+import ProfileFeedSubs from "./ProfileFeedSubs.jsx";
+import ProfileFeedComment from "./ProfileFeedComment.jsx";
+
 const ProfileFeed = ({ type, id, userdata, User, setmessage, setseverity }) => {
   const variables = {
     id: id,
