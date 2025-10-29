@@ -47,6 +47,7 @@ const ProfileFeed = ({ type, id, userdata, User, setmessage, setseverity }) => {
       ></ProfileFeedSubs>
     );
   }
+  return
 };
 
 export default ProfileFeed;

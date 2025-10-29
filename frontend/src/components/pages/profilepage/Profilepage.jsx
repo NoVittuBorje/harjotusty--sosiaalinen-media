@@ -32,7 +32,7 @@ const Profilepage = ({ User, match, setmessage, setseverity }) => {
     console.log(profiledata);
     const ProfileDesc = ({ profiledata }) => {
       if (profiledata.description) {
-        return <>{parse(profiledata.description)}</>;
+        return <Box key={"ProfileDesc"}>{parse(profiledata.description)}</Box>;
       } else {
         return;
       }
@@ -95,8 +95,9 @@ const Profilepage = ({ User, match, setmessage, setseverity }) => {
               <Grid size={{ xs: 12 }} container flexDirection={"row"}></Grid>
               <Grid></Grid>
               <Divider></Divider>
-              <ProfileDesc profiledata={profiledata}></ProfileDesc>
-
+              
+                <ProfileDesc profiledata={profiledata}></ProfileDesc>
+              
               <Divider></Divider>
             </Box>
             <Box sx={{ padding: 1 }}>
@@ -118,8 +119,8 @@ const Profilepage = ({ User, match, setmessage, setseverity }) => {
               </FormControl>
             </Box>
             <Divider></Divider>
-            <Box>
-              <List>
+            <Box key={"ProfileFeed"}>
+              
                 <ProfileFeed
                   id={profiledata.id}
                   User={User}
@@ -128,7 +129,7 @@ const Profilepage = ({ User, match, setmessage, setseverity }) => {
                   setmessage={setmessage}
                   setseverity={setseverity}
                 ></ProfileFeed>
-              </List>
+              
             </Box>
           </Grid>
           <Grid size={{ xs: 12, md: 2 }} sx={{}}></Grid>

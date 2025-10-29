@@ -1,7 +1,5 @@
 import { Box} from "@mui/material";
 import FeedItem from "../../FeedItem";
-
-import { useNavigate } from "react-router";
 import useGetUserPosts from "../../hooks/useGetUserPosts";
 import InfiniteScroll from "react-infinite-scroll-component";
 
@@ -13,7 +11,7 @@ const ProfileFeedPosts = ({
   setseverity,
 }) => {
   console.log(variables);
-  const navigate = useNavigate();
+  
   let posts = useGetUserPosts(variables);
   const loadmore = () => {
     posts.fetchMore({ offset: posts.data.getuserposts.length });
