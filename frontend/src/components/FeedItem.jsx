@@ -52,12 +52,14 @@ const FeedItem = ({ item, owner, User, mods,setmessage,setseverity }) => {
   const FeedDescription = ({ item }) => {
     if (item.img) {
       return (
-        <Box className="imagecontainer">
+        <Box key={`${item.id}imagedescription`} className="imagecontainer">
           <FeedImage img={item.img}></FeedImage>
         </Box>
       );
     } else {
-      return <Box className="feedDesc">{parse(item.description)}</Box>;
+      return <Box key={`${item.id}description`} className="feedDesc">
+        {parse(item.description)}
+      </Box>;
     }
   };
   return (

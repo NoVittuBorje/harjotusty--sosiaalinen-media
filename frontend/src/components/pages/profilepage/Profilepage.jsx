@@ -26,6 +26,7 @@ const ProfileFeed = ({ type, id, userdata, User, setmessage, setseverity }) => {
 
   if (type === "posts") {
     return (
+      <Box key={"profileposts"}>
       <ProfileFeedPosts
         variables={variables}
         setmessage={setmessage}
@@ -33,10 +34,12 @@ const ProfileFeed = ({ type, id, userdata, User, setmessage, setseverity }) => {
         userdata={userdata}
         User={User}
       ></ProfileFeedPosts>
+      </Box>
     );
   }
   if (type === "comments") {
     return (
+      <Box key={"profilecomments"}>
       <ProfileFeedComment
         setmessage={setmessage}
         setseverity={setseverity}
@@ -44,22 +47,27 @@ const ProfileFeed = ({ type, id, userdata, User, setmessage, setseverity }) => {
         userdata={userdata}
         User={User}
       ></ProfileFeedComment>
+      </Box>
     );
   }
   if (type === "ownedfeeds") {
     return (
+      <Box key={"profileownedfeeds"}>
       <ProfileFeedOwnedFeeds
         variables={variables}
         userdata={userdata}
       ></ProfileFeedOwnedFeeds>
+      </Box>
     );
   }
   if (type === "subs") {
     return (
+      <Box key={"profilesubs"}>
       <ProfileFeedSubs
         variables={variables}
         userdata={userdata}
       ></ProfileFeedSubs>
+      </Box>
     );
   }
   return
@@ -161,11 +169,11 @@ const Profilepage = ({ User, match, setmessage, setseverity }) => {
                   sx={{ color: "inherit" }}
                   onChange={handleChange}
                 >
-                  <Typography sx={{ paddingLeft: 2 }}>Sort by</Typography>
-                  <MenuItem value={"posts"}>Posts</MenuItem>
-                  <MenuItem value={"subs"}>Subs</MenuItem>
-                  <MenuItem value={"comments"}>Comments</MenuItem>
-                  <MenuItem value={"ownedfeeds"}>Owned feeds</MenuItem>
+                  <Typography key={"sortby"} sx={{ paddingLeft: 2 }}>Sort by</Typography>
+                  <MenuItem key={"posts"} value={"posts"}>Posts</MenuItem>
+                  <MenuItem key={"subs"} value={"subs"}>Subs</MenuItem>
+                  <MenuItem key={"comments"} value={"comments"}>Comments</MenuItem>
+                  <MenuItem key={"ownedfeeds"} value={"ownedfeeds"}>Owned feeds</MenuItem>
                 </Select>
               </FormControl>
             </Box>
