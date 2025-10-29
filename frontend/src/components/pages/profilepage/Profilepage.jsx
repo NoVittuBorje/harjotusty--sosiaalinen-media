@@ -80,7 +80,7 @@ const Profilepage = ({ User, match, setmessage, setseverity }) => {
   } else {
     const profiledata = userdata.data ? userdata.data.getuser : [];
     console.log(profiledata);
-    if(profiledata.description)
+    
     const ProfileDesc = ({ profiledata }) => {
       if (profiledata.description) {
         return <Box key={"ProfileDesc"}>{parse(profiledata.description)}</Box>;

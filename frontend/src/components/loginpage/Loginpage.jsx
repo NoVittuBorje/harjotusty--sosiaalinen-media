@@ -69,7 +69,7 @@ const LoginPage = ({ setUser, User, refetch }) => {
     
       <Grid container rowSpacing={1} sx={{ flexDirection: "row" }}>
         <Grid size={{ xs: 12, md: 4 }}></Grid>
-        <Grid size={{ xs: 12, md: 4 }}>
+        <Grid >
           <Box sx={{ borderRadius: 3,boxShadow:3, padding:3,marginTop:"20%" }}>
             <FormGroup
               sx={{
