@@ -11,7 +11,6 @@ const useMakePost = () => {
   ],
   });
   const make = async ({ description, feedname, headline, img }) => {
-    console.log(description);
     const data = await mutate({
       variables: {
         headline: headline,

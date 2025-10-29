@@ -15,7 +15,6 @@ import { createTheme, CssBaseline, ThemeProvider } from "@mui/material";
 import { offsetLimitPagination } from "@apollo/client/utilities";
 import createUploadLink from "apollo-upload-client/createUploadLink.mjs";
 
-
 const authLink = setContext((_, { headers }) => {
   const token = sessionStorage.getItem("token");
   return {
@@ -27,11 +26,11 @@ const authLink = setContext((_, { headers }) => {
   };
 });
 
-var linktobackend = "http://localhost:3000"
-const deployment = false
+var linktobackend = "http://localhost:3000";
+const deployment = false;
 
-if(deployment){
-  linktobackend = "https://backend-harjotus-sosi.fly.dev/"
+if (deployment) {
+  linktobackend = "https://backend-harjotus-sosi.fly.dev/";
 }
 const httpLink = createUploadLink({
   uri: `${linktobackend}`,
@@ -72,7 +71,9 @@ const cache = new InMemoryCache({
     },
   },
 });
-const wsLink = new GraphQLWsLink(createClient({ url: `ws://${linktobackend}` }));
+const wsLink = new GraphQLWsLink(
+  createClient({ url: `ws://${linktobackend}` })
+);
 const splitLink = split(
   ({ query }) => {
     const definition = getMainDefinition(query);
@@ -90,8 +91,6 @@ const client = new ApolloClient({
   link: splitLink,
 });
 
-
-
 const theme = createTheme({
   colorSchemes: {
     light: {
@@ -99,9 +98,9 @@ const theme = createTheme({
         mode: "light",
         background: {
           default: "#ffffffff",
-          dark:"#f7f7f7ff",
-          hover:"#f0f0f0ff",
-          button:"#e2e2e2ff",
+          dark: "#f7f7f7ff",
+          hover: "#f0f0f0ff",
+          button: "#e2e2e2ff",
         },
         secondary: {
           main: "#000000ff",
@@ -113,14 +112,14 @@ const theme = createTheme({
         mode: "dark",
         background: {
           default: "#363535ff",
-          dark:"#2c2c2cff",
-          hover:"#444343ff",
-          button:"#3d3c3cff",
+          dark: "#2c2c2cff",
+          hover: "#444343ff",
+          button: "#3d3c3cff",
         },
         primary: {
           main: "#ffffff",
-          button:"#3d3c3cff",
-          error:"#d32f2f",
+          button: "#3d3c3cff",
+          error: "#d32f2f",
         },
         secondary: {
           main: "#ffffff",
@@ -137,8 +136,6 @@ const theme = createTheme({
       textTransform: "none",
     },
   },
-
-  
 });
 
 ReactDOM.createRoot(document.getElementById("root")).render(

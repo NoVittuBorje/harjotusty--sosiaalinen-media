@@ -1,12 +1,7 @@
 import { FormGroup, TextField, Button, Box } from "@mui/material";
 import { useState } from "react";
 
-const NewComment = ({
-  handleReply,
-  commentid,
-  handleReplyClick,
-
-}) => {
+const NewComment = ({ handleReply, commentid, handleReplyClick }) => {
   const [comment, setComment] = useState("");
   const handleNewReply = (event) => {
     event.preventDefault();
@@ -31,7 +26,7 @@ const NewComment = ({
           variant="outlined"
           color="inherit"
           className={"button"}
-          style={{ borderRadius: 50,backgroundColor:"background.button" }}
+          style={{ borderRadius: 50, backgroundColor: "background.button" }}
           onClick={(event) => {
             handleNewReply(event);
           }}
@@ -43,7 +38,7 @@ const NewComment = ({
           variant="outlined"
           color="inherit"
           className={"button"}
-          style={{ borderRadius: 50,backgroundColor:"background.button" }}
+          style={{ borderRadius: 50, backgroundColor: "background.button" }}
           onClick={handleReplyClick}
         >
           cancel

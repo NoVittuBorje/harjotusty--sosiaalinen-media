@@ -20,9 +20,9 @@ import ListItemButton from "@mui/material/ListItemButton";
 import ListItemIcon from "@mui/material/ListItemIcon";
 import ListItemText from "@mui/material/ListItemText";
 import FeedIcon from "@mui/icons-material/Feed";
-import useGetManyFeeds from "./hooks/useGetManyFeeds";
+import useGetManyFeeds from "../hooks/useGetManyFeeds";
 import { useApolloClient } from "@apollo/client";
-import useGetSearch from "./hooks/useGetSearch";
+import useGetSearch from "../hooks/useGetSearch";
 import { useDebouncedCallback } from "use-debounce";
 import AccountBoxIcon from "@mui/icons-material/AccountBox";
 import LogoutIcon from "@mui/icons-material/Logout";
@@ -35,6 +35,7 @@ import {
   FormControl,
   FormControlLabel,
   FormLabel,
+  InputBase,
   Popper,
   Radio,
   RadioGroup,
@@ -46,8 +47,7 @@ import AddCircleOutlineIcon from "@mui/icons-material/AddCircleOutline";
 import { useState } from "react";
 import ArrowDropDownIcon from "@mui/icons-material/ArrowDropDown";
 import ArrowDropUpIcon from "@mui/icons-material/ArrowDropUp";
-import UserAvatar from "./utils/UserAvatar";
-
+import UserAvatar from "./UserAvatar";
 
 const Search = styled("div")(({ theme }) => ({
   position: "relative",
@@ -57,7 +57,7 @@ const Search = styled("div")(({ theme }) => ({
     backgroundColor: alpha(theme.palette.common.white, 0.25),
   },
   marginRight: theme.spacing(2),
-  marginLeft:0,
+  marginLeft: 0,
   width: "100%",
   [theme.breakpoints.up("sm")]: {
     marginLeft: theme.spacing(3),
@@ -69,26 +69,29 @@ const SearchIconWrapper = styled("div")(({ theme }) => ({
   padding: theme.spacing(0, 2),
   height: "100%",
   position: "absolute",
+  pointerEvents: "none",
   display: "flex",
   alignItems: "center",
   justifyContent: "center",
 }));
-const StyledAutocomplete = styled(Autocomplete)(({ theme }) => ({
-  color: "inherit",
 
-  "& .MuiAutocomplete-inputRoot": {
+const StyledInputBase = styled(InputBase)(({ theme }) => ({
+  color: "inherit",
+  "& .MuiInputBase-input": {
     padding: theme.spacing(1, 1, 1, 0),
     // vertical padding + font size from searchIcon
     paddingLeft: `calc(1em + ${theme.spacing(4)})`,
     transition: theme.transitions.create("width"),
-    width: 200,
+    width: "100%",
+    [theme.breakpoints.up("md")]: {
+      width: "20ch",
+    },
   },
 }));
 
 export default function PrimarySearchAppBar({ User, refetch }) {
-  console.log(User);
   const navigate = useNavigate();
-  
+
   const token = sessionStorage.getItem("token");
 
   const feeds = useGetManyFeeds();
@@ -134,41 +137,34 @@ export default function PrimarySearchAppBar({ User, refetch }) {
   };
 
   const handleProfileMenuClick = () => {
-    console.log("profile Page");
     navigate(`/profile/${User.id}`);
     handleMenuClose();
   };
   const handleMyaccountClick = () => {
-    console.log("my acc page");
     navigate("/myaccount");
     handleMenuClose();
   };
   const handleLoginClick = () => {
-    console.log("login page");
     navigate("/login");
     handleLoginMenuClose();
   };
   const handleLogoutClick = () => {
-    console.log("logout");
     handleMenuClose();
-    
+
     localStorage.setItem("HomeorderBy", "POPULAR");
     localStorage.setItem("FeedorderBy", "POPULAR");
-    sessionStorage.clear()
-    
+    sessionStorage.clear();
+
     navigate("/");
   };
   const handleRegisterClick = () => {
-    console.log("register page");
     navigate("/register");
     handleLoginMenuClose();
   };
   const handleHomeClick = () => {
-    console.log("home");
     navigate("/");
   };
   const handleMakeNewFeedClick = () => {
-    console.log("makenewfeed");
     navigate("/makefeed");
   };
   const debounced = useDebouncedCallback((value) => {
@@ -177,7 +173,7 @@ export default function PrimarySearchAppBar({ User, refetch }) {
 
   const ThemeState = () => {
     const { mode, setMode } = useColorScheme();
-    console.log(mode);
+
     if (!mode) {
       return null;
     }
@@ -191,7 +187,6 @@ export default function PrimarySearchAppBar({ User, refetch }) {
         >
           <option value="dark">Dark</option>
           <option value="light">Light</option>
-          
         </select>
       </Box>
     );
@@ -200,7 +195,7 @@ export default function PrimarySearchAppBar({ User, refetch }) {
     if (User) {
       return (
         <Menu
-        sx={{borderRadius:5}}
+          sx={{ borderRadius: 5 }}
           anchorEl={anchorEl}
           anchorOrigin={{
             vertical: "bottom",
@@ -215,13 +210,13 @@ export default function PrimarySearchAppBar({ User, refetch }) {
           open={isMenuOpen}
           onClose={handleMenuClose}
         >
-          <MenuItem sx={{borderRadius:5}} onClick={handleProfileMenuClick}>
+          <MenuItem sx={{ borderRadius: 5 }} onClick={handleProfileMenuClick}>
             <PersonIcon></PersonIcon>Profile
           </MenuItem>
-          <MenuItem sx={{borderRadius:5}} onClick={handleMyaccountClick}>
+          <MenuItem sx={{ borderRadius: 5 }} onClick={handleMyaccountClick}>
             <AccountBoxIcon></AccountBoxIcon>My account
           </MenuItem>
-          <MenuItem sx={{borderRadius:5}} onClick={handleLogoutClick}>
+          <MenuItem sx={{ borderRadius: 5 }} onClick={handleLogoutClick}>
             <LogoutIcon></LogoutIcon>Logout
           </MenuItem>
         </Menu>
@@ -276,7 +271,7 @@ export default function PrimarySearchAppBar({ User, refetch }) {
               disablePadding
             >
               <ListItemButton
-              sx={{borderRadius:5}}
+                sx={{ borderRadius: 5 }}
                 onClick={() => {
                   navigate(`/feed/${feed.feedname}`);
                 }}
@@ -327,7 +322,7 @@ export default function PrimarySearchAppBar({ User, refetch }) {
                   disablePadding
                 >
                   <ListItemButton
-                  sx={{borderRadius:5}}
+                    sx={{ borderRadius: 5 }}
                     onClick={() => {
                       navigate(`/feed/${subs.feedname}`);
                     }}
@@ -379,7 +374,7 @@ export default function PrimarySearchAppBar({ User, refetch }) {
               disablePadding
             >
               <ListItemButton
-              sx={{borderRadius:5}}
+                sx={{ borderRadius: 5 }}
                 onClick={() => {
                   navigate(`/feed/${feed.feedname}`);
                 }}
@@ -408,9 +403,9 @@ export default function PrimarySearchAppBar({ User, refetch }) {
   };
   const DrawerState = ({ User }) => {
     const popularfeeds = feeds.data ? feeds.data.getfeed : [];
-    
+
     if (feeds.loading) {
-      return <CircularProgress color="inherit"></CircularProgress>
+      return <CircularProgress color="inherit"></CircularProgress>;
     }
 
     if (User) {
@@ -441,11 +436,7 @@ export default function PrimarySearchAppBar({ User, refetch }) {
       );
     } else {
       return (
-        <Box
-          sx={{ width: 250 }}
-          role="presentation"
-          
-        >
+        <Box sx={{ width: 250 }} role="presentation">
           <MenupopularState feeds={popularfeeds}></MenupopularState>
           <Divider></Divider>
         </Box>
@@ -469,8 +460,7 @@ export default function PrimarySearchAppBar({ User, refetch }) {
             onClick={handleLoginMenuOpen}
             color="inherit"
           >
-            <AccountCircle fontSize="large"/>
-            
+            <AccountCircle fontSize="large" />
           </IconButton>
         </Box>
       );
@@ -494,41 +484,42 @@ export default function PrimarySearchAppBar({ User, refetch }) {
   };
   const searchoptions = data ? data.getsearchbar : [];
 
-  console.log(searchoptions, "options");
   return (
-    
-      <AppBar position="fixed" sx={{marginBottom:"64px"}}>
+    <Box sx={{ flexGrow: 1 }}>
+      <AppBar position="fixed" sx={{ marginBottom: "64px" }}>
         <Toolbar>
-          
-          <Box key={"appbar-left"} sx={{display:"flex"}}>
-          <IconButton
-            onClick={toggleDrawer(true)}
-            size="medium"
-            edge="start"
-            color="inherit"
-            aria-label="open drawer"
-            sx={{ mr: 2 }}
-          >
-            <MenuIcon />
-          </IconButton>
+          <Box key={"appbar-left"} sx={{ display: "flex" }}>
+            <IconButton
+              onClick={toggleDrawer(true)}
+              size="medium"
+              edge="start"
+              color="inherit"
+              aria-label="open drawer"
+              sx={{ mr: 2 }}
+            >
+              <MenuIcon />
+            </IconButton>
 
-          <Drawer open={open} onClose={toggleDrawer(false)}>
-            {DrawerList}
-          </Drawer>
+            <Drawer open={open} onClose={toggleDrawer(false)}>
+              {DrawerList}
+            </Drawer>
 
-          <IconButton
-            size="medium"
-            edge="start"
-            color="inherit"
-            aria-label="Home button"
-            sx={{ mr: 2 }}
-            onClick={handleHomeClick}
-          >
-            <HomeIcon />
-          </IconButton>
+            <IconButton
+              size="medium"
+              edge="start"
+              color="inherit"
+              aria-label="Home button"
+              sx={{ mr: 2 }}
+              onClick={handleHomeClick}
+            >
+              <HomeIcon />
+            </IconButton>
           </Box>
-          <Box key={"appbar-center"} sx={{display:"flex",flexDirection:"row",alignItems:"center"}}>
-          <StyledAutocomplete
+          <Box
+            key={"appbar-center"}
+            sx={{ display: "flex", flexDirection: "row", alignItems: "center" }}
+          ></Box>
+          <Autocomplete
             disablePortal
             options={searchoptions}
             getOptionLabel={(option) => `f/${option.feedname}`}
@@ -548,7 +539,6 @@ export default function PrimarySearchAppBar({ User, refetch }) {
                         textAnchor: "left",
                       }}
                       onClick={(event) => {
-                        console.log(event);
                         navigate(`/feed/${option.key.feedname}`);
                       }}
                     >
@@ -572,7 +562,6 @@ export default function PrimarySearchAppBar({ User, refetch }) {
                         textAnchor: "left",
                       }}
                       onClick={(event) => {
-                        console.log(event);
                         navigate(`/post/${option.key.id}`);
                       }}
                     >
@@ -596,7 +585,6 @@ export default function PrimarySearchAppBar({ User, refetch }) {
                         textAnchor: "left",
                       }}
                       onClick={(event) => {
-                        console.log(event);
                         navigate(`/profile/${option.key.id}`);
                       }}
                     >
@@ -618,10 +606,11 @@ export default function PrimarySearchAppBar({ User, refetch }) {
                     <SearchIcon></SearchIcon>
                   </SearchIconWrapper>
 
-                  <TextField
+                  <StyledInputBase
                     aria-label="search"
                     variant="filled"
-                    {...params}
+                    inputProps={params.inputProps}
+                    ref={params.InputProps.ref}
                     onChange={(e) => {
                       debounced(e.target.value);
                       if (e.target.value == "") {
@@ -634,26 +623,17 @@ export default function PrimarySearchAppBar({ User, refetch }) {
                 </Search>
               );
             }}
-            onChange={(value) => {
-              console.log(value);
-            }}
-            onClick={(value) => {
-              console.log(value.target.value);
-            }}
             renderValue={(value, getItemProps) => (
               <Chip key={value.id} label={value.feedname} {...getItemProps()} />
             )}
           />
           <ThemeState></ThemeState>
-          </Box>
 
-
-          <Box key={"appbar-right"} sx={{display:"flex", flexGrow: 1}} />
+          <Box key={"appbar-right"} sx={{ display: "flex", flexGrow: 1 }} />
           {Renderloginstate({ User, refetch, token })}
         </Toolbar>
         {MenuState}
       </AppBar>
-      
-    
+    </Box>
   );
 }

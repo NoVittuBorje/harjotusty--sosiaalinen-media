@@ -13,20 +13,19 @@ import {
   IconButton,
 } from "@mui/material";
 import MoreComments from "./MoreComments";
-import KarmaItem from "../KarmaItem";
-import Useritem from "../Useritem";
 import EditComment from "./EditComment";
 import { useEffect, useState } from "react";
 import useMakeComment from "../hooks/useMakeComment";
 import useEditComment from "../hooks/useEditComment";
 import RemoveCircleOutlineIcon from "@mui/icons-material/RemoveCircleOutline";
 import AddCircleOutlineIcon from "@mui/icons-material/AddCircleOutline";
+import KarmaItem from "../utils/KarmaItem";
+import Useritem from "../utils/Useritem";
 const Comment = ({
   comment,
   handleDelete,
   User,
   handleModify,
-  type,
   handleNewComment,
   postid,
   setmessage,
@@ -39,15 +38,14 @@ const Comment = ({
   const [newcomment, result] = useMakeComment();
   const [edit, editresult] = useEditComment();
   useEffect(() => {
-    if (sessionStorage.getItem(comment.id) === "true" & !ShowComments) {
+    if ((sessionStorage.getItem(comment.id) === "true") & !ShowComments) {
       setShowComments(true);
     }
-    
-  }, [comment,ShowComments]);
+  }, [comment, ShowComments]);
   const handleReplyClick = () => {
     setReplyOpen(!replyopen);
   };
-  
+
   const handleReply = async ({ content, commentid }) => {
     const data = await newcomment({
       postid,
@@ -62,27 +60,23 @@ const Comment = ({
   const handleMod = async ({ commentid, content, action }) => {
     const data = await edit({ commentid, content, action });
   };
-  console.log(sessionStorage.getItem(comment.id),comment.content,ShowComments)
+
   const handleEditClick = () => {
-    console.log(editopen);
     setEditOpen(!editopen);
   };
   const handleMoreComments = () => {
-    setShowComments(true)
-    sessionStorage.setItem(comment.id,true)
+    setShowComments(true);
+    sessionStorage.setItem(comment.id, true);
   };
   const handleDeleteOpen = () => {
     setDeleteOpen(!deleteopen);
   };
   const Showmorecomments = () => {
-    
     if (comment.replies.length == 0) {
       return;
     }
-    
 
     if (!ShowComments) {
-
       return (
         <Grid
           sx={{ display: "flex", flexDirection: "row", justifyItems: "center" }}
@@ -126,8 +120,8 @@ const Comment = ({
           ShowComments={ShowComments}
           User={User}
           postid={postid}
-              setmessage={setmessage}
-            setseverity={setseverity}
+          setmessage={setmessage}
+          setseverity={setseverity}
         ></MoreComments>
       );
     }
@@ -184,13 +178,15 @@ const Comment = ({
           >
             <Box sx={{ display: "flex", flexDirection: "row" }}>
               <Box>
-
-
-                  
-                <IconButton size="small" onClick={() => {setShowComment(false);sessionStorage.setItem(comment.id,false)}}>
+                <IconButton
+                  size="small"
+                  onClick={() => {
+                    setShowComment(false);
+                    sessionStorage.setItem(comment.id, false);
+                  }}
+                >
                   <RemoveCircleOutlineIcon></RemoveCircleOutlineIcon>
                 </IconButton>
-
               </Box>
               <Box>
                 <Useritem
@@ -212,8 +208,8 @@ const Comment = ({
                   <Box className={"footer"}>
                     <KarmaItem
                       User={User}
-                                  setmessage={setmessage}
-            setseverity={setseverity}
+                      setmessage={setmessage}
+                      setseverity={setseverity}
                       id={comment.id}
                       type={"comment"}
                       karma={comment.karma}
@@ -247,7 +243,6 @@ const Comment = ({
   };
   const ReplySection = () => {
     if (!User) {
-      console.log("no user");
       return;
     }
     if (deleteopen) {

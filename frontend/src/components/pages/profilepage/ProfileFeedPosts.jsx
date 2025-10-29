@@ -1,5 +1,5 @@
 import { Box} from "@mui/material";
-import FeedItem from "../../FeedItem";
+import FeedItem from "../../utils/FeedItem";
 import useGetUserPosts from "../../hooks/useGetUserPosts";
 import InfiniteScroll from "react-infinite-scroll-component";
 
@@ -10,7 +10,7 @@ const ProfileFeedPosts = ({
   setmessage,
   setseverity,
 }) => {
-  console.log(variables);
+
   
   let posts = useGetUserPosts(variables);
   const loadmore = () => {

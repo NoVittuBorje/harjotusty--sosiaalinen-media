@@ -2,7 +2,6 @@ import { List, ListItem } from "@mui/material";
 import useGetComments from "../hooks/useGetComments";
 import Comment from "./Comment";
 
-
 const MoreComments = ({
   comment,
   User,
@@ -13,13 +12,11 @@ const MoreComments = ({
   handleDislike,
   handleReply,
   setmessage,
-  setseverity
+  setseverity,
 }) => {
   const { data, error, loading, refetchComments } = useGetComments({
     commentid: comment.id,
   });
-
-  console.log("juu");
 
   if (!loading) {
     const morecomments = data.getcomments[0];
@@ -27,7 +24,7 @@ const MoreComments = ({
       <List>
         {morecomments.replies.map((reply) => (
           <ListItem key={reply.id}>
-                              <Comment
+            <Comment
               comment={reply}
               User={User}
               handleReply={handleReply}

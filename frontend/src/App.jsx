@@ -1,17 +1,17 @@
-import AppBar from "./components/Appbar";
+import AppBar from "./components/utils/Appbar";
 import "./App.css";
 import Homescreen from "./components/pages/homepage/Homepage";
 import { Box,} from "@mui/material";
 import { Routes, Route, useMatch } from "react-router-dom";
 import Profilepage from "./components/pages/profilepage/Profilepage";
 import SinglePost from "./components/pages/singlepostpage/SinglePost";
-import LoginPage from "./components/loginpage/Loginpage";
-import RegisterPage from "./components/loginpage/Registerpage";
+import LoginPage from "./components/pages/loginpage/Loginpage";
+import RegisterPage from "./components/pages/loginpage/Registerpage";
 import MakeFeedPage from "./components/pages/feedpage/Makefeedpage";
 import FeedPage from "./components/pages/feedpage/Feedpage";
 import NewPostpage from "./components/pages/feedpage/NewPostpage";
 import useMe from "./components/hooks/useMe";
-import MyAccountpage from "./components/myaccountpage/MyAccountpage";
+import MyAccountpage from "./components/pages/myaccountpage/MyAccountpage";
 import Alerts from "./components/utils/Alerts";
 import { useEffect, useState } from "react";
 
@@ -21,7 +21,6 @@ function App() {
   const [message, setmessage] = useState(null);
   const [severity, setseverity] = useState(null);
   const [open, setOpen] = useState(false);
-  console.log(data);
   useEffect(() => {
     if (message) {
       return setOpen(true);
@@ -51,7 +50,6 @@ function App() {
     User = null;
   }
 
-  console.log(User, data);
 
   return (
     <Box>

@@ -1,15 +1,11 @@
 import {
   Autocomplete,
-  Avatar,
   Box,
   Button,
   createFilterOptions,
-  Divider,
   FormControl,
   Grid,
   InputLabel,
-  List,
-  ListItem,
   MenuItem,
   Select,
   Stack,
@@ -18,16 +14,15 @@ import {
   Typography,
 } from "@mui/material";
 import EditFieldItem from "./EditFieldItem";
-import FileUpload from "../utils/FileUpload";
+import FileUpload from "../../utils/FileUpload";
 import { useEffect, useState } from "react";
-import UserAvatar from "../utils/UserAvatar";
-import useEditUser from "../hooks/useEditUser";
-import { GetCountries } from "../utils/Getcountrys";
-import TextEditor from "../utils/TextEditor";
+import UserAvatar from "../../utils/UserAvatar";
+import useEditUser from "../../hooks/useEditUser";
+import { GetCountries } from "../../utils/Getcountrys";
+import TextEditor from "../../utils/TextEditor";
 import parse from "html-react-parser";
 import { useFormik } from "formik";
 import * as yup from "yup";
-
 
 const MyAccountpage = ({ User }) => {
   const [imagePath, setImagePath] = useState(User.avatar);
@@ -35,8 +30,6 @@ const MyAccountpage = ({ User }) => {
   const [open, setOpen] = useState(false);
   const [avataredit, setavataredit] = useState(false);
   const [edit, result] = useEditUser();
-  console.log(User);
-  console.log(imagePath);
   const handleRelationshipchange = (event) => {
     setRelationship(event.target.value);
   };
@@ -46,17 +39,13 @@ const MyAccountpage = ({ User }) => {
   const [description, setDescription] = useState(User.description);
   const hook = () => {
     GetCountries().then((res) => {
-      console.log(res);
       setCountries(res.data);
     });
   };
   useEffect(hook, []);
 
   const handleSave = async ({ content, type }) => {
-    console.log("save");
-    console.log(content, type);
     const data = await edit({ content: content, type: type });
-    console.log(data);
   };
 
   const EditAvatar = () => {
@@ -178,12 +167,9 @@ const MyAccountpage = ({ User }) => {
     }
   };
   const EditNationality = () => {
-    console.log(openNationality);
-    console.log(nationality);
     const usernationality = countries.find(
       (value) => value.name.common == User.nationality
     );
-    console.log(usernationality);
     const [selected, setSelected] = useState(usernationality);
     const filterOptions = createFilterOptions({
       limit: 10,
@@ -214,7 +200,6 @@ const MyAccountpage = ({ User }) => {
                 ></img>
               </Typography>
             )}
-
             renderInput={(params) => (
               <TextField
                 sx={{
@@ -226,7 +211,6 @@ const MyAccountpage = ({ User }) => {
               />
             )}
             onChange={(event, newValue) => {
-              console.log(newValue);
               setSelected(newValue);
             }}
           />
@@ -282,32 +266,67 @@ const MyAccountpage = ({ User }) => {
   };
   const EditDescription = () => {
     const [open, setOpen] = useState(false);
-    console.log(open)
     const validationSchema = yup.object().shape({
-  description: yup.string().min(10).required(),
-});
-  const description = User.description ? User.description : ""
-    const formik = useFormik({ 
+      description: yup.string().min(10).required(),
+    });
+    const description = User.description ? User.description : "";
+    const formik = useFormik({
       initialValues: {
-        description:description
+        description: description,
       },
       onSubmit: (values) => {
-        handleSave({content:values.description,type:"Description"});
+        handleSave({ content: values.description, type: "Description" });
       },
       validationSchema,
     });
     if (open) {
-      console.log(description)
       return (
-        <Box           sx={{
+        <Box
+          sx={{
             display: "flex",
             flexDirection: "column",
             alignItems: "center",
-          }}>
-          <TextEditor html={formik.values.description} setHtml={formik.handleChange("description")}></TextEditor>
-          <Box sx={{display:"flex",flexDirection:"row"}}>
-          <Button className="button" variant="outlined" color="inherit" sx={{borderRadius:50}} onClick={formik.handleSubmit}>Save</Button>
+          }}
+        >
+          <TextEditor
+            html={formik.values.description}
+            setHtml={formik.handleChange("description")}
+          ></TextEditor>
+          <Box sx={{ display: "flex", flexDirection: "row" }}>
+            <Button
+              className="button"
+              variant="outlined"
+              color="inherit"
+              sx={{ borderRadius: 50 }}
+              onClick={formik.handleSubmit}
+            >
+              Save
+            </Button>
 
+            <Button
+              className={"button"}
+              style={{ borderRadius: 50 }}
+              size="small"
+              variant="outlined"
+              color="inherit"
+              onClick={() => setOpen(!open)}
+            >
+              cancel
+            </Button>
+          </Box>
+        </Box>
+      );
+    } else {
+      return (
+        <Box
+          sx={{
+            display: "flex",
+            flexDirection: "column",
+            alignItems: "center",
+          }}
+        >
+          <Typography paddingRight={1}>Description:</Typography>
+          {parse(description)}
           <Button
             className={"button"}
             style={{ borderRadius: 50 }}
@@ -316,30 +335,8 @@ const MyAccountpage = ({ User }) => {
             color="inherit"
             onClick={() => setOpen(!open)}
           >
-            cancel
+            edit
           </Button>
-          </Box>
-        </Box>
-      );
-    } else {
-      return (
-        <Box sx={{
-            display: "flex",
-            flexDirection: "column",
-            alignItems: "center",
-          }}>
-        <Typography paddingRight={1}>Description:</Typography>
-        {parse(description)}
-        <Button
-          className={"button"}
-          style={{ borderRadius: 50 }}
-          size="small"
-          variant="outlined"
-          color="inherit"
-          onClick={() => setOpen(!open)}
-        >
-          edit
-        </Button>
         </Box>
       );
     }
@@ -349,58 +346,62 @@ const MyAccountpage = ({ User }) => {
     <Box sx={{ flexGrow: 1 }}>
       <Grid container rowSpacing={1} sx={{ flexDirection: "row" }}>
         <Grid size={{ xs: 12, md: 2 }}></Grid>
-      <Grid size={{ xs: 12, md: 8 }} container rowSpacing={1} sx={{ flexDirection: "row" }}>
-        <Box
-          className={"center"}
-          sx={{ textAlign: "center", border: 1, borderRadius: 5 }}
+        <Grid
+          size={{ xs: 12, md: 8 }}
+          container
+          rowSpacing={1}
+          sx={{ flexDirection: "row" }}
         >
-          <h3>My account</h3>
-          <Stack spacing={1}>
-            
-            <Box sx={{ borderTop: 1 }} padding={1}>
-              <Typography>Id: {User.id}</Typography>
-            </Box>
+          <Box
+            className={"center"}
+            sx={{ textAlign: "center", border: 1, borderRadius: 5 }}
+          >
+            <h3>My account</h3>
+            <Stack spacing={1}>
+              <Box sx={{ borderTop: 1 }} padding={1}>
+                <Typography>Id: {User.id}</Typography>
+              </Box>
 
-            <EditAvatar></EditAvatar>
-            <Box sx={{ borderTop: 1 }} padding={1}>
-              <EditNationality></EditNationality>
-            </Box>
-            <EditFieldItem
-              value={User.username}
-              valueType={"Username"}
-              handleSave={handleSave}
-            ></EditFieldItem>
-            <EditFieldItem
-              value={User.email}
-              valueType={"Email"}
-              handleSave={handleSave}
-            ></EditFieldItem>
-            <Box sx={{ borderTop: 1 }} padding={1}>
-              <EditDescription></EditDescription>
-            </Box>
+              <EditAvatar></EditAvatar>
+              <Box sx={{ borderTop: 1 }} padding={1}>
+                <EditNationality></EditNationality>
+              </Box>
+              <EditFieldItem
+                value={User.username}
+                valueType={"Username"}
+                handleSave={handleSave}
+              ></EditFieldItem>
+              <EditFieldItem
+                value={User.email}
+                valueType={"Email"}
+                handleSave={handleSave}
+              ></EditFieldItem>
+              <Box sx={{ borderTop: 1 }} padding={1}>
+                <EditDescription></EditDescription>
+              </Box>
 
-            <EditFieldItem
-              value={User.firstname}
-              valueType={"Firstname"}
-              handleSave={handleSave}
-            ></EditFieldItem>
-            <EditFieldItem
-              value={User.lastname}
-              valueType={"Lastname"}
-              handleSave={handleSave}
-            ></EditFieldItem>
-            <Box sx={{ borderTop: 1, padding: 1 }}>
-              <EditSelector></EditSelector>
-            </Box>
-            <EditFieldItem
-              value={User.work}
-              valueType={"Work"}
-              handleSave={handleSave}
-            ></EditFieldItem>
-          </Stack>
-        </Box>
-      </Grid>
-      <Grid size={{ xs: 12, md: 2 }}></Grid>
+              <EditFieldItem
+                value={User.firstname}
+                valueType={"Firstname"}
+                handleSave={handleSave}
+              ></EditFieldItem>
+              <EditFieldItem
+                value={User.lastname}
+                valueType={"Lastname"}
+                handleSave={handleSave}
+              ></EditFieldItem>
+              <Box sx={{ borderTop: 1, padding: 1 }}>
+                <EditSelector></EditSelector>
+              </Box>
+              <EditFieldItem
+                value={User.work}
+                valueType={"Work"}
+                handleSave={handleSave}
+              ></EditFieldItem>
+            </Stack>
+          </Box>
+        </Grid>
+        <Grid size={{ xs: 12, md: 2 }}></Grid>
       </Grid>
     </Box>
   );

@@ -1,10 +1,8 @@
 import { useMutation } from "@apollo/client";
 import { SUBSCRIBE } from "../graphql/mutations";
-import { GET_ME } from "../graphql/queries";
 const useSubscribe = () => {
   const [mutate, result] = useMutation(SUBSCRIBE);
   const sub = async ({ feedname, type }) => {
-    console.log(feedname, type);
     const data = await mutate({
       variables: { feedname: feedname, type: type },
     });

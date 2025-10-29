@@ -3,7 +3,6 @@ import {
   CircularProgress,
   Divider,
   FormControl,
-  List,
   MenuItem,
   Select,
   Typography,
@@ -22,7 +21,7 @@ const ProfileFeed = ({ type, id, userdata, User, setmessage, setseverity }) => {
   const variables = {
     id: id,
   };
-  console.log(variables);
+
 
   if (type === "posts") {
     return (
@@ -73,8 +72,6 @@ const ProfileFeed = ({ type, id, userdata, User, setmessage, setseverity }) => {
   return
 };
 const Profilepage = ({ User, match, setmessage, setseverity }) => {
-  console.log(User);
-  console.log(match);
   const [type, setType] = useState("posts");
   const id = match.params.userid;
   const userdata = useGetUser({ id: id });
@@ -82,12 +79,11 @@ const Profilepage = ({ User, match, setmessage, setseverity }) => {
     setType(event.target.value);
   };
 
-  console.log(id);
   if (userdata.loading) {
     return <CircularProgress></CircularProgress>;
   } else {
     const profiledata = userdata.data ? userdata.data.getuser : [];
-    console.log(profiledata);
+
     
     const ProfileDesc = ({ profiledata }) => {
       if (profiledata.description) {

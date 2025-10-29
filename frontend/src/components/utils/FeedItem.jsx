@@ -10,14 +10,13 @@ import {
 import { useNavigate } from "react-router";
 import KarmaItem from "./KarmaItem";
 import Useritem from "./Useritem";
-import useEditPost from "./hooks/useEditPost";
 import SettingsIcon from "@mui/icons-material/Settings";
 import parse from "html-react-parser";
 import { useState } from "react";
-import PostModSettings from "./pages/singlepostpage/PostModSettings";
-import useGetImageUrl from "./hooks/useGetImageUrl";
-import Locked from "./utils/Locked";
-import PostCommentItem from "./utils/PostCommentItem"
+import PostModSettings from "../pages/singlepostpage/PostModSettings";
+import useGetImageUrl from "../hooks/useGetImageUrl";
+import Locked from "./Locked";
+import PostCommentItem from "./PostCommentItem"
 
 const FeedItem = ({ item, owner, User, mods,setmessage,setseverity }) => {
   const navigate = useNavigate();

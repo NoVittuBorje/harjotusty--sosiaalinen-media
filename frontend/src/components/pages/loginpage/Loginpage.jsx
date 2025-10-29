@@ -15,7 +15,7 @@ import FormControl from "@mui/material/FormControl";
 import Visibility from "@mui/icons-material/Visibility";
 import VisibilityOff from "@mui/icons-material/VisibilityOff";
 import * as React from "react";
-import useLogin from "../hooks/useLogin";
+import useLogin from "../../hooks/useLogin";
 import { Link, useNavigate } from "react-router";
 
 const LoginPage = ({ setUser, User, refetch }) => {
@@ -25,7 +25,7 @@ const LoginPage = ({ setUser, User, refetch }) => {
   const [Username, setUsername] = React.useState("");
   const [Password, setPassword] = React.useState("");
   const handleClickShowPassword = () => setShowPassword((show) => !show);
-  
+
   const handleMouseDownPassword = (event) => {
     event.preventDefault();
   };
@@ -34,43 +34,39 @@ const LoginPage = ({ setUser, User, refetch }) => {
   };
 
   const handleFormSubmit = async () => {
-    console.log("login");
-    try{
-    const data = await login({ Username, Password });
-    console.log(data);
-    if (data.data.login.value) {
-      refetch();
-      navigate("/");
-    }
-  }catch(error){
-    console.log(error.message)
-    setUsernameError(false)
-    setUsernameErrorMsg(null)
-    setPasswordError(false)
-    setPasswordErrorMsg(null)
-  if(error.message == "Wrong Username!"){
-    
-    setUsernameErrorMsg(error.message)
-    setUsernameError(true)
-    }
+    try {
+      const data = await login({ Username, Password });
 
-  if(error.message == "Wrong Password!"){
-    setPasswordErrorMsg(error.message)
-  setPasswordError(true)}
-  
+      if (data.data.login.value) {
+        refetch();
+        navigate("/");
+      }
+    } catch (error) {
+      setUsernameError(false);
+      setUsernameErrorMsg(null);
+      setPasswordError(false);
+      setPasswordErrorMsg(null);
+      if (error.message == "Wrong Username!") {
+        setUsernameErrorMsg(error.message);
+        setUsernameError(true);
+      }
+
+      if (error.message == "Wrong Password!") {
+        setPasswordErrorMsg(error.message);
+        setPasswordError(true);
+      }
+    }
   };
-  }
-  const [usernameError,setUsernameError] = React.useState(false)
-  const [usernameErrorMsg, setUsernameErrorMsg] = React.useState(null)
-    const [passwordError,setPasswordError] = React.useState(false)
-  const [passwordErrorMsg, setPasswordErrorMsg] = React.useState(null)
-  console.log(usernameError)
+  const [usernameError, setUsernameError] = React.useState(false);
+  const [usernameErrorMsg, setUsernameErrorMsg] = React.useState(null);
+  const [passwordError, setPasswordError] = React.useState(false);
+  const [passwordErrorMsg, setPasswordErrorMsg] = React.useState(null);
   return (
-    
-      <Grid container rowSpacing={1} sx={{ flexDirection: "row" }}>
-        <Grid size={{ xs: 12, md: 4 }}></Grid>
-        <Grid >
-          <Box sx={{ borderRadius: 3,boxShadow:3, padding:3,marginTop:"20%" }}>
+    <Grid container rowSpacing={1} sx={{ flexDirection: "row" }}>
+      <Grid size={{ xs: 12, md: 4, sm: 2 }}></Grid>
+      <Grid size={{ xs: 12, md: 4, sm: 8 }}>
+        <Box>
+          <Box sx={{ borderRadius: 3, boxShadow: 3, padding: 3 }}>
             <FormGroup
               sx={{
                 alignItems: "center",
@@ -81,7 +77,7 @@ const LoginPage = ({ setUser, User, refetch }) => {
               <Typography variant="h5">Login</Typography>
               <TextField
                 id="username"
-                sx={{ m: 0.5, width: '30ch' }} 
+                sx={{ m: 0.5, width: "30ch" }}
                 label="Username"
                 variant="outlined"
                 onChange={(event) => setUsername(event.target.value)}
@@ -89,11 +85,14 @@ const LoginPage = ({ setUser, User, refetch }) => {
                 helperText={usernameErrorMsg ? usernameErrorMsg : ""}
               />
 
-              <FormControl sx={{ m: 0.5, width: '30ch' }} error={passwordError}  variant="outlined">
+              <FormControl
+                sx={{ m: 0.5, width: "30ch" }}
+                error={passwordError}
+                variant="outlined"
+              >
                 <InputLabel htmlFor="password">Password</InputLabel>
-                
+
                 <OutlinedInput
-                
                   id="password"
                   onChange={(event) => setPassword(event.target.value)}
                   type={showPassword ? "text" : "password"}
@@ -116,19 +115,20 @@ const LoginPage = ({ setUser, User, refetch }) => {
                   }
                   label="Password"
                 />
-                
-<FormHelperText>{passwordErrorMsg ? passwordErrorMsg : ""}</FormHelperText>
+
+                <FormHelperText>
+                  {passwordErrorMsg ? passwordErrorMsg : ""}
+                </FormHelperText>
               </FormControl>
-                <Button
-                  sx={{  borderRadius: 50 }}
-                  className="button"
-                  color="inherit"
-                  onClick={handleFormSubmit}
-                  variant="contained"
-                  
-                >
-                  Log in
-                </Button>
+              <Button
+                sx={{ borderRadius: 50 }}
+                className="button"
+                color="inherit"
+                onClick={handleFormSubmit}
+                variant="contained"
+              >
+                Log in
+              </Button>
               <Box sx={{ paddingX: 2 }}>
                 <Typography>If you have no account</Typography>
                 <Typography>
@@ -137,10 +137,10 @@ const LoginPage = ({ setUser, User, refetch }) => {
               </Box>
             </FormGroup>
           </Box>
-        </Grid>
-        <Grid size={{ xs: 12, md: 4 }}></Grid>
+        </Box>
       </Grid>
-    
+      <Grid size={{ xs: 12, md: 4, sm: 2 }}></Grid>
+    </Grid>
   );
 };
 export default LoginPage;

@@ -11,7 +11,7 @@ import {
   Typography,
 } from "@mui/material";
 
-import FeedItem from "../../FeedItem";
+import FeedItem from "../../utils/FeedItem";
 import useGetPopularPosts from "../../hooks/useGetPopularPosts";
 import InfiniteScroll from "react-infinite-scroll-component";
 import { useEffect, useState } from "react";
@@ -20,7 +20,6 @@ const Homescreen = ({ User,setmessage,setseverity }) => {
   if(!localStorage.getItem("HomeorderBy")){localStorage.setItem("HomeorderBy","POPULAR")}
   const [orderBy, setorderBy] = useState(localStorage.getItem("HomeorderBy"));
   const [open, setOpen] = useState(false);
-  console.log(orderBy,localStorage.getItem("HomeorderBy"))
   useEffect(() => {
     setorderBy(localStorage.getItem("HomeorderBy"))
   },[])
@@ -32,14 +31,11 @@ const Homescreen = ({ User,setmessage,setseverity }) => {
     orderBy: orderBy,
   };
   const { data, error, loading, fetchMore } = useGetPopularPosts(variables);
-  console.log(loading);
-  console.log(data);
   const handleChange = (event) => {
-    console.log(event.target.value)
     setorderBy(event.target.value);
   };
   const feed = data ? data.getpopularposts : [];
-  console.log(data, error, loading);
+
 
   const loadmore = () => {
     fetchMore({ offset: feed.length });
@@ -47,13 +43,13 @@ const Homescreen = ({ User,setmessage,setseverity }) => {
   
   let hasmore = true;
   if (feed.length % 10 != 0 || hasmore === false || feed.length == 0) {
-    console.log("no more")
+
     hasmore = false
   }
   
   const UserSubs = () => {
     if(!User){return}
-    console.log(User)
+
     if(User.feedsubs.length > 0){
       return(
         <MenuItem value={"SUBSCRIPTIONS"}>Subscriptions</MenuItem>

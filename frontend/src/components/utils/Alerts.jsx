@@ -1,8 +1,6 @@
 import { Alert, Box, Snackbar } from "@mui/material";
 
 const Alerts = ({ msg, severity, setmessage, setOpen,open }) => {
-    
-  console.log(msg);
   if (msg) {
     return (
       <Snackbar

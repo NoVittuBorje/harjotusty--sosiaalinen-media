@@ -4,7 +4,6 @@ import {
   Collapse,
   Divider,
   Grid,
-  Icon,
   IconButton,
   Stack,
   Tooltip,
@@ -16,10 +15,11 @@ import useMakeComment from "../../hooks/useMakeComment";
 import CommentForm from "./CommentForm";
 import AddCommentIcon from "@mui/icons-material/AddComment";
 import { useState } from "react";
-import KarmaItem from "../../KarmaItem";
+import Useritem from "../../utils/Useritem";
+import KarmaItem from "../../utils/KarmaItem";
 import { useNavigate } from "react-router";
 import useEditPost from "../../hooks/useEditPost";
-import Useritem from "../../Useritem";
+
 import useGetPostComments from "../../hooks/useGetPostComments";
 import SinglePostImage from "./SinglePostImage";
 import SettingsIcon from "@mui/icons-material/Settings";
@@ -33,9 +33,8 @@ import parse from "html-react-parser";
 import PostModSettings from "./PostModSettings";
 import Locked from "../../utils/Locked";
 
-const SinglePost = ({ match, User, refetchUser,setmessage,setseverity }) => {
+const SinglePost = ({ match, User, refetchUser, setmessage, setseverity }) => {
   const id = match.params.id;
-  console.log(match.params.id);
   const navigate = useNavigate();
   const [edit] = useEditPost();
   const { data, loading, error, refetchPost } = useGetPost({ id });
@@ -53,24 +52,19 @@ const SinglePost = ({ match, User, refetchUser,setmessage,setseverity }) => {
     setOpen(false);
   };
   const handleNewComment = async (content) => {
-    console.log("new comment");
     const data = await newcomment({ postid: id, content: content.content });
     setopenNewComment(false);
     postcomments.refetchPostComment();
   };
 
   const handleDelete = async () => {
-    console.log("delete post");
-
     const data = await edit({ action: "delete", content: "", postid: id });
-    console.log(data);
+
     refetchPost();
     handleClose();
     navigate(-1);
   };
   const loadmore = () => {
-    console.log("loadmore");
-    console.log(postcomments.data.getpostcomments.length);
     if (postcomments.data.getpostcomments.length % 10 == 0) {
       postcomments.fetchMore({
         offset: postcomments.data.getpostcomments.length,
@@ -78,8 +72,7 @@ const SinglePost = ({ match, User, refetchUser,setmessage,setseverity }) => {
     }
   };
 
-  const PostSettings = ({ info,User}) => {
-    console.log(info);
+  const PostSettings = ({ info, User }) => {
     if (!User) {
       return;
     }
@@ -125,10 +118,7 @@ const SinglePost = ({ match, User, refetchUser,setmessage,setseverity }) => {
         </Stack>
       );
     };
-    if (
-      !OpenSettings &
-      (info.owner.username == User.username)
-    ) {
+    if (!OpenSettings & (info.owner.username == User.username)) {
       return (
         <IconButton
           className={"button"}
@@ -190,14 +180,12 @@ const SinglePost = ({ match, User, refetchUser,setmessage,setseverity }) => {
   };
   const postdata = data ? data.getpost : [];
   const comments = postcomments.data ? postcomments.data.getpostcomments : [];
-  console.log(postdata);
+
   if (postdata.feed) {
     const mods = [postdata.feed.owner.id, ...postdata.feed.moderators];
-    console.log(mods);
 
     const Postimage = () => {
       if (postdata.img) {
-        console.log(postdata.img);
         return (
           <Box className="imagecontainer">
             <SinglePostImage img={postdata.img}></SinglePostImage>
@@ -214,8 +202,8 @@ const SinglePost = ({ match, User, refetchUser,setmessage,setseverity }) => {
       if (mods.includes(User.id))
         return (
           <IconButton
-                    className={"button"}
-          sx={{ color: "inherit" }}
+            className={"button"}
+            sx={{ color: "inherit" }}
             onClick={() => {
               setOpenModSettings(!openModSettings);
             }}
@@ -285,15 +273,15 @@ const SinglePost = ({ match, User, refetchUser,setmessage,setseverity }) => {
                 </Box>
 
                 <Postimage></Postimage>
-                <Box sx={{padding:1}}>{parse(postdata.description)}</Box>
+                <Box sx={{ padding: 1 }}>{parse(postdata.description)}</Box>
                 <Box className={"footer"}>
                   <KarmaItem
                     id={postdata.id}
                     User={User}
                     type={"post"}
                     karma={postdata.karma}
-                                setmessage={setmessage}
-            setseverity={setseverity}
+                    setmessage={setmessage}
+                    setseverity={setseverity}
                   ></KarmaItem>
                   <NewCommentform></NewCommentform>
                 </Box>
@@ -314,25 +302,25 @@ const SinglePost = ({ match, User, refetchUser,setmessage,setseverity }) => {
                 loadmore={loadmore}
                 loading={postcomments.loading}
                 postid={postdata.id}
-                            setmessage={setmessage}
-            setseverity={setseverity}
+                setmessage={setmessage}
+                setseverity={setseverity}
               ></CommentSection>
             </Box>
           </Grid>
           <Grid size={{ xs: 12, md: 2, sm: 2 }}>
-            <Box sx={{margin:1}}>
-            <ModSettings></ModSettings>
-            <Collapse
-              in={openModSettings}
-              sx={{
-                backgroundColor: "background.dark",
-                borderRadius: 5,
-                padding: 1,
-                border: "1px solid",
-              }}
-            >
-              <PostModSettings item={postdata}></PostModSettings>
-            </Collapse>
+            <Box sx={{ margin: 1 }}>
+              <ModSettings></ModSettings>
+              <Collapse
+                in={openModSettings}
+                sx={{
+                  backgroundColor: "background.dark",
+                  borderRadius: 5,
+                  padding: 1,
+                  border: "1px solid",
+                }}
+              >
+                <PostModSettings item={postdata}></PostModSettings>
+              </Collapse>
             </Box>
           </Grid>
         </Grid>

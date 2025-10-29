@@ -1,15 +1,13 @@
-import { Alert, Box, IconButton, Tooltip, Typography } from "@mui/material";
+import { Box, IconButton, Tooltip, Typography } from "@mui/material";
 import ArrowUpwardRoundedIcon from "@mui/icons-material/ArrowUpwardRounded";
 import ArrowDownwardRoundedIcon from "@mui/icons-material/ArrowDownwardRounded";
 import { useNavigate } from "react-router";
 import { useEffect, useState } from "react";
-import useEditPost from "./hooks/useEditPost";
-import useEditComment from "./hooks/useEditComment";
-import useLikeComment from "./hooks/useLikeComment";
-import useDislikeComment from "./hooks/useDislikeComment";
-import useLikePost from "./hooks/useLikePost";
-import useDislikePost from "./hooks/useDislikePost";
-import formatNumber from "./utils/FormatNumber";
+import useLikeComment from "../hooks/useLikeComment";
+import useDislikeComment from "../hooks/useDislikeComment";
+import useLikePost from "../hooks/useLikePost";
+import useDislikePost from "../hooks/useDislikePost";
+import formatNumber from "./FormatNumber";
 
 const KarmaItem = ({ type, id, karma, User, setmessage, setseverity }) => {
   const navigate = useNavigate();
@@ -61,9 +59,9 @@ const KarmaItem = ({ type, id, karma, User, setmessage, setseverity }) => {
 
   const handleDislikeComment = async ({ id }) => {
     try {
-      console.log("dislike comment");
+
       const data = await dislikecomment({ id: id });
-      console.log(data);
+
     } catch (error) {
       setmessage(error.message);
       setseverity("error");
@@ -71,9 +69,9 @@ const KarmaItem = ({ type, id, karma, User, setmessage, setseverity }) => {
   };
   const handleLikeComment = async ({ id }) => {
     try {
-      console.log("like comment");
+
       const data = await likecomment({ id: id });
-      console.log(data);
+
     } catch (error) {
       setmessage(error.message);
       setseverity("error");
@@ -82,7 +80,7 @@ const KarmaItem = ({ type, id, karma, User, setmessage, setseverity }) => {
   const handleLikePost = async () => {
     try {
       const data = await likepost({ id: id });
-      console.log(data);
+
     } catch (error) {
       setmessage(error.message);
       setseverity("error");
@@ -91,8 +89,7 @@ const KarmaItem = ({ type, id, karma, User, setmessage, setseverity }) => {
   const handleDislikePost = async () => {
     try {
       const data = await dislikepost({ id: id });
-      console.log(data);
-      console.log(data.errors);
+
     } catch (error) {
       setmessage(error.message);
       setseverity("error");

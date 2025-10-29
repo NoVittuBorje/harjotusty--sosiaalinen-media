@@ -1,12 +1,11 @@
-import parse from "html-react-parser";
+
 import { useFormik } from "formik";
 import * as yup from "yup";
-import { useState } from "react";
 import TextEditor from "../../utils/TextEditor";
-import { Box, Button, Typography } from "@mui/material";
+import { Box, Button} from "@mui/material";
 
 const EditFeedDesc = ({ feed, handleSave, setOpen }) => {
-  console.log(open);
+
   const validationSchema = yup.object().shape({
     description: yup.string().min(10).required(),
   });
@@ -22,7 +21,7 @@ const EditFeedDesc = ({ feed, handleSave, setOpen }) => {
     validationSchema,
   });
 
-  console.log(description);
+
   return (
     <Box
       sx={{

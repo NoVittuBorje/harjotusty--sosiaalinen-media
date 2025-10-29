@@ -366,13 +366,13 @@ export const GET_SEARCH_BAR = gql`
   }
 `;
 export const GET_SEARCH_USERS = gql`
-query Getsearchusers($searchby: String) {
-  getsearchusers(searchby: $searchby) {
-    username
-    id
+  query Getsearchusers($searchby: String) {
+    getsearchusers(searchby: $searchby) {
+      username
+      id
+    }
   }
-}
-`
+`;
 export const GET_IMAGE_URLS = gql`
   query Query($userId: String!) {
     getFiles(userId: $userId)
@@ -384,7 +384,7 @@ export const GET_IMAGE_URL = gql`
   }
 `;
 export const GET_FEED_SUBS_COUNT = gql`
-query Query($feedname: String!) {
-  getSubsCount(feedname: $feedname)
-}
+  query Query($feedname: String!) {
+    getSubsCount(feedname: $feedname)
+  }
 `;

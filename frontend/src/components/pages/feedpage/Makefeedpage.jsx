@@ -1,10 +1,16 @@
-import { Box, FormGroup, Grid, TextField, Button, Typography } from "@mui/material";
+import {
+  Box,
+  FormGroup,
+  Grid,
+  TextField,
+  Button,
+  Typography,
+} from "@mui/material";
 import { useFormik } from "formik";
 import * as yup from "yup";
 import useMakeFeed from "../../hooks/useMakeFeed";
 import { useNavigate } from "react-router";
 import TextEditor from "../../utils/TextEditor";
-
 
 const validationSchema = yup.object().shape({
   feedname: yup.string().min(2).max(20).required(),
@@ -15,9 +21,11 @@ const MakeFeedPage = () => {
 
   const navigate = useNavigate();
   const handleFormSubmit = async () => {
-    console.log("submit");
-    const data = await make({feedname:formik.values.feedname,description:formik.values.description});
-    console.log(data);
+    const data = await make({
+      feedname: formik.values.feedname,
+      description: formik.values.description,
+    });
+
     if (data.data.makeFeed.feedname) {
       navigate(`/feed/${data.data.makeFeed.feedname}`);
     }
@@ -26,7 +34,7 @@ const MakeFeedPage = () => {
   const formik = useFormik({
     initialValues: {
       feedname: "",
-      description:""
+      description: "",
     },
     onSubmit: (values) => {
       handleFormSubmit(values);
@@ -64,12 +72,24 @@ const MakeFeedPage = () => {
                 }
                 onChange={formik.handleChange("feedname")}
               />
-                          <Typography>Description: </Typography>
-                          <Box sx={{}} className="error">{formik.errors.description ? formik.errors.description : ""}</Box>
-            <TextEditor html={formik.values.description} setHtml={formik.handleChange("description")}></TextEditor>
-            <Button className="button" variant="outlined" color="inherit" sx={{borderRadius:50}} onClick={formik.handleSubmit}>Make feed</Button>
+              <Typography>Description: </Typography>
+              <Box sx={{}} className="error">
+                {formik.errors.description ? formik.errors.description : ""}
+              </Box>
+              <TextEditor
+                html={formik.values.description}
+                setHtml={formik.handleChange("description")}
+              ></TextEditor>
+              <Button
+                className="button"
+                variant="outlined"
+                color="inherit"
+                sx={{ borderRadius: 50 }}
+                onClick={formik.handleSubmit}
+              >
+                Make feed
+              </Button>
             </FormGroup>
-
           </Box>
         </Grid>
 

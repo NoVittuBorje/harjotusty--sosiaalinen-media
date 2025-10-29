@@ -19,7 +19,7 @@ import {
 } from "@mui/material";
 import useGetFeed from "../../hooks/useGetFeed";
 import { useNavigate } from "react-router";
-import FeedItem from "../../FeedItem";
+import FeedItem from "../../utils/FeedItem";
 import useSubscribe from "../../hooks/useSubscribe";
 import InfiniteScroll from "react-infinite-scroll-component";
 import useGetFeedPosts from "../../hooks/useGetFeedPosts";
@@ -39,14 +39,11 @@ import ExpandIcon from "../../utils/ExpandIcon";
 import Timestamp from "../../utils/Timestamp";
 
 const FeedPage = ({ match, User, refetchUser, setmessage, setseverity }) => {
-  console.log(localStorage.getItem("Feedorderby"));
   if (!localStorage.getItem("FeedorderBy")) {
     localStorage.setItem("FeedorderBy", "POPULAR");
-    console.log("joo");
   }
   const [orderBy, setorderBy] = useState(localStorage.getItem("FeedorderBy"));
 
-  console.log(orderBy, localStorage.getItem("FeedorderBy"));
   useEffect(() => {
     setorderBy(localStorage.getItem("FeedorderBy"));
   }, []);
@@ -70,26 +67,22 @@ const FeedPage = ({ match, User, refetchUser, setmessage, setseverity }) => {
   const [OpenSettings, setOpenSettings] = useState(false);
   const [FeedEditOpen, setFeedEditOpen] = useState(false);
   const handleSave = async ({ content, feedid, action }) => {
-    console.log("save");
-    console.log(feedid);
     const data = await editfeed({
       content,
       feedid,
       action,
     });
-    console.log(data);
+
     if (data.modifyFeed) {
       setFeedEditOpen(false);
     }
   };
   const handleorderByChange = (event) => {
-    console.log(event.target.value);
     setorderBy(event.target.value);
   };
   const Subscribe = async ({ feedname, type }) => {
-    console.log("Subscribe");
     const data = await sub({ feedname, type });
-    console.log(data);
+
     refetchUser();
     feedinfo.refetch();
   };
@@ -201,13 +194,15 @@ const FeedPage = ({ match, User, refetchUser, setmessage, setseverity }) => {
       </Box>
     );
   };
-  const ModSettingIcon = ({ info,infoloading, User }) => {
-    if(infoloading){return}
+  const ModSettingIcon = ({ info, infoloading, User }) => {
+    if (infoloading) {
+      return;
+    }
     const mods = [...info.moderators.map((mod) => mod.id), info.owner.id];
     if (!mods || !User) {
       return;
     }
-    if (mods.includes(User.id)){
+    if (mods.includes(User.id)) {
       return (
         <IconButton
           className={"button"}
@@ -216,8 +211,10 @@ const FeedPage = ({ match, User, refetchUser, setmessage, setseverity }) => {
         >
           <SettingsIcon></SettingsIcon>
         </IconButton>
-      );}
-      else{return}
+      );
+    } else {
+      return;
+    }
   };
   const SubButton = ({ User }) => {
     if (!User) {
@@ -282,20 +279,16 @@ const FeedPage = ({ match, User, refetchUser, setmessage, setseverity }) => {
     }
   };
 
-  console.log(data, loading, error);
   const feed = data ? data.getfeedposts : [];
   let info = feedinfo.data ? feedinfo.data.getfeed : {};
   let infoloading = feedinfo.loading;
   info = info[0];
   let hasmore = true;
-  
 
   if (feed.length % 10 != 0 || hasmore === false || feed.length == 0) {
-    console.log("no more");
     hasmore = false;
   }
   const loadmore = () => {
-    console.log("loadmore");
     if (feed.length % 10 == 0) {
       fetchMore({ offset: feed.length });
       hasmore = false;
@@ -304,84 +297,95 @@ const FeedPage = ({ match, User, refetchUser, setmessage, setseverity }) => {
 
   return (
     <Box sx={{ flexGrow: 1 }}>
-      <Grid container rowSpacing={1} sx={{ flexDirection: "row" }}>
-        <Grid size={{ xs: 12, md: 2, sm: 0 }}></Grid>
-        <Grid size={{ xs: 12, md: 7, sm: 9 }}>
+      <Grid direction={"row"} container item spacing={3}>
+        <Grid size={{ xs: 12, md: 2, sm: 1 }}></Grid>
+        <Grid size={{ xs: 12, md: 8, sm: 10 }}>
           <Box>
-            <FeedDescription
-              infoloading={infoloading}
-              info={info}
-              feed={feed}
-              FeedEditOpen={FeedEditOpen}
-            ></FeedDescription>
-            <Box sx={{ display: "flex", justifyContent: "space-between" }}>
-              <Box sx={{ alignContent: "center" }}>
-                <FormControl>
-                  <Select
-                    defaultValue={orderBy}
-                    name="orderBy"
-                    id="orderBy-select"
-                    sx={{ color: "inherit" }}
-                    size="small"
-                    onChange={handleorderByChange}
+            <Grid direction={"row"} container spacing={1}>
+              <Grid size={{ xs: 12, md: 8, sm: 8 }}>
+                <FeedDescription
+                  infoloading={infoloading}
+                  info={info}
+                  feed={feed}
+                  FeedEditOpen={FeedEditOpen}
+                ></FeedDescription>
+              </Grid>
+              <Grid size={{ xs: 12, md: 4, sm: 4 }}>
+                <Box sx={{ padding: 2 }}>
+                  <FeedInfo info={info} infoloading={infoloading}></FeedInfo>
+
+                  <ModSettingIcon
+                    info={info}
+                    infoloading={infoloading}
+                    User={User}
+                  ></ModSettingIcon>
+
+                  <Collapse
+                    sx={{
+                      backgroundColor: "background.dark",
+                      borderRadius: 5,
+                      padding: 1,
+                      border: "1px solid",
+                    }}
+                    in={OpenSettings}
                   >
-                    <Typography sx={{ paddingLeft: 2 }}>Sort by</Typography>
-                    <MenuItem value={"POPULAR"}>Popular</MenuItem>
-                    <MenuItem value={"NEWEST"}>Newest</MenuItem>
-                    <MenuItem value={"HOTTEST"}>Hottest</MenuItem>
-                  </Select>
-                </FormControl>
-              </Box>
-              <Box sx={{ alignContent: "center", paddingBottom: 1 }}>
-                <SubButton User={User}></SubButton>
-                <NewPostButton User={User}></NewPostButton>
-              </Box>
+                    <FeedModSettings
+                      info={info}
+                      infoloading={infoloading}
+                      User={User}
+                      setFeedEditOpen={setFeedEditOpen}
+                      item={info}
+                    ></FeedModSettings>
+                  </Collapse>
+                </Box>
+              </Grid>
+            </Grid>
+          </Box>
+          <Box sx={{ display: "flex", justifyContent: "space-between" }}>
+            <Box sx={{ alignContent: "center" }}>
+              <FormControl>
+                <Select
+                  defaultValue={orderBy}
+                  name="orderBy"
+                  id="orderBy-select"
+                  sx={{ color: "inherit" }}
+                  size="small"
+                  onChange={handleorderByChange}
+                >
+                  <Typography sx={{ paddingLeft: 2 }}>Sort by</Typography>
+                  <MenuItem value={"POPULAR"}>Popular</MenuItem>
+                  <MenuItem value={"NEWEST"}>Newest</MenuItem>
+                  <MenuItem value={"HOTTEST"}>Hottest</MenuItem>
+                </Select>
+              </FormControl>
             </Box>
-            <Divider></Divider>
 
-            <InfiniteScroll
-              dataLength={feed.length}
-              next={loadmore}
-              hasMore={hasmore}
-              loader={<CircularProgress color="inherit"></CircularProgress>}
-            >
-              {feed.map((item) => (
-                <FeedItem
-                  item={item}
-                  setmessage={setmessage}
-                  setseverity={setseverity}
-                  owner={item.owner}
-                  mods={info ? [...info.moderators, info.owner.id] : []}
-                  User={User}
-                ></FeedItem>
-              ))}
-            </InfiniteScroll>
+            <Box sx={{ alignContent: "center", paddingBottom: 1 }}>
+              <SubButton User={User}></SubButton>
+              <NewPostButton User={User}></NewPostButton>
+            </Box>
           </Box>
-        </Grid>
-        <Grid size={{ xs: 12, md: 3, sm: 3 }}>
-          <Box sx={{ margin: 1 }}>
-            <FeedInfo info={info} infoloading={infoloading}></FeedInfo>
+          <Divider></Divider>
 
-            <ModSettingIcon info={info} infoloading={infoloading}  User={User}></ModSettingIcon>
-            <Collapse
-              sx={{
-                backgroundColor: "background.dark",
-                borderRadius: 5,
-                padding: 1,
-                border: "1px solid",
-              }}
-              in={OpenSettings}
-            >
-              <FeedModSettings
-                info={info}
-                infoloading={infoloading}
+          <InfiniteScroll
+            dataLength={feed.length}
+            next={loadmore}
+            hasMore={hasmore}
+            loader={<CircularProgress color="inherit"></CircularProgress>}
+          >
+            {feed.map((item) => (
+              <FeedItem
+                item={item}
+                setmessage={setmessage}
+                setseverity={setseverity}
+                owner={item.owner}
+                mods={info ? [...info.moderators, info.owner.id] : []}
                 User={User}
-                setFeedEditOpen={setFeedEditOpen}
-                item={info}
-              ></FeedModSettings>
-            </Collapse>
-          </Box>
+              ></FeedItem>
+            ))}
+          </InfiniteScroll>
         </Grid>
+        <Grid size={{ xs: 12, md: 2, sm: 1 }}></Grid>
       </Grid>
     </Box>
   );

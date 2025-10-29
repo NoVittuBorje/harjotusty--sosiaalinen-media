@@ -1,6 +1,6 @@
 import InfiniteScroll from "react-infinite-scroll-component";
 import useGetUserSubs from "../../hooks/useGetUserSubs";
-import { Box, Link, List, Stack, Typography } from "@mui/material";
+import { Box, Link, Stack, Typography } from "@mui/material";
 import { useNavigate } from "react-router";
 import parse from "html-react-parser";
 const ProfileFeedSubs = (variables) => {
@@ -12,7 +12,7 @@ const ProfileFeedSubs = (variables) => {
   if (subs.loading) {
     return <Box>loading</Box>;
   }
-  console.log(subs.data);
+
   return (
     <Box sx={{}}>
       <InfiniteScroll

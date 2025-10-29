@@ -1,7 +1,7 @@
-import { Avatar, Box, Button, ListItemAvatar, Typography } from "@mui/material";
-import Timestamp from "./utils/Timestamp";
+import {  Box, Button, Typography } from "@mui/material";
+import Timestamp from "./Timestamp";
 import { useNavigate } from "react-router";
-import UserAvatar from "./utils/UserAvatar";
+import UserAvatar from "./UserAvatar";
 const Useritem = ({ user, time, edittime }) => {
   const navigate = useNavigate();
   return (

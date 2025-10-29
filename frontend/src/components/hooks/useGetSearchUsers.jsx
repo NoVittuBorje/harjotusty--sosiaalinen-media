@@ -1,7 +1,6 @@
 import { useQuery } from "@apollo/client";
 import { GET_SEARCH_USERS } from "../graphql/queries";
 const useGetSearchUsers = ({ search }) => {
-
   const { data, error, loading, refetch, fetchMore, ...result } = useQuery(
     GET_SEARCH_USERS,
     { variables: { searchby: search } },

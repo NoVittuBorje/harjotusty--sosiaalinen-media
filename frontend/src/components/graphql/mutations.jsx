@@ -36,27 +36,27 @@ export const MAKEPOST = gql`
       img: $img
       description: $description
     ) {
-    headline
-    description
-    karma
-    img
-    active
-    createdAt
-    updatedAt
-    id
-    owner {
-      username
-      avatar
-      id
-    }
-    feed {
-      feedname
+      headline
       description
+      karma
+      img
       active
       createdAt
       updatedAt
       id
-    }
+      owner {
+        username
+        avatar
+        id
+      }
+      feed {
+        feedname
+        description
+        active
+        createdAt
+        updatedAt
+        id
+      }
     }
   }
 `;
@@ -111,140 +111,162 @@ export const MAKECOMMENT = gql`
     }
   }
 `;
-export const EDITCOMMENT = gql`mutation ModifyComment($commentid: String!, $content: String!, $action: String!) {
-  modifyComment(commentid: $commentid, content: $content, action: $action) {
-    content
-    active
-    karma
-    depth
-    id
-  }
-}`
-export const EDITFEED = gql`mutation ModifyFeed($feedid: String!, $action: String!, $content: String!) {
-  modifyFeed(feedid: $feedid, action: $action, content: $content) {
-    ... on Feed {
-      feedname
-      description
+export const EDITCOMMENT = gql`
+  mutation ModifyComment(
+    $commentid: String!
+    $content: String!
+    $action: String!
+  ) {
+    modifyComment(commentid: $commentid, content: $content, action: $action) {
+      content
       active
-      feedavatar
-      createdAt
-      updatedAt
+      karma
+      depth
       id
-      owner {
-        avatar
-        username
+    }
+  }
+`;
+export const EDITFEED = gql`
+  mutation ModifyFeed($feedid: String!, $action: String!, $content: String!) {
+    modifyFeed(feedid: $feedid, action: $action, content: $content) {
+      ... on Feed {
+        feedname
+        description
+        active
+        feedavatar
+        createdAt
+        updatedAt
         id
+        owner {
+          avatar
+          username
+          id
+        }
+        moderators {
+          username
+          avatar
+          id
+        }
+        bannedusers {
+          username
+          avatar
+          id
+        }
       }
-      moderators {
-        username
-        avatar
-        id
-      }
-      bannedusers {
-        username
-        avatar
+      ... on Post {
+        headline
+        description
+        karma
+        img
+        active
+        locked
+        createdAt
+        updatedAt
         id
       }
     }
-    ... on Post {
+  }
+`;
+export const EDITPOST = gql`
+  mutation ModifyPost($postid: String!, $action: String!, $content: String!) {
+    modifyPost(postid: $postid, action: $action, content: $content) {
       headline
       description
       karma
       img
       active
-      locked
       createdAt
       updatedAt
       id
     }
   }
-}`
-export const EDITPOST = gql`mutation ModifyPost($postid: String!, $action: String!, $content: String!) {
-  modifyPost(postid: $postid, action: $action, content: $content) {
-    headline
-    description
-    karma
-    img
-    active
-    createdAt
-    updatedAt
-    id
+`;
+export const SINGLEIMAGEUPLOAD = gql`
+  mutation Mutation($input: SingleFileInput!) {
+    singleUpload(input: $input)
   }
-}`
-export const SINGLEIMAGEUPLOAD = gql`mutation Mutation($input: SingleFileInput!) {
-  singleUpload(input: $input)
-}`
-export const USEREDIT = gql`mutation Mutation($type: String!, $content: String!) {
-  modifyUser(type: $type, content: $content) {
-    username
-    email
-    firstname
-    lastname
-    avatar
-    relationship
-    description
-    work
-    nationality
-    active
-    createdAt
-    id
-  }
-}`
-export const LIKECOMMENT = gql`mutation LikeComment($likeCommentId: String!) {
-  likeComment(id: $likeCommentId) {
-    content
-    active
-    karma
-    depth
-    createdAt
-    updatedAt
-    id
-    replies{
-    id
-    }
-    replyto{
-    id
+`;
+export const USEREDIT = gql`
+  mutation Mutation($type: String!, $content: String!) {
+    modifyUser(type: $type, content: $content) {
+      username
+      email
+      firstname
+      lastname
+      avatar
+      relationship
+      description
+      work
+      nationality
+      active
+      createdAt
+      id
     }
   }
-}`
-export const DISLIKECOMMENT = gql`mutation DislikeComment($dislikeCommentId: String!) {
-  dislikeComment(id: $dislikeCommentId) {
-    content
-    active
-    karma
-    depth
-    createdAt
-    updatedAt
-    id
-    replies{
-    id
+`;
+export const LIKECOMMENT = gql`
+  mutation LikeComment($likeCommentId: String!) {
+    likeComment(id: $likeCommentId) {
+      content
+      active
+      karma
+      depth
+      createdAt
+      updatedAt
+      id
+      replies {
+        id
+      }
+      replyto {
+        id
+      }
     }
-    replyto{
-    id
+  }
+`;
+export const DISLIKECOMMENT = gql`
+  mutation DislikeComment($dislikeCommentId: String!) {
+    dislikeComment(id: $dislikeCommentId) {
+      content
+      active
+      karma
+      depth
+      createdAt
+      updatedAt
+      id
+      replies {
+        id
+      }
+      replyto {
+        id
+      }
     }
   }
-}`
-export const LIKEPOST = gql`mutation LikePost($likePostId: String!) {
-  likePost(id: $likePostId) {
-    headline
-    description
-    karma
-    img
-    active
-    createdAt
-    updatedAt
-    id
+`;
+export const LIKEPOST = gql`
+  mutation LikePost($likePostId: String!) {
+    likePost(id: $likePostId) {
+      headline
+      description
+      karma
+      img
+      active
+      createdAt
+      updatedAt
+      id
+    }
   }
-}`
-export const DISLIKEPOST = gql`mutation DislikePost($dislikePostId: String!) {
-  dislikePost(id: $dislikePostId) {
-    headline
-    description
-    karma
-    img
-    active
-    createdAt
-    updatedAt
-    id
+`;
+export const DISLIKEPOST = gql`
+  mutation DislikePost($dislikePostId: String!) {
+    dislikePost(id: $dislikePostId) {
+      headline
+      description
+      karma
+      img
+      active
+      createdAt
+      updatedAt
+      id
+    }
   }
-}`
+`;
