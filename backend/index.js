@@ -25,12 +25,12 @@ require("dotenv").config();
 const MONGODB_URI = process.env.MONGODB_URI;
 
 console.log("connecting to", MONGODB_URI);
-var linktofrontend = "http://localhost:5173/"
+var linktofrontend = "http://localhost:5173"
 var hostname = "localhost"
-const deployment = true
-if(deployment){
+
+if(process.env.NODE_ENV == "production"){
   hostname = "0.0.0.0"
-  linktofrontend = "https://frontend-harjotus-sosi.fly.dev/"
+  linktofrontend = "https://frontend-harjotus-sosi.fly.dev"
 }
 mongoose
   .connect(MONGODB_URI)
@@ -44,7 +44,7 @@ mongoose
 const start = async () => {
   const app = express();
    const corsOptions = {
-    origin: `*`,
+    origin: `${linktofrontend}`,
     methods: "POST",
     accessControlAllowOrigin: '*',
     accessControlAllowCredentials: true,
