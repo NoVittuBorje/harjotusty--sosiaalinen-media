@@ -30,10 +30,6 @@ jobs:
     if: ${{ (github.event_name == 'push')  && (!contains(github.event.head_commit.message, '#skip')) }}
     steps:
       - uses: actions/checkout@v4
-      - uses: actions/setup-node@v3
-        with:
-          node-version: latest
-          cache: 'npm'
       - uses: superfly/flyctl-actions/setup-flyctl@master
       - name: Install dependencies 
         run: npm install
