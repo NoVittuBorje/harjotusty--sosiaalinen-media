@@ -61,7 +61,7 @@ const FeedItem = ({ item, owner, User, mods,setmessage,setseverity }) => {
     }
   };
   return (
-    <Box>
+    <Box key={item.id}>
       <Box
         className={"feed"}
         sx={{
@@ -71,7 +71,6 @@ const FeedItem = ({ item, owner, User, mods,setmessage,setseverity }) => {
             backgroundColor: "background.hover",
           },
         }}
-        key={item.id}
       >
         <Box sx={{ display: "flex", flexDirection: "column" }}>
           <Link

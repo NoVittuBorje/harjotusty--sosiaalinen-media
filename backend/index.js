@@ -44,7 +44,7 @@ mongoose
 const start = async () => {
   const app = express();
    const corsOptions = {
-    origin: `${linktofrontend}`,
+    origin: [`${linktofrontend}`,"novittuborjeampari1.s3.eu-north-1.amazonaws.com"],
     methods: "POST,GET",
     accessControlAllowOrigin: '*',
     accessControlAllowCredentials: true,

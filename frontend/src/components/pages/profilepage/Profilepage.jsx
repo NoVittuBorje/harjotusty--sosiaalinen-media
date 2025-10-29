@@ -80,6 +80,7 @@ const Profilepage = ({ User, match, setmessage, setseverity }) => {
   } else {
     const profiledata = userdata.data ? userdata.data.getuser : [];
     console.log(profiledata);
+    if(profiledata.description)
     const ProfileDesc = ({ profiledata }) => {
       if (profiledata.description) {
         return <Box key={"ProfileDesc"}>{parse(profiledata.description)}</Box>;
@@ -125,9 +126,9 @@ const Profilepage = ({ User, match, setmessage, setseverity }) => {
                     paddingRight: 5,
                   }}
                 >
-                  <Typography>{`Disliked posts: ${profiledata.dislikedposts.length}`}</Typography>
-                  <Typography>{`Disliked comments: ${profiledata.dislikedcomments.length}`}</Typography>
-                  <Typography>{`Subs:  ${profiledata.feedsubs.length}`}</Typography>
+                  <Typography>{`Disliked posts: ${profiledata.dislikedposts ? profiledata.dislikedposts.length : "0"}`}</Typography>
+                  <Typography>{`Disliked comments: ${profiledata.dislikedcomments ? profiledata.dislikedcomments.length : "0"}`}</Typography>
+                  <Typography>{`Subs:  ${profiledata.feedsubs ? profiledata.feedsubs.length : "0"}`}</Typography>
                 </Grid>
                 <Grid
                   sx={{
@@ -136,9 +137,9 @@ const Profilepage = ({ User, match, setmessage, setseverity }) => {
                     justifyContent: "center",
                   }}
                 >
-                  <Typography>{`Liked posts: ${profiledata.likedposts.length}`}</Typography>
-                  <Typography>{`Liked comments: ${profiledata.likedcomments.length}`}</Typography>
-                  <Typography>{`Owned feeds: ${profiledata.ownedfeeds.length}`}</Typography>
+                  <Typography>{`Liked posts: ${profiledata.likedposts ? profiledata.likedposts.length : "0"}`}</Typography>
+                  <Typography>{`Liked comments: ${profiledata.likedcomments ? profiledata.likedcomments.length : "0"}`}</Typography>
+                  <Typography>{`Owned feeds: ${profiledata.ownedfeeds ? profiledata.ownedfeeds.length : "0"}`}</Typography>
                 </Grid>
               </Grid>
 
