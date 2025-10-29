@@ -27,10 +27,7 @@ const MONGODB_URI = process.env.MONGODB_URI;
 console.log("connecting to", MONGODB_URI);
 var linktofrontend = "http://localhost:5173/"
 var hostname = "localhost"
-const deployment = false
-if(process.env.NODE_ENV == "production"){
-  deployment = true
-}
+const deployment = true
 if(deployment){
   hostname = "0.0.0.0"
   linktofrontend = "https://frontend-harjotus-sosi.fly.dev/"
