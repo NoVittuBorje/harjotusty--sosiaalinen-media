@@ -45,7 +45,7 @@ const start = async () => {
   const app = express();
    const corsOptions = {
     origin: `${linktofrontend}`,
-    methods: "POST",
+    methods: "POST,GET",
     accessControlAllowOrigin: '*',
     accessControlAllowCredentials: true,
 }
