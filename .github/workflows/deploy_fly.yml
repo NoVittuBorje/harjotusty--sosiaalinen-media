@@ -1,4 +1,4 @@
-name: Deployment pipeline BlogList
+name: Deployment Sosi harjotus
 on:
   push:
     branches:
