@@ -14,7 +14,7 @@ import { useDebouncedCallback } from "use-debounce";
 import useGetSearchUsers from "../../hooks/useGetSearchUsers";
 import useEditFeed from "../../hooks/useEditFeed";
 import ExpandIcon from "../../utils/ExpandIcon";
-import FileUpload from "../../utils/upload";
+import FileUpload from "../../utils/FileUpload";
 
 const FeedModSettings = ({ infoloading,info, item, setFeedEditOpen, User }) => {
   if(infoloading){return}

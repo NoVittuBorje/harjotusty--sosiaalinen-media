@@ -18,7 +18,7 @@ import {
   Typography,
 } from "@mui/material";
 import EditFieldItem from "./EditFieldItem";
-import FileUpload from "../utils/upload";
+import FileUpload from "../utils/FileUpload";
 import { useEffect, useState } from "react";
 import UserAvatar from "../utils/UserAvatar";
 import useEditUser from "../hooks/useEditUser";

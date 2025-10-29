@@ -3,7 +3,7 @@ import { useFormik } from "formik";
 import * as yup from "yup";
 import useMakePost from "../../hooks/useMakePost";
 import { useNavigate } from "react-router";
-import FileUpload from "../../utils/upload";
+import FileUpload from "../../utils/FileUpload";
 import useGetImageUrls from "../../hooks/useGetImageUrl";
 import { useState } from "react";
 import TextEditor from "../../utils/TextEditor";
