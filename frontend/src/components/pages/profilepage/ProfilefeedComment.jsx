@@ -29,7 +29,7 @@ const ProfileFeedComment = ({
   });
   console.log(ecomments);
   return (
-    <Box sx={{}}>
+    <Box>
       <CommentSection
         User={User}
         setmessage={setmessage}

@@ -21,7 +21,7 @@ FROM base AS build
 RUN apt-get update -qq && \
     apt-get install --no-install-recommends -y build-essential node-gyp pkg-config python-is-python3
 
-ENV NODE_ENV="production"
+
 # Install node modules
 COPY package-lock.json package.json ./
 RUN npm ci

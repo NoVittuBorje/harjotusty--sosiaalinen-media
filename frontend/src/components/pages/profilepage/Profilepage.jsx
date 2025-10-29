@@ -8,10 +8,10 @@ import {
   Select,
   Typography,
 } from "@mui/material";
-import ProfileFeedPosts from "./ProfileFeedPosts.jsx";
-import ProfileFeedOwnedFeeds from "./ProfileFeedOwnedFeeds.jsx";
-import ProfileFeedSubs from "./ProfileFeedSubs.jsx";
-import ProfileFeedComment from "./ProfileFeedComment.jsx";
+import ProfileFeedComment from "./ProfileFeedComment"
+import ProfileFeedOwnedFeeds from "./ProfileFeedOwnedFeeds"
+import ProfileFeedPosts from "./ProfileFeedPosts"
+import ProfileFeedSubs from "./ProfileFeedSubs"
 import { useState } from "react";
 import useGetUser from "../../hooks/useGetUser";
 import UserAvatar from "../../utils/UserAvatar";
