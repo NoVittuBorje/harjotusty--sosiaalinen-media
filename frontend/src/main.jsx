@@ -28,7 +28,7 @@ const authLink = setContext((_, { headers }) => {
 });
 
 var linktobackend = "http://localhost:3000"
-const deployment = true
+const deployment = false
 if(deployment){
   linktobackend = "https://backend-harjotus-sosi.fly.dev/"
 }

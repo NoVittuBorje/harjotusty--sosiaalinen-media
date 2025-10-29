@@ -25,7 +25,7 @@ require("dotenv").config();
 const MONGODB_URI = process.env.MONGODB_URI;
 
 console.log("connecting to", MONGODB_URI);
-var linktofrontend = "http://localhost:5173"
+var linktofrontend = "http://localhost:5173/"
 var hostname = "localhost"
 const deployment = false
 if(process.env.NODE_ENV == "production"){
@@ -33,7 +33,7 @@ if(process.env.NODE_ENV == "production"){
 }
 if(deployment){
   hostname = "0.0.0.0"
-  linktofrontend = "frontend-harjotus-sosi.fly.dev"
+  linktofrontend = "https://frontend-harjotus-sosi.fly.dev/"
 }
 mongoose
   .connect(MONGODB_URI)
@@ -47,7 +47,7 @@ mongoose
 const start = async () => {
   const app = express();
    const corsOptions = {
-    origin: 'https://frontend-harjotus-sosi.fly.dev/',
+    origin: `*`,
     methods: "POST",
     accessControlAllowOrigin: '*',
     accessControlAllowCredentials: true,
@@ -122,7 +122,7 @@ const start = async () => {
   const PORT = 3000;
 
   httpServer.listen(PORT,hostname, () =>
-    console.log(`Server is now running on http://${hostname}:${PORT}`)
+    console.log(`Server is now running on ${hostname}:${PORT}`)
   );
 };
 

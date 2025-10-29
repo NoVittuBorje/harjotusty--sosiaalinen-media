@@ -8,12 +8,62 @@ import {
   Select,
   Typography,
 } from "@mui/material";
-import ProfileFeed from "./Profilefeed";
+import ProfileFeedPosts from "./ProfileFeedPosts.jsx";
+import ProfileFeedOwnedFeeds from "./ProfileFeedOwnedFeeds.jsx";
+import ProfileFeedSubs from "./ProfileFeedSubs.jsx";
+import ProfileFeedComment from "./ProfileFeedComment.jsx";
 import { useState } from "react";
 import useGetUser from "../../hooks/useGetUser";
 import UserAvatar from "../../utils/UserAvatar";
 import parse from "html-react-parser";
 import formatNumber from "../../utils/FormatNumber";
+
+const ProfileFeed = ({ type, id, userdata, User, setmessage, setseverity }) => {
+  const variables = {
+    id: id,
+  };
+  console.log(variables);
+
+  if (type === "posts") {
+    return (
+      <ProfileFeedPosts
+        variables={variables}
+        setmessage={setmessage}
+        setseverity={setseverity}
+        userdata={userdata}
+        User={User}
+      ></ProfileFeedPosts>
+    );
+  }
+  if (type === "comments") {
+    return (
+      <ProfileFeedComment
+        setmessage={setmessage}
+        setseverity={setseverity}
+        variables={variables}
+        userdata={userdata}
+        User={User}
+      ></ProfileFeedComment>
+    );
+  }
+  if (type === "ownedfeeds") {
+    return (
+      <ProfileFeedOwnedFeeds
+        variables={variables}
+        userdata={userdata}
+      ></ProfileFeedOwnedFeeds>
+    );
+  }
+  if (type === "subs") {
+    return (
+      <ProfileFeedSubs
+        variables={variables}
+        userdata={userdata}
+      ></ProfileFeedSubs>
+    );
+  }
+  return
+};
 const Profilepage = ({ User, match, setmessage, setseverity }) => {
   console.log(User);
   console.log(match);
