@@ -101,6 +101,12 @@ const schema = new mongoose.Schema(
       type: Boolean,
       default: true,
     },
+    chatrooms: [
+      {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "Room",
+      },
+    ],
   },
   { timestamps: true }
 );

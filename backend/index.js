@@ -44,8 +44,8 @@ mongoose
 const start = async () => {
   const app = express();
    const corsOptions = {
-    origin: [`${linktofrontend}`,"novittuborjeampari1.s3.eu-north-1.amazonaws.com"],
-    methods: "POST,GET",
+    origin: [`${linktofrontend}`,"novittuborjeampari1.s3.eu-north-1.amazonaws.com","https://studio.apollographql.com"],
+    methods: ['GET', 'PUT', 'POST'],
     accessControlAllowOrigin: '*',
     accessControlAllowCredentials: true,
 }
@@ -55,7 +55,7 @@ const start = async () => {
 
   const wsServer = new WebSocketServer({
     server: httpServer,
-    path: "/",
+    path: "/subscriptions",
   });
 
   const schema = makeExecutableSchema({ typeDefs, resolvers });
@@ -78,7 +78,7 @@ const start = async () => {
       },
     ],
   });
-
+  
   await server.start();
 
   app.use(
@@ -117,7 +117,7 @@ const start = async () => {
   );
 
   const PORT = 3000;
-
+  
   httpServer.listen(PORT,hostname, () =>
     console.log(`Server is now running on ${hostname}:${PORT}`)
   );

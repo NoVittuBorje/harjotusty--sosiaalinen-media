@@ -5,6 +5,9 @@ const User = require("./models/user_model");
 const Feed = require("./models/feed_model");
 const Post = require("./models/post_model");
 const Comment = require(`./models/comment_model`);
+const Message = require(`./models/chat_message_model`)
+const Room = require(`./models/chatroom_model`)
+
 const { Upload } = require("@aws-sdk/lib-storage");
 const {
   S3Client,
@@ -16,6 +19,11 @@ const {
 const GraphQLUpload = require("graphql-upload/GraphQLUpload.js");
 const { v4: uuidv4 } = require("uuid");
 const { getSignedUrl } = require("@aws-sdk/s3-request-presigner");
+
+const { PubSub ,withFilter} = require("graphql-subscriptions");
+
+const pubsub = new PubSub();
+const MESSAGE_SENT = "messageSent";
 
 const client = new S3Client({
   accessKeyId: process.env.AWS_ACCESS_KEY_ID,
@@ -40,6 +48,7 @@ const resolvers = {
       return null;
     },
   },
+
   Query: {
     me: (root, args, context) => {
       console.log(context, "context");
@@ -106,11 +115,19 @@ const resolvers = {
                 "id",
                 "createdAt",
               ],
-              populate: { path: "owner", select: ["username", "id", "avatar","active"] },
+              populate: {
+                path: "owner",
+                select: ["username", "id", "avatar", "active"],
+              },
             })
-            .populate("owner", { username: 1, id: 1,avatar:1,active:1 })
+            .populate("owner", { username: 1, id: 1, avatar: 1, active: 1 })
             .populate("subs", { username: 1, id: 1 })
-            .populate("moderators", { username: 1, id: 1,avatar:1,active:1 })
+            .populate("moderators", {
+              username: 1,
+              id: 1,
+              avatar: 1,
+              active: 1,
+            })
             .populate("bannedusers", { id: 1 });
           console.log(feed);
           return [feed];
@@ -137,7 +154,7 @@ const resolvers = {
             .skip(args.offset)
             .limit(20)
             .populate("feed", { feedname: 1 })
-            .populate("owner", { username: 1, id: 1, avatar: 1 })
+            .populate("owner", { username: 1, id: 1, avatar: 1 });
           return posts;
         } catch (e) {
           throw new GraphQLError(e);
@@ -151,7 +168,7 @@ const resolvers = {
             .skip(args.offset)
             .limit(20)
             .populate("feed", { feedname: 1 })
-            .populate("owner", { username: 1, id: 1, avatar: 1 })
+            .populate("owner", { username: 1, id: 1, avatar: 1 });
           console.log(posts);
           return posts;
         } catch (e) {
@@ -165,7 +182,7 @@ const resolvers = {
             .skip(args.offset)
             .limit(20)
             .populate("feed", { feedname: 1 })
-            .populate("owner", { username: 1, id: 1, avatar: 1 })
+            .populate("owner", { username: 1, id: 1, avatar: 1 });
           return posts;
         } catch (e) {
           throw new GraphQLError(e);
@@ -198,7 +215,7 @@ const resolvers = {
       if (args.orderBy === "HOTTEST") {
         try {
           const posts = await Post.find({ active: true })
-          .sort({commentsCount: -1})
+            .sort({ commentsCount: -1 })
             .sort({ karma: -1 })
             .sort({ createdAt: -1 })
             .skip(args.offset)
@@ -276,10 +293,10 @@ const resolvers = {
       const post = await Post.find({ _id: args.id })
         .populate({
           path: "feed",
-          select: ["feedname", "id", "owner", "moderators","feedavatar"],
+          select: ["feedname", "id", "owner", "moderators", "feedavatar"],
           populate: {
             path: ["owner", "moderators"],
-            select: ["id","username","avatar"],
+            select: ["id", "username", "avatar"],
           },
         })
         .populate("owner", { username: 1, id: 1, avatar: 1 });
@@ -530,7 +547,33 @@ const resolvers = {
         return error;
       }
     },
+    getUserRooms: async (root,args,context) => {
+      const user = await User.findById(context.currentUser).populate({path:"chatrooms",select:["name","owner","users"] ,populate: {
+            path: ["users", "owner"],
+            select: ["username", "id","avatar"],
+          },})
+        return user
+    },
+    getMessages: async (_, input) => {
+      const query = {
+        room: input.room,
+      };
+
+      const options = {
+        sort: {
+          createdAt: 1,
+        },
+      };
+
+      const messages = await Message.find(query, null, options).populate(
+        'author'
+      );
+
+      return messages;
+    },
+    
   },
+
   Mutation: {
     subscribe: async (root, args, context) => {
       if (!context.currentUser) {
@@ -540,7 +583,7 @@ const resolvers = {
       if (args.type === "sub") {
         const newfeed = await Feed.findOneAndUpdate(
           { _id: feed._id },
-          { $push: { subs: context.currentUser._id },$inc:{subsCount:1} }
+          { $push: { subs: context.currentUser._id }, $inc: { subsCount: 1 } }
         );
         const newuser = await User.findOneAndUpdate(
           { _id: context.currentUser._id },
@@ -554,7 +597,7 @@ const resolvers = {
       if (args.type === "unsub") {
         const newfeed = await Feed.findOneAndUpdate(
           { _id: feed._id },
-          { $pull: { subs: context.currentUser._id },$inc:{subsCount:-1} }
+          { $pull: { subs: context.currentUser._id }, $inc: { subsCount: -1 } }
         );
         const newuser = await User.findOneAndUpdate(
           { _id: context.currentUser._id },
@@ -612,8 +655,8 @@ const resolvers = {
       }
     },
     createUser: async (root, args) => {
-      if(args.username.match(/^\S*$/) > 0){
-        throw new GraphQLError("Username not allowed characters.")
+      if (args.username.match(/^\S*$/) > 0) {
+        throw new GraphQLError("Username not allowed characters.");
       }
       const salt_rounds = 10;
       const passwordHash = await bcrypt.hash(args.password, salt_rounds);
@@ -659,8 +702,8 @@ const resolvers = {
           },
         });
       }
-      if(!password_correct){
-          throw new GraphQLError("Wrong Password!", {
+      if (!password_correct) {
+        throw new GraphQLError("Wrong Password!", {
           extensions: {
             code: "BAD_USER_INPUT",
           },
@@ -699,8 +742,8 @@ const resolvers = {
         })
         .populate({ path: "replies", select: ["id"] })
         .populate({ path: "replyto", select: ["id"] });
-      if(comment.user.id == user.id){
-        throw new GraphQLError("Cant give karma to yourself.")
+      if (comment.user.id == user.id) {
+        throw new GraphQLError("Cant give karma to yourself.");
       }
       console.log(comment);
       const likecommentids = user.likedcomments.map((comment) =>
@@ -711,7 +754,10 @@ const resolvers = {
       );
       if (likecommentids.includes(comment._id.toString())) {
         comment.karma = comment.karma - 1;
-        const commentOwner = await User.findByIdAndUpdate({_id:comment.user.id},{$inc:{userKarma: -1}})
+        const commentOwner = await User.findByIdAndUpdate(
+          { _id: comment.user.id },
+          { $inc: { userKarma: -1 } }
+        );
         const newuser = await User.findOneAndUpdate(
           { _id: context.currentUser._id },
           { $pull: { likedcomments: comment._id } }
@@ -721,14 +767,20 @@ const resolvers = {
       } else {
         if (dislikecommentids.includes(comment._id.toString())) {
           comment.karma = comment.karma + 1;
-          const commentOwner = await User.findByIdAndUpdate({_id:comment.user.id},{$inc:{userKarma: +1}})
+          const commentOwner = await User.findByIdAndUpdate(
+            { _id: comment.user.id },
+            { $inc: { userKarma: +1 } }
+          );
           const newuser = await User.findOneAndUpdate(
             { _id: context.currentUser._id },
             { $pull: { dislikedcomments: comment._id } }
           );
         }
         comment.karma = comment.karma + 1;
-        const commentOwner = await User.findByIdAndUpdate({_id:comment.user.id},{$inc:{userKarma: +1}})
+        const commentOwner = await User.findByIdAndUpdate(
+          { _id: comment.user.id },
+          { $inc: { userKarma: +1 } }
+        );
         const newuser = await User.findOneAndUpdate(
           { _id: context.currentUser._id },
           { $push: { likedcomments: comment._id } }
@@ -747,8 +799,8 @@ const resolvers = {
         })
         .populate({ path: "replies", select: ["id"] })
         .populate({ path: "replyto", select: ["id"] });
-      if(comment.user.id == user.id){
-        throw new GraphQLError("Cant give karma to yourself.")
+      if (comment.user.id == user.id) {
+        throw new GraphQLError("Cant give karma to yourself.");
       }
       const dislikecommentids = user.dislikedcomments.map((comment) =>
         comment._id.toString()
@@ -758,25 +810,34 @@ const resolvers = {
       );
       if (dislikecommentids.includes(comment._id.toString())) {
         comment.karma = comment.karma + 1;
-        const commentOwner = await User.findByIdAndUpdate({_id:comment.user.id},{$inc:{userKarma: +1}})
+        const commentOwner = await User.findByIdAndUpdate(
+          { _id: comment.user.id },
+          { $inc: { userKarma: +1 } }
+        );
         const newuser = await User.findOneAndUpdate(
           { _id: context.currentUser._id },
           { $pull: { dislikedcomments: comment._id } }
-        )
+        );
 
         await comment.save();
         return comment;
       } else {
         if (likecommentids.includes(comment._id.toString())) {
           comment.karma = comment.karma - 1;
-          const commentOwner = await User.findByIdAndUpdate({_id:comment.user.id},{$inc:{userKarma: -1}})
+          const commentOwner = await User.findByIdAndUpdate(
+            { _id: comment.user.id },
+            { $inc: { userKarma: -1 } }
+          );
           const newuser = await User.findOneAndUpdate(
             { _id: context.currentUser._id },
             { $pull: { likedcomments: comment._id } }
           );
         }
         comment.karma = comment.karma - 1;
-        const commentOwner = await User.findByIdAndUpdate({_id:comment.user.id},{$inc:{userKarma: -1}})
+        const commentOwner = await User.findByIdAndUpdate(
+          { _id: comment.user.id },
+          { $inc: { userKarma: -1 } }
+        );
         const newuser = await User.findOneAndUpdate(
           { _id: context.currentUser._id },
           { $push: { dislikedcomments: comment._id } }
@@ -791,14 +852,17 @@ const resolvers = {
         path: "owner",
         select: ["id"],
       });
-      if(post.owner.id == user.id){
-        throw new GraphQLError("Cant give karma to yourself.")
+      if (post.owner.id == user.id) {
+        throw new GraphQLError("Cant give karma to yourself.");
       }
       const likeids = user.likedposts.map((post) => post._id.toString());
       const dislikedids = user.dislikedposts.map((post) => post._id.toString());
       if (likeids.includes(post._id.toString())) {
         post.karma = post.karma - 1;
-        const postOwner = await User.findByIdAndUpdate({_id:post.owner.id},{$inc:{userKarma: -1}})
+        const postOwner = await User.findByIdAndUpdate(
+          { _id: post.owner.id },
+          { $inc: { userKarma: -1 } }
+        );
         const newuser = await User.findOneAndUpdate(
           { _id: context.currentUser._id },
           { $pull: { likedposts: post._id } }
@@ -808,14 +872,20 @@ const resolvers = {
       } else {
         if (dislikedids.includes(post._id.toString())) {
           post.karma = post.karma + 1;
-          const postOwner = await User.findByIdAndUpdate({_id:post.owner.id},{$inc:{userKarma: +1}})
+          const postOwner = await User.findByIdAndUpdate(
+            { _id: post.owner.id },
+            { $inc: { userKarma: +1 } }
+          );
           const newuser = await User.findOneAndUpdate(
             { _id: context.currentUser._id },
             { $pull: { dislikedposts: post._id } }
           );
         }
         post.karma = post.karma + 1;
-        const postOwner = await User.findByIdAndUpdate({_id:post.owner.id},{$inc:{userKarma: +1}})
+        const postOwner = await User.findByIdAndUpdate(
+          { _id: post.owner.id },
+          { $inc: { userKarma: +1 } }
+        );
         const newuser = await User.findOneAndUpdate(
           { _id: context.currentUser._id },
           { $push: { likedposts: post._id } }
@@ -824,18 +894,20 @@ const resolvers = {
         return post;
       }
     },
-
     dislikePost: async (root, args, context) => {
       const user = context.currentUser;
-      const post = await Post.findById(args.id).populate("owner",{id:1});
-      if(post.owner.id == user.id){
-        throw new GraphQLError("Cant give karma to yourself.")
+      const post = await Post.findById(args.id).populate("owner", { id: 1 });
+      if (post.owner.id == user.id) {
+        throw new GraphQLError("Cant give karma to yourself.");
       }
       const dislikeids = user.dislikedposts.map((post) => post._id.toString());
       const likeids = user.likedposts.map((post) => post._id.toString());
       if (dislikeids.includes(post._id.toString())) {
         post.karma = post.karma + 1;
-        const postOwner = await User.findByIdAndUpdate({_id:post.owner.id},{$inc:{userKarma: +1}})
+        const postOwner = await User.findByIdAndUpdate(
+          { _id: post.owner.id },
+          { $inc: { userKarma: +1 } }
+        );
         const newuser = await User.findOneAndUpdate(
           { _id: context.currentUser._id },
           { $pull: { dislikedposts: post._id } }
@@ -847,14 +919,20 @@ const resolvers = {
       } else {
         if (likeids.includes(post._id.toString())) {
           post.karma = post.karma - 1;
-          const postOwner = await User.findByIdAndUpdate({_id:post.owner.id},{$inc:{userKarma: -1}})
+          const postOwner = await User.findByIdAndUpdate(
+            { _id: post.owner.id },
+            { $inc: { userKarma: -1 } }
+          );
           const newuser = await User.findOneAndUpdate(
             { _id: context.currentUser._id },
             { $pull: { likedposts: post._id } }
           );
         }
         post.karma = post.karma - 1;
-        const postOwner = await User.findByIdAndUpdate({_id:post.owner.id},{$inc:{userKarma: -1}})
+        const postOwner = await User.findByIdAndUpdate(
+          { _id: post.owner.id },
+          { $inc: { userKarma: -1 } }
+        );
         const newuser = await User.findOneAndUpdate(
           { _id: context.currentUser._id },
           { $push: { dislikedposts: post._id } }
@@ -1206,8 +1284,8 @@ const resolvers = {
                 id: 1,
                 username: 1,
               })
-              .populate("moderators", { id: 1, username: 1,avatar:1 })
-              .populate("owner", { id: 1, username: 1,avatar:1 });
+              .populate("moderators", { id: 1, username: 1, avatar: 1 })
+              .populate("owner", { id: 1, username: 1, avatar: 1 });
             return res;
           } catch (e) {
             throw new GraphQLError(e);
@@ -1248,20 +1326,21 @@ const resolvers = {
           .populate({ path: "replyto", select: ["id"] });
         const newpost = await Post.findByIdAndUpdate(
           { _id: args.postid },
-          { $inc:{commentsCount:1} },
+          { $inc: { commentsCount: 1 } }
         );
         const newuser = await User.findByIdAndUpdate(
           { _id: user.id },
           { $push: { comments: newComment._id } }
         );
-        const res = await Comment.findById(
-          { _id: args.replyto },
-        ).populate({
+        const res = await Comment.findById({ _id: args.replyto })
+          .populate({
             path: "user",
             select: ["username", "id", "avatar"],
           })
-          .populate({ path: "replies", select: ["id"] }).populate({path:"replyto",select:["id"]}).populate({ path: "post", select: ["id"] });
-        return res
+          .populate({ path: "replies", select: ["id"] })
+          .populate({ path: "replyto", select: ["id"] })
+          .populate({ path: "post", select: ["id"] });
+        return res;
       } else {
         console.log("newcomment");
         const user = context.currentUser;
@@ -1276,7 +1355,7 @@ const resolvers = {
         console.log(user, post);
         const newpost = await Post.findByIdAndUpdate(
           { _id: args.postid },
-          { $push: { comments: newComment._id },$inc:{commentsCount:1} },
+          { $push: { comments: newComment._id }, $inc: { commentsCount: 1 } }
         );
         const newuser = await User.findByIdAndUpdate(
           { _id: user.id },
@@ -1337,6 +1416,53 @@ const resolvers = {
         console.error("Error uploading files:", error);
         throw new Error("Failed to upload files");
       }
+    },
+    createRoom: async (root,args,context) => {
+      const newroom = new Room({
+        owner:context.currentUser,
+        name:args.name,
+      })
+      await newroom.save()
+      const newuser = await User.findByIdAndUpdate({_id:context.currentUser.id},{$push:{chatrooms:newroom}})
+      return newroom;
+    },
+    inviteToRoom: async (root, args,context) => {
+      const inviteduser = await User.findById(args.invitedId)
+      const room = await Room.findByIdAndUpdate({_id: args.roomId},{$push:{users:inviteduser}})
+      return room
+    },
+    exitRoom: async (_, input) => {
+      const query = {
+        user: input.user,
+      };
+      return Room.findOneAndRemove(query).populate({path:"owner",select:["username","avatar","id"]});
+    },
+    message: async (root, args, context) => {
+      const author = context.currentUser
+      const room = await Room.findById(args.roomId)
+
+
+      const data = {
+        content: args.content,
+        author:author,
+        room: room,
+      };
+
+      const message = new Message(data)
+
+      pubsub.publish(MESSAGE_SENT, { messageSent: message });
+
+      await message.save();
+      return message.populate("author");
+    },
+  },
+  Subscription: {
+    messageSent: {
+      subscribe: withFilter(
+        () => pubsub.asyncIterator(MESSAGE_SENT),
+        (payload, variables) =>
+          payload.messageSent.room._id.equals(variables.room)
+      ),
     },
   },
 };

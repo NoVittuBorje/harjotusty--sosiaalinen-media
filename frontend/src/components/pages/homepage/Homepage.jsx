@@ -101,9 +101,13 @@ const Homescreen = ({ User,setmessage,setseverity }) => {
             hasMore={hasmore}
             loader={<CircularProgress color="inherit"></CircularProgress>}
           >
+            
             {feed.map((item) => (
+              <Box key={`feeditemhomepage${item.id}`}>
               <FeedItem item={item} setseverity={setseverity} setmessage={setmessage} owner={item.owner} User={User}></FeedItem>
+              </Box>
             ))}
+            
           </InfiniteScroll>
         </Grid>
         <Grid size={{ xs: 12, md: 2 }}></Grid>

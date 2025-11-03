@@ -402,4 +402,11 @@
   <td>28</td>
   <td>Fixed cors settings to backend and finally fixed bugged deployment by manually changing filename in github. And fixed search bar style and minimization</td>
   </tr>
+    <tr>
+  <td>Nov 3, 2025</td>
+  <td>4</td>
+  <td>202</td>
+  <td>29</td>
+  <td>Researched chatrooms and started implementing it to backend.</td>
+  </tr>
 </table>

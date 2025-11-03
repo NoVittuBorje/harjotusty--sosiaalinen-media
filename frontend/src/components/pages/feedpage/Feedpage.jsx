@@ -92,7 +92,7 @@ const FeedPage = ({ match, User, refetchUser, setmessage, setseverity }) => {
     if (infoloading) {
       return <CircularProgress color="inherit"></CircularProgress>;
     }
-
+    console.log("info");
     return (
       <Box
         sx={{
@@ -106,8 +106,8 @@ const FeedPage = ({ match, User, refetchUser, setmessage, setseverity }) => {
       >
         <Stack spacing={1}>
           <Typography variant="h6">Feed info: </Typography>
-          <Typography>
-            Owner:
+          <Box sx={{ display: "flex" }}>
+            <Typography>Owner:</Typography>
             <Button
               onClick={() => {
                 navigate(`/profile/${info.owner.id}`);
@@ -117,15 +117,17 @@ const FeedPage = ({ match, User, refetchUser, setmessage, setseverity }) => {
               size="small"
               sx={{ borderRadius: 50 }}
             >
-              <UserAvatar width={20} height={20} user={info.owner}></UserAvatar>{" "}
+              <UserAvatar width={20} height={20} user={info.owner}></UserAvatar>
+
               {info.owner.username}
             </Button>
-          </Typography>
-          <Typography>
-            Created :<Timestamp time={info.createdAt}></Timestamp>
-          </Typography>
-          <Typography>
-            Moderators:
+          </Box>
+          <Box sx={{ display: "flex" }}>
+            <Typography>Created :</Typography>
+            <Timestamp time={info.createdAt}></Timestamp>
+          </Box>
+          <Box>
+            <Typography>Moderators:</Typography>
             <Button
               onClick={() => {
                 setOpenModeratorShow(!OpenModeratorShow);
@@ -138,33 +140,34 @@ const FeedPage = ({ match, User, refetchUser, setmessage, setseverity }) => {
               show {info.moderators.length}
               <ExpandIcon Open={OpenModeratorShow}></ExpandIcon>
             </Button>
-            <Collapse in={OpenModeratorShow}>
-              <Stack>
-                {info.moderators.map((mod) => {
-                  return (
-                    <Box>
-                      <Button
-                        onClick={() => {
-                          navigate(`/profile/${mod.id}`);
-                        }}
-                        className="button"
-                        color="inherit"
-                        size="small"
-                        sx={{ borderRadius: 50 }}
-                      >
-                        <UserAvatar
-                          width={20}
-                          height={20}
-                          user={mod}
-                        ></UserAvatar>{" "}
-                        {mod.username}
-                      </Button>
-                    </Box>
-                  );
-                })}
-              </Stack>
-            </Collapse>
-          </Typography>
+          </Box>
+          <Collapse in={OpenModeratorShow}>
+            <Stack>
+              {info.moderators.map((mod) => {
+                return (
+                  <Box>
+                    <Button
+                      onClick={() => {
+                        navigate(`/profile/${mod.id}`);
+                      }}
+                      className="button"
+                      color="inherit"
+                      size="small"
+                      sx={{ borderRadius: 50 }}
+                    >
+                      <UserAvatar
+                        width={20}
+                        height={20}
+                        user={mod}
+                      ></UserAvatar>{" "}
+                      {mod.username}
+                    </Button>
+                  </Box>
+                );
+              })}
+            </Stack>
+          </Collapse>
+
           <Typography>Subs: {info.subs.length}</Typography>
         </Stack>
       </Box>
@@ -174,15 +177,16 @@ const FeedPage = ({ match, User, refetchUser, setmessage, setseverity }) => {
     if (infoloading) {
       return <CircularProgress color="inherit"></CircularProgress>;
     }
-
+    console.log(info.description);
+    console.log("desc");
     return (
       <Box sx={{ padding: 1 }}>
         <Stack direction={"column"}>
           <Stack direction={"row"} alignItems={"center"} gap={2} padding={1}>
             <FeedAvatar width={100} height={100} feed={info}></FeedAvatar>
-            <Typography variant="h5">f/{info.feedname}</Typography>
+            <Typography variant="h5">{`f/${info.feedname}`}</Typography>
           </Stack>
-          <Box>{parse(info.description)}</Box>
+          <Box key={info.id}>{parse(info.description)}</Box>
         </Stack>
         <Collapse in={FeedEditOpen}>
           <EditFeedDesc
@@ -195,6 +199,7 @@ const FeedPage = ({ match, User, refetchUser, setmessage, setseverity }) => {
     );
   };
   const ModSettingIcon = ({ info, infoloading, User }) => {
+    console.log("setting");
     if (infoloading) {
       return;
     }
@@ -294,7 +299,6 @@ const FeedPage = ({ match, User, refetchUser, setmessage, setseverity }) => {
       hasmore = false;
     }
   };
-
   return (
     <Box sx={{ flexGrow: 1 }}>
       <Grid direction={"row"} container item spacing={3}>
@@ -310,7 +314,7 @@ const FeedPage = ({ match, User, refetchUser, setmessage, setseverity }) => {
                   FeedEditOpen={FeedEditOpen}
                 ></FeedDescription>
               </Grid>
-              <Grid size={{ xs: 12, md: 4, sm: 4 }}>
+              <Grid container size={{ xs: 12, md: 4, sm: 4 }}>
                 <Box sx={{ padding: 2 }}>
                   <FeedInfo info={info} infoloading={infoloading}></FeedInfo>
 
@@ -373,16 +377,20 @@ const FeedPage = ({ match, User, refetchUser, setmessage, setseverity }) => {
             hasMore={hasmore}
             loader={<CircularProgress color="inherit"></CircularProgress>}
           >
-            {feed.map((item) => (
-              <FeedItem
-                item={item}
-                setmessage={setmessage}
-                setseverity={setseverity}
-                owner={item.owner}
-                mods={info ? [...info.moderators, info.owner.id] : []}
-                User={User}
-              ></FeedItem>
-            ))}
+            <Box>
+              {feed.map((item) => (
+                <Box key={`feeditemfeedpage${item.id}`}>
+                  <FeedItem
+                    item={item}
+                    setmessage={setmessage}
+                    setseverity={setseverity}
+                    owner={item.owner}
+                    mods={info ? [...info.moderators, info.owner.id] : []}
+                    User={User}
+                  ></FeedItem>
+                </Box>
+              ))}
+            </Box>
           </InfiniteScroll>
         </Grid>
         <Grid size={{ xs: 12, md: 2, sm: 1 }}></Grid>

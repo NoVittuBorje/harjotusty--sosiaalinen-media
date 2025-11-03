@@ -63,7 +63,25 @@ const typeDefs = `#graphql
     active:Boolean
     comments:[Comment]
     createdAt:String
+    chatrooms:[Room]
     id: ID!
+  }
+  scalar Date
+
+  type Message {
+    id: ID!
+    content: String!
+    author: User!
+    room: Room!
+    createdAt: Date!
+  }
+
+  type Room {
+    id: ID!
+    name: String!
+    owner:User!
+    users: [User!]
+    messages: [Message!]
   }
   union Search = Feed | Post | User
   type Token {
@@ -78,6 +96,9 @@ const typeDefs = `#graphql
   input MultiFileInput {
   userId: String!
   files: [Upload!]!
+  }
+  type Subscription {
+    messageSent(room: ID!): Message
   }
   
   type Query {
@@ -154,6 +175,10 @@ const typeDefs = `#graphql
     getFiles(userId: String!): [String!]
     
     getImage(imageId:String!):String!
+
+    getUserRooms:User
+
+    getMessages(room: ID!): [Message!]
   }
   
   type Mutation {
@@ -223,6 +248,15 @@ const typeDefs = `#graphql
     
     singleUpload(input: SingleFileInput!): [String!]
     multiUpload(input: MultiFileInput!): String!
+
+    createRoom(name:String!):Room
+    exitRoom(roomId:String!):Room
+    inviteToRoom(
+    roomId:String!,
+    invitedId:String!
+    ):Room
+
+    message(content: String!, roomId:String!): Message
   }
 `;
 module.exports = typeDefs;

@@ -10,10 +10,8 @@ const PostCommentItem = ({comments}) => {
     >
         <Box sx={{display:"flex",alignItems:"center",minHeight:34,maxHeight:34,paddingX:1}}>
     <ChatIcon  color="inherit" size="small"></ChatIcon>
-      <Typography>
-        
         {formatNumber(comments)}
-      </Typography>
+
       </Box>
     </Box>
   );

@@ -62,7 +62,7 @@ const FeedItem = ({ item, owner, User, mods,setmessage,setseverity }) => {
     }
   };
   return (
-    <Box key={item.id}>
+    <Box key={`feeditem${item.id}`}>
       <Box
         className={"feed"}
         sx={{
@@ -74,15 +74,10 @@ const FeedItem = ({ item, owner, User, mods,setmessage,setseverity }) => {
         }}
       >
         <Box sx={{ display: "flex", flexDirection: "column" }}>
-          <Link
-            onClick={() => {
+            <Box 
+                        onClick={() => {
               navigate(`/post/${item.id}`);
-            }}
-            variant="inherit"
-            underline="none"
-            color="inherit"
-          >
-            <Box sx={{ flexDirection: "column", padding: 1 }}>
+            }} sx={{ flexDirection: "column", padding: 1 }}>
               <Useritem time={item.createdAt} user={owner}></Useritem>
 
               <Box>
@@ -120,7 +115,7 @@ const FeedItem = ({ item, owner, User, mods,setmessage,setseverity }) => {
                 <FeedDescription item={item}></FeedDescription>
               </Box>
             </Box>
-          </Link>
+          
 
           <Box className={"footer"}>
             <KarmaItem
