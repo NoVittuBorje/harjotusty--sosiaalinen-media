@@ -391,22 +391,29 @@
     <tr>
   <td>Oct 28, 2025</td>
   <td>4</td>
-  <td>202</td>
+  <td>204</td>
   <td>28</td>
   <td>Fixed nginx routing for fly,and added automatic deploy to github.</td>
   </tr>
       <tr>
   <td>Oct 29, 2025</td>
   <td>4</td>
-  <td>202</td>
+  <td>208</td>
   <td>28</td>
   <td>Fixed cors settings to backend and finally fixed bugged deployment by manually changing filename in github. And fixed search bar style and minimization</td>
   </tr>
     <tr>
   <td>Nov 3, 2025</td>
   <td>4</td>
-  <td>202</td>
+  <td>212</td>
   <td>29</td>
   <td>Researched chatrooms and started implementing it to backend.</td>
+  </tr>
+      <tr>
+  <td>Nov 4, 2025</td>
+  <td>4</td>
+  <td>216</td>
+  <td>29</td>
+  <td>Started on implementing chatroom to frontend.</td>
   </tr>
 </table>

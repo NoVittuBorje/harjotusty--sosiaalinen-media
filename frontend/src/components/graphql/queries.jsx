@@ -388,3 +388,14 @@ export const GET_FEED_SUBS_COUNT = gql`
     getSubsCount(feedname: $feedname)
   }
 `;
+export const GET_CHAT_MESSAGES = gql`query GetMessages($roomId: String!) {
+  getMessages(roomId: $roomId) {
+    id
+    content
+    author {
+      username
+      id
+    }
+    createdAt
+  }
+}`

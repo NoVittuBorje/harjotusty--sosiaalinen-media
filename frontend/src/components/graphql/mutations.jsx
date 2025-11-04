@@ -270,3 +270,16 @@ export const DISLIKEPOST = gql`
     }
   }
 `;
+export const SENDCHATMESSAGE = gql`
+  mutation Message($content: String!, $roomId: String!) {
+    message(content: $content, roomId: $roomId) {
+      id
+      content
+      createdAt
+      author {
+        username
+        id
+      }
+    }
+  }
+`;

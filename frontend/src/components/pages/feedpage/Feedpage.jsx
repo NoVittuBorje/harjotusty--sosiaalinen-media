@@ -37,6 +37,7 @@ import FeedModSettings from "./FeedModSettings";
 import FeedAvatar from "../../utils/FeedAvatar";
 import ExpandIcon from "../../utils/ExpandIcon";
 import Timestamp from "../../utils/Timestamp";
+import ChatItem from "../../chatroom/Chatitem";
 
 const FeedPage = ({ match, User, refetchUser, setmessage, setseverity }) => {
   if (!localStorage.getItem("FeedorderBy")) {
@@ -299,6 +300,7 @@ const FeedPage = ({ match, User, refetchUser, setmessage, setseverity }) => {
       hasmore = false;
     }
   };
+  
   return (
     <Box sx={{ flexGrow: 1 }}>
       <Grid direction={"row"} container item spacing={3}>
@@ -315,7 +317,7 @@ const FeedPage = ({ match, User, refetchUser, setmessage, setseverity }) => {
                 ></FeedDescription>
               </Grid>
               <Grid container size={{ xs: 12, md: 4, sm: 4 }}>
-                <Box sx={{ padding: 2 }}>
+                <Box sx={{ paddingTop: 2 }}>
                   <FeedInfo info={info} infoloading={infoloading}></FeedInfo>
 
                   <ModSettingIcon
@@ -344,7 +346,7 @@ const FeedPage = ({ match, User, refetchUser, setmessage, setseverity }) => {
                 </Box>
               </Grid>
             </Grid>
-          </Box>
+          <Box>
           <Box sx={{ display: "flex", justifyContent: "space-between" }}>
             <Box sx={{ alignContent: "center" }}>
               <FormControl>
@@ -367,10 +369,16 @@ const FeedPage = ({ match, User, refetchUser, setmessage, setseverity }) => {
             <Box sx={{ alignContent: "center", paddingBottom: 1 }}>
               <SubButton User={User}></SubButton>
               <NewPostButton User={User}></NewPostButton>
+
             </Box>
           </Box>
-          <Divider></Divider>
+                      <Box sx={{width:"100%"}}>
+            <ChatItem type={"feed"} headline={"feed"}></ChatItem>
+          </Box>
+          </Box>
 
+          <Divider></Divider>
+          <Box>
           <InfiniteScroll
             dataLength={feed.length}
             next={loadmore}
@@ -392,8 +400,12 @@ const FeedPage = ({ match, User, refetchUser, setmessage, setseverity }) => {
               ))}
             </Box>
           </InfiniteScroll>
+          </Box>
+          </Box>
         </Grid>
-        <Grid size={{ xs: 12, md: 2, sm: 1 }}></Grid>
+        <Grid size={{ xs: 12, md: 2, sm: 1 }}>
+          
+        </Grid>
       </Grid>
     </Box>
   );

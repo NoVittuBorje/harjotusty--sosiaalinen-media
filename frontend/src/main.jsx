@@ -27,8 +27,8 @@ const authLink = setContext((_, { headers }) => {
 });
 
 var linktobackend = "http://localhost:3000";
-const deployment = false;
-
+const deployment = true;
+var linktows = "localhost:3000"
 if (deployment) {
   linktobackend = "https://backend-harjotus-sosi.fly.dev/";
 }
@@ -71,8 +71,14 @@ const cache = new InMemoryCache({
     },
   },
 });
+
 const wsLink = new GraphQLWsLink(
-  createClient({ url: `ws://${linktobackend}` })
+  createClient({
+    url: `ws://${linktows}/subscriptions`,
+    connectionParams: {
+      authToken: sessionStorage.getItem("token") ? `Bearer ${sessionStorage.getItem("token")}` : null,
+    },
+  })
 );
 const splitLink = split(
   ({ query }) => {
@@ -85,7 +91,13 @@ const splitLink = split(
   wsLink,
   authLink.concat(httpLink)
 );
+import { loadErrorMessages, loadDevMessages } from "@apollo/client/dev";
 
+if (deployment == false) {
+  // Adds messages only in a dev environment
+  loadDevMessages();
+  loadErrorMessages();
+}
 const client = new ApolloClient({
   cache: cache,
   link: splitLink,

@@ -98,7 +98,7 @@ const typeDefs = `#graphql
   files: [Upload!]!
   }
   type Subscription {
-    messageSent(room: ID!): Message
+    messageSent(roomId: String!): Message
   }
   
   type Query {
@@ -178,7 +178,7 @@ const typeDefs = `#graphql
 
     getUserRooms:User
 
-    getMessages(room: ID!): [Message!]
+    getMessages(roomId: String!): [Message!]
   }
   
   type Mutation {
@@ -247,16 +247,20 @@ const typeDefs = `#graphql
     ):Comment
     
     singleUpload(input: SingleFileInput!): [String!]
+
     multiUpload(input: MultiFileInput!): String!
 
     createRoom(name:String!):Room
+
     exitRoom(roomId:String!):Room
+
     inviteToRoom(
     roomId:String!,
     invitedId:String!
     ):Room
 
     message(content: String!, roomId:String!): Message
+
   }
 `;
 module.exports = typeDefs;

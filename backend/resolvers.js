@@ -556,7 +556,7 @@ const resolvers = {
     },
     getMessages: async (_, input) => {
       const query = {
-        room: input.room,
+        room: input.roomId,
       };
 
       const options = {
@@ -1449,19 +1449,19 @@ const resolvers = {
       };
 
       const message = new Message(data)
-
+      await message.save()
+      console.log(message)
       pubsub.publish(MESSAGE_SENT, { messageSent: message });
 
-      await message.save();
       return message.populate("author");
     },
   },
   Subscription: {
     messageSent: {
       subscribe: withFilter(
-        () => pubsub.asyncIterator(MESSAGE_SENT),
+        () => pubsub.asyncIterableIterator(MESSAGE_SENT),
         (payload, variables) =>
-          payload.messageSent.room._id.equals(variables.room)
+          payload.messageSent.room._id.equals(variables.roomId)
       ),
     },
   },
