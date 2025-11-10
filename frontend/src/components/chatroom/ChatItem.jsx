@@ -14,27 +14,31 @@ import { useEffect } from "react";
 import ChatForm from "./ChatForm";
 import useSendChatMessage from "../hooks/useSendChatMessage";
 import ChatMessageItem from "./ChatMessageItem";
-const ChatItem = ({ type, headline }) => {
+import { useSubscription } from "@apollo/client";
+import { MESSAGE_SENT_PUBSUB } from "../graphql/subscriptions";
+const ChatItem = ({ type, headline,roomId }) => {
   const [Open, setOpen] = useState(false);
-  const ChatData = ChatMessageData({ roomId: "6908b05aa6df56041422274a" });
-  console.log(ChatData);
+  var ChatData = ChatMessageData({ roomId: roomId });
+  
 
+  
   const containerRef = useRef(null);
   const [sendchat, result] = useSendChatMessage();
   const SendChat = ({ content }) => {
     sendchat({
       content: content,
-      roomId: "6908b05aa6df56041422274a",
+      roomId: roomId,
     });
   };
   const executeScroll = () => containerRef.current.scrollIntoView();
   useEffect(() => {
     executeScroll;
   }, [ChatData.data]);
-
+  console.log(ChatData)
   if (ChatData.loading) {
     return;
   }
+
   return (
     <Box>
       <Stack>
@@ -63,7 +67,7 @@ const ChatItem = ({ type, headline }) => {
               }}
             >
               <InfiniteScroll
-                dataLength={ChatData.data.getMessages.length}
+                dataLength={ChatData.data.getMessagesForRoom.messages.length}
                 style={{
                   display: "flex",
                   flexDirection: "column",
@@ -76,7 +80,7 @@ const ChatItem = ({ type, headline }) => {
                 scrollableTarget="scrollableDiv"
               >
                 {/*Put the scroll bar always on the bottom*/}
-                {ChatData.data.getMessages.map((item) => (
+                {ChatData.data.getMessagesForRoom.messages.map((item) => (
                   <Box key={`ChatMessage${item.id}`}>
                     <ChatMessageItem item={item}></ChatMessageItem>
                   </Box>

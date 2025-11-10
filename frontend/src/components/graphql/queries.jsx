@@ -63,6 +63,16 @@ export const GET_FEED = gql`
         id
       }
       subsCount
+      chatRoom {
+        owner {
+          id
+        }
+        name
+        id
+        users {
+          id
+        }
+      }
     }
   }
 `;
@@ -388,14 +398,36 @@ export const GET_FEED_SUBS_COUNT = gql`
     getSubsCount(feedname: $feedname)
   }
 `;
-export const GET_CHAT_MESSAGES = gql`query GetMessages($roomId: String!) {
-  getMessages(roomId: $roomId) {
-    id
-    content
-    author {
-      username
+export const GET_CHAT_MESSAGES = gql`
+  query GetMessages($roomId: String!) {
+    getMessages(roomId: $roomId) {
       id
+      content
+      author {
+        username
+        avatar
+        id
+      }
+      createdAt
     }
-    createdAt
   }
-}`
+`;
+export const GET_CHAT_MESSAGES_FOR_ROOM = gql`
+  query GetMessagesForRoom($roomId: String!) {
+    getMessagesForRoom(roomId: $roomId) {
+      id
+      name
+      type
+      messages {
+        id
+        content
+        author {
+          username
+          avatar
+          id
+        }
+        createdAt
+      }
+    }
+  }
+`;

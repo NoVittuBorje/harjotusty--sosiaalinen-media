@@ -15,6 +15,7 @@ import useGetSearchUsers from "../../hooks/useGetSearchUsers";
 import useEditFeed from "../../hooks/useEditFeed";
 import ExpandIcon from "../../utils/ExpandIcon";
 import FileUpload from "../../utils/FileUpload";
+import useMakeNewChatRoom from "../../hooks/useMakeChatRoom";
 
 const FeedModSettings = ({
   infoloading,
@@ -23,12 +24,9 @@ const FeedModSettings = ({
   setFeedEditOpen,
   User,
 }) => {
-  if (infoloading) {
-    return;
-  }
-  const mods = [...info.moderators.map((mod) => mod.id), info.owner.id];
-  const [editfeed, editfeedresult] = useEditFeed();
 
+  const [editfeed, editfeedresult] = useEditFeed();
+  const [newroom, newchatresult ] = useMakeNewChatRoom()
   const [OpenUnban, setOpenUnban] = useState(false);
   const [OpenBan, setOpenBan] = useState(false);
   const [OpenUnMod, setOpenUnMod] = useState(false);
@@ -153,6 +151,20 @@ const FeedModSettings = ({
                 action={"makeowner"}
               ></UserSearchItem>
             </Collapse>
+            <Button
+              className="button"
+              sx={{ borderRadius: 50 }}
+              onClick={() => newroom({
+                type:"feedchat",
+                feedId:item.id,
+                name:item.feedname
+              })}
+              size="small"
+              variant="outlined"
+              color="inherit"
+            >
+              Add chatroom for feedpage
+            </Button>
           </Stack>
         </Box>
       );
@@ -177,13 +189,18 @@ const FeedModSettings = ({
     const searchoptions = data ? data.getsearchusers : [];
     return (
       <Box
-        sx={{ display: "flex", flexDirection: "column", alignItems: "center",minWidth:"100%" }}
+        sx={{
+          display: "flex",
+          flexDirection: "column",
+          alignItems: "center",
+          minWidth: "100%",
+        }}
       >
         <Autocomplete
           disablePortal
           filterOptions={filterOptions}
           value={SelectedUser}
-          sx={{minWidth:"100%"}}
+          sx={{ minWidth: "100%" }}
           options={searchoptions}
           getOptionLabel={(option) => `${option.username}`}
           getOptionKey={(option) => option.username}
@@ -218,18 +235,19 @@ const FeedModSettings = ({
               content: SelectedUser.id,
             })
           }
-          
           size="small"
           variant="outlined"
           color="inherit"
         >
           {buttontext}
         </Button>
-
       </Box>
     );
   };
-
+  if (infoloading) {
+    return;
+  }
+  const mods = [...info.moderators.map((mod) => mod.id), info.owner.id];
   if (!mods || !User) {
     return;
   }
@@ -241,12 +259,15 @@ const FeedModSettings = ({
             display: "flex",
             justifyContent: "center",
             justifyItems: "center",
-            
           }}
         >
           <Stack
             direction={"column"}
-            sx={{ justifyContent: "center", justifyItems: "center",minWidth:"100%" }}
+            sx={{
+              justifyContent: "center",
+              justifyItems: "center",
+              minWidth: "100%",
+            }}
           >
             <Typography>Mod settings:</Typography>
 

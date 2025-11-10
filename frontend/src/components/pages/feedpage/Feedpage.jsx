@@ -39,6 +39,7 @@ import ExpandIcon from "../../utils/ExpandIcon";
 import Timestamp from "../../utils/Timestamp";
 import ChatItem from "../../chatroom/Chatitem";
 
+
 const FeedPage = ({ match, User, refetchUser, setmessage, setseverity }) => {
   if (!localStorage.getItem("FeedorderBy")) {
     localStorage.setItem("FeedorderBy", "POPULAR");
@@ -64,6 +65,7 @@ const FeedPage = ({ match, User, refetchUser, setmessage, setseverity }) => {
   const { data, loading, error, fetchMore, refetch } =
     useGetFeedPosts(variables);
   const [editfeed, resultedit] = useEditFeed();
+  
   const [sub, resultsub] = useSubscribe();
   const [OpenSettings, setOpenSettings] = useState(false);
   const [FeedEditOpen, setFeedEditOpen] = useState(false);
@@ -284,7 +286,16 @@ const FeedPage = ({ match, User, refetchUser, setmessage, setseverity }) => {
       );
     }
   };
+  const FeedChat = ({info,infoloading, User}) => {
+    console.log(info)
+    if(!User || infoloading || !info.chatRoom){return}
 
+    return(
+          <Box sx={{width:"100%"}}>
+            <ChatItem type={"feed"} headline={"feed"} roomId={info.chatRoom.id}></ChatItem>
+          </Box>
+    )
+  }
   const feed = data ? data.getfeedposts : [];
   let info = feedinfo.data ? feedinfo.data.getfeed : {};
   let infoloading = feedinfo.loading;
@@ -372,9 +383,7 @@ const FeedPage = ({ match, User, refetchUser, setmessage, setseverity }) => {
 
             </Box>
           </Box>
-                      <Box sx={{width:"100%"}}>
-            <ChatItem type={"feed"} headline={"feed"}></ChatItem>
-          </Box>
+          <FeedChat User={User} info={info} infoloading={infoloading}></FeedChat>
           </Box>
 
           <Divider></Divider>

@@ -22,6 +22,10 @@ const schema = new Schema(
         ref: 'Message',
       },
     ],
+    type:{
+      type:String,
+      enum:["GROUP","FEED","PRIVATE"]
+    }
   },
   {
     timestamps: true,

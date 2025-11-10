@@ -5,8 +5,8 @@ const User = require("./models/user_model");
 const Feed = require("./models/feed_model");
 const Post = require("./models/post_model");
 const Comment = require(`./models/comment_model`);
-const Message = require(`./models/chat_message_model`)
-const Room = require(`./models/chatroom_model`)
+const Message = require(`./models/chat_message_model`);
+const Room = require(`./models/chatroom_model`);
 
 const { Upload } = require("@aws-sdk/lib-storage");
 const {
@@ -20,7 +20,7 @@ const GraphQLUpload = require("graphql-upload/GraphQLUpload.js");
 const { v4: uuidv4 } = require("uuid");
 const { getSignedUrl } = require("@aws-sdk/s3-request-presigner");
 
-const { PubSub ,withFilter} = require("graphql-subscriptions");
+const { PubSub, withFilter } = require("graphql-subscriptions");
 
 const pubsub = new PubSub();
 const MESSAGE_SENT = "messageSent";
@@ -48,7 +48,20 @@ const resolvers = {
       return null;
     },
   },
-
+  NewRoomResult: {
+    __resolveType(obj, contextValue, info) {
+      if (obj.feedname) {
+        return "Feed";
+      }
+      if (obj.username) {
+        return "User";
+      }
+      if (obj.name) {
+        return "Room";
+      }
+      return null;
+    },
+  },
   Query: {
     me: (root, args, context) => {
       console.log(context, "context");
@@ -128,7 +141,12 @@ const resolvers = {
               avatar: 1,
               active: 1,
             })
-            .populate("bannedusers", { id: 1 });
+            .populate("bannedusers", { id: 1 })
+            .populate({
+              path: "chatRoom",
+              select: ["owner", "id", "name", "users"],
+              populate: { path: ["owner", "users"], select: ["id"] },
+            });
           console.log(feed);
           return [feed];
         }
@@ -547,12 +565,25 @@ const resolvers = {
         return error;
       }
     },
-    getUserRooms: async (root,args,context) => {
-      const user = await User.findById(context.currentUser).populate({path:"chatrooms",select:["name","owner","users"] ,populate: {
-            path: ["users", "owner"],
-            select: ["username", "id","avatar"],
-          },})
-        return user
+    getUserRooms: async (root, args, context) => {
+      const user = await User.findById(context.currentUser).populate({
+        path: "chatrooms",
+        select: ["name", "owner", "users"],
+        populate: {
+          path: ["users", "owner"],
+          select: ["username", "id", "avatar"],
+        },
+      });
+      return user;
+    },
+    getMessagesForRoom: async (root, args, context) => {
+      const room = await Room.findById(args.roomId).populate({
+        path: "messages",
+        options: { createdAt: 1,},
+        select: ["id", "content", "author", "createdAt"],
+        populate: { path: "author", select: ["id", "username", "avatar"] },
+      });
+      return room;
     },
     getMessages: async (_, input) => {
       const query = {
@@ -566,12 +597,11 @@ const resolvers = {
       };
 
       const messages = await Message.find(query, null, options).populate(
-        'author'
+        "author"
       );
 
       return messages;
     },
-    
   },
 
   Mutation: {
@@ -1417,43 +1447,78 @@ const resolvers = {
         throw new Error("Failed to upload files");
       }
     },
-    createRoom: async (root,args,context) => {
-      const newroom = new Room({
-        owner:context.currentUser,
-        name:args.name,
-      })
-      await newroom.save()
-      const newuser = await User.findByIdAndUpdate({_id:context.currentUser.id},{$push:{chatrooms:newroom}})
-      return newroom;
+    createRoom: async (root, args, context) => {
+      if (args.type == "group") {
+        const newroom = new Room({
+          owner: context.currentUser,
+          name: args.name,
+        });
+        await newroom.save();
+        const newuser = await User.findByIdAndUpdate(
+          { _id: context.currentUser.id },
+          { $push: { chatrooms: newroom } }
+        );
+        return newroom;
+      }
+      if (args.type == "feedchat") {
+        const newroom = new Room({
+          owner: context.currentUser,
+          name: args.name,
+          type: "FEED",
+        });
+        const feed = await Feed.findById({ _id: args.feedId }).populate(
+          "owner",
+          { id: 1 }
+        );
+        console.log(context.currentUser.id, feed.owner.id);
+        if (context.currentUser.id == feed.owner.id) {
+          newroom.save();
+          feed.chatRoom = newroom;
+          feed.save();
+          console.log(feed);
+          return feed;
+        } else {
+          return new GraphQLError("Not the owner of feed");
+        }
+      }
     },
-    inviteToRoom: async (root, args,context) => {
-      const inviteduser = await User.findById(args.invitedId)
-      const room = await Room.findByIdAndUpdate({_id: args.roomId},{$push:{users:inviteduser}})
-      return room
+    inviteToRoom: async (root, args, context) => {
+      const inviteduser = await User.findById(args.invitedId);
+      const room = await Room.findByIdAndUpdate(
+        { _id: args.roomId },
+        { $push: { users: inviteduser } }
+      );
+      return room;
     },
     exitRoom: async (_, input) => {
       const query = {
         user: input.user,
       };
-      return Room.findOneAndRemove(query).populate({path:"owner",select:["username","avatar","id"]});
+      return Room.findOneAndRemove(query).populate({
+        path: "owner",
+        select: ["username", "avatar", "id"],
+      });
     },
     message: async (root, args, context) => {
-      const author = context.currentUser
-      const room = await Room.findById(args.roomId)
-
+      const author = context.currentUser;
+      const room = await Room.findById(args.roomId);
 
       const data = {
         content: args.content,
-        author:author,
+        author: author,
         room: room,
       };
 
-      const message = new Message(data)
-      await message.save()
-      console.log(message)
-      pubsub.publish(MESSAGE_SENT, { messageSent: message });
-
-      return message.populate("author");
+      const message = new Message(data);
+      await message.save();
+      console.log(message);
+      const newroom = await Room.findByIdAndUpdate(
+        { _id: room.id },
+        { $push: { messages: message } }
+      );
+      const newmessage = await Message.findById(message.id).populate("author",{id:1,username:1,avatar:1})
+      pubsub.publish(MESSAGE_SENT, { messageSent: newmessage });
+      return newmessage;
     },
   },
   Subscription: {

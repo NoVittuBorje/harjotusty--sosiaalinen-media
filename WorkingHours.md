@@ -416,4 +416,11 @@
   <td>29</td>
   <td>Started on implementing chatroom to frontend.</td>
   </tr>
+        <tr>
+  <td>Nov 10, 2025</td>
+  <td>4</td>
+  <td>220</td>
+  <td>30</td>
+  <td>Fixing chatroom.</td>
+  </tr>
 </table>

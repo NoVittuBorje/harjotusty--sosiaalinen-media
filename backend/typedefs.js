@@ -10,6 +10,7 @@ const typeDefs = `#graphql
     posts:[Post]
     bannedusers:[User]
     active:Boolean
+    chatRoom:Room
     createdAt:String
     updatedAt:String
     id:ID!
@@ -75,14 +76,20 @@ const typeDefs = `#graphql
     room: Room!
     createdAt: Date!
   }
-
+  enum RoomType {
+    PRIVATE
+    GROUP
+    FEED
+  }
   type Room {
     id: ID!
     name: String!
     owner:User!
     users: [User!]
     messages: [Message!]
+    type: RoomType
   }
+  union NewRoomResult = Feed | User | Room
   union Search = Feed | Post | User
   type Token {
     value: String!
@@ -101,6 +108,7 @@ const typeDefs = `#graphql
     messageSent(roomId: String!): Message
   }
   
+
   type Query {
     me: User!
     getuser(
@@ -179,6 +187,8 @@ const typeDefs = `#graphql
     getUserRooms:User
 
     getMessages(roomId: String!): [Message!]
+
+    getMessagesForRoom(roomId:String!): Room!
   }
   
   type Mutation {
@@ -250,7 +260,11 @@ const typeDefs = `#graphql
 
     multiUpload(input: MultiFileInput!): String!
 
-    createRoom(name:String!):Room
+    createRoom(
+    name:String! 
+    type:String!
+    feedId:String
+    ):NewRoomResult
 
     exitRoom(roomId:String!):Room
 

@@ -5,6 +5,7 @@ const useSubscribe = () => {
   const sub = async ({ feedname, type }) => {
     const data = await mutate({
       variables: { feedname: feedname, type: type },
+      fetchPolicy: "no-cache"
     });
     return data;
   };

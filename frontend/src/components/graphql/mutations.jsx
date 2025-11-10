@@ -283,3 +283,11 @@ export const SENDCHATMESSAGE = gql`
     }
   }
 `;
+export const MAKENEWCHATROOM = gql`
+  mutation CreateRoom($name: String!, $type: String!, $feedId: String) {
+    createRoom(name: $name, type: $type, feedId: $feedId) {
+      id
+      name
+    }
+  }
+`;

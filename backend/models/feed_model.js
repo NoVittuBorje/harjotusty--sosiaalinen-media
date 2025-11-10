@@ -46,6 +46,10 @@ const schema = new mongoose.Schema(
         ref: "Post",
       },
     ],
+    chatRoom: {
+      type:mongoose.Schema.Types.ObjectId,
+      ref: "Room"
+    },
     active: {
       type: Boolean,
       default: true,

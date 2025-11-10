@@ -7,6 +7,7 @@ const useSendChatMessage = () => {
   const sendchat = async ({ content, roomId }) => {
     const data = await mutate({
       variables: { content: content, roomId: roomId },
+      fetchPolicy: "no-cache"
     });
     return data;
   };

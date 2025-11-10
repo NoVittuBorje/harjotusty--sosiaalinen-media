@@ -1,7 +1,6 @@
 import { Box, Button, Typography } from "@mui/material";
 
 const ChatMessageItem = ({ item }) => {
-  console.log(item);
   return (
     <Box sx={{border:"1px solid black"}}>
       <Button
