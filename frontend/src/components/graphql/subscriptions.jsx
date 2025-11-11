@@ -8,6 +8,7 @@ export const MESSAGE_SENT_PUBSUB = gql`
       createdAt
       author {
         username
+        avatar
         id
       }
     }

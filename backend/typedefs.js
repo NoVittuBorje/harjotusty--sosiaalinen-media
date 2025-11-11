@@ -186,7 +186,7 @@ const typeDefs = `#graphql
 
     getUserRooms:User
 
-    getMessages(roomId: String!): [Message!]
+    getMessages(roomId: String!,offset:Int): [Message!]
 
     getMessagesForRoom(roomId:String!): Room!
   }
@@ -272,6 +272,12 @@ const typeDefs = `#graphql
     roomId:String!,
     invitedId:String!
     ):Room
+
+    editRoom(
+    roomId:String,
+    feedId:String,
+    type:String!
+    ):NewRoomResult!
 
     message(content: String!, roomId:String!): Message
 

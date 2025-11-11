@@ -14,12 +14,10 @@ import { useEffect } from "react";
 import ChatForm from "./ChatForm";
 import useSendChatMessage from "../hooks/useSendChatMessage";
 import ChatMessageItem from "./ChatMessageItem";
-import { useSubscription } from "@apollo/client";
-import { MESSAGE_SENT_PUBSUB } from "../graphql/subscriptions";
-const ChatItem = ({ type, headline,roomId }) => {
+const ChatItem = ({ type, headline,roomId,User }) => {
   const [Open, setOpen] = useState(false);
   var ChatData = ChatMessageData({ roomId: roomId });
-  
+  console.log(ChatData)
 
   
   const containerRef = useRef(null);
@@ -29,6 +27,9 @@ const ChatItem = ({ type, headline,roomId }) => {
       content: content,
       roomId: roomId,
     });
+  };
+  const loadmore = () => {
+    ChatData.handleFetchMore({ offset: ChatData.data.getMessages.length });
   };
   const executeScroll = () => containerRef.current.scrollIntoView();
   useEffect(() => {
@@ -40,19 +41,8 @@ const ChatItem = ({ type, headline,roomId }) => {
   }
 
   return (
-    <Box>
+    <Box sx={{width:200,maxWidth:200}}>
       <Stack>
-        <Button
-          className={"button"}
-          style={{ borderRadius: 50 }}
-          size="small"
-          variant="outlined"
-          color="inherit"
-          onClick={() => setOpen(!Open)}
-        >
-          Open {headline} Chat
-        </Button>
-        <Collapse in={Open}>
           <Box sx={{ display: "flex", alignContent: "center" }}></Box>
           <Box sx={{ float: "right" }}>
             <Typography>{headline} Chat</Typography>
@@ -67,32 +57,34 @@ const ChatItem = ({ type, headline,roomId }) => {
               }}
             >
               <InfiniteScroll
-                dataLength={ChatData.data.getMessagesForRoom.messages.length}
+                dataLength={ChatData.data.getMessages.length}
                 style={{
                   display: "flex",
-                  flexDirection: "column",
-                  border: "1px solid white",
+                  flexDirection: "column-reverse",
                   padding: 2,
                 }}
+                next={loadmore}
                 inverse={true}
                 hasMore={true}
                 loader={<h4>Loading...</h4>}
                 scrollableTarget="scrollableDiv"
               >
                 {/*Put the scroll bar always on the bottom*/}
-                {ChatData.data.getMessagesForRoom.messages.map((item) => (
+                {ChatData.data.getMessages.map((item) => (
                   <Box key={`ChatMessage${item.id}`}>
                     <ChatMessageItem item={item}></ChatMessageItem>
+                    <Divider></Divider>
                   </Box>
                 ))}
                 <div ref={containerRef}> {}</div>
               </InfiniteScroll>
+              
             </div>
+            <ChatForm User={User} onSubmit={SendChat}></ChatForm>
             <Box>
-              <ChatForm onSubmit={SendChat}></ChatForm>
+              
             </Box>
           </Box>
-        </Collapse>
       </Stack>
     </Box>
   );

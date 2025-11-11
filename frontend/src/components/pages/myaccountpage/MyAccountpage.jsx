@@ -288,10 +288,12 @@ const MyAccountpage = ({ User }) => {
             alignItems: "center",
           }}
         >
+          <Box sx={{display:"block"}}>
           <TextEditor
             html={formik.values.description}
             setHtml={formik.handleChange("description")}
           ></TextEditor>
+          </Box>
           <Box sx={{ display: "flex", flexDirection: "row" }}>
             <Button
               className="button"
@@ -326,7 +328,9 @@ const MyAccountpage = ({ User }) => {
           }}
         >
           <Typography paddingRight={1}>Description:</Typography>
+          <Box sx={{display:"block"}}>
           {parse(description)}
+          </Box>
           <Button
             className={"button"}
             style={{ borderRadius: 50 }}

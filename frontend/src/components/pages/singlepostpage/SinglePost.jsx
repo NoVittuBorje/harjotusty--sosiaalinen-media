@@ -61,7 +61,6 @@ const SinglePost = ({ match, User, refetchUser, setmessage, setseverity }) => {
     const data = await edit({ action: "delete", content: "", postid: id });
 
     refetchPost();
-    handleClose();
     navigate(-1);
   };
   const loadmore = () => {
@@ -89,7 +88,7 @@ const SinglePost = ({ match, User, refetchUser, setmessage, setseverity }) => {
                 variant="outlined"
                 color="inherit"
                 sx={{ borderRadius: 50 }}
-                onClick={handleClose}
+                onClick={() => handleClose()}
               >
                 No
               </Button>
@@ -111,7 +110,7 @@ const SinglePost = ({ match, User, refetchUser, setmessage, setseverity }) => {
             color="inherit"
             className={"button"}
             sx={{ borderRadius: 50 }}
-            onClick={handleClickOpen}
+            onClick={() => handleClickOpen()}
           >
             Delete post
           </Button>
@@ -199,7 +198,7 @@ const SinglePost = ({ match, User, refetchUser, setmessage, setseverity }) => {
       if (!mods || !User) {
         return;
       }
-      if (mods.includes(User.id))
+      if (mods.includes(User.id)){
         return (
           <IconButton
             className={"button"}
@@ -210,7 +209,7 @@ const SinglePost = ({ match, User, refetchUser, setmessage, setseverity }) => {
           >
             <SettingsIcon></SettingsIcon>
           </IconButton>
-        );
+        )}
     };
     return (
       <Box sx={{ flexGrow: 1 }}>

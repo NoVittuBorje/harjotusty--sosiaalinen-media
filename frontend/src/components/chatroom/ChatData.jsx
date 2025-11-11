@@ -1,14 +1,21 @@
 import { useQuery, useSubscription } from "@apollo/client";
-import { GET_CHAT_MESSAGES_FOR_ROOM } from "../graphql/queries";
+import { GET_CHAT_MESSAGES, GET_CHAT_MESSAGES_FOR_ROOM } from "../graphql/queries";
 import { MESSAGE_SENT_PUBSUB } from "../graphql/subscriptions";
 import { useEffect } from "react";
 
 
 function ChatMessageData({ roomId }) {
-  const { subscribeToMore, ...result } = useQuery(GET_CHAT_MESSAGES_FOR_ROOM, {
-    variables: { roomId: roomId },
+  const { subscribeToMore, fetchMore,...result } = useQuery(GET_CHAT_MESSAGES, {
+    variables: { roomId: roomId,offset:0 },
   });
-  
+  const handleFetchMore = ({ offset }) => {
+    fetchMore({
+      variables: {
+        roomId:roomId,
+        offset: offset,
+      },
+    });
+  };
 
   useEffect(() => {
     if (result.data) {
@@ -18,16 +25,16 @@ function ChatMessageData({ roomId }) {
         updateQuery: (prev, { subscriptionData }) => {
           if (!subscriptionData.data) return prev;
           console.log(subscriptionData.data.messageSent,"subdata")
-          console.log(prev.getMessagesForRoom.messages,"prev data")
+          console.log(prev.getMessages,"prev data")
           
-          const newFeedItem = subscriptionData.data.messageSent;
-          console.log([newFeedItem,...prev.getMessagesForRoom.messages])
-          const newmessages = [newFeedItem,...prev.getMessagesForRoom.messages]
-          return Object.assign({}, prev, {
-            getMessagesForRoom: {
-              messages: newmessages,
-            },
+          const newFeedItem = [subscriptionData.data.messageSent,...prev.getMessages]
+          console.log([...prev.getMessages,subscriptionData.data.messageSent])
+          const newmessages = Object.assign({}, prev, {
+            getMessages: newFeedItem,
+            
           });
+          console.log(newmessages)
+          return newmessages
         },
       });
 
@@ -37,6 +44,6 @@ function ChatMessageData({ roomId }) {
     }
   }, [result, roomId,subscribeToMore]);
 
-  return {...result};
+  return {handleFetchMore,...result};
 }
 export default ChatMessageData

@@ -286,8 +286,112 @@ export const SENDCHATMESSAGE = gql`
 export const MAKENEWCHATROOM = gql`
   mutation CreateRoom($name: String!, $type: String!, $feedId: String) {
     createRoom(name: $name, type: $type, feedId: $feedId) {
-      id
-      name
+      ... on Feed {
+        feedname
+        description
+        feedavatar
+        subsCount
+        active
+        createdAt
+        updatedAt
+        id
+        chatRoom {
+          id
+          name
+          type
+          owner {
+            username
+            avatar
+            id
+          }
+          users {
+            username
+            avatar
+            id
+          }
+        }
+      }
+      ... on User {
+        username
+        avatar
+        id
+        chatrooms {
+          id
+          name
+          type
+        }
+      }
+      ... on Room {
+        id
+        name
+        type
+        owner {
+          username
+          avatar
+          id
+        }
+        users {
+          username
+          avatar
+          id
+        }
+      }
+    }
+  }
+`;
+export const EDITCHATROOM = gql`
+  mutation EditRoom($type: String!, $roomId: String, $feedId: String) {
+    editRoom(type: $type, roomId: $roomId, feedId: $feedId) {
+      ... on Feed {
+        feedname
+        description
+        feedavatar
+        subsCount
+        active
+        createdAt
+        updatedAt
+        id
+        chatRoom {
+          id
+          name
+          type
+          owner {
+            username
+            avatar
+            id
+          }
+          users {
+            username
+            avatar
+            id
+          }
+        }
+      }
+      ... on User {
+        username
+        avatar
+        id
+        chatrooms {
+          id
+          name
+          type
+        }
+      }
+      ... on Room {
+        id
+        name
+        type
+        owner {
+          username
+          avatar
+          id
+        }
+        users {
+          username
+          avatar
+          id
+        }
+      }
     }
   }
 `;

@@ -29,6 +29,7 @@
     "mongoose": "^8.13.2",
     "mongoose-autopopulate": "^1.1.0",
     "mongoose-unique-validator": "^5.0.0",
+    "sanitize-html": "^2.17.0",
     "uuid": "^11.1.0",
     "ws": "^8.18.1"
   },

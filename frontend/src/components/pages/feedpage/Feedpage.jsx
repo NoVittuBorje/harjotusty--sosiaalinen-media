@@ -38,6 +38,7 @@ import FeedAvatar from "../../utils/FeedAvatar";
 import ExpandIcon from "../../utils/ExpandIcon";
 import Timestamp from "../../utils/Timestamp";
 import ChatItem from "../../chatroom/Chatitem";
+import Chat from "../../chatroom/Chat";
 
 
 const FeedPage = ({ match, User, refetchUser, setmessage, setseverity }) => {
@@ -230,7 +231,7 @@ const FeedPage = ({ match, User, refetchUser, setmessage, setseverity }) => {
     }
     if (!User.feedsubs.find((e) => e.feedname === feedname)) {
       return (
-        <Box>
+        <Box sx={{ verticalAlign: "middle" }}>
           <Button
             className={"button"}
             style={{ borderRadius: 50 }}
@@ -288,12 +289,13 @@ const FeedPage = ({ match, User, refetchUser, setmessage, setseverity }) => {
   };
   const FeedChat = ({info,infoloading, User}) => {
     console.log(info)
-    if(!User || infoloading || !info.chatRoom){return}
-
+    if( infoloading || !info.chatRoom){return}
+    console.log(info)
     return(
-          <Box sx={{width:"100%"}}>
-            <ChatItem type={"feed"} headline={"feed"} roomId={info.chatRoom.id}></ChatItem>
-          </Box>
+
+    <Chat type={"feed"} headline={info.chatRoom.name} User={User} roomId={info.chatRoom.id}></Chat>
+
+          
     )
   }
   const feed = data ? data.getfeedposts : [];
@@ -314,12 +316,12 @@ const FeedPage = ({ match, User, refetchUser, setmessage, setseverity }) => {
   
   return (
     <Box sx={{ flexGrow: 1 }}>
-      <Grid direction={"row"} container item spacing={3}>
+      <Grid direction={"row"} container item spacing={0}>
         <Grid size={{ xs: 12, md: 2, sm: 1 }}></Grid>
         <Grid size={{ xs: 12, md: 8, sm: 10 }}>
           <Box>
             <Grid direction={"row"} container spacing={1}>
-              <Grid size={{ xs: 12, md: 8, sm: 8 }}>
+              <Grid   size={{ xs: 12, md: 8, sm: 8 }}>
                 <FeedDescription
                   infoloading={infoloading}
                   info={info}
@@ -327,7 +329,7 @@ const FeedPage = ({ match, User, refetchUser, setmessage, setseverity }) => {
                   FeedEditOpen={FeedEditOpen}
                 ></FeedDescription>
               </Grid>
-              <Grid container size={{ xs: 12, md: 4, sm: 4 }}>
+              <Grid container  size={{ xs: 12, md: 4, sm: 4 }}>
                 <Box sx={{ paddingTop: 2 }}>
                   <FeedInfo info={info} infoloading={infoloading}></FeedInfo>
 
@@ -357,8 +359,13 @@ const FeedPage = ({ match, User, refetchUser, setmessage, setseverity }) => {
                 </Box>
               </Grid>
             </Grid>
-          <Box>
-          <Box sx={{ display: "flex", justifyContent: "space-between" }}>
+          <Box sx={{display:"flex", justifyContent:"space-between"}}>
+                          
+              <NewPostButton User={User}></NewPostButton>
+              <SubButton User={User}></SubButton>
+          <FeedChat User={User} info={info} infoloading={infoloading}></FeedChat>
+          </Box>
+          <Box sx={{ display: "flex", justifyContent: "start" }}>
             <Box sx={{ alignContent: "center" }}>
               <FormControl>
                 <Select
@@ -376,17 +383,10 @@ const FeedPage = ({ match, User, refetchUser, setmessage, setseverity }) => {
                 </Select>
               </FormControl>
             </Box>
-
-            <Box sx={{ alignContent: "center", paddingBottom: 1 }}>
-              <SubButton User={User}></SubButton>
-              <NewPostButton User={User}></NewPostButton>
-
-            </Box>
-          </Box>
-          <FeedChat User={User} info={info} infoloading={infoloading}></FeedChat>
           </Box>
 
           <Divider></Divider>
+          
           <Box>
           <InfiniteScroll
             dataLength={feed.length}

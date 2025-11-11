@@ -399,18 +399,18 @@ export const GET_FEED_SUBS_COUNT = gql`
   }
 `;
 export const GET_CHAT_MESSAGES = gql`
-  query GetMessages($roomId: String!) {
-    getMessages(roomId: $roomId) {
+query GetMessages($roomId: String!, $offset: Int) {
+  getMessages(roomId: $roomId, offset: $offset) {
+    id
+    content
+    createdAt
+    author {
+      username
       id
-      content
-      author {
-        username
-        avatar
-        id
-      }
-      createdAt
+      avatar
     }
   }
+}
 `;
 export const GET_CHAT_MESSAGES_FOR_ROOM = gql`
   query GetMessagesForRoom($roomId: String!) {

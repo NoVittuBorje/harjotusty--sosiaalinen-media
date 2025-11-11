@@ -67,6 +67,10 @@ const cache = new InMemoryCache({
           ...offsetLimitPagination(),
           keyArgs: ["userid"],
         },
+        getMessages:{
+          ...offsetLimitPagination(),
+          keyArgs:["roomId"]
+        },
       },
     },
   },

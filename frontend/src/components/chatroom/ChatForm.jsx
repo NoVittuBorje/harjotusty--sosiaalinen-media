@@ -1,15 +1,16 @@
 import { Box, Button, FormGroup, TextField } from "@mui/material";
 import { useState } from "react";
 
-const ChatForm = ({ onSubmit }) => {
+const ChatForm = ({ onSubmit ,User}) => {
   const [content, setContent] = useState("");
+  if(!User)return
   return (
     <FormGroup sx={{}}>
       <TextField
         required
         value={content}
         multiline
-        label="new message"
+        label="New message"
         color="inherit"
         inputProps={{ style: { color: "inherit" } }}
         variant="standard"

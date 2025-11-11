@@ -8,6 +8,7 @@ import useDislikeComment from "../hooks/useDislikeComment";
 import useLikePost from "../hooks/useLikePost";
 import useDislikePost from "../hooks/useDislikePost";
 import formatNumber from "./FormatNumber";
+import numbertoColor from "./NumbertoColor";
 
 const KarmaItem = ({ type, id, karma, User, setmessage, setseverity }) => {
   const navigate = useNavigate();
@@ -113,7 +114,7 @@ const KarmaItem = ({ type, id, karma, User, setmessage, setseverity }) => {
           </IconButton>
         </Tooltip>
         <Tooltip title={`${karma} karma`}>
-          <Typography style={{ paddingTop: 0, textAlignVertical: "top" }}>
+          <Typography style={{ paddingTop: 0, textAlignVertical: "top", color:numbertoColor(karma)}}>
             {formatNumber(karma)}
           </Typography>
         </Tooltip>
@@ -152,7 +153,7 @@ const KarmaItem = ({ type, id, karma, User, setmessage, setseverity }) => {
         >
           <Tooltip title={"like"}>
             <ArrowUpwardRoundedIcon
-              style={{ color: "green" }}
+              style={{ color: "lightgreen" }}
             ></ArrowUpwardRoundedIcon>
           </Tooltip>
         </IconButton>
@@ -198,7 +199,7 @@ const KarmaItem = ({ type, id, karma, User, setmessage, setseverity }) => {
         >
           <Tooltip title={"dislike"}>
             <ArrowDownwardRoundedIcon
-              style={{ color: "red" }}
+              style={{ color: "#fd4437ff" }}
             ></ArrowDownwardRoundedIcon>
           </Tooltip>
         </IconButton>
@@ -242,7 +243,7 @@ const KarmaItem = ({ type, id, karma, User, setmessage, setseverity }) => {
         ></LikeButton>
       </Tooltip>
       <Tooltip title={`${karma} karma`}>
-        <Typography style={{ paddingTop: 0, textAlignVertical: "top" }}>
+        <Typography style={{ paddingTop: 0, textAlignVertical: "top" ,color:numbertoColor(karma) }}>
           {formatNumber(karma)}
         </Typography>
       </Tooltip>

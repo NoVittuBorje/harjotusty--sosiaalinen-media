@@ -7,7 +7,7 @@ const Post = require("./models/post_model");
 const Comment = require(`./models/comment_model`);
 const Message = require(`./models/chat_message_model`);
 const Room = require(`./models/chatroom_model`);
-
+const sanitizeHtml = require('sanitize-html');
 const { Upload } = require("@aws-sdk/lib-storage");
 const {
   S3Client,
@@ -579,7 +579,11 @@ const resolvers = {
     getMessagesForRoom: async (root, args, context) => {
       const room = await Room.findById(args.roomId).populate({
         path: "messages",
-        options: { createdAt: 1,},
+        options: {
+          sort: { createdAt: -1 },
+          skip: args.offset,
+          limit: 20,
+        },
         select: ["id", "content", "author", "createdAt"],
         populate: { path: "author", select: ["id", "username", "avatar"] },
       });
@@ -589,16 +593,18 @@ const resolvers = {
       const query = {
         room: input.roomId,
       };
-
+      console.log(input.offset)
       const options = {
         sort: {
-          createdAt: 1,
+          createdAt: -1,
         },
+        skip: input.offset,
+        limit: 10,
       };
 
       const messages = await Message.find(query, null, options).populate(
         "author"
-      );
+      ).populate("room",{id:1});
 
       return messages;
     },
@@ -652,7 +658,7 @@ const resolvers = {
       } else {
         const post = new Post({
           headline: args.headline,
-          description: args.description,
+          description: sanitizeHtml(args.description),
           feed: feed._id,
           karma: 0,
           owner: context.currentUser,
@@ -751,7 +757,7 @@ const resolvers = {
       console.log(context.currentUser);
       const newfeed = new Feed({
         feedname: args.feedname,
-        description: args.description,
+        description: sanitizeHtml(args.description),
         owner: context.currentUser,
       });
       await newfeed.save();
@@ -1016,7 +1022,7 @@ const resolvers = {
         if (post.locked == true) {
           throw new GraphQLError("Post is locked cant modify post");
         }
-        post.content = args.content;
+        post.content = sanitizeHtml(args.content);
         await post.save();
         return post;
       }
@@ -1040,7 +1046,7 @@ const resolvers = {
       }
       if (args.type === "Description") {
         try {
-          user.description = args.content;
+          user.description = sanitizeHtml(args.content)
           await user.save();
           return user;
         } catch (e) {
@@ -1220,9 +1226,10 @@ const resolvers = {
         }
         if (args.action == "editdesc") {
           try {
+            const cleandesc = sanitizeHtml(args.content)
             const newfeed = await Feed.findOneAndUpdate(
               { _id: feed._id },
-              { $set: { description: args.content } }
+              { $set: { description: cleandesc } }
             );
 
             const res = await Feed.findById(feed._id)
@@ -1482,6 +1489,20 @@ const resolvers = {
         }
       }
     },
+    editRoom: async (root,args,context) => {
+      if(args.type == "removeChatFeed"){
+      const feed = await Feed.findById(args.feedId).populate("chatRoom",{id:1}).populate(
+          "owner",
+          { id: 1 }
+        )
+      console.log(context.currentUser.id ,feed.owner.id)
+      if (context.currentUser.id == feed.owner.id) {
+        const newfeed = await Feed.findByIdAndUpdate({_id:feed._id},{chatRoom:null})
+        return newfeed
+      }else{
+        return new GraphQLError("Not the owner of chat or feed");
+      }}
+    },
     inviteToRoom: async (root, args, context) => {
       const inviteduser = await User.findById(args.invitedId);
       const room = await Room.findByIdAndUpdate(
@@ -1516,7 +1537,11 @@ const resolvers = {
         { _id: room.id },
         { $push: { messages: message } }
       );
-      const newmessage = await Message.findById(message.id).populate("author",{id:1,username:1,avatar:1})
+      const newmessage = await Message.findById(message.id).populate("author", {
+        id: 1,
+        username: 1,
+        avatar: 1,
+      }).populate("room",{id:1});
       pubsub.publish(MESSAGE_SENT, { messageSent: newmessage });
       return newmessage;
     },

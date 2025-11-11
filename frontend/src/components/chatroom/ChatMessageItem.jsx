@@ -1,19 +1,20 @@
 import { Box, Button, Typography } from "@mui/material";
+import stringToColor from "../utils/StringtoColor";
+import { useNavigate } from "react-router";
 
 const ChatMessageItem = ({ item }) => {
+  const navigate = useNavigate()
   return (
-    <Box sx={{border:"1px solid black"}}>
+      <Typography  sx={{wordBreak:"break-word"}}>
       <Button
         className={"button"}
-        style={{ borderRadius: 50 }}
+        style={{ borderRadius:50,color:stringToColor(item.author.username) }}
         size="small"
-        variant="outlined"
+        variant="text"
+        onClick={()=> navigate(`/profile/${item.author.id}`)}
         color="inherit"
       >
-        <Typography>u/{item.author.username}</Typography>
-      </Button>
-      <Typography>{item.content}</Typography>
-    </Box>
+        u/{item.author.username}</Button>: {item.content}</Typography>
   );
 };
 export default ChatMessageItem;
