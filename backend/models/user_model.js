@@ -107,6 +107,30 @@ const schema = new mongoose.Schema(
         ref: "Room",
       },
     ],
+    chatroominvites: [
+      {
+        type: mongoose.Schema.Types.ObjectId,
+        ref:"Room",
+      }
+    ],
+    friends: [
+      {
+        type: mongoose.Schema.Types.ObjectId,
+        ref:"User"
+      }
+    ],
+    friendsRequests: [
+      {
+        type: mongoose.Schema.Types.ObjectId,
+        ref:"User"
+      }
+    ],
+    friendsRequestsSent: [
+            {
+        type: mongoose.Schema.Types.ObjectId,
+        ref:"User"
+      }
+    ],
   },
   { timestamps: true }
 );

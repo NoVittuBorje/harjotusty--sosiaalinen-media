@@ -65,6 +65,10 @@ const typeDefs = `#graphql
     comments:[Comment]
     createdAt:String
     chatrooms:[Room]
+    chatroominvites:[Room]
+    friends:[User]
+    friendsRequests:[User]
+    friendsRequestsSent:[User]
     id: ID!
   }
   scalar Date
@@ -273,6 +277,12 @@ const typeDefs = `#graphql
     invitedId:String!
     ):Room
 
+    roomInviteAction(
+    type:String!
+    roomId:String!
+    ):User
+
+
     editRoom(
     roomId:String,
     feedId:String,
@@ -281,6 +291,9 @@ const typeDefs = `#graphql
 
     message(content: String!, roomId:String!): Message
 
+    sendFriendRequest(userId:String!):User
+
+    friendRequestAction(userId:String!, type:String!):User
   }
 `;
 module.exports = typeDefs;

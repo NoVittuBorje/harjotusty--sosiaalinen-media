@@ -2,11 +2,10 @@ const numbertoColor = (num) => {
 
     const sign = Math.sign(num)
     if(num == 0){return "inherit"}
-    console.log(sign)
     if(sign > 0){
-        return ("green")
+        return ("#15ca0fff")
     }else{
-        return("red")
+        return("#dd1a0cff")
     }
 }
 export default numbertoColor

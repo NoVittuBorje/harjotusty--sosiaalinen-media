@@ -1,7 +1,7 @@
 import AppBar from "./components/utils/Appbar";
 import "./App.css";
 import Homescreen from "./components/pages/homepage/Homepage";
-import { Box,} from "@mui/material";
+import { Box } from "@mui/material";
 import { Routes, Route, useMatch } from "react-router-dom";
 import Profilepage from "./components/pages/profilepage/Profilepage";
 import SinglePost from "./components/pages/singlepostpage/SinglePost";
@@ -50,22 +50,25 @@ function App() {
     User = null;
   }
 
-
   return (
     <Box>
-      <AppBar User={User} refetch={refetch} />
+      <AppBar
+        User={User}
+        refetch={refetch}
+        setmessage={setmessage}
+        setseverity={setseverity}
+      />
 
-        <Alerts
-          msg={message}
-          setmessage={setmessage}
-          severity={severity}
-          setOpen={setOpen}
-          open={open}
-        ></Alerts>
+      <Alerts
+        msg={message}
+        setmessage={setmessage}
+        severity={severity}
+        setOpen={setOpen}
+        open={open}
+      ></Alerts>
 
-
-      <Box sx={{marginTop:"64px"}}>
-        <Routes >
+      <Box sx={{ marginTop: "64px" }}>
+        <Routes>
           <Route
             path="/"
             element={

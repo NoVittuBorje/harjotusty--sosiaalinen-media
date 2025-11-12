@@ -7,7 +7,7 @@ const Post = require("./models/post_model");
 const Comment = require(`./models/comment_model`);
 const Message = require(`./models/chat_message_model`);
 const Room = require(`./models/chatroom_model`);
-const sanitizeHtml = require('sanitize-html');
+const sanitizeHtml = require("sanitize-html");
 const { Upload } = require("@aws-sdk/lib-storage");
 const {
   S3Client,
@@ -593,7 +593,7 @@ const resolvers = {
       const query = {
         room: input.roomId,
       };
-      console.log(input.offset)
+      console.log(input.offset);
       const options = {
         sort: {
           createdAt: -1,
@@ -602,9 +602,9 @@ const resolvers = {
         limit: 10,
       };
 
-      const messages = await Message.find(query, null, options).populate(
-        "author"
-      ).populate("room",{id:1});
+      const messages = await Message.find(query, null, options)
+        .populate("author")
+        .populate("room", { id: 1 });
 
       return messages;
     },
@@ -619,11 +619,14 @@ const resolvers = {
       if (args.type === "sub") {
         const newfeed = await Feed.findOneAndUpdate(
           { _id: feed._id },
-          { $push: { subs: context.currentUser._id }, $inc: { subsCount: 1 } }
+          {
+            $addToSet: { subs: context.currentUser._id },
+            $inc: { subsCount: 1 },
+          }
         );
         const newuser = await User.findOneAndUpdate(
           { _id: context.currentUser._id },
-          { $push: { feedsubs: feed._id } }
+          { $addToSet: { feedsubs: feed._id } }
         )
           .populate("ownedfeeds", { feedname: 1, id: 1 })
           .populate("feedsubs", { id: 1, feedname: 1 });
@@ -819,7 +822,7 @@ const resolvers = {
         );
         const newuser = await User.findOneAndUpdate(
           { _id: context.currentUser._id },
-          { $push: { likedcomments: comment._id } }
+          { $addToSet: { likedcomments: comment._id } }
         );
 
         await comment.save();
@@ -876,7 +879,7 @@ const resolvers = {
         );
         const newuser = await User.findOneAndUpdate(
           { _id: context.currentUser._id },
-          { $push: { dislikedcomments: comment._id } }
+          { $addToSet: { dislikedcomments: comment._id } }
         );
         await comment.save();
         return comment;
@@ -924,7 +927,7 @@ const resolvers = {
         );
         const newuser = await User.findOneAndUpdate(
           { _id: context.currentUser._id },
-          { $push: { likedposts: post._id } }
+          { $addToSet: { likedposts: post._id } }
         ).populate("likedposts", { id: 1, karma: 1 });
         await post.save();
         return post;
@@ -971,7 +974,7 @@ const resolvers = {
         );
         const newuser = await User.findOneAndUpdate(
           { _id: context.currentUser._id },
-          { $push: { dislikedposts: post._id } }
+          { $addToSet: { dislikedposts: post._id } }
         )
           .populate("dislikedposts", { id: 1, karma: 1 })
           .populate("likedposts", { id: 1, karma: 1 });
@@ -1046,7 +1049,7 @@ const resolvers = {
       }
       if (args.type === "Description") {
         try {
-          user.description = sanitizeHtml(args.content)
+          user.description = sanitizeHtml(args.content);
           await user.save();
           return user;
         } catch (e) {
@@ -1141,7 +1144,7 @@ const resolvers = {
             const newmod = await User.findById(args.content);
             const newfeed = await Feed.findOneAndUpdate(
               { _id: feed._id },
-              { $push: { moderators: newmod._id } }
+              { $addToSet: { moderators: newmod._id } }
             );
 
             const res = await Feed.findById(feed._id)
@@ -1188,7 +1191,7 @@ const resolvers = {
             }
             const newfeed = await Feed.findOneAndUpdate(
               { _id: feed._id },
-              { $push: { bannedusers: banneduser._id } }
+              { $addToSet: { bannedusers: banneduser._id } }
             );
 
             const res = await Feed.findById(feed._id)
@@ -1226,7 +1229,7 @@ const resolvers = {
         }
         if (args.action == "editdesc") {
           try {
-            const cleandesc = sanitizeHtml(args.content)
+            const cleandesc = sanitizeHtml(args.content);
             const newfeed = await Feed.findOneAndUpdate(
               { _id: feed._id },
               { $set: { description: cleandesc } }
@@ -1489,27 +1492,46 @@ const resolvers = {
         }
       }
     },
-    editRoom: async (root,args,context) => {
-      if(args.type == "removeChatFeed"){
-      const feed = await Feed.findById(args.feedId).populate("chatRoom",{id:1}).populate(
-          "owner",
-          { id: 1 }
-        )
-      console.log(context.currentUser.id ,feed.owner.id)
-      if (context.currentUser.id == feed.owner.id) {
-        const newfeed = await Feed.findByIdAndUpdate({_id:feed._id},{chatRoom:null})
-        return newfeed
-      }else{
-        return new GraphQLError("Not the owner of chat or feed");
-      }}
+    editRoom: async (root, args, context) => {
+      if (args.type == "removeChatFeed") {
+        const feed = await Feed.findById(args.feedId)
+          .populate("chatRoom", { id: 1 })
+          .populate("owner", { id: 1 });
+        console.log(context.currentUser.id, feed.owner.id);
+        if (context.currentUser.id == feed.owner.id) {
+          const newfeed = await Feed.findByIdAndUpdate(
+            { _id: feed._id },
+            { chatRoom: null }
+          );
+          return newfeed;
+        } else {
+          return new GraphQLError("Not the owner of chat or feed");
+        }
+      }
     },
     inviteToRoom: async (root, args, context) => {
-      const inviteduser = await User.findById(args.invitedId);
-      const room = await Room.findByIdAndUpdate(
-        { _id: args.roomId },
-        { $push: { users: inviteduser } }
-      );
+      const room = await Room.findById(args.roomId);
+      const inviteduser = await User.findByIdAndUpdate(args.invitedId, {
+        $addToSet: { chatroominvites: room._id },
+      });
       return room;
+    },
+    roomInviteAction: async (root, args, context) => {
+      if (args.type == "accept") {
+        const newroom = await Room.findByIdAndUpdate(args.roomId, {
+          $addToSet: { users: context.currentUser },
+        });
+        const newuser = await User.findByIdAndUpdate(context.currentUser._id, {
+          $pull: { chatroominvites: newroom._id },
+        }).populate("chatroominvites", { id: 1, name: 1 });
+        return newuser;
+      }
+      if (args.type == "decline") {
+        const newuser = await User.findByIdAndUpdate(context.currentUser._id, {
+          $pull: { chatroominvites: args.invitedId },
+        }).populate("chatroominvites", { id: 1, name: 1 });
+        return newuser;
+      }
     },
     exitRoom: async (_, input) => {
       const query = {
@@ -1537,13 +1559,53 @@ const resolvers = {
         { _id: room.id },
         { $push: { messages: message } }
       );
-      const newmessage = await Message.findById(message.id).populate("author", {
-        id: 1,
-        username: 1,
-        avatar: 1,
-      }).populate("room",{id:1});
+      const newmessage = await Message.findById(message.id)
+        .populate("author", {
+          id: 1,
+          username: 1,
+          avatar: 1,
+        })
+        .populate("room", { id: 1 });
       pubsub.publish(MESSAGE_SENT, { messageSent: newmessage });
       return newmessage;
+    },
+    sendFriendRequest: async (root, args, context) => {
+      if (!context.currentUser) {
+        return new GraphQLError("No user logon.");
+      }
+      const requestedUser = await User.findByIdAndUpdate(
+        { _id: args.userId },
+        { $addToSet: { friendsRequests: context.currentUser._id } }
+      );
+      const newuser = await User.findByIdAndUpdate(
+        { _id: context.currentUser._id },
+        { $addToSet: { friendsRequestsSent: requestedUser._id } }
+      ).populate("friendsRequestsSent", { id: 1 });
+      return newuser;
+    },
+    friendRequestAction: async (root, args, context) => {
+      if (args.type == "accept") {
+        const accepteduser = await User.findById(args.userId);
+        const newuser = await User.findByIdAndUpdate(context.currentUser.id, {
+          $addToSet: { friends: accepteduser._id },
+          $pull: { friendsRequests: accepteduser._id },
+        }).populate("friends", { username: 1, id: 1, avatar: 1 });
+        const newaccepteduser = await User.findByIdAndUpdate(accepteduser.id, {
+          $addToSet: { friends: context.currentUser._id },
+          $pull: { friendsRequestsSent: context.currentUser._id },
+        });
+        return newuser;
+      }
+      if (args.type == "decline") {
+        const declineduser = await User.findById(args.userId);
+        const newuser = await User.findByIdAndUpdate(context.currentUser.id, {
+          $pull: { friendsRequests: declineduser._id },
+        });
+        const newdeclineduser = await User.findByIdAndUpdate(declineduser.id, {
+          $pull: { friendsRequestsSent: context.currentUser._id },
+        });
+        return newuser;
+      }
     },
   },
   Subscription: {

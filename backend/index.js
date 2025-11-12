@@ -6,7 +6,7 @@ const { expressMiddleware } = require("@apollo/server/express4");
 const { makeExecutableSchema } = require("@graphql-tools/schema");
 const { WebSocketServer } = require("ws");
 const { useServer } = require("graphql-ws/use/ws");
-const  graphqlUploadExpress  = require("graphql-upload/graphqlUploadExpress.js");
+const graphqlUploadExpress = require("graphql-upload/graphqlUploadExpress.js");
 const http = require("http");
 const express = require("express");
 const bodyParser = require("body-parser");
@@ -25,12 +25,12 @@ require("dotenv").config();
 const MONGODB_URI = process.env.MONGODB_URI;
 
 console.log("connecting to", MONGODB_URI);
-var linktofrontend = "http://localhost:5173"
-var hostname = "localhost"
+var linktofrontend = "http://localhost:5173";
+var hostname = "localhost";
 
-if(process.env.NODE_ENV == "production"){
-  hostname = "0.0.0.0"
-  linktofrontend = "https://frontend-harjotus-sosi.fly.dev"
+if (process.env.NODE_ENV == "production") {
+  hostname = "0.0.0.0";
+  linktofrontend = "https://frontend-harjotus-sosi.fly.dev";
 }
 mongoose
   .connect(MONGODB_URI)
@@ -43,14 +43,18 @@ mongoose
 
 const start = async () => {
   const app = express();
-   const corsOptions = {
-    origin: [`${linktofrontend}`,"novittuborjeampari1.s3.eu-north-1.amazonaws.com","https://studio.apollographql.com"],
-    methods: ['GET', 'PUT', 'POST'],
-    accessControlAllowOrigin: '*',
+  const corsOptions = {
+    origin: [
+      `${linktofrontend}`,
+      "novittuborjeampari1.s3.eu-north-1.amazonaws.com",
+      "https://studio.apollographql.com",
+    ],
+    methods: ["GET", "PUT", "POST"],
+    accessControlAllowOrigin: "*",
     accessControlAllowCredentials: true,
-}
-  app.use(cors(corsOptions))
- 
+  };
+  app.use(cors(corsOptions));
+
   const httpServer = http.createServer(app);
 
   const wsServer = new WebSocketServer({
@@ -61,10 +65,9 @@ const start = async () => {
   const schema = makeExecutableSchema({ typeDefs, resolvers });
   const serverCleanup = useServer({ schema }, wsServer);
 
-  
   const server = new ApolloServer({
     schema,
-    csrfPrevention:true,
+    csrfPrevention: true,
     plugins: [
       ApolloServerPluginDrainHttpServer({ httpServer }),
       {
@@ -78,7 +81,7 @@ const start = async () => {
       },
     ],
   });
-  
+
   await server.start();
 
   app.use(
@@ -109,7 +112,19 @@ const start = async () => {
               options: {
                 limit: 20,
               },
-            }).populate({path:["likedposts","dislikedposts","likedcomments","dislikedcomments"],select:["id"],})
+            })
+            .populate({
+              path: [
+                "likedposts",
+                "dislikedposts",
+                "likedcomments",
+                "dislikedcomments",
+              ],
+              select: ["id"],
+            })
+            .populate("friendsRequestsSent", { id: 1, username: 1 })
+            .populate("friendsRequests", { id: 1, username: 1 })
+            .populate("friends", { id: 1, username: 1, avatar: 1 }).populate("chatrooms",{id:1,name:1}).populate("chatroominvites",{name:1,id:1});
           return { currentUser };
         }
       },
@@ -117,8 +132,8 @@ const start = async () => {
   );
 
   const PORT = 3000;
-  
-  httpServer.listen(PORT,hostname, () =>
+
+  httpServer.listen(PORT, hostname, () =>
     console.log(`Server is now running on ${hostname}:${PORT}`)
   );
 };

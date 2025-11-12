@@ -28,10 +28,17 @@ import AccountBoxIcon from "@mui/icons-material/AccountBox";
 import LogoutIcon from "@mui/icons-material/Logout";
 import LoginIcon from "@mui/icons-material/Login";
 import PersonIcon from "@mui/icons-material/Person";
+import MailIcon from "@mui/icons-material/Mail";
+import NotificationsIcon from "@mui/icons-material/Notifications";
+import CheckCircleOutlineIcon from "@mui/icons-material/CheckCircleOutline";
+import NotInterestedIcon from "@mui/icons-material/NotInterested";
+import PeopleIcon from "@mui/icons-material/People";
 import {
   Autocomplete,
+  Badge,
   Chip,
   CircularProgress,
+  Collapse,
   FormControl,
   FormControlLabel,
   FormLabel,
@@ -40,7 +47,9 @@ import {
   Radio,
   RadioGroup,
   Select,
+  Stack,
   TextField,
+  Tooltip,
   useColorScheme,
 } from "@mui/material";
 import AddCircleOutlineIcon from "@mui/icons-material/AddCircleOutline";
@@ -48,6 +57,10 @@ import { useState } from "react";
 import ArrowDropDownIcon from "@mui/icons-material/ArrowDropDown";
 import ArrowDropUpIcon from "@mui/icons-material/ArrowDropUp";
 import UserAvatar from "./UserAvatar";
+import useFriendsRequestActions from "../hooks/useFriendsRequestActions";
+import ExpandIcon from "./ExpandIcon";
+import useChatRoomInviteAction from "../hooks/useChatRoomInviteAction";
+import useInviteToChatRoom from "../hooks/useInviteToChatRoom";
 
 const Search = styled("div")(({ theme }) => ({
   position: "relative",
@@ -89,7 +102,12 @@ const StyledInputBase = styled(InputBase)(({ theme }) => ({
   },
 }));
 
-export default function PrimarySearchAppBar({ User, refetch }) {
+export default function PrimarySearchAppBar({
+  User,
+  refetch,
+  setseverity,
+  setmessage,
+}) {
   const navigate = useNavigate();
 
   const token = sessionStorage.getItem("token");
@@ -98,6 +116,9 @@ export default function PrimarySearchAppBar({ User, refetch }) {
 
   const [search, setSearch] = useState(null);
   const { data, loading, error, fetchmore } = useGetSearch({ search });
+  const [friendsaction, friendsactionresult] = useFriendsRequestActions();
+  const [chatinviteaction, chatactionresult] = useChatRoomInviteAction();
+  const [InviteToChatRoom, chatinviteresult] = useInviteToChatRoom();
 
   const [open, setOpen] = useState(false);
 
@@ -105,17 +126,26 @@ export default function PrimarySearchAppBar({ User, refetch }) {
   const [anchorEl, setAnchorEl] = useState(null);
   const [loginanchorEl, setLoginAnchorEl] = useState(null);
   const [searchanchorEl, setSearchAnchorEl] = useState(null);
+  const [notificationanchorEl, setNotificationAnchorEl] = useState(null);
 
   const isMenuOpen = Boolean(anchorEl);
   const isLoginMenuOpen = Boolean(loginanchorEl);
   const isSearchPopperOpen = Boolean(searchanchorEl);
+  const isNotificationPopperOpen = Boolean(notificationanchorEl);
 
   const menuId = "primary-search-account-menu";
   const loginMenuId = "login-menu";
+  const notificationId = "notification-menu";
 
   const searchopen = Boolean(searchanchorEl);
   const searchmenuId = searchopen ? "search-popper" : undefined;
 
+  const handleNotificationMenuOpen = (event) => {
+    setNotificationAnchorEl(event.currentTarget);
+  };
+  const handleNotificationMenuClose = () => {
+    setNotificationAnchorEl(null);
+  };
   const handleLoginMenuOpen = (event) => {
     setLoginAnchorEl(event.currentTarget);
   };
@@ -250,20 +280,20 @@ export default function PrimarySearchAppBar({ User, refetch }) {
   };
   const MenupopularState = ({ feeds }) => {
     const [open, setOpen] = useState(false);
-    if (open) {
-      return (
-        <>
-          <ListItem key="popularfeeds" disablePadding>
-            <ListItemButton onClick={() => setOpen(!open)}>
-              <ListItemIcon>
-                <FeedIcon />
-              </ListItemIcon>
-              <ListItemText primary={"Popular feeds"} />
-              <ListItemIcon>
-                <ArrowDropUpIcon></ArrowDropUpIcon>
-              </ListItemIcon>
-            </ListItemButton>
-          </ListItem>
+    return (
+      <>
+        <ListItem key="popularfeeds" disablePadding>
+          <ListItemButton onClick={() => setOpen(!open)}>
+            <ListItemIcon>
+              <FeedIcon />
+            </ListItemIcon>
+            <ListItemText primary={"Popular feeds"} />
+            <ListItemIcon>
+              <ExpandIcon Open={open}></ExpandIcon>
+            </ListItemIcon>
+          </ListItemButton>
+        </ListItem>
+        <Collapse in={open}>
           {feeds.map((feed) => (
             <ListItem
               onClick={toggleDrawer(false)}
@@ -280,62 +310,14 @@ export default function PrimarySearchAppBar({ User, refetch }) {
               </ListItemButton>
             </ListItem>
           ))}
-        </>
-      );
-    } else {
-      return (
-        <ListItem key="popularfeeds" disablePadding>
-          <ListItemButton onClick={() => setOpen(!open)}>
-            <ListItemIcon>
-              <FeedIcon />
-            </ListItemIcon>
-            <ListItemText primary={"Popular feeds"} />
-            <ListItemIcon>
-              <ArrowDropDownIcon></ArrowDropDownIcon>
-            </ListItemIcon>
-          </ListItemButton>
-        </ListItem>
-      );
-    }
+        </Collapse>
+      </>
+    );
   };
   const MenusubsState = ({ User }) => {
     const [open, setOpen] = useState(false);
-    if (open) {
-      return (
-        <>
-          <ListItem key="subscribedfeeds" disablePadding>
-            <ListItemButton onClick={() => setOpen(!open)}>
-              <ListItemIcon>
-                <FeedIcon />
-              </ListItemIcon>
-              <ListItemText primary={"Subscribed feeds"} />
-              <ListItemIcon>
-                <ArrowDropUpIcon></ArrowDropUpIcon>
-              </ListItemIcon>
-            </ListItemButton>
-          </ListItem>
-          {User.feedsubs
-            ? User.feedsubs.map((subs) => (
-                <ListItem
-                  onClick={toggleDrawer(false)}
-                  key={subs.feedname}
-                  disablePadding
-                >
-                  <ListItemButton
-                    sx={{ borderRadius: 5 }}
-                    onClick={() => {
-                      navigate(`/feed/${subs.feedname}`);
-                    }}
-                  >
-                    <ListItemText primary={subs.feedname} />
-                  </ListItemButton>
-                </ListItem>
-              ))
-            : null}
-        </>
-      );
-    } else {
-      return (
+    return (
+      <>
         <ListItem key="subscribedfeeds" disablePadding>
           <ListItemButton onClick={() => setOpen(!open)}>
             <ListItemIcon>
@@ -343,50 +325,40 @@ export default function PrimarySearchAppBar({ User, refetch }) {
             </ListItemIcon>
             <ListItemText primary={"Subscribed feeds"} />
             <ListItemIcon>
-              <ArrowDropDownIcon></ArrowDropDownIcon>
+              <ExpandIcon Open={open}></ExpandIcon>
             </ListItemIcon>
           </ListItemButton>
         </ListItem>
-      );
-    }
+        <Collapse in={open}>
+          {User.feedsubs ? (
+            User.feedsubs.map((subs) => (
+              <ListItem
+                onClick={toggleDrawer(false)}
+                key={subs.feedname}
+                disablePadding
+              >
+                <ListItemButton
+                  sx={{ borderRadius: 5 }}
+                  onClick={() => {
+                    navigate(`/feed/${subs.feedname}`);
+                  }}
+                >
+                  <ListItemText primary={subs.feedname} />
+                </ListItemButton>
+              </ListItem>
+            ))
+          ) : (
+            <Typography>Not subscribed to any feeds.</Typography>
+          )}
+        </Collapse>
+      </>
+    );
   };
 
   const MenuOwnedState = ({ User }) => {
     const [open, setOpen] = useState(false);
-    if (open) {
-      return (
-        <>
-          <ListItem key="ownedfeeds" disablePadding>
-            <ListItemButton onClick={() => setOpen(!open)}>
-              <ListItemIcon>
-                <FeedIcon />
-              </ListItemIcon>
-              <ListItemText primary={"Owned feeds"} />
-              <ListItemIcon>
-                <ArrowDropUpIcon></ArrowDropUpIcon>
-              </ListItemIcon>
-            </ListItemButton>
-          </ListItem>
-          {User.ownedfeeds.map((feed) => (
-            <ListItem
-              onClick={toggleDrawer(false)}
-              key={feed.feedname}
-              disablePadding
-            >
-              <ListItemButton
-                sx={{ borderRadius: 5 }}
-                onClick={() => {
-                  navigate(`/feed/${feed.feedname}`);
-                }}
-              >
-                <ListItemText primary={feed.feedname} />
-              </ListItemButton>
-            </ListItem>
-          ))}
-        </>
-      );
-    } else {
-      return (
+    return (
+      <>
         <ListItem key="ownedfeeds" disablePadding>
           <ListItemButton onClick={() => setOpen(!open)}>
             <ListItemIcon>
@@ -394,13 +366,36 @@ export default function PrimarySearchAppBar({ User, refetch }) {
             </ListItemIcon>
             <ListItemText primary={"Owned feeds"} />
             <ListItemIcon>
-              <ArrowDropDownIcon></ArrowDropDownIcon>
+              <ExpandIcon Open={open}></ExpandIcon>
             </ListItemIcon>
           </ListItemButton>
         </ListItem>
-      );
-    }
+        <Collapse in={open}>
+          {User.ownedfeeds ? (
+            User.ownedfeeds.map((feed) => (
+              <ListItem
+                onClick={toggleDrawer(false)}
+                key={feed.feedname}
+                disablePadding
+              >
+                <ListItemButton
+                  sx={{ borderRadius: 5 }}
+                  onClick={() => {
+                    navigate(`/feed/${feed.feedname}`);
+                  }}
+                >
+                  <ListItemText primary={feed.feedname} />
+                </ListItemButton>
+              </ListItem>
+            ))
+          ) : (
+            <Typography>No owned feeds</Typography>
+          )}
+        </Collapse>
+      </>
+    );
   };
+
   const DrawerState = ({ User }) => {
     const popularfeeds = feeds.data ? feeds.data.getfeed : [];
 
@@ -431,6 +426,8 @@ export default function PrimarySearchAppBar({ User, refetch }) {
 
             <MenupopularState feeds={popularfeeds}></MenupopularState>
             <Divider></Divider>
+            <MenufriendsState User={User}></MenufriendsState>
+            <Divider></Divider>
           </List>
         </Box>
       );
@@ -443,7 +440,97 @@ export default function PrimarySearchAppBar({ User, refetch }) {
       );
     }
   };
-
+  const MenufriendsState = ({ User }) => {
+    const [open, setOpen] = useState(false);
+    const Frienditem = ({ item, User }) => {
+      const [Open, setOpen] = useState(false);
+      const [OpenChatInvite, setOpenChatInvite] = useState(false);
+      return (
+        <>
+          <ListItem key={item.id} disablePadding>
+            <ListItemButton onClick={() => setOpen(!Open)}>
+              <ListItemIcon>
+                <PersonIcon />
+              </ListItemIcon>
+              <ListItemText primary={item.username} />
+              <ListItemIcon>
+                <ExpandIcon Open={Open}></ExpandIcon>
+              </ListItemIcon>
+            </ListItemButton>
+          </ListItem>
+          <Collapse in={Open}>
+            <Stack direction={"column"} sx={{ textAlign: "center" }}>
+              <Typography>Actions:</Typography>
+              <Divider></Divider>
+              <Button onClick={() => navigate(`/profile/${item.id}`)}>
+                Go to profile
+              </Button>
+              <Button
+                onClick={() => {
+                  setOpenChatInvite(!OpenChatInvite);
+                }}
+              >
+                invite to chatroom{" "}
+                <ExpandIcon Open={OpenChatInvite}></ExpandIcon>
+              </Button>
+              <Collapse in={OpenChatInvite}>
+                {User.chatrooms ? (
+                  User.chatrooms.map((chatitem) => (
+                    <Button
+                      onClick={() => {
+                        try {
+                          InviteToChatRoom({
+                            roomId: chatitem.id,
+                            invitedId: item.id,
+                          });
+                          setseverity("success");
+                          setmessage(
+                            `Friend ${item.username} invited to ${chatitem.name}`
+                          );
+                        } catch (error) {
+                          setmessage(error.message);
+                          setseverity("error");
+                        }
+                      }}
+                    >
+                      {chatitem.name}
+                    </Button>
+                  ))
+                ) : (
+                  <Typography>No chatrooms to invite to.</Typography>
+                )}
+              </Collapse>
+              <Button>Remove friend</Button>
+            </Stack>
+          </Collapse>
+        </>
+      );
+    };
+    return (
+      <>
+        <ListItem key="friends" disablePadding>
+          <ListItemButton onClick={() => setOpen(!open)}>
+            <ListItemIcon>
+              <PeopleIcon />
+            </ListItemIcon>
+            <ListItemText primary={"Friends"} />
+            <ListItemIcon>
+              <ExpandIcon Open={open}></ExpandIcon>
+            </ListItemIcon>
+          </ListItemButton>
+        </ListItem>
+        <Collapse in={open}>
+          {User.friends ? (
+            User.friends.map((item) => (
+              <Frienditem item={item} User={User}></Frienditem>
+            ))
+          ) : (
+            <Typography>No friends :/.</Typography>
+          )}
+        </Collapse>
+      </>
+    );
+  };
   const MenuState = MenuStatelogin({ User });
   const DrawerList = DrawerState({ User });
 
@@ -483,7 +570,127 @@ export default function PrimarySearchAppBar({ User, refetch }) {
     }
   };
   const searchoptions = data ? data.getsearchbar : [];
+  const NotificationsState = ({ User }) => {
+    if (!User) {
+      return;
+    }
+    const friendsRequests = User.friendsRequests;
+    return (
+      <Box sx={{ display: { md: "flex" } }}>
+        <IconButton
+          size="small"
+          edge="end"
+          aria-label="notifications"
+          aria-controls={notificationId}
+          aria-haspopup="true"
+          onClick={handleNotificationMenuOpen}
+          color="inherit"
+        >
+          <Badge badgeContent={friendsRequests.length} color="error">
+            <NotificationsIcon />
+          </Badge>
+        </IconButton>
+      </Box>
+    );
+  };
+  const MenuNotificationsState = ({ User }) => {
+    console.log(notificationanchorEl);
+    if (!User) {
+      return;
+    }
+    const FriendRequests = ({ User }) => {
+      if (User.friendsRequests.length > 0) {
+        return (
+          <>
+            <Typography>Friends requests</Typography>
+            {User.friendsRequests.map((item) => {
+              return (
+                <MenuItem sx={{ borderRadius: 5 }}>
+                  <Typography onClick={() => navigate(`/profile/${item.id}`)}>
+                    {item.username}
+                  </Typography>
+                  <Tooltip title="accept">
+                    <IconButton
+                      onClick={() =>
+                        friendsaction({
+                          type: "accept",
+                          userId: item.id,
+                        })
+                      }
+                      size="small"
+                    >
+                      <CheckCircleOutlineIcon></CheckCircleOutlineIcon>
+                    </IconButton>
+                  </Tooltip>
+                  <Tooltip title="decline">
+                    <IconButton
+                      onClick={() =>
+                        friendsaction({
+                          type: "decline",
+                          userId: item.id,
+                        })
+                      }
+                      size="small"
+                    >
+                      <NotInterestedIcon></NotInterestedIcon>
+                    </IconButton>
+                  </Tooltip>
+                </MenuItem>
+              );
+            })}
+          </>
+        );
+      } else {
+        return <Typography>No notifications</Typography>;
+      }
+    };
+    return (
+      <Menu
+        anchorEl={notificationanchorEl}
+        anchorOrigin={{
+          vertical: "bottom",
+          horizontal: "left",
+        }}
+        id={notificationId}
+        keepMounted
+        transformOrigin={{
+          vertical: "top",
+          horizontal: "left",
+        }}
+        open={isNotificationPopperOpen}
+        onClose={handleNotificationMenuClose}
+        sx={{ padding: 5 }}
+      >
+        <Stack
+          direction={"column"}
+          sx={{
+            display: "flex",
+            padding: 1,
+            borderRadius: 5,
+            textAlign: "center",
+          }}
+        >
+          <FriendRequests User={User}></FriendRequests>
+        </Stack>
+      </Menu>
+    );
+  };
+  const NotificationState = MenuNotificationsState({ User });
 
+  const ChatsNotifications = ({ User }) => {
+    const newChatMessages = 0;
+    return (
+      <IconButton
+        size="small"
+        aria-label={`show ${newChatMessages} new mails`}
+        color="inherit"
+      >
+        <Badge badgeContent={newChatMessages} color="error">
+          <MailIcon />
+        </Badge>
+      </IconButton>
+    );
+  };
   return (
     <Box sx={{ flexGrow: 1 }}>
       <AppBar position="fixed" sx={{ marginBottom: "64px" }}>
@@ -518,120 +725,127 @@ export default function PrimarySearchAppBar({ User, refetch }) {
           <Box
             key={"appbar-center"}
             sx={{ display: "flex", flexDirection: "row", alignItems: "center" }}
-          ></Box>
-          <Autocomplete
-            disablePortal
-            options={searchoptions}
-            getOptionLabel={(option) => `f/${option.feedname}`}
-            getOptionKey={(option) => option}
-            groupBy={(option) => option.__typename}
-            freeSolo
-            filterOptions={(x) => x}
-            size="small"
-            renderOption={(option) => {
-              if (option.key.__typename == "Feed") {
-                return (
-                  <li key={option.key.id}>
-                    <Button
-                      sx={{
-                        width: "100%",
-                        textAlign: "left",
-                        textAnchor: "left",
-                      }}
-                      onClick={(event) => {
-                        navigate(`/feed/${option.key.feedname}`);
-                      }}
-                    >
-                      <Typography
-                        textAlign={"left"}
-                        sx={{ textAlign: "left", width: "100%" }}
+          >
+            <Autocomplete
+              disablePortal
+              options={searchoptions}
+              getOptionLabel={(option) => `f/${option.feedname}`}
+              getOptionKey={(option) => option}
+              groupBy={(option) => option.__typename}
+              freeSolo
+              filterOptions={(x) => x}
+              size="small"
+              renderOption={(option) => {
+                if (option.key.__typename == "Feed") {
+                  return (
+                    <li key={option.key.id}>
+                      <Button
+                        sx={{
+                          width: "100%",
+                          textAlign: "left",
+                          textAnchor: "left",
+                        }}
+                        onClick={(event) => {
+                          navigate(`/feed/${option.key.feedname}`);
+                        }}
                       >
-                        {option.key.feedname}
-                      </Typography>
-                    </Button>
-                  </li>
-                );
-              }
-              if (option.key.__typename == "Post") {
-                return (
-                  <li key={option.key.id}>
-                    <Button
-                      sx={{
-                        width: "100%",
-                        textAlign: "left",
-                        textAnchor: "left",
-                      }}
-                      onClick={(event) => {
-                        navigate(`/post/${option.key.id}`);
-                      }}
-                    >
-                      <Typography
-                        textAlign={"left"}
-                        sx={{ textAlign: "left", width: "100%" }}
+                        <Typography
+                          textAlign={"left"}
+                          sx={{ textAlign: "left", width: "100%" }}
+                        >
+                          {option.key.feedname}
+                        </Typography>
+                      </Button>
+                    </li>
+                  );
+                }
+                if (option.key.__typename == "Post") {
+                  return (
+                    <li key={option.key.id}>
+                      <Button
+                        sx={{
+                          width: "100%",
+                          textAlign: "left",
+                          textAnchor: "left",
+                        }}
+                        onClick={(event) => {
+                          navigate(`/post/${option.key.id}`);
+                        }}
                       >
-                        {option.key.headline}
-                      </Typography>
-                    </Button>
-                  </li>
-                );
-              }
-              if (option.key.__typename == "User") {
-                return (
-                  <li key={option.key.id}>
-                    <Button
-                      sx={{
-                        width: "100%",
-                        textAlign: "left",
-                        textAnchor: "left",
-                      }}
-                      onClick={(event) => {
-                        navigate(`/profile/${option.key.id}`);
-                      }}
-                    >
-                      <Typography
-                        textAlign={"left"}
-                        sx={{ textAlign: "left", width: "100%" }}
+                        <Typography
+                          textAlign={"left"}
+                          sx={{ textAlign: "left", width: "100%" }}
+                        >
+                          {option.key.headline}
+                        </Typography>
+                      </Button>
+                    </li>
+                  );
+                }
+                if (option.key.__typename == "User") {
+                  return (
+                    <li key={option.key.id}>
+                      <Button
+                        sx={{
+                          width: "100%",
+                          textAlign: "left",
+                          textAnchor: "left",
+                        }}
+                        onClick={(event) => {
+                          navigate(`/profile/${option.key.id}`);
+                        }}
                       >
-                        {option.key.username}
-                      </Typography>
-                    </Button>
-                  </li>
-                );
-              }
-            }}
-            renderInput={(params) => {
-              return (
-                <Search>
-                  <SearchIconWrapper>
-                    <SearchIcon></SearchIcon>
-                  </SearchIconWrapper>
+                        <Typography
+                          textAlign={"left"}
+                          sx={{ textAlign: "left", width: "100%" }}
+                        >
+                          {option.key.username}
+                        </Typography>
+                      </Button>
+                    </li>
+                  );
+                }
+              }}
+              renderInput={(params) => {
+                return (
+                  <Search>
+                    <SearchIconWrapper>
+                      <SearchIcon></SearchIcon>
+                    </SearchIconWrapper>
 
-                  <StyledInputBase
-                    aria-label="search"
-                    variant="filled"
-                    inputProps={params.inputProps}
-                    ref={params.InputProps.ref}
-                    onChange={(e) => {
-                      debounced(e.target.value);
-                      if (e.target.value == "") {
-                        setSearchvalue("");
-                      } else {
-                        setSearchvalue(e.target.value);
-                      }
-                    }}
-                  />
-                </Search>
-              );
-            }}
-            renderValue={(value, getItemProps) => (
-              <Chip key={value.id} label={value.feedname} {...getItemProps()} />
-            )}
-          />
-          <ThemeState></ThemeState>
-
+                    <StyledInputBase
+                      aria-label="search"
+                      variant="filled"
+                      inputProps={params.inputProps}
+                      ref={params.InputProps.ref}
+                      onChange={(e) => {
+                        debounced(e.target.value);
+                        if (e.target.value == "") {
+                          setSearchvalue("");
+                        } else {
+                          setSearchvalue(e.target.value);
+                        }
+                      }}
+                    />
+                  </Search>
+                );
+              }}
+              renderValue={(value, getItemProps) => (
+                <Chip
+                  key={value.id}
+                  label={value.feedname}
+                  {...getItemProps()}
+                />
+              )}
+            />
+            <ThemeState></ThemeState>
+          </Box>
           <Box key={"appbar-right"} sx={{ display: "flex", flexGrow: 1 }} />
+          {NotificationsState({ User })}
+          {ChatsNotifications({ User })}
           {Renderloginstate({ User, refetch, token })}
         </Toolbar>
+        {NotificationState}
         {MenuState}
       </AppBar>
     </Box>

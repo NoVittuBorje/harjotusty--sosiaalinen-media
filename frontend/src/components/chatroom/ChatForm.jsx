@@ -5,19 +5,19 @@ const ChatForm = ({ onSubmit ,User}) => {
   const [content, setContent] = useState("");
   if(!User)return
   return (
-    <FormGroup sx={{}}>
+    <FormGroup sx={{border:"1px solid white",borderRadius:2,padding:1}}>
       <TextField
         required
         value={content}
         multiline
-        label="New message"
+        
         color="inherit"
         inputProps={{ style: { color: "inherit" } }}
         variant="standard"
         InputLabelProps={{style:{color:"inherit"}}}
         onChange={(event) => setContent(event.target.value)}
       />
-      <Box sx={{ display: "flex", paddingTop: 1 }}>
+      <Box sx={{ display: "flex", paddingTop: 1 ,justifyContent:"end"}}>
         <Button
           size="small"
           variant="outlined"

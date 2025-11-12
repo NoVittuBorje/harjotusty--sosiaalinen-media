@@ -395,3 +395,47 @@ export const EDITCHATROOM = gql`
     }
   }
 `;
+export const FRIENDSREQUESTACTIONS = gql`
+  mutation FriendRequestAction($userId: String!, $type: String!) {
+    friendRequestAction(userId: $userId, type: $type) {
+      username
+      avatar
+      id
+      friends {
+        username
+        avatar
+        id
+      }
+      friendsRequests {
+        username
+        avatar
+        id
+      }
+    }
+  }
+`;
+export const INVITETOCHATROOM = gql`
+  mutation InviteToRoom($roomId: String!, $invitedId: String!) {
+    inviteToRoom(roomId: $roomId, invitedId: $invitedId) {
+      id
+      name
+    }
+  }
+`;
+export const CHATROOMINVITEACTIONS = gql`
+  mutation RoomInviteAction($type: String!, $roomId: String!) {
+    roomInviteAction(type: $type, roomId: $roomId) {
+      username
+      avatar
+      id
+      chatrooms {
+        id
+        name
+      }
+      chatroominvites {
+        id
+        name
+      }
+    }
+  }
+`;

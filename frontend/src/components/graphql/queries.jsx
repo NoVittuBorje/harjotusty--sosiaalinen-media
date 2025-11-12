@@ -35,6 +35,27 @@ export const GET_ME = gql`
       dislikedcomments {
         id
       }
+      friends {
+        id
+        username
+        avatar
+      }
+      friendsRequests {
+        id
+        username
+      }
+      friendsRequestsSent {
+        id
+        username
+      }
+      chatrooms {
+        id
+        name
+      }
+      chatroominvites {
+        id
+        name
+      }
     }
   }
 `;
@@ -399,18 +420,18 @@ export const GET_FEED_SUBS_COUNT = gql`
   }
 `;
 export const GET_CHAT_MESSAGES = gql`
-query GetMessages($roomId: String!, $offset: Int) {
-  getMessages(roomId: $roomId, offset: $offset) {
-    id
-    content
-    createdAt
-    author {
-      username
+  query GetMessages($roomId: String!, $offset: Int) {
+    getMessages(roomId: $roomId, offset: $offset) {
       id
-      avatar
+      content
+      createdAt
+      author {
+        username
+        id
+        avatar
+      }
     }
   }
-}
 `;
 export const GET_CHAT_MESSAGES_FOR_ROOM = gql`
   query GetMessagesForRoom($roomId: String!) {
