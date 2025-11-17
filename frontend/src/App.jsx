@@ -14,6 +14,7 @@ import useMe from "./components/hooks/useMe";
 import MyAccountpage from "./components/pages/myaccountpage/MyAccountpage";
 import Alerts from "./components/utils/Alerts";
 import { useEffect, useState } from "react";
+import ChatRoomsItem from "./components/utils/BottomBar";
 
 function App() {
   const token = sessionStorage.getItem("token");
@@ -58,7 +59,11 @@ function App() {
         setmessage={setmessage}
         setseverity={setseverity}
       />
-
+      <ChatRoomsItem
+        User={User}
+        setmessage={setmessage}
+        setseverity={setseverity}
+      ></ChatRoomsItem>
       <Alerts
         msg={message}
         setmessage={setmessage}

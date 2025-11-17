@@ -21,7 +21,7 @@ import ListItemIcon from "@mui/material/ListItemIcon";
 import ListItemText from "@mui/material/ListItemText";
 import FeedIcon from "@mui/icons-material/Feed";
 import useGetManyFeeds from "../hooks/useGetManyFeeds";
-import { useApolloClient } from "@apollo/client";
+
 import useGetSearch from "../hooks/useGetSearch";
 import { useDebouncedCallback } from "use-debounce";
 import AccountBoxIcon from "@mui/icons-material/AccountBox";
@@ -32,7 +32,7 @@ import MailIcon from "@mui/icons-material/Mail";
 import NotificationsIcon from "@mui/icons-material/Notifications";
 import CheckCircleOutlineIcon from "@mui/icons-material/CheckCircleOutline";
 import NotInterestedIcon from "@mui/icons-material/NotInterested";
-import PeopleIcon from "@mui/icons-material/People";
+
 import {
   Autocomplete,
   Badge,
@@ -426,8 +426,6 @@ export default function PrimarySearchAppBar({
 
             <MenupopularState feeds={popularfeeds}></MenupopularState>
             <Divider></Divider>
-            <MenufriendsState User={User}></MenufriendsState>
-            <Divider></Divider>
           </List>
         </Box>
       );
@@ -440,97 +438,7 @@ export default function PrimarySearchAppBar({
       );
     }
   };
-  const MenufriendsState = ({ User }) => {
-    const [open, setOpen] = useState(false);
-    const Frienditem = ({ item, User }) => {
-      const [Open, setOpen] = useState(false);
-      const [OpenChatInvite, setOpenChatInvite] = useState(false);
-      return (
-        <>
-          <ListItem key={item.id} disablePadding>
-            <ListItemButton onClick={() => setOpen(!Open)}>
-              <ListItemIcon>
-                <PersonIcon />
-              </ListItemIcon>
-              <ListItemText primary={item.username} />
-              <ListItemIcon>
-                <ExpandIcon Open={Open}></ExpandIcon>
-              </ListItemIcon>
-            </ListItemButton>
-          </ListItem>
-          <Collapse in={Open}>
-            <Stack direction={"column"} sx={{ textAlign: "center" }}>
-              <Typography>Actions:</Typography>
-              <Divider></Divider>
-              <Button onClick={() => navigate(`/profile/${item.id}`)}>
-                Go to profile
-              </Button>
-              <Button
-                onClick={() => {
-                  setOpenChatInvite(!OpenChatInvite);
-                }}
-              >
-                invite to chatroom{" "}
-                <ExpandIcon Open={OpenChatInvite}></ExpandIcon>
-              </Button>
-              <Collapse in={OpenChatInvite}>
-                {User.chatrooms ? (
-                  User.chatrooms.map((chatitem) => (
-                    <Button
-                      onClick={() => {
-                        try {
-                          InviteToChatRoom({
-                            roomId: chatitem.id,
-                            invitedId: item.id,
-                          });
-                          setseverity("success");
-                          setmessage(
-                            `Friend ${item.username} invited to ${chatitem.name}`
-                          );
-                        } catch (error) {
-                          setmessage(error.message);
-                          setseverity("error");
-                        }
-                      }}
-                    >
-                      {chatitem.name}
-                    </Button>
-                  ))
-                ) : (
-                  <Typography>No chatrooms to invite to.</Typography>
-                )}
-              </Collapse>
-              <Button>Remove friend</Button>
-            </Stack>
-          </Collapse>
-        </>
-      );
-    };
-    return (
-      <>
-        <ListItem key="friends" disablePadding>
-          <ListItemButton onClick={() => setOpen(!open)}>
-            <ListItemIcon>
-              <PeopleIcon />
-            </ListItemIcon>
-            <ListItemText primary={"Friends"} />
-            <ListItemIcon>
-              <ExpandIcon Open={open}></ExpandIcon>
-            </ListItemIcon>
-          </ListItemButton>
-        </ListItem>
-        <Collapse in={open}>
-          {User.friends ? (
-            User.friends.map((item) => (
-              <Frienditem item={item} User={User}></Frienditem>
-            ))
-          ) : (
-            <Typography>No friends :/.</Typography>
-          )}
-        </Collapse>
-      </>
-    );
-  };
+
   const MenuState = MenuStatelogin({ User });
   const DrawerList = DrawerState({ User });
 
@@ -675,6 +583,7 @@ export default function PrimarySearchAppBar({
       </Menu>
     );
   };
+
   const NotificationState = MenuNotificationsState({ User });
 
   const ChatsNotifications = ({ User }) => {

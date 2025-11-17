@@ -14,7 +14,7 @@ import { useEffect } from "react";
 import ChatForm from "./ChatForm";
 import useSendChatMessage from "../hooks/useSendChatMessage";
 import ChatMessageItem from "./ChatMessageItem";
-const ChatItem = ({ type, headline,roomId,User }) => {
+const ChatItem = ({ type, headline,roomId,User,size }) => {
   const [Open, setOpen] = useState(false);
   var ChatData = ChatMessageData({ roomId: roomId });
   console.log(ChatData)
@@ -41,7 +41,7 @@ const ChatItem = ({ type, headline,roomId,User }) => {
   }
 
   return (
-    <Box sx={{width:200,maxWidth:200}}>
+    <Box sx={{width:size.width,maxWidth:size.maxWidth}}>
       <Stack>
           <Box sx={{ display: "flex", alignContent: "center" }}></Box>
           <Box sx={{ float: "right" }}>
@@ -50,7 +50,7 @@ const ChatItem = ({ type, headline,roomId,User }) => {
             <div
               id="scrollableDiv"
               style={{
-                height: 300,
+                height: size.height,
                 overflow: "auto",
                 display: "flex",
                 flexDirection: "column-reverse",
@@ -88,5 +88,6 @@ const ChatItem = ({ type, headline,roomId,User }) => {
       </Stack>
     </Box>
   );
+  
 };
 export default ChatItem;

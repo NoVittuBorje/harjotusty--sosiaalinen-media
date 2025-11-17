@@ -4,7 +4,8 @@ import { Box, Button, Icon } from "@mui/material";
 import ExpandIcon from "../utils/ExpandIcon";
 import ForumIcon from '@mui/icons-material/Forum';
 const Chat = ({type,roomId,headline,User}) => {
-    const [Open, setOpen] = useState(false)
+  const [Open, setOpen] = useState(false)
+    if(type == "feed"){
     if(Open){
     return(
       <Box sx={{width:200}}>
@@ -18,7 +19,7 @@ const Chat = ({type,roomId,headline,User}) => {
         >
           <ForumIcon></ForumIcon>Close {headline} Chat <ExpandIcon Open={Open}></ExpandIcon>
         </Button>
-        <ChatItem type={type} roomId={roomId} headline={headline} User={User}></ChatItem>
+        <ChatItem type={type} roomId={roomId} headline={headline} User={User} size={{width:300,maxWidth:300,height:200}}></ChatItem>
         </Box>
     )}else{
       return(
@@ -32,7 +33,11 @@ const Chat = ({type,roomId,headline,User}) => {
         >
           <ForumIcon></ForumIcon>Open {headline} Chat <ExpandIcon Open={Open}></ExpandIcon>
         </Button>
-
+      )
+    }}
+    if(type == "account"){
+      return(
+        <ChatItem type={type} roomId={roomId} headline={headline} User={User} size={{width:"auto",maxWidth:"auto",height:200}}></ChatItem>
       )
     }
 }

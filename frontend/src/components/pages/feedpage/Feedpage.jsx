@@ -362,8 +362,9 @@ const FeedPage = ({ match, User, refetchUser, setmessage, setseverity }) => {
           <Box sx={{display:"flex", justifyContent:"space-between"}}>
                           
               <NewPostButton User={User}></NewPostButton>
+              <FeedChat type={"feed"} User={User} info={info} infoloading={infoloading}></FeedChat>
               <SubButton User={User}></SubButton>
-          <FeedChat User={User} info={info} infoloading={infoloading}></FeedChat>
+          
           </Box>
           <Box sx={{ display: "flex", justifyContent: "start" }}>
             <Box sx={{ alignContent: "center" }}>
