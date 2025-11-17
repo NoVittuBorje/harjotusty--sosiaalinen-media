@@ -37,7 +37,7 @@ import FeedModSettings from "./FeedModSettings";
 import FeedAvatar from "../../utils/FeedAvatar";
 import ExpandIcon from "../../utils/ExpandIcon";
 import Timestamp from "../../utils/Timestamp";
-import ChatItem from "../../chatroom/Chatitem";
+import ChatItem from "../../chatroom/ChatItem";
 import Chat from "../../chatroom/Chat";
 
 
