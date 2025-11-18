@@ -32,6 +32,8 @@ import MailIcon from "@mui/icons-material/Mail";
 import NotificationsIcon from "@mui/icons-material/Notifications";
 import CheckCircleOutlineIcon from "@mui/icons-material/CheckCircleOutline";
 import NotInterestedIcon from "@mui/icons-material/NotInterested";
+import PeopleIcon from "@mui/icons-material/People";
+import AddIcon from "@mui/icons-material/Add";
 
 import {
   Autocomplete,
@@ -48,9 +50,11 @@ import {
   RadioGroup,
   Select,
   Stack,
+  ListSubheader,
   TextField,
   Tooltip,
   useColorScheme,
+  Grid,
 } from "@mui/material";
 import AddCircleOutlineIcon from "@mui/icons-material/AddCircleOutline";
 import { useState } from "react";
@@ -127,15 +131,18 @@ export default function PrimarySearchAppBar({
   const [loginanchorEl, setLoginAnchorEl] = useState(null);
   const [searchanchorEl, setSearchAnchorEl] = useState(null);
   const [notificationanchorEl, setNotificationAnchorEl] = useState(null);
+  const [friendsanchorEl, setFriendsAnchorEl] = useState(null);
 
   const isMenuOpen = Boolean(anchorEl);
   const isLoginMenuOpen = Boolean(loginanchorEl);
   const isSearchPopperOpen = Boolean(searchanchorEl);
   const isNotificationPopperOpen = Boolean(notificationanchorEl);
+  const isFriendsMenuOpen = Boolean(friendsanchorEl);
 
   const menuId = "primary-search-account-menu";
   const loginMenuId = "login-menu";
   const notificationId = "notification-menu";
+  const friendsmenuId = "Friends-Menu";
 
   const searchopen = Boolean(searchanchorEl);
   const searchmenuId = searchopen ? "search-popper" : undefined;
@@ -164,6 +171,12 @@ export default function PrimarySearchAppBar({
   };
   const handleSearchClose = () => {
     setSearchAnchorEl(null);
+  };
+  const handleFriendsMenuOpen = (event) => {
+    setFriendsAnchorEl(event.currentTarget);
+  };
+  const handleFriendsMenuClose = () => {
+    setFriendsAnchorEl(null);
   };
 
   const handleProfileMenuClick = () => {
@@ -197,6 +210,7 @@ export default function PrimarySearchAppBar({
   const handleMakeNewFeedClick = () => {
     navigate("/makefeed");
   };
+
   const debounced = useDebouncedCallback((value) => {
     setSearch(value);
   }, 1000);
@@ -438,7 +452,125 @@ export default function PrimarySearchAppBar({
       );
     }
   };
+  const FriendsMenu = ({ User }) => {
+    if (!User) {
+      return;
+    }
+    return (
+      <>
+        <IconButton
+          onClick={handleFriendsMenuOpen}
+          size="small"
+          edge="end"
+          aria-label="friendsmenu"
+          aria-controls={friendsmenuId}
+          aria-haspopup="true"
+          color="inherit"
+          className="button"
+          sx={{ borderRadius: 50 }}
+        >
+          <PeopleIcon />
+        </IconButton>
 
+        <Drawer
+          anchor="right"
+          id={friendsmenuId}
+          keepMounted
+          open={isFriendsMenuOpen}
+          onClose={handleFriendsMenuClose}
+          sx={{ padding: 5 }}
+        >
+          <MenufriendsState User={User}></MenufriendsState>
+        </Drawer>
+      </>
+    );
+  };
+  const MenufriendsState = ({ User }) => {
+    const Frienditem = ({ item, User }) => {
+      const [Open, setOpen] = useState(false);
+      const [OpenChatInvite, setOpenChatInvite] = useState(false);
+      return (
+        <>
+          <ListItem key={item.id} disablePadding>
+            <ListItemButton onClick={() => setOpen(!Open)}>
+              <ListItemIcon>
+                <PersonIcon />
+              </ListItemIcon>
+              <ListItemText primary={item.username} />
+              <ListItemIcon>
+                <ExpandIcon Open={Open}></ExpandIcon>
+              </ListItemIcon>
+            </ListItemButton>
+          </ListItem>
+          <Collapse in={Open}>
+            <Stack direction={"column"} sx={{ textAlign: "center" }}>
+              <Typography>Actions:</Typography>
+              <Divider></Divider>
+              <Button onClick={() => navigate(`/profile/${item.id}`)}>
+                Go to profile
+              </Button>
+              <Button
+                onClick={() => {
+                  setOpenChatInvite(!OpenChatInvite);
+                }}
+              >
+                invite to chatroom{" "}
+                <ExpandIcon Open={OpenChatInvite}></ExpandIcon>
+              </Button>
+              <Collapse in={OpenChatInvite}>
+                {User.chatrooms ? (
+                  User.chatrooms.map((chatitem) => (
+                    <Button
+                      onClick={() => {
+                        try {
+                          InviteToChatRoom({
+                            roomId: chatitem.id,
+                            invitedId: item.id,
+                          });
+                          setseverity("success");
+                          setmessage(
+                            `Friend ${item.username} invited to ${chatitem.name}`
+                          );
+                        } catch (error) {
+                          setmessage(error.message);
+                          setseverity("error");
+                        }
+                      }}
+                    >
+                      {chatitem.name}
+                    </Button>
+                  ))
+                ) : (
+                  <Typography>No chatrooms to invite to.</Typography>
+                )}
+              </Collapse>
+              <Button>Remove friend</Button>
+            </Stack>
+          </Collapse>
+        </>
+      );
+    };
+    return (
+      <>
+        <ListSubheader>
+          <ListItem key="friends" disablePadding>
+            <ListItemIcon>
+              <PeopleIcon />
+            </ListItemIcon>
+            <ListItemText primary={"Friends"} />
+          </ListItem>
+        </ListSubheader>
+
+        {User.friends ? (
+          User.friends.map((item) => (
+            <Frienditem item={item} User={User}></Frienditem>
+          ))
+        ) : (
+          <Typography>No friends :/.</Typography>
+        )}
+      </>
+    );
+  };
   const MenuState = MenuStatelogin({ User });
   const DrawerList = DrawerState({ User });
 
@@ -478,13 +610,14 @@ export default function PrimarySearchAppBar({
     }
   };
   const searchoptions = data ? data.getsearchbar : [];
+
   const NotificationsState = ({ User }) => {
     if (!User) {
       return;
     }
     const friendsRequests = User.friendsRequests;
     return (
-      <Box sx={{ display: { md: "flex" } }}>
+      <>
         <IconButton
           size="small"
           edge="end"
@@ -498,11 +631,10 @@ export default function PrimarySearchAppBar({
             <NotificationsIcon />
           </Badge>
         </IconButton>
-      </Box>
+      </>
     );
   };
   const MenuNotificationsState = ({ User }) => {
-    console.log(notificationanchorEl);
     if (!User) {
       return;
     }
@@ -603,8 +735,8 @@ export default function PrimarySearchAppBar({
   return (
     <Box sx={{ flexGrow: 1 }}>
       <AppBar position="fixed" sx={{ marginBottom: "64px" }}>
-        <Toolbar>
-          <Box key={"appbar-left"} sx={{ display: "flex" }}>
+        <Toolbar sx={{ display: "flex", justifyContent: "space-between" }}>
+          <Grid container key={"appbar-left"} >
             <IconButton
               onClick={toggleDrawer(true)}
               size="medium"
@@ -626,15 +758,18 @@ export default function PrimarySearchAppBar({
               color="inherit"
               aria-label="Home button"
               sx={{ mr: 2 }}
+              
               onClick={handleHomeClick}
             >
               <HomeIcon />
             </IconButton>
-          </Box>
-          <Box
+          </Grid>
+          <Grid
             key={"appbar-center"}
+            container
             sx={{ display: "flex", flexDirection: "row", alignItems: "center" }}
           >
+            <Box sx={{display:"flex"}} size={{xs:0,sm:2,md:3,lg:4,xl:6}}>
             <Autocomplete
               disablePortal
               options={searchoptions}
@@ -721,7 +856,6 @@ export default function PrimarySearchAppBar({
                     <SearchIconWrapper>
                       <SearchIcon></SearchIcon>
                     </SearchIconWrapper>
-
                     <StyledInputBase
                       aria-label="search"
                       variant="filled"
@@ -748,14 +882,21 @@ export default function PrimarySearchAppBar({
               )}
             />
             <ThemeState></ThemeState>
-          </Box>
-          <Box key={"appbar-right"} sx={{ display: "flex", flexGrow: 1 }} />
-          {NotificationsState({ User })}
-          {ChatsNotifications({ User })}
-          {Renderloginstate({ User, refetch, token })}
+            </Box>
+          </Grid>
+          <Grid
+            container
+            key={"appbar-right"}
+            sx={{ display: "flex", flexDirection: "row", alignItems: "center" }}
+          >
+            {NotificationsState({ User })}
+            {FriendsMenu({ User })}
+            {Renderloginstate({ User, refetch, token })}
+          </Grid>
+
+          {NotificationState}
+          {MenuState}
         </Toolbar>
-        {NotificationState}
-        {MenuState}
       </AppBar>
     </Box>
   );

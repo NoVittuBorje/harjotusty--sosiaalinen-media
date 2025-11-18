@@ -1,6 +1,7 @@
 import {
   Box,
   Button,
+  CircularProgress,
   Collapse,
   Divider,
   Stack,
@@ -35,7 +36,7 @@ const ChatItem = ({ type, headline,roomId,User,size }) => {
   useEffect(() => {
     executeScroll;
   }, [ChatData.data]);
-  console.log(ChatData)
+
   if (ChatData.loading) {
     return;
   }
@@ -66,7 +67,7 @@ const ChatItem = ({ type, headline,roomId,User,size }) => {
                 next={loadmore}
                 inverse={true}
                 hasMore={true}
-                loader={<h4>Loading...</h4>}
+                loader={<Typography>Either no more messages or loading</Typography>}
                 scrollableTarget="scrollableDiv"
               >
                 {/*Put the scroll bar always on the bottom*/}

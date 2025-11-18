@@ -5,7 +5,7 @@ import TextEditor from "../../utils/TextEditor";
 import { Box, Button} from "@mui/material";
 
 const EditFeedDesc = ({ feed, handleSave, setOpen }) => {
-
+  
   const validationSchema = yup.object().shape({
     description: yup.string().min(10).required(),
   });
@@ -20,8 +20,8 @@ const EditFeedDesc = ({ feed, handleSave, setOpen }) => {
     },
     validationSchema,
   });
-
-
+  if(!feed){return}
+  
   return (
     <Box
       sx={{

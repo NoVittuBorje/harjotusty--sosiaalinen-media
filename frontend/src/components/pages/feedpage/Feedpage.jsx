@@ -40,7 +40,6 @@ import Timestamp from "../../utils/Timestamp";
 import ChatItem from "../../chatroom/Chatitem";
 import Chat from "../../chatroom/Chat";
 
-
 const FeedPage = ({ match, User, refetchUser, setmessage, setseverity }) => {
   if (!localStorage.getItem("FeedorderBy")) {
     localStorage.setItem("FeedorderBy", "POPULAR");
@@ -66,7 +65,7 @@ const FeedPage = ({ match, User, refetchUser, setmessage, setseverity }) => {
   const { data, loading, error, fetchMore, refetch } =
     useGetFeedPosts(variables);
   const [editfeed, resultedit] = useEditFeed();
-  
+
   const [sub, resultsub] = useSubscribe();
   const [OpenSettings, setOpenSettings] = useState(false);
   const [FeedEditOpen, setFeedEditOpen] = useState(false);
@@ -184,7 +183,7 @@ const FeedPage = ({ match, User, refetchUser, setmessage, setseverity }) => {
     console.log(info.description);
     console.log("desc");
     return (
-      <Box sx={{ padding: 1 }}>
+      <Box sx={{ padding: 1, display: "flex" }}>
         <Stack direction={"column"}>
           <Stack direction={"row"} alignItems={"center"} gap={2} padding={1}>
             <FeedAvatar width={100} height={100} feed={info}></FeedAvatar>
@@ -192,13 +191,6 @@ const FeedPage = ({ match, User, refetchUser, setmessage, setseverity }) => {
           </Stack>
           <Box key={info.id}>{parse(info.description)}</Box>
         </Stack>
-        <Collapse in={FeedEditOpen}>
-          <EditFeedDesc
-            setOpen={setFeedEditOpen}
-            handleSave={handleSave}
-            feed={info}
-          ></EditFeedDesc>
-        </Collapse>
       </Box>
     );
   };
@@ -224,6 +216,23 @@ const FeedPage = ({ match, User, refetchUser, setmessage, setseverity }) => {
     } else {
       return;
     }
+  };
+  const FeedEdit = ({ info, User }) => {
+    if(!info){return}
+    const mods = [...info.moderators.map((mod) => mod.id), info.owner.id];
+    if (!mods || !User) {
+      return;
+    }
+    if (mods.includes(User.id)) {
+    return (
+      <Collapse in={FeedEditOpen}>
+        <EditFeedDesc
+          setOpen={setFeedEditOpen}
+          handleSave={handleSave}
+          feed={info ? info.description : null}
+        ></EditFeedDesc>
+      </Collapse>
+    );}else{return}
   };
   const SubButton = ({ User }) => {
     if (!User) {
@@ -287,17 +296,21 @@ const FeedPage = ({ match, User, refetchUser, setmessage, setseverity }) => {
       );
     }
   };
-  const FeedChat = ({info,infoloading, User}) => {
-    console.log(info)
-    if( infoloading || !info.chatRoom){return}
-    console.log(info)
-    return(
-
-    <Chat type={"feed"} headline={info.chatRoom.name} User={User} roomId={info.chatRoom.id}></Chat>
-
-          
-    )
-  }
+  const FeedChat = ({ info, infoloading, User }) => {
+    console.log(info);
+    if (infoloading || !info.chatRoom) {
+      return;
+    }
+    console.log(info);
+    return (
+      <Chat
+        type={"feed"}
+        headline={info.chatRoom.name}
+        User={User}
+        roomId={info.chatRoom.id}
+      ></Chat>
+    );
+  };
   const feed = data ? data.getfeedposts : [];
   let info = feedinfo.data ? feedinfo.data.getfeed : {};
   let infoloading = feedinfo.loading;
@@ -313,58 +326,78 @@ const FeedPage = ({ match, User, refetchUser, setmessage, setseverity }) => {
       hasmore = false;
     }
   };
-  
+
   return (
     <Box sx={{ flexGrow: 1 }}>
       <Grid direction={"row"} container item spacing={0}>
         <Grid size={{ xs: 12, md: 2, sm: 1 }}></Grid>
-        <Grid size={{ xs: 12, md: 8, sm: 10 }}>
-          <Box>
-            <Grid direction={"row"} container spacing={1}>
-              <Grid   size={{ xs: 12, md: 8, sm: 8 }}>
-                <FeedDescription
-                  infoloading={infoloading}
-                  info={info}
-                  feed={feed}
-                  FeedEditOpen={FeedEditOpen}
-                ></FeedDescription>
-              </Grid>
-              <Grid container  size={{ xs: 12, md: 4, sm: 4 }}>
-                <Box sx={{ paddingTop: 2 }}>
-                  <FeedInfo info={info} infoloading={infoloading}></FeedInfo>
+        <Grid size={{ xs: 12, md: 8, sm: 12 }}>
+          <Box direction={"row"} container>
+            <Box
+              sx={{
+                display: "flex",
+                justifyContent: "space-between",
+              }}
+              size={{ xs: 2, md: 2, sm: 1 }}
+            >
+              <FeedDescription
+                infoloading={infoloading}
+                info={info}
+                feed={feed}
+                FeedEditOpen={FeedEditOpen}
+              ></FeedDescription>
 
+              <Box
+                size={{ xs: 2, md: 2, sm: 1 }}
+                sx={{ paddingTop: 2, display: "flex", flexDirection: "column" }}
+              >
+                <FeedInfo info={info} infoloading={infoloading}></FeedInfo>
+                <Box>
                   <ModSettingIcon
                     info={info}
                     infoloading={infoloading}
                     User={User}
                   ></ModSettingIcon>
-
-                  <Collapse
-                    sx={{
-                      backgroundColor: "background.dark",
-                      borderRadius: 5,
-                      padding: 1,
-                      border: "1px solid",
-                    }}
-                    in={OpenSettings}
-                  >
-                    <FeedModSettings
-                      info={info}
-                      infoloading={infoloading}
-                      User={User}
-                      setFeedEditOpen={setFeedEditOpen}
-                      item={info}
-                    ></FeedModSettings>
-                  </Collapse>
                 </Box>
-              </Grid>
-            </Grid>
-          <Box sx={{display:"flex", justifyContent:"space-between"}}>
-                          
-              <NewPostButton User={User}></NewPostButton>
-              <FeedChat type={"feed"} User={User} info={info} infoloading={infoloading}></FeedChat>
-              <SubButton User={User}></SubButton>
-          
+              </Box>
+            </Box>
+            <FeedEdit
+              info={info}
+              infoloading={infoloading}
+              User={User}
+            ></FeedEdit>
+
+            <Box sx={{ display: "flex", justifyContent: "end" }}>
+              <Collapse
+                sx={{
+                  backgroundColor: "background.dark",
+                  borderRadius: 5,
+                  padding: 1,
+                  border: "1px solid",
+                }}
+                in={OpenSettings}
+              >
+                <Box display={"flex"}>
+                  <FeedModSettings
+                    info={info}
+                    infoloading={infoloading}
+                    User={User}
+                    setFeedEditOpen={setFeedEditOpen}
+                    item={info}
+                  ></FeedModSettings>
+                </Box>
+              </Collapse>
+            </Box>
+          </Box>
+          <Box sx={{ display: "flex", justifyContent: "space-between" }}>
+            <NewPostButton User={User}></NewPostButton>
+            <FeedChat
+              type={"feed"}
+              User={User}
+              info={info}
+              infoloading={infoloading}
+            ></FeedChat>
+            <SubButton User={User}></SubButton>
           </Box>
           <Box sx={{ display: "flex", justifyContent: "start" }}>
             <Box sx={{ alignContent: "center" }}>
@@ -387,35 +420,32 @@ const FeedPage = ({ match, User, refetchUser, setmessage, setseverity }) => {
           </Box>
 
           <Divider></Divider>
-          
+
           <Box>
-          <InfiniteScroll
-            dataLength={feed.length}
-            next={loadmore}
-            hasMore={hasmore}
-            loader={<CircularProgress color="inherit"></CircularProgress>}
-          >
-            <Box>
-              {feed.map((item) => (
-                <Box key={`feeditemfeedpage${item.id}`}>
-                  <FeedItem
-                    item={item}
-                    setmessage={setmessage}
-                    setseverity={setseverity}
-                    owner={item.owner}
-                    mods={info ? [...info.moderators, info.owner.id] : []}
-                    User={User}
-                  ></FeedItem>
-                </Box>
-              ))}
-            </Box>
-          </InfiniteScroll>
-          </Box>
+            <InfiniteScroll
+              dataLength={feed.length}
+              next={loadmore}
+              hasMore={hasmore}
+              loader={<CircularProgress color="inherit"></CircularProgress>}
+            >
+              <Box>
+                {feed.map((item) => (
+                  <Box key={`feeditemfeedpage${item.id}`}>
+                    <FeedItem
+                      item={item}
+                      setmessage={setmessage}
+                      setseverity={setseverity}
+                      owner={item.owner}
+                      mods={info ? [...info.moderators, info.owner.id] : []}
+                      User={User}
+                    ></FeedItem>
+                  </Box>
+                ))}
+              </Box>
+            </InfiniteScroll>
           </Box>
         </Grid>
-        <Grid size={{ xs: 12, md: 2, sm: 1 }}>
-          
-        </Grid>
+        <Grid size={{ xs: 12, md: 2, sm: 1 }}></Grid>
       </Grid>
     </Box>
   );

@@ -3,12 +3,13 @@ import ChatItem from "./Chatitem"
 import { Box, Button, Icon } from "@mui/material";
 import ExpandIcon from "../utils/ExpandIcon";
 import ForumIcon from '@mui/icons-material/Forum';
+import ChatOptions from "./ChatOptions";
 const Chat = ({type,roomId,headline,User}) => {
   const [Open, setOpen] = useState(false)
     if(type == "feed"){
     if(Open){
     return(
-      <Box sx={{width:200}}>
+      <Box sx={{border:"1px solid",borderRadius:5,padding:1,display:"flex",flexDirection:"column"}}>
               <Button
           className={"button"}
           style={{ borderRadius: 50 }}
@@ -19,7 +20,7 @@ const Chat = ({type,roomId,headline,User}) => {
         >
           <ForumIcon></ForumIcon>Close {headline} Chat <ExpandIcon Open={Open}></ExpandIcon>
         </Button>
-        <ChatItem type={type} roomId={roomId} headline={headline} User={User} size={{width:300,maxWidth:300,height:200}}></ChatItem>
+        <ChatItem type={type} roomId={roomId} headline={headline} User={User} size={{width:500,maxWidth:600,height:200}}></ChatItem>
         </Box>
     )}else{
       return(
@@ -35,9 +36,18 @@ const Chat = ({type,roomId,headline,User}) => {
         </Button>
       )
     }}
-    if(type == "account"){
+    if(type == "chatroom"){
       return(
-        <ChatItem type={type} roomId={roomId} headline={headline} User={User} size={{width:"auto",maxWidth:"auto",height:200}}></ChatItem>
+        <Box >
+                <ChatItem type={type} roomId={roomId} headline={headline} User={User} size={{width:"auto",maxWidth:"auto",height:200}}></ChatItem>
+                </Box>
+      )
+    }
+    if(type == "makechatroom"){
+      return(
+        <Box sx={{width:"auto",height:"auto"}}>
+          <ChatOptions></ChatOptions>
+        </Box>
       )
     }
 }

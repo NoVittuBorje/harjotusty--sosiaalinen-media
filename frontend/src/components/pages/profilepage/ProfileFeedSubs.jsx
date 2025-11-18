@@ -22,7 +22,7 @@ const ProfileFeedSubs = (variables) => {
       >
         {subs.data.getusersubs.map((item) => (
           <Box sx={{ display: "flex", flexDirection: "column" }}>
-            <Box sx={{ flexDirection: "column", padding: 1 }}>
+
               <Link
                 variant="inherit"
                 underline="none"
@@ -49,7 +49,6 @@ const ProfileFeedSubs = (variables) => {
               </Link>
               <Stack></Stack>
             </Box>
-          </Box>
         ))}
       </InfiniteScroll>
     </Box>

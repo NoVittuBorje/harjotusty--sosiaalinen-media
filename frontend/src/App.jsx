@@ -43,9 +43,7 @@ function App() {
   if (!matchuserid) {
     matchuserid = null;
   }
-  if (loading) {
-    return <Box>loading</Box>;
-  }
+
   let User = data ? data.me : null;
   if (!token) {
     User = null;

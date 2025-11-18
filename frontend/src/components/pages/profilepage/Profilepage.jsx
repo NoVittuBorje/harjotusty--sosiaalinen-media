@@ -5,6 +5,7 @@ import {
   FormControl,
   MenuItem,
   Select,
+  Tooltip,
   Typography,
 } from "@mui/material";
 import ProfileFeedComment from "./ProfileFeedComment"
@@ -16,6 +17,7 @@ import useGetUser from "../../hooks/useGetUser";
 import UserAvatar from "../../utils/UserAvatar";
 import parse from "html-react-parser";
 import formatNumber from "../../utils/FormatNumber";
+import numbertoColor from "../../utils/NumbertoColor";
 
 const ProfileFeed = ({ type, id, userdata, User, setmessage, setseverity }) => {
   const variables = {
@@ -103,21 +105,25 @@ const Profilepage = ({ User, match, setmessage, setseverity }) => {
                   paddingBottom: 5,
                   flexDirection: "row",
                   justifyItems: "center",
-                  justifyContent: "center",
+                  justifyContent: "space-between",
                 }}
                 container
               >
                 <Grid>
-                  <Stack>
+                  <Stack direction={"column"} sx={{justifyContent:"center"}}>
                     <Typography variant="h4">{profiledata.username}</Typography>
                     <UserAvatar
                       height={100}
                       width={100}
                       user={profiledata}
                     ></UserAvatar>
-                    <Typography>{`User karma: ${formatNumber(
+                    <Box sx={{justifyContent:"center"}}>
+                    <Tooltip title={profiledata.userKarma}>
+                    <Typography color={numbertoColor(profiledata.userKarma)}>{`Karma: ${formatNumber(
                       profiledata.userKarma
                     )}`}</Typography>
+                    </Tooltip>
+                    </Box>
                   </Stack>
                 </Grid>
 

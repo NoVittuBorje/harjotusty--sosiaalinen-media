@@ -445,4 +445,11 @@
   <td>31</td>
   <td>Made friends list and chat menu.</td>
   </tr>
+      <tr>
+  <td>Nov 18, 2025</td>
+  <td>4</td>
+  <td>236</td>
+  <td>31</td>
+  <td>Finished chatroom menu started on menu for making chatrooms.</td>
+  </tr>
 </table>

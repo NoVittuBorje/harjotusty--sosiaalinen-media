@@ -45,7 +45,6 @@ const FeedModSettings = ({
 
   const OwnerSettings = () => {
     const ChatroomOptions = () => {
-
       if(item.chatRoom){
       return(
             <Button

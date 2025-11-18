@@ -1,18 +1,12 @@
-import AppBar from "@mui/material/AppBar";
 import Toolbar from "@mui/material/Toolbar";
 import Typography from "@mui/material/Typography";
 import IconButton from "@mui/material/IconButton";
-import PeopleIcon from "@mui/icons-material/People";
-import MenuIcon from "@mui/icons-material/Menu";
-import AddIcon from "@mui/icons-material/Add";
-import PersonIcon from "@mui/icons-material/Person";
 import ChatIcon from "@mui/icons-material/Chat";
 import ChatBubbleIcon from "@mui/icons-material/ChatBubble";
 import {
   Box,
   Button,
-  Collapse,
-  Drawer,
+  Divider,
   ListItem,
   ListItemButton,
   ListItemIcon,
@@ -27,174 +21,74 @@ import {
 import { useState } from "react";
 import ExpandIcon from "./ExpandIcon";
 import { useNavigate } from "react-router";
-import useFriendsRequestActions from "../hooks/useFriendsRequestActions";
-import useChatRoomInviteAction from "../hooks/useChatRoomInviteAction";
-import useInviteToChatRoom from "../hooks/useInviteToChatRoom";
-import { Divider } from "@mui/material";
+import AddCircleOutlineIcon from "@mui/icons-material/AddCircleOutline";
 import Chat from "../chatroom/Chat";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 const BottomBar = ({ User, setmessage, setseverity }) => {
-  const [friendsaction, friendsactionresult] = useFriendsRequestActions();
-  const [chatinviteaction, chatactionresult] = useChatRoomInviteAction();
-  const [InviteToChatRoom, chatinviteresult] = useInviteToChatRoom();
-  const [OpenChats, setOpenChats] = useState(false);
-  const [OpenFriends, setOpenFriends] = useState(false);
+  const [OpenedChat, setOpenedChat] = useState(null);
+  const [MakeChatOpen, setMakeChatOpen] = useState(false);
 
+  const [makechatanchorEl, setMakeChatAnchorEl] = useState(null);
   const [chatsanchorEl, setChatsAnchorEl] = useState(null);
-  const [friendsanchorEl, setFriendsAnchorEl] = useState(null);
 
   const isChatsMenuOpen = Boolean(chatsanchorEl);
-  const isFriendsMenuOpen = Boolean(friendsanchorEl);
-
+  const isMakeChatMenuOpen = Boolean();
   const chatsmenuId = "Chats-Menu";
-  const friendsmenuId = "Friends-Menu";
+
   const chatsmenuChatId = "Chats-Menu-chat";
+  const makechatmenuId = "Make-Chat-Menu";
 
   const menuId = "Bottom-Menu";
 
   const navigate = useNavigate();
+
   const handleChatsMenuOpen = (event) => {
     setChatsAnchorEl(event.currentTarget);
-    setFriendsAnchorEl(null);
   };
 
   const handleChatsMenuClose = () => {
     setChatsAnchorEl(null);
+    setOpenedChat(null)
   };
-  const handleFriendsMenuOpen = (event) => {
-    setFriendsAnchorEl(event.currentTarget);
+  const handleMakeChatMenuOpen = (event) => {
+    setMakeChatAnchorEl(event.currentTarget);
+  };
+  const handleMakeChatMenuClose = () => {
     setChatsAnchorEl(null);
-  };
-  const handleFriendsMenuClose = () => {
-    setFriendsAnchorEl(null);
   };
   console.log(User);
   if (!User) {
     return;
   }
-  const FriendsMenu = ({ User }) => {
-    return (
-      <Drawer
-        anchor="right"
-        id={friendsmenuId}
-        keepMounted
-        open={isFriendsMenuOpen}
-        onClose={handleFriendsMenuClose}
-        sx={{ padding: 5 }}
-      >
-        <MenufriendsState User={User}></MenufriendsState>
-      </Drawer>
-    );
-  };
-  const MenufriendsState = ({ User }) => {
-    const [open, setOpen] = useState(false);
-    const Frienditem = ({ item, User }) => {
-      const [Open, setOpen] = useState(false);
-      const [OpenChatInvite, setOpenChatInvite] = useState(false);
-      return (
-        <>
-          <ListItem key={item.id} disablePadding>
-            <ListItemButton onClick={() => setOpen(!Open)}>
-              <ListItemIcon>
-                <PersonIcon />
-              </ListItemIcon>
-              <ListItemText primary={item.username} />
-              <ListItemIcon>
-                <ExpandIcon Open={Open}></ExpandIcon>
-              </ListItemIcon>
-            </ListItemButton>
-          </ListItem>
-          <Collapse in={Open}>
-            <Stack direction={"column"} sx={{ textAlign: "center" }}>
-              <Typography>Actions:</Typography>
-              <Divider></Divider>
-              <Button onClick={() => navigate(`/profile/${item.id}`)}>
-                Go to profile
-              </Button>
-              <Button
-                onClick={() => {
-                  setOpenChatInvite(!OpenChatInvite);
-                }}
-              >
-                invite to chatroom{" "}
-                <ExpandIcon Open={OpenChatInvite}></ExpandIcon>
-              </Button>
-              <Collapse in={OpenChatInvite}>
-                {User.chatrooms ? (
-                  User.chatrooms.map((chatitem) => (
-                    <Button
-                      onClick={() => {
-                        try {
-                          InviteToChatRoom({
-                            roomId: chatitem.id,
-                            invitedId: item.id,
-                          });
-                          setseverity("success");
-                          setmessage(
-                            `Friend ${item.username} invited to ${chatitem.name}`
-                          );
-                        } catch (error) {
-                          setmessage(error.message);
-                          setseverity("error");
-                        }
-                      }}
-                    >
-                      {chatitem.name}
-                    </Button>
-                  ))
-                ) : (
-                  <Typography>No chatrooms to invite to.</Typography>
-                )}
-              </Collapse>
-              <Button>Remove friend</Button>
-            </Stack>
-          </Collapse>
-        </>
-      );
-    };
-    return (
-      <>
-        <ListSubheader>
-          <ListItem key="friends" disablePadding>
-            <ListItemIcon>
-              <PeopleIcon />
-            </ListItemIcon>
-            <ListItemText primary={"Friends"} />
-          </ListItem>
-        </ListSubheader>
-
-        {User.friends ? (
-          User.friends.map((item) => (
-            <Frienditem item={item} User={User}></Frienditem>
-          ))
-        ) : (
-          <Typography>No friends :/.</Typography>
-        )}
-      </>
-    );
+  const MakeChatMenu = ({ User }) => {
+    if (!User) {
+      return;
+    }
+    return <Box>
+      
+    </Box>;
   };
   const ChatsMenu = ({ User }) => {
     console.log(User);
-    const [OpenedChat, setOpenedChat] = useState(null);
+    if (!User) {
+      return;
+    }
     if (OpenedChat) {
       return (
-        <>
+        <Box>
           <Button
             size="small"
             edge="end"
             aria-label="chatsmenu"
             aria-controls={chatsmenuId}
             aria-haspopup="true"
-            onClick={handleChatsMenuOpen}
+            onClick={handleChatsMenuClose}
             color="inherit"
           >
-            <Typography>
-              Chat Rooms
-              <IconButton size="small">
-                <ExpandIcon Open={isChatsMenuOpen}></ExpandIcon>
-              </IconButton>
-            </Typography>
+            Chat Rooms
+            <ExpandIcon Open={isChatsMenuOpen}></ExpandIcon>
           </Button>
+
           <Menu
             anchorEl={chatsanchorEl}
             anchorOrigin={{
@@ -203,29 +97,32 @@ const BottomBar = ({ User, setmessage, setseverity }) => {
             }}
             transformOrigin={{
               vertical: "bottom",
-              horizontal: "left",
+              horizontal: "right",
             }}
             id={chatsmenuChatId}
-            keepMounted
             open={isChatsMenuOpen}
             onClose={handleChatsMenuClose}
-            sx={{ height: 500, width: "auto" }}
           >
-            <IconButton onClick={() => setOpenedChat(null)} size="small">
-              <ArrowBackIcon></ArrowBackIcon>
-            </IconButton>
-            <Chat
-              type={"account"}
-              roomId={OpenedChat.id}
-              headline={OpenedChat.name}
-              User={User}
-            ></Chat>
+            <Box sx={{ border: "1px solid", padding: 1, borderRadius: 4 }}>
+              <IconButton onClick={() => setOpenedChat(null)} size="small">
+                <ArrowBackIcon></ArrowBackIcon>
+              </IconButton>
+              <Box sx={{ width: 600, height: 310 }}>
+                <Chat
+                  type={"chatroom"}
+                  roomId={OpenedChat.id}
+                  headline={OpenedChat.name}
+                  User={User}
+                ></Chat>
+              </Box>
+            </Box>
           </Menu>
-        </>
+        </Box>
       );
     }
+
     return (
-      <>
+      <Box sx={{}}>
         <Button
           size="small"
           edge="end"
@@ -234,14 +131,13 @@ const BottomBar = ({ User, setmessage, setseverity }) => {
           aria-haspopup="true"
           onClick={handleChatsMenuOpen}
           color="inherit"
+          className="button"
+          sx={{ borderRadius: 50 }}
         >
-          <Typography>
-            Chat Rooms
-            <IconButton size="small">
-              <ExpandIcon Open={isChatsMenuOpen}></ExpandIcon>
-            </IconButton>
-          </Typography>
+          Chat Rooms
+          <ExpandIcon Open={isChatsMenuOpen}></ExpandIcon>
         </Button>
+
         <Menu
           anchorEl={chatsanchorEl}
           anchorOrigin={{
@@ -249,18 +145,29 @@ const BottomBar = ({ User, setmessage, setseverity }) => {
             horizontal: "right",
           }}
           id={chatsmenuId}
-          keepMounted
           transformOrigin={{
             vertical: "bottom",
             horizontal: "right",
           }}
           open={isChatsMenuOpen}
           onClose={handleChatsMenuClose}
-          sx={{ padding: 5 }}
         >
-          <ListSubheader>
-            <ListItem key="Chats" disablePadding>
-              <ListItemIcon>
+          <ListItemButton
+            onClick={() => setMakeChatOpen(true)}
+            key="Make-ChatRoom"
+            color="inherit"
+            disablePadding
+          >
+            <ListItemIcon color="inherit">
+              <AddCircleOutlineIcon></AddCircleOutlineIcon>
+            </ListItemIcon>
+            <ListItemText primary={"Make new chatroom"} />
+          </ListItemButton>
+
+          <Divider></Divider>
+          <ListSubheader color="inherit">
+            <ListItem color="inherit" key="Chats" disablePadding>
+              <ListItemIcon color="inherit">
                 <ChatIcon></ChatIcon>
               </ListItemIcon>
               <ListItemText primary={"Chats"} />
@@ -268,15 +175,19 @@ const BottomBar = ({ User, setmessage, setseverity }) => {
           </ListSubheader>
           <MenuList>
             {User.chatrooms.map((item) => (
-              <MenuItem id={item.id} onClick={() => setOpenedChat(item)}>
-                {item.name}
-              </MenuItem>
+              <Box>
+                <MenuItem id={item.id} onClick={() => setOpenedChat(item)}>
+                  {item.name}
+                </MenuItem>
+                <Divider></Divider>
+              </Box>
             ))}
           </MenuList>
         </Menu>
-      </>
+      </Box>
     );
   };
+
   return (
     <>
       <Snackbar
@@ -284,42 +195,15 @@ const BottomBar = ({ User, setmessage, setseverity }) => {
           vertical: "bottom",
           horizontal: "right",
         }}
-        id={menuId}
-        transformOrigin={{
-          vertical: "top",
-          horizontal: "right",
+        sx={{
+          backgroundColor: "background.dark",
+          borderRadius: 50,
+          border: "1px solid",
         }}
+        id={menuId}
         open={true}
       >
-        <Toolbar
-          sx={{
-            backgroundColor: "black",
-            borderRadius: 5,
-          }}
-        >
-          <Box sx={{ display: "block" }}>
-            <Stack direction={"row"}>
-              <Button
-                onClick={handleFriendsMenuOpen}
-                size="small"
-                edge="end"
-                aria-label="friendsmenu"
-                aria-controls={friendsmenuId}
-                aria-haspopup="true"
-                color="inherit"
-              >
-                <Typography>
-                  Friends
-                  <IconButton size="small">
-                    <MenuIcon></MenuIcon>
-                  </IconButton>
-                </Typography>
-              </Button>
-            </Stack>
-          </Box>
-          {ChatsMenu({ User })}
-          {FriendsMenu({ User })}
-        </Toolbar>
+        {ChatsMenu({ User })}
       </Snackbar>
     </>
   );
