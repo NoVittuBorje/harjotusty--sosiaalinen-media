@@ -1,5 +1,5 @@
 import { useState } from "react";
-import ChatItem from "./Chatitem"
+import ChatItem from "./ChatItem"
 import { Box, Button, Icon } from "@mui/material";
 import ExpandIcon from "../utils/ExpandIcon";
 import ForumIcon from '@mui/icons-material/Forum';
