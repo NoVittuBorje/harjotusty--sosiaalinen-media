@@ -126,8 +126,10 @@ const Comment = ({
       );
     }
   };
+
   const Commentitem = ({ comment, index }) => {
     const [showComment, setShowComment] = useState(true);
+    sessionStorage.setItem(comment.id, showComment);
     if (!showComment) {
       return (
         <Box
@@ -146,6 +148,7 @@ const Comment = ({
                 size="small"
                 onClick={() => {
                   setShowComment(true);
+                  sessionStorage.setItem(comment.id, true);
                 }}
               >
                 <AddCircleOutlineIcon></AddCircleOutlineIcon>

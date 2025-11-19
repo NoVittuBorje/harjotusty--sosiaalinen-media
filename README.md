@@ -165,8 +165,8 @@
   </tr>
               <tr>
   <td>31</td>
-  <td>8</td>
-  <td>236</td>
+  <td>12</td>
+  <td>240</td>
   </tr>
 </table>
 

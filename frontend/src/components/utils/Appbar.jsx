@@ -55,6 +55,7 @@ import {
   Tooltip,
   useColorScheme,
   Grid,
+  createFilterOptions,
 } from "@mui/material";
 import AddCircleOutlineIcon from "@mui/icons-material/AddCircleOutline";
 import { useState } from "react";
@@ -65,6 +66,8 @@ import useFriendsRequestActions from "../hooks/useFriendsRequestActions";
 import ExpandIcon from "./ExpandIcon";
 import useChatRoomInviteAction from "../hooks/useChatRoomInviteAction";
 import useInviteToChatRoom from "../hooks/useInviteToChatRoom";
+import useGetSearchUsers from "../hooks/useGetSearchUsers";
+import useSendFriendRequest from "../hooks/useSendFriendRequest";
 
 const Search = styled("div")(({ theme }) => ({
   position: "relative",
@@ -123,6 +126,7 @@ export default function PrimarySearchAppBar({
   const [friendsaction, friendsactionresult] = useFriendsRequestActions();
   const [chatinviteaction, chatactionresult] = useChatRoomInviteAction();
   const [InviteToChatRoom, chatinviteresult] = useInviteToChatRoom();
+  const [SendFriendRequest, sendFriendresult] = useSendFriendRequest();
 
   const [open, setOpen] = useState(false);
 
@@ -214,7 +218,60 @@ export default function PrimarySearchAppBar({
   const debounced = useDebouncedCallback((value) => {
     setSearch(value);
   }, 1000);
+  const UserSearchItem = ({ setSelectedUser, SelectedUser }) => {
+    const [SearchUsers, setSearchUsers] = useState("");
 
+    const { data, error, loading } = useGetSearchUsers({
+      search: SearchUsers,
+    });
+    const filterOptions = createFilterOptions({
+      limit: 10,
+    });
+    const debouncedUsers = useDebouncedCallback((value) => {
+      setSearchUsers(value);
+    }, 1000);
+
+    const searchoptions = data ? data.getsearchusers : [];
+    return (
+      <Box
+        sx={{
+          display: "flex",
+          flexDirection: "column",
+          alignItems: "center",
+          minWidth: "100%",
+        }}
+      >
+        <Autocomplete
+          disablePortal
+          filterOptions={filterOptions}
+          value={SelectedUser}
+          sx={{ minWidth: "100%" }}
+          options={searchoptions}
+          getOptionLabel={(option) => `${option.username}`}
+          getOptionKey={(option) => option.username}
+          renderOption={(params, option) => (
+            <Typography {...params}>{option.username}</Typography>
+          )}
+          renderInput={(params) => (
+            <TextField
+              sx={{
+                minWidth: "90%",
+                input: { color: "inherit" },
+                label: { color: "inherit" },
+              }}
+              size="small"
+              {...params}
+              onChange={(e) => debouncedUsers(e.target.value)}
+              label="Search"
+            />
+          )}
+          onChange={(event, newValue) => {
+            setSelectedUser(newValue);
+          }}
+        />
+      </Box>
+    );
+  };
   const ThemeState = () => {
     const { mode, setMode } = useColorScheme();
 
@@ -486,11 +543,13 @@ export default function PrimarySearchAppBar({
     );
   };
   const MenufriendsState = ({ User }) => {
+    const [SelectedUser, setSelectedUser] = useState(null);
     const Frienditem = ({ item, User }) => {
       const [Open, setOpen] = useState(false);
       const [OpenChatInvite, setOpenChatInvite] = useState(false);
+
       return (
-        <>
+        <Box sx={{ width: 250 }}>
           <ListItem key={item.id} disablePadding>
             <ListItemButton onClick={() => setOpen(!Open)}>
               <ListItemIcon>
@@ -547,11 +606,42 @@ export default function PrimarySearchAppBar({
               <Button>Remove friend</Button>
             </Stack>
           </Collapse>
-        </>
+        </Box>
       );
     };
     return (
       <>
+        <Divider></Divider>
+        <ListSubheader>
+          <ListItem key="addfriends" disablePadding>
+            <ListItemIcon>
+              <PeopleIcon />
+            </ListItemIcon>
+            <ListItemText primary={"Add Friends"} />
+          </ListItem>
+        </ListSubheader>
+        <UserSearchItem
+          setSelectedUser={setSelectedUser}
+          SelectedUser={SelectedUser}
+        ></UserSearchItem>
+        <Button
+          className="button"
+          sx={{ borderRadius: 50 }}
+          onClick={() => {
+              SendFriendRequest({ userId: SelectedUser.id });
+              setmessage(`friend request sent to ${SelectedUser.username}`);
+              setseverity("success");
+              setSelectedUser(null);
+            
+          }}
+          size="small"
+          variant="outlined"
+          color="inherit"
+        >
+          Add
+        </Button>
+
+        <Divider></Divider>
         <ListSubheader>
           <ListItem key="friends" disablePadding>
             <ListItemIcon>
@@ -616,6 +706,7 @@ export default function PrimarySearchAppBar({
       return;
     }
     const friendsRequests = User.friendsRequests;
+    const chatinvites = User.chatroominvites;
     return (
       <>
         <IconButton
@@ -627,7 +718,10 @@ export default function PrimarySearchAppBar({
           onClick={handleNotificationMenuOpen}
           color="inherit"
         >
-          <Badge badgeContent={friendsRequests.length} color="error">
+          <Badge
+            badgeContent={friendsRequests.length + chatinvites.length}
+            color="error"
+          >
             <NotificationsIcon />
           </Badge>
         </IconButton>
@@ -680,9 +774,54 @@ export default function PrimarySearchAppBar({
             })}
           </>
         );
-      } else {
+      }
+      if (User.chatroominvites.length + User.friendsRequests.length == 0) {
         return <Typography>No notifications</Typography>;
       }
+      return;
+    };
+    const ChatInvites = ({ User }) => {
+      if (User.chatroominvites.length > 0) {
+        return (
+          <>
+            <Typography>Chat invites</Typography>
+            {User.chatroominvites.map((item) => {
+              return (
+                <MenuItem sx={{ borderRadius: 5 }}>
+                  <Typography>{item.name}</Typography>
+                  <Tooltip title="accept">
+                    <IconButton
+                      onClick={() =>
+                        chatinviteaction({
+                          type: "accept",
+                          roomId: item.id,
+                        })
+                      }
+                      size="small"
+                    >
+                      <CheckCircleOutlineIcon></CheckCircleOutlineIcon>
+                    </IconButton>
+                  </Tooltip>
+                  <Tooltip title="decline">
+                    <IconButton
+                      onClick={() =>
+                        chatinviteaction({
+                          type: "decline",
+                          roomId: item.id,
+                        })
+                      }
+                      size="small"
+                    >
+                      <NotInterestedIcon></NotInterestedIcon>
+                    </IconButton>
+                  </Tooltip>
+                </MenuItem>
+              );
+            })}
+          </>
+        );
+      }
+      return;
     };
     return (
       <Menu
@@ -711,6 +850,7 @@ export default function PrimarySearchAppBar({
           }}
         >
           <FriendRequests User={User}></FriendRequests>
+          <ChatInvites User={User}></ChatInvites>
         </Stack>
       </Menu>
     );
@@ -736,7 +876,7 @@ export default function PrimarySearchAppBar({
     <Box sx={{ flexGrow: 1 }}>
       <AppBar position="fixed" sx={{ marginBottom: "64px" }}>
         <Toolbar sx={{ display: "flex", justifyContent: "space-between" }}>
-          <Grid container key={"appbar-left"} >
+          <Grid container key={"appbar-left"}>
             <IconButton
               onClick={toggleDrawer(true)}
               size="medium"
@@ -758,7 +898,6 @@ export default function PrimarySearchAppBar({
               color="inherit"
               aria-label="Home button"
               sx={{ mr: 2 }}
-              
               onClick={handleHomeClick}
             >
               <HomeIcon />
@@ -769,119 +908,122 @@ export default function PrimarySearchAppBar({
             container
             sx={{ display: "flex", flexDirection: "row", alignItems: "center" }}
           >
-            <Box sx={{display:"flex"}} size={{xs:0,sm:2,md:3,lg:4,xl:6}}>
-            <Autocomplete
-              disablePortal
-              options={searchoptions}
-              getOptionLabel={(option) => `f/${option.feedname}`}
-              getOptionKey={(option) => option}
-              groupBy={(option) => option.__typename}
-              freeSolo
-              filterOptions={(x) => x}
-              size="small"
-              renderOption={(option) => {
-                if (option.key.__typename == "Feed") {
-                  return (
-                    <li key={option.key.id}>
-                      <Button
-                        sx={{
-                          width: "100%",
-                          textAlign: "left",
-                          textAnchor: "left",
-                        }}
-                        onClick={(event) => {
-                          navigate(`/feed/${option.key.feedname}`);
-                        }}
-                      >
-                        <Typography
-                          textAlign={"left"}
-                          sx={{ textAlign: "left", width: "100%" }}
+            <Box
+              sx={{ display: "flex" }}
+              size={{ xs: 0, sm: 2, md: 3, lg: 4, xl: 6 }}
+            >
+              <Autocomplete
+                disablePortal
+                options={searchoptions}
+                getOptionLabel={(option) => `f/${option.feedname}`}
+                getOptionKey={(option) => option}
+                groupBy={(option) => option.__typename}
+                freeSolo
+                filterOptions={(x) => x}
+                size="small"
+                renderOption={(option) => {
+                  if (option.key.__typename == "Feed") {
+                    return (
+                      <li key={option.key.id}>
+                        <Button
+                          sx={{
+                            width: "100%",
+                            textAlign: "left",
+                            textAnchor: "left",
+                          }}
+                          onClick={(event) => {
+                            navigate(`/feed/${option.key.feedname}`);
+                          }}
                         >
-                          {option.key.feedname}
-                        </Typography>
-                      </Button>
-                    </li>
-                  );
-                }
-                if (option.key.__typename == "Post") {
-                  return (
-                    <li key={option.key.id}>
-                      <Button
-                        sx={{
-                          width: "100%",
-                          textAlign: "left",
-                          textAnchor: "left",
-                        }}
-                        onClick={(event) => {
-                          navigate(`/post/${option.key.id}`);
-                        }}
-                      >
-                        <Typography
-                          textAlign={"left"}
-                          sx={{ textAlign: "left", width: "100%" }}
+                          <Typography
+                            textAlign={"left"}
+                            sx={{ textAlign: "left", width: "100%" }}
+                          >
+                            {option.key.feedname}
+                          </Typography>
+                        </Button>
+                      </li>
+                    );
+                  }
+                  if (option.key.__typename == "Post") {
+                    return (
+                      <li key={option.key.id}>
+                        <Button
+                          sx={{
+                            width: "100%",
+                            textAlign: "left",
+                            textAnchor: "left",
+                          }}
+                          onClick={(event) => {
+                            navigate(`/post/${option.key.id}`);
+                          }}
                         >
-                          {option.key.headline}
-                        </Typography>
-                      </Button>
-                    </li>
-                  );
-                }
-                if (option.key.__typename == "User") {
-                  return (
-                    <li key={option.key.id}>
-                      <Button
-                        sx={{
-                          width: "100%",
-                          textAlign: "left",
-                          textAnchor: "left",
-                        }}
-                        onClick={(event) => {
-                          navigate(`/profile/${option.key.id}`);
-                        }}
-                      >
-                        <Typography
-                          textAlign={"left"}
-                          sx={{ textAlign: "left", width: "100%" }}
+                          <Typography
+                            textAlign={"left"}
+                            sx={{ textAlign: "left", width: "100%" }}
+                          >
+                            {option.key.headline}
+                          </Typography>
+                        </Button>
+                      </li>
+                    );
+                  }
+                  if (option.key.__typename == "User") {
+                    return (
+                      <li key={option.key.id}>
+                        <Button
+                          sx={{
+                            width: "100%",
+                            textAlign: "left",
+                            textAnchor: "left",
+                          }}
+                          onClick={(event) => {
+                            navigate(`/profile/${option.key.id}`);
+                          }}
                         >
-                          {option.key.username}
-                        </Typography>
-                      </Button>
-                    </li>
+                          <Typography
+                            textAlign={"left"}
+                            sx={{ textAlign: "left", width: "100%" }}
+                          >
+                            {option.key.username}
+                          </Typography>
+                        </Button>
+                      </li>
+                    );
+                  }
+                }}
+                renderInput={(params) => {
+                  return (
+                    <Search>
+                      <SearchIconWrapper>
+                        <SearchIcon></SearchIcon>
+                      </SearchIconWrapper>
+                      <StyledInputBase
+                        aria-label="search"
+                        variant="filled"
+                        inputProps={params.inputProps}
+                        ref={params.InputProps.ref}
+                        onChange={(e) => {
+                          debounced(e.target.value);
+                          if (e.target.value == "") {
+                            setSearchvalue("");
+                          } else {
+                            setSearchvalue(e.target.value);
+                          }
+                        }}
+                      />
+                    </Search>
                   );
-                }
-              }}
-              renderInput={(params) => {
-                return (
-                  <Search>
-                    <SearchIconWrapper>
-                      <SearchIcon></SearchIcon>
-                    </SearchIconWrapper>
-                    <StyledInputBase
-                      aria-label="search"
-                      variant="filled"
-                      inputProps={params.inputProps}
-                      ref={params.InputProps.ref}
-                      onChange={(e) => {
-                        debounced(e.target.value);
-                        if (e.target.value == "") {
-                          setSearchvalue("");
-                        } else {
-                          setSearchvalue(e.target.value);
-                        }
-                      }}
-                    />
-                  </Search>
-                );
-              }}
-              renderValue={(value, getItemProps) => (
-                <Chip
-                  key={value.id}
-                  label={value.feedname}
-                  {...getItemProps()}
-                />
-              )}
-            />
-            <ThemeState></ThemeState>
+                }}
+                renderValue={(value, getItemProps) => (
+                  <Chip
+                    key={value.id}
+                    label={value.feedname}
+                    {...getItemProps()}
+                  />
+                )}
+              />
+              <ThemeState></ThemeState>
             </Box>
           </Grid>
           <Grid

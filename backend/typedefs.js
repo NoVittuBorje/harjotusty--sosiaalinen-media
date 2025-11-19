@@ -270,7 +270,7 @@ const typeDefs = `#graphql
     feedId:String
     ):NewRoomResult
 
-    exitRoom(roomId:String!):Room
+
 
     inviteToRoom(
     roomId:String!,
@@ -286,6 +286,7 @@ const typeDefs = `#graphql
     editRoom(
     roomId:String,
     feedId:String,
+    content:String,
     type:String!
     ):NewRoomResult!
 

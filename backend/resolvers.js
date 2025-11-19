@@ -1462,13 +1462,18 @@ const resolvers = {
         const newroom = new Room({
           owner: context.currentUser,
           name: args.name,
+          type: "GROUP",
         });
         await newroom.save();
         const newuser = await User.findByIdAndUpdate(
           { _id: context.currentUser.id },
           { $push: { chatrooms: newroom } }
         );
-        return newroom;
+        const returnuser = await User.findById(context.currentUser.id).populate(
+          "chatrooms",
+          { id: 1, name: 1 }
+        );
+        return returnuser;
       }
       if (args.type == "feedchat") {
         const newroom = new Room({
@@ -1508,6 +1513,38 @@ const resolvers = {
           return new GraphQLError("Not the owner of chat or feed");
         }
       }
+      if (args.type == "leaveroom") {
+        const room = await Room.findById(args.roomId);
+        if (room.owner.id == context.currentUser.id) {
+          await Room.findByIdAndDelete(args.roomId);
+          const newuser = await User.findByIdAndUpdate(
+            context.currentUser._id,
+            {
+              $pull: { chatrooms: args.roomId },
+            }
+          ).populate("chatrooms", { id: 1, name: 1 });
+          return newuser;
+        } else {
+          const newuser = await User.findByIdAndUpdate(
+            context.currentUser._id,
+            {
+              $pull: { chatrooms: args.roomId },
+            }
+          ).populate("chatrooms", { id: 1, name: 1 });
+          const newroom = await Room.findByIdAndUpdate(args.roomId, {
+            $pull: { users: context.currentUser._id },
+          });
+          return newuser;
+        }
+      }
+      if (args.type == "changename") {
+        const newroom = await Room.findByIdAndUpdate(args.roomId, {
+          $set: { name: args.content },
+        });
+        const user = await User.findById(context.currentUser.id).populate("chatrooms",{id:1,name:1})
+        return user;
+      }
+      return new GraphQLError("no such type of action");
     },
     inviteToRoom: async (root, args, context) => {
       const room = await Room.findById(args.roomId);
@@ -1521,27 +1558,23 @@ const resolvers = {
         const newroom = await Room.findByIdAndUpdate(args.roomId, {
           $addToSet: { users: context.currentUser },
         });
-        const newuser = await User.findByIdAndUpdate(context.currentUser._id, {
+
+        const newuser = await User.findByIdAndUpdate(context.currentUser.id, {
           $pull: { chatroominvites: newroom._id },
-        }).populate("chatroominvites", { id: 1, name: 1 });
-        return newuser;
+          $addToSet: { chatrooms: newroom._id },
+        })
+        const returnuser = await User.findById(newuser.id).populate("chatroominvites", { id: 1, name: 1 }).populate("chatrooms",{id:1,name:1});
+        return returnuser;
       }
       if (args.type == "decline") {
-        const newuser = await User.findByIdAndUpdate(context.currentUser._id, {
-          $pull: { chatroominvites: args.invitedId },
-        }).populate("chatroominvites", { id: 1, name: 1 });
-        return newuser;
+        const newuser = await User.findByIdAndUpdate(context.currentUser.id, {
+          $pull: { chatroominvites: args.roomId },
+        })
+        const returnuser = await User.findById(newuser.id).populate("chatroominvites", { id: 1, name: 1 }).populate("chatrooms",{id:1,name:1});
+        return returnuser;
       }
     },
-    exitRoom: async (_, input) => {
-      const query = {
-        user: input.user,
-      };
-      return Room.findOneAndRemove(query).populate({
-        path: "owner",
-        select: ["username", "avatar", "id"],
-      });
-    },
+
     message: async (root, args, context) => {
       const author = context.currentUser;
       const room = await Room.findById(args.roomId);

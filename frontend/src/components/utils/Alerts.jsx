@@ -9,7 +9,7 @@ const Alerts = ({ msg, severity, setmessage, setOpen,open }) => {
           setOpen(false);
           setmessage(null);
         }}
-        anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
+        anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}
         autoHideDuration={6000}
       >
         <Alert

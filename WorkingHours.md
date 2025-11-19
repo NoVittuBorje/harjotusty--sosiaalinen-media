@@ -452,4 +452,11 @@
   <td>31</td>
   <td>Finished chatroom menu started on menu for making chatrooms.</td>
   </tr>
+        <tr>
+  <td>Nov 19, 2025</td>
+  <td>4</td>
+  <td>236</td>
+  <td>31</td>
+  <td>Finished chatroom options and added chat room invite notification and searching friend request.</td>
+  </tr>
 </table>

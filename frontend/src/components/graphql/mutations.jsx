@@ -340,8 +340,13 @@ export const MAKENEWCHATROOM = gql`
   }
 `;
 export const EDITCHATROOM = gql`
-  mutation EditRoom($type: String!, $roomId: String, $feedId: String) {
-    editRoom(type: $type, roomId: $roomId, feedId: $feedId) {
+  mutation EditRoom(
+    $type: String!
+    $roomId: String
+    $feedId: String
+    $content: String
+  ) {
+    editRoom(type: $type, roomId: $roomId, feedId: $feedId, content: $content) {
       ... on Feed {
         feedname
         description
@@ -435,6 +440,20 @@ export const CHATROOMINVITEACTIONS = gql`
       chatroominvites {
         id
         name
+      }
+    }
+  }
+`;
+export const SENDFRIENDREQUEST = gql`
+  mutation SendFriendRequest($userId: String!) {
+    sendFriendRequest(userId: $userId) {
+      username
+      avatar
+      id
+      friendsRequestsSent {
+        username
+        avatar
+        id
       }
     }
   }

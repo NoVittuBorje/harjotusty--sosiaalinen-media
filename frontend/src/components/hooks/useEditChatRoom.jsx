@@ -4,10 +4,10 @@ import { useMutation } from "@apollo/client";
 
 const useEditChatRoom = () => {
   const [mutate, result] = useMutation(EDITCHATROOM);
-  const editroom = async ({ roomId, type, feedId }) => {
+  const editroom = async ({ roomId, type, feedId,content }) => {
 
     const data = await mutate({
-        variables: { roomId: roomId, type: type, feedId: feedId },
+        variables: { roomId: roomId, type: type, feedId: feedId,content:content },
     });
       return data;
     }

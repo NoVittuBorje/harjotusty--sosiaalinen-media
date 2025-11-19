@@ -290,7 +290,7 @@ const FeedPage = ({ match, User, refetchUser, setmessage, setseverity }) => {
             }}
           >
             <AddBoxIcon></AddBoxIcon>
-            Make new Post
+            New Post
           </Button>
         </Box>
       );
