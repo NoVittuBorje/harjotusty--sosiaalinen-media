@@ -31,6 +31,7 @@ const deployment = true;
 var linktows = "localhost:3000"
 if (deployment) {
   linktobackend = "https://backend-harjotus-sosi.fly.dev/";
+  linktows = "backend-harjotus-sosi.fly.dev"
 }
 const httpLink = createUploadLink({
   uri: `${linktobackend}`,
