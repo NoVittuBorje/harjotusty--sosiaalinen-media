@@ -28,10 +28,10 @@ const authLink = setContext((_, { headers }) => {
 
 var linktobackend = "http://localhost:3000";
 const deployment = true;
-var linktows = "localhost:3000"
+var linktows = `ws://localhost:3000/subscriptions`
 if (deployment) {
   linktobackend = "https://backend-harjotus-sosi.fly.dev/";
-  linktows = "https://backend-harjotus-sosi.fly.dev"
+  linktows = `wss://backend-harjotus-sosi.fly.dev/subscriptions`
 }
 const httpLink = createUploadLink({
   uri: `${linktobackend}`,
@@ -79,7 +79,7 @@ const cache = new InMemoryCache({
 
 const wsLink = new GraphQLWsLink(
   createClient({
-    url: `ws://${linktows}/subscriptions`,
+    url: `${linktows}`,
     connectionParams: {
       authToken: sessionStorage.getItem("token") ? `Bearer ${sessionStorage.getItem("token")}` : null,
     },
