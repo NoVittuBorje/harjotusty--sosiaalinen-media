@@ -452,3 +452,22 @@ export const GET_CHAT_MESSAGES_FOR_ROOM = gql`
     }
   }
 `;
+export const GET_CHAT_ROOM_INFO = gql`
+  query Query($roomId: String!) {
+    getChatRoomInfo(roomId: $roomId) {
+      id
+      name
+      type
+      owner {
+        username
+        avatar
+        id
+      }
+      users {
+        username
+        avatar
+        id
+      }
+    }
+  }
+`;

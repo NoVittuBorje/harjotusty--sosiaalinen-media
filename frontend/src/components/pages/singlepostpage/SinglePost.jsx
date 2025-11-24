@@ -37,10 +37,10 @@ const SinglePost = ({ match, User, refetchUser, setmessage, setseverity }) => {
   const id = match.params.id;
   const navigate = useNavigate();
   const [edit] = useEditPost();
-  const { data, loading, error, refetchPost } = useGetPost({ id });
+  const { data, refetchPost } = useGetPost({ id });
 
   const postcomments = useGetPostComments({ postid: id });
-  const [newcomment, result] = useMakeComment();
+  const [newcomment] = useMakeComment();
   const [openNewComment, setopenNewComment] = useState(false);
   const [OpenSettings, setOpenSettings] = useState(false);
   const [openModSettings, setOpenModSettings] = useState(false);
@@ -52,13 +52,13 @@ const SinglePost = ({ match, User, refetchUser, setmessage, setseverity }) => {
     setOpen(false);
   };
   const handleNewComment = async (content) => {
-    const data = await newcomment({ postid: id, content: content.content });
+    await newcomment({ postid: id, content: content.content });
     setopenNewComment(false);
     postcomments.refetchPostComment();
   };
 
   const handleDelete = async () => {
-    const data = await edit({ action: "delete", content: "", postid: id });
+    await edit({ action: "delete", content: "", postid: id });
 
     refetchPost();
     navigate(-1);
@@ -198,7 +198,7 @@ const SinglePost = ({ match, User, refetchUser, setmessage, setseverity }) => {
       if (!mods || !User) {
         return;
       }
-      if (mods.includes(User.id)){
+      if (mods.includes(User.id)) {
         return (
           <IconButton
             className={"button"}
@@ -209,7 +209,8 @@ const SinglePost = ({ match, User, refetchUser, setmessage, setseverity }) => {
           >
             <SettingsIcon></SettingsIcon>
           </IconButton>
-        )}
+        );
+      }
     };
     return (
       <Box sx={{ flexGrow: 1 }}>

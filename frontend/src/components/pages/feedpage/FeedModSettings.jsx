@@ -17,7 +17,7 @@ import ExpandIcon from "../../utils/ExpandIcon";
 import FileUpload from "../../utils/FileUpload";
 import useMakeNewChatRoom from "../../hooks/useMakeChatRoom";
 import useEditChatRoom from "../../hooks/useEditChatRoom";
-import Chat from "../../chatroom/Chat";
+
 
 const FeedModSettings = ({
   infoloading,
@@ -26,9 +26,9 @@ const FeedModSettings = ({
   setFeedEditOpen,
   User,
 }) => {
-  const [editfeed, editfeedresult] = useEditFeed();
-  const [editroom, editroomresult] = useEditChatRoom()
-  const [newroom, newchatresult] = useMakeNewChatRoom();
+  const [editfeed] = useEditFeed();
+  const [editroom] = useEditChatRoom();
+  const [newroom] = useMakeNewChatRoom();
   const [OpenUnban, setOpenUnban] = useState(false);
   const [OpenBan, setOpenBan] = useState(false);
   const [OpenUnMod, setOpenUnMod] = useState(false);
@@ -45,42 +45,45 @@ const FeedModSettings = ({
 
   const OwnerSettings = () => {
     const ChatroomOptions = () => {
-      if(item.chatRoom){
-      return(
-            <Button
-              className="button"
-              sx={{ borderRadius: 50 }}
-              onClick={() =>
-                editroom({
-                  type: "removeChatFeed",
-                  feedId: item.id,
-                })
-              }
-              size="small"
-              variant="outlined"
-              color="inherit"
-            >Remove chatroom from feedpage</Button>
-      )}else{
-        return(
-                      <Button
-              className="button"
-              sx={{ borderRadius: 50 }}
-              onClick={() =>
-                newroom({
-                  type: "feedchat",
-                  feedId: item.id,
-                  name: item.feedname,
-                })
-              }
-              size="small"
-              variant="outlined"
-              color="inherit"
-            >
-              Add chatroom for feedpage
-            </Button>
-        )
+      if (item.chatRoom) {
+        return (
+          <Button
+            className="button"
+            sx={{ borderRadius: 50 }}
+            onClick={() =>
+              editroom({
+                type: "removeChatFeed",
+                feedId: item.id,
+              })
+            }
+            size="small"
+            variant="outlined"
+            color="inherit"
+          >
+            Remove chatroom from feedpage
+          </Button>
+        );
+      } else {
+        return (
+          <Button
+            className="button"
+            sx={{ borderRadius: 50 }}
+            onClick={() =>
+              newroom({
+                type: "feedchat",
+                feedId: item.id,
+                name: item.feedname,
+              })
+            }
+            size="small"
+            variant="outlined"
+            color="inherit"
+          >
+            Add chatroom for feedpage
+          </Button>
+        );
       }
-    }
+    };
     if (item.owner.id == User.id) {
       return (
         <Box
@@ -190,7 +193,7 @@ const FeedModSettings = ({
                 action={"makeowner"}
               ></UserSearchItem>
             </Collapse>
-              <ChatroomOptions></ChatroomOptions>
+            <ChatroomOptions></ChatroomOptions>
           </Stack>
         </Box>
       );
@@ -202,7 +205,7 @@ const FeedModSettings = ({
     const [SearchUsers, setSearchUsers] = useState("");
 
     const [SelectedUser, setSelectedUser] = useState(null);
-    const { data, error, loading } = useGetSearchUsers({
+    const { data } = useGetSearchUsers({
       search: SearchUsers,
     });
     const filterOptions = createFilterOptions({

@@ -35,8 +35,8 @@ const Comment = ({
   const [editopen, setEditOpen] = useState(false);
   const [deleteopen, setDeleteOpen] = useState(false);
   const [ShowComments, setShowComments] = useState(false);
-  const [newcomment, result] = useMakeComment();
-  const [edit, editresult] = useEditComment();
+  const [newcomment] = useMakeComment();
+  const [edit] = useEditComment();
   useEffect(() => {
     if ((sessionStorage.getItem(comment.id) === "true") & !ShowComments) {
       setShowComments(true);
@@ -47,7 +47,7 @@ const Comment = ({
   };
 
   const handleReply = async ({ content, commentid }) => {
-    const data = await newcomment({
+    await newcomment({
       postid,
       content: content,
       replyto: commentid,
@@ -55,10 +55,10 @@ const Comment = ({
     setReplyOpen(!replyopen);
   };
   const handleDel = async ({ commentid, content, action }) => {
-    const data = await edit({ commentid, content, action });
+    await edit({ commentid, content, action });
   };
   const handleMod = async ({ commentid, content, action }) => {
-    const data = await edit({ commentid, content, action });
+    await edit({ commentid, content, action });
   };
 
   const handleEditClick = () => {
@@ -129,8 +129,8 @@ const Comment = ({
 
   const Commentitem = ({ comment, index }) => {
     const [showComment, setShowComment] = useState(true);
-    sessionStorage.setItem(comment.id, showComment);
     if (!showComment) {
+      sessionStorage.setItem(comment.id, showComment);
       return (
         <Box
           sx={{

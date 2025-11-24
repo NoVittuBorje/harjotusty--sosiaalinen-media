@@ -1,5 +1,5 @@
 import { Box, Button, FormGroup, TextField } from "@mui/material";
-import React, { useState } from "react";
+import { useState } from "react";
 
 const CommentForm = ({ onSubmit }) => {
   const [content, setContent] = useState("");

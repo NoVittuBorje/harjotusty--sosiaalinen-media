@@ -14,7 +14,7 @@ const MoreComments = ({
   setmessage,
   setseverity,
 }) => {
-  const { data, error, loading, refetchComments } = useGetComments({
+  const { data,  loading, refetchComments } = useGetComments({
     commentid: comment.id,
   });
 

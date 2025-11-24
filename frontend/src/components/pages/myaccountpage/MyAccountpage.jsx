@@ -25,18 +25,16 @@ import { useFormik } from "formik";
 import * as yup from "yup";
 
 const MyAccountpage = ({ User }) => {
-  const [imagePath, setImagePath] = useState(User.avatar);
+  const [imagePath, setImagePath] = useState(null);
   const [relationship, setRelationship] = useState(User.relationship);
   const [open, setOpen] = useState(false);
   const [avataredit, setavataredit] = useState(false);
-  const [edit, result] = useEditUser();
+  const [edit] = useEditUser();
   const handleRelationshipchange = (event) => {
     setRelationship(event.target.value);
   };
   const [openNationality, setNationalityOpen] = useState(false);
   const [countries, setCountries] = useState([]);
-  const [nationality, setNationality] = useState();
-  const [description, setDescription] = useState(User.description);
   const hook = () => {
     GetCountries().then((res) => {
       setCountries(res.data);
@@ -45,7 +43,7 @@ const MyAccountpage = ({ User }) => {
   useEffect(hook, []);
 
   const handleSave = async ({ content, type }) => {
-    const data = await edit({ content: content, type: type });
+    await edit({ content: content, type: type });
   };
 
   const EditAvatar = () => {
@@ -53,7 +51,20 @@ const MyAccountpage = ({ User }) => {
       return (
         <Box>
           <FileUpload userid={User.id} setImagePath={setImagePath}></FileUpload>
-
+          <Typography>{imagePath ? imagePath[1] : ""}</Typography>
+          <Button
+            className={"button"}
+            style={{ borderRadius: 50 }}
+            size="small"
+            variant="outlined"
+            color="inherit"
+            onClick={() =>
+              handleSave({ content: imagePath[0], type: "Avatar" })
+            }
+          >
+            {" "}
+            save
+          </Button>
           <Button
             className={"button"}
             style={{ borderRadius: 50 }}
@@ -288,11 +299,11 @@ const MyAccountpage = ({ User }) => {
             alignItems: "center",
           }}
         >
-          <Box sx={{display:"block"}}>
-          <TextEditor
-            html={formik.values.description}
-            setHtml={formik.handleChange("description")}
-          ></TextEditor>
+          <Box sx={{ display: "block" }}>
+            <TextEditor
+              html={formik.values.description}
+              setHtml={formik.handleChange("description")}
+            ></TextEditor>
           </Box>
           <Box sx={{ display: "flex", flexDirection: "row" }}>
             <Button
@@ -328,9 +339,7 @@ const MyAccountpage = ({ User }) => {
           }}
         >
           <Typography paddingRight={1}>Description:</Typography>
-          <Box sx={{display:"block"}}>
-          {parse(description)}
-          </Box>
+          <Box sx={{ display: "block" }}>{parse(description)}</Box>
           <Button
             className={"button"}
             style={{ borderRadius: 50 }}

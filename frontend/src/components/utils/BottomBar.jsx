@@ -1,9 +1,7 @@
-import Toolbar from "@mui/material/Toolbar";
-import Typography from "@mui/material/Typography";
 import IconButton from "@mui/material/IconButton";
 import ChatIcon from "@mui/icons-material/Chat";
-import ChatBubbleIcon from "@mui/icons-material/ChatBubble";
-import SettingsIcon from '@mui/icons-material/Settings';
+
+import SettingsIcon from "@mui/icons-material/Settings";
 import {
   Box,
   Button,
@@ -17,21 +15,19 @@ import {
   MenuItem,
   MenuList,
   Snackbar,
-  Stack,
 } from "@mui/material";
 import { useState } from "react";
 import ExpandIcon from "./ExpandIcon";
-import { useNavigate } from "react-router";
-import AddCircleOutlineIcon from "@mui/icons-material/AddCircleOutline";
+
 import Chat from "../chatroom/Chat";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
-const BottomBar = ({ User, setmessage, setseverity }) => {
+const BottomBar = ({ User }) => {
   const [OpenedChat, setOpenedChat] = useState(null);
-  const [MakeChatOpen, setMakeChatOpen] = useState(false);
-
   const [makechatanchorEl, setMakeChatAnchorEl] = useState(null);
   const [chatsanchorEl, setChatsAnchorEl] = useState(null);
-
+  if (!User) {
+    return;
+  }
   const isChatsMenuOpen = Boolean(chatsanchorEl);
   const isMakeChatMenuOpen = Boolean(makechatanchorEl);
 
@@ -40,8 +36,6 @@ const BottomBar = ({ User, setmessage, setseverity }) => {
   const makechatmenuId = "Make-Chat-Menu";
 
   const menuId = "Bottom-Menu";
-
-  const navigate = useNavigate();
 
   const handleChatsMenuOpen = (event) => {
     if (isChatsMenuOpen) {
@@ -57,16 +51,12 @@ const BottomBar = ({ User, setmessage, setseverity }) => {
   };
   const handleMakeChatMenuOpen = () => {
     setMakeChatAnchorEl(chatsanchorEl);
-    handleChatsMenuClose()
+    handleChatsMenuClose();
   };
   const handleMakeChatMenuClose = () => {
-    console.log("juu");
     setMakeChatAnchorEl(null);
   };
-  console.log(User);
-  if (!User) {
-    return;
-  }
+
   const MakeChatsMenu = ({ User }) => {
     return (
       <>
@@ -83,8 +73,7 @@ const BottomBar = ({ User, setmessage, setseverity }) => {
           id={makechatmenuId}
           open={isMakeChatMenuOpen}
           onClose={handleMakeChatMenuClose}
-          
-          sx={{paddingBottom:0,paddingTop:0,borderRadius:5}}
+          sx={{ paddingBottom: 0, paddingTop: 0, borderRadius: 5 }}
         >
           <Box>
             <IconButton onClick={() => handleMakeChatMenuClose()} size="small">
@@ -105,7 +94,6 @@ const BottomBar = ({ User, setmessage, setseverity }) => {
     );
   };
   const ChatsMenu = ({ User }) => {
-    console.log(User);
     if (!User) {
       return;
     }
@@ -142,11 +130,11 @@ const BottomBar = ({ User, setmessage, setseverity }) => {
             open={isChatsMenuOpen}
             onClose={handleChatsMenuClose}
           >
-            <Box sx={{ border: "1px solid", padding: 1, borderRadius: 4 }}>
+            <Box sx={{ padding: 1, borderRadius: 4 }}>
               <IconButton onClick={() => setOpenedChat(null)} size="small">
                 <ArrowBackIcon></ArrowBackIcon>
               </IconButton>
-              <Box sx={{ width: 600, height: 310 }}>
+              <Box sx={{ width: 600, height: 340 }}>
                 <Chat
                   type={"chatroom"}
                   roomId={OpenedChat.id}
@@ -170,7 +158,6 @@ const BottomBar = ({ User, setmessage, setseverity }) => {
           aria-haspopup="true"
           onClick={(e) => {
             handleChatsMenuOpen(e);
-            console.log("2");
           }}
           color="inherit"
           className="button"

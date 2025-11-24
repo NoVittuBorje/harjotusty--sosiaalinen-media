@@ -2,11 +2,9 @@ import {
   Box,
   Divider,
   Grid,
-  List,
   Select,
   MenuItem,
   FormControl,
-  Button,
   CircularProgress,
   Typography,
 } from "@mui/material";
@@ -19,7 +17,6 @@ import { useEffect, useState } from "react";
 const Homescreen = ({ User,setmessage,setseverity }) => {
   if(!localStorage.getItem("HomeorderBy")){localStorage.setItem("HomeorderBy","POPULAR")}
   const [orderBy, setorderBy] = useState(localStorage.getItem("HomeorderBy"));
-  const [open, setOpen] = useState(false);
   useEffect(() => {
     setorderBy(localStorage.getItem("HomeorderBy"))
   },[])
@@ -30,7 +27,7 @@ const Homescreen = ({ User,setmessage,setseverity }) => {
   const variables = {
     orderBy: orderBy,
   };
-  const { data, error, loading, fetchMore } = useGetPopularPosts(variables);
+  const { data, fetchMore } = useGetPopularPosts(variables);
   const handleChange = (event) => {
     setorderBy(event.target.value);
   };

@@ -25,6 +25,7 @@ require("dotenv").config();
 const MONGODB_URI = process.env.MONGODB_URI;
 
 console.log("connecting to", MONGODB_URI);
+
 var linktofrontend = "http://localhost:5173";
 var hostname = "localhost";
 
@@ -90,9 +91,7 @@ const start = async () => {
     graphqlUploadExpress({ maxFileSize: 10000000, maxFiles: 10 }),
     expressMiddleware(server, {
       context: async ({ req }) => {
-        console.log(req.headers.authorization, req.body.operationName);
         const auth = req ? req.headers.authorization : null;
-        console.log(auth);
         if (auth && auth.startsWith("Bearer ")) {
           const decodedToken = jwt.verify(
             auth.substring(7),

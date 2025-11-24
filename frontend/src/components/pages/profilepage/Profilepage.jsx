@@ -8,10 +8,10 @@ import {
   Tooltip,
   Typography,
 } from "@mui/material";
-import ProfileFeedComment from "./ProfileFeedComment"
-import ProfileFeedOwnedFeeds from "./ProfileFeedOwnedFeeds"
-import ProfileFeedPosts from "./ProfileFeedPosts"
-import ProfileFeedSubs from "./ProfileFeedSubs"
+import ProfileFeedComment from "./ProfileFeedComment";
+import ProfileFeedOwnedFeeds from "./ProfileFeedOwnedFeeds";
+import ProfileFeedPosts from "./ProfileFeedPosts";
+import ProfileFeedSubs from "./ProfileFeedSubs";
 import { useState } from "react";
 import useGetUser from "../../hooks/useGetUser";
 import UserAvatar from "../../utils/UserAvatar";
@@ -24,54 +24,53 @@ const ProfileFeed = ({ type, id, userdata, User, setmessage, setseverity }) => {
     id: id,
   };
 
-
   if (type === "posts") {
     return (
       <Box key={"profileposts"}>
-      <ProfileFeedPosts
-        variables={variables}
-        setmessage={setmessage}
-        setseverity={setseverity}
-        userdata={userdata}
-        User={User}
-      ></ProfileFeedPosts>
+        <ProfileFeedPosts
+          variables={variables}
+          setmessage={setmessage}
+          setseverity={setseverity}
+          userdata={userdata}
+          User={User}
+        ></ProfileFeedPosts>
       </Box>
     );
   }
   if (type === "comments") {
     return (
       <Box key={"profilecomments"}>
-      <ProfileFeedComment
-        setmessage={setmessage}
-        setseverity={setseverity}
-        variables={variables}
-        userdata={userdata}
-        User={User}
-      ></ProfileFeedComment>
+        <ProfileFeedComment
+          setmessage={setmessage}
+          setseverity={setseverity}
+          variables={variables}
+          userdata={userdata}
+          User={User}
+        ></ProfileFeedComment>
       </Box>
     );
   }
   if (type === "ownedfeeds") {
     return (
       <Box key={"profileownedfeeds"}>
-      <ProfileFeedOwnedFeeds
-        variables={variables}
-        userdata={userdata}
-      ></ProfileFeedOwnedFeeds>
+        <ProfileFeedOwnedFeeds
+          variables={variables}
+          userdata={userdata}
+        ></ProfileFeedOwnedFeeds>
       </Box>
     );
   }
   if (type === "subs") {
     return (
       <Box key={"profilesubs"}>
-      <ProfileFeedSubs
-        variables={variables}
-        userdata={userdata}
-      ></ProfileFeedSubs>
+        <ProfileFeedSubs
+          variables={variables}
+          userdata={userdata}
+        ></ProfileFeedSubs>
       </Box>
     );
   }
-  return
+  return;
 };
 const Profilepage = ({ User, match, setmessage, setseverity }) => {
   const [type, setType] = useState("posts");
@@ -86,7 +85,6 @@ const Profilepage = ({ User, match, setmessage, setseverity }) => {
   } else {
     const profiledata = userdata.data ? userdata.data.getuser : [];
 
-    
     const ProfileDesc = ({ profiledata }) => {
       if (profiledata.description) {
         return <Box key={"ProfileDesc"}>{parse(profiledata.description)}</Box>;
@@ -110,19 +108,21 @@ const Profilepage = ({ User, match, setmessage, setseverity }) => {
                 container
               >
                 <Grid>
-                  <Stack direction={"column"} sx={{justifyContent:"center"}}>
+                  <Stack direction={"column"} sx={{ justifyContent: "center" }}>
                     <Typography variant="h4">{profiledata.username}</Typography>
                     <UserAvatar
                       height={100}
                       width={100}
                       user={profiledata}
                     ></UserAvatar>
-                    <Box sx={{justifyContent:"center"}}>
-                    <Tooltip title={profiledata.userKarma}>
-                    <Typography color={numbertoColor(profiledata.userKarma)}>{`Karma: ${formatNumber(
-                      profiledata.userKarma
-                    )}`}</Typography>
-                    </Tooltip>
+                    <Box sx={{ justifyContent: "center" }}>
+                      <Tooltip title={profiledata.userKarma}>
+                        <Typography
+                          color={numbertoColor(profiledata.userKarma)}
+                        >{`Karma: ${formatNumber(
+                          profiledata.userKarma
+                        )}`}</Typography>
+                      </Tooltip>
                     </Box>
                   </Stack>
                 </Grid>
@@ -136,9 +136,19 @@ const Profilepage = ({ User, match, setmessage, setseverity }) => {
                     paddingRight: 5,
                   }}
                 >
-                  <Typography>{`Disliked posts: ${profiledata.dislikedposts ? profiledata.dislikedposts.length : "0"}`}</Typography>
-                  <Typography>{`Disliked comments: ${profiledata.dislikedcomments ? profiledata.dislikedcomments.length : "0"}`}</Typography>
-                  <Typography>{`Subs:  ${profiledata.feedsubs ? profiledata.feedsubs.length : "0"}`}</Typography>
+                  <Typography>{`Disliked posts: ${
+                    profiledata.dislikedposts
+                      ? profiledata.dislikedposts.length
+                      : "0"
+                  }`}</Typography>
+                  <Typography>{`Disliked comments: ${
+                    profiledata.dislikedcomments
+                      ? profiledata.dislikedcomments.length
+                      : "0"
+                  }`}</Typography>
+                  <Typography>{`Subs:  ${
+                    profiledata.feedsubs ? profiledata.feedsubs.length : "0"
+                  }`}</Typography>
                 </Grid>
                 <Grid
                   sx={{
@@ -147,18 +157,26 @@ const Profilepage = ({ User, match, setmessage, setseverity }) => {
                     justifyContent: "center",
                   }}
                 >
-                  <Typography>{`Liked posts: ${profiledata.likedposts ? profiledata.likedposts.length : "0"}`}</Typography>
-                  <Typography>{`Liked comments: ${profiledata.likedcomments ? profiledata.likedcomments.length : "0"}`}</Typography>
-                  <Typography>{`Owned feeds: ${profiledata.ownedfeeds ? profiledata.ownedfeeds.length : "0"}`}</Typography>
+                  <Typography>{`Liked posts: ${
+                    profiledata.likedposts ? profiledata.likedposts.length : "0"
+                  }`}</Typography>
+                  <Typography>{`Liked comments: ${
+                    profiledata.likedcomments
+                      ? profiledata.likedcomments.length
+                      : "0"
+                  }`}</Typography>
+                  <Typography>{`Owned feeds: ${
+                    profiledata.ownedfeeds ? profiledata.ownedfeeds.length : "0"
+                  }`}</Typography>
                 </Grid>
               </Grid>
 
               <Grid size={{ xs: 12 }} container flexDirection={"row"}></Grid>
               <Grid></Grid>
               <Divider></Divider>
-              
-                <ProfileDesc profiledata={profiledata}></ProfileDesc>
-              
+
+              <ProfileDesc profiledata={profiledata}></ProfileDesc>
+
               <Divider></Divider>
             </Box>
             <Box sx={{ padding: 1 }}>
@@ -171,26 +189,34 @@ const Profilepage = ({ User, match, setmessage, setseverity }) => {
                   sx={{ color: "inherit" }}
                   onChange={handleChange}
                 >
-                  <Typography key={"sortby"} sx={{ paddingLeft: 2 }}>Sort by</Typography>
-                  <MenuItem key={"posts"} value={"posts"}>Posts</MenuItem>
-                  <MenuItem key={"subs"} value={"subs"}>Subs</MenuItem>
-                  <MenuItem key={"comments"} value={"comments"}>Comments</MenuItem>
-                  <MenuItem key={"ownedfeeds"} value={"ownedfeeds"}>Owned feeds</MenuItem>
+                  <Typography key={"sortby"} sx={{ paddingLeft: 2 }}>
+                    Sort by
+                  </Typography>
+                  <MenuItem key={"posts"} value={"posts"}>
+                    Posts
+                  </MenuItem>
+                  <MenuItem key={"subs"} value={"subs"}>
+                    Subs
+                  </MenuItem>
+                  <MenuItem key={"comments"} value={"comments"}>
+                    Comments
+                  </MenuItem>
+                  <MenuItem key={"ownedfeeds"} value={"ownedfeeds"}>
+                    Owned feeds
+                  </MenuItem>
                 </Select>
               </FormControl>
             </Box>
             <Divider></Divider>
             <Box key={"ProfileFeed"}>
-              
-                <ProfileFeed
-                  id={profiledata.id}
-                  User={User}
-                  userdata={userdata.data.getuser}
-                  type={type}
-                  setmessage={setmessage}
-                  setseverity={setseverity}
-                ></ProfileFeed>
-              
+              <ProfileFeed
+                id={profiledata.id}
+                User={User}
+                userdata={userdata.data.getuser}
+                type={type}
+                setmessage={setmessage}
+                setseverity={setseverity}
+              ></ProfileFeed>
             </Box>
           </Grid>
           <Grid size={{ xs: 12, md: 2 }} sx={{}}></Grid>

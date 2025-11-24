@@ -18,9 +18,9 @@ import * as React from "react";
 import useLogin from "../../hooks/useLogin";
 import { Link, useNavigate } from "react-router";
 
-const LoginPage = ({ setUser, User, refetch }) => {
+const LoginPage = ({ refetch }) => {
   const navigate = useNavigate();
-  const [login, result] = useLogin();
+  const [login] = useLogin();
   const [showPassword, setShowPassword] = React.useState(false);
   const [Username, setUsername] = React.useState("");
   const [Password, setPassword] = React.useState("");

@@ -1,13 +1,8 @@
 import {
-  Accordion,
   Autocomplete,
   Box,
   Button,
   Divider,
-  ListItem,
-  ListItemButton,
-  ListItemIcon,
-  ListItemText,
   Stack,
   TextField,
   Typography,
@@ -17,18 +12,17 @@ import useMakeNewChatRoom from "../hooks/useMakeChatRoom";
 import useEditChatRoom from "../hooks/useEditChatRoom";
 
 const ChatOptions = ({ User, CloseMenu }) => {
-  const [makechatroom, resultmake] = useMakeNewChatRoom();
-  const [editroom, resultedit] = useEditChatRoom();
+  const [makechatroom] = useMakeNewChatRoom();
+  const [editroom] = useEditChatRoom();
   const [ChatName, setChatName] = useState("");
   const [SelectedChat, setSelectedChat] = useState();
 
   const [SelectedChangeChat, setSelectedChangeChat] = useState();
-  const [ChangeChatName, setChangeChatName] = useState("")
-  console.log(ChatName);
+  const [ChangeChatName, setChangeChatName] = useState("");
   const avoidBubblingUp = (e) => {
-  e.stopPropagation();
-    };
-  const chatoptions = User.chatrooms;
+    e.stopPropagation();
+  };
+
   return (
     <Stack rowGap={1} padding={1}>
       <Box
@@ -74,134 +68,130 @@ const ChatOptions = ({ User, CloseMenu }) => {
           display: "flex",
           flexDirection: "column",
           padding: 1,
-                      alignItems: "center",
-            minWidth: "100%",
+          alignItems: "center",
+          minWidth: "100%",
         }}
       >
-
-          <Autocomplete
-            disablePortal
-            value={SelectedChat || null}
-            sx={{ minWidth: "100%" }}
-            options={User ? User.chatrooms : []}
-            getOptionLabel={(option) => `${option.name}`}
-            getOptionKey={(option) => option.name}
-            renderOption={(params, option) => (
-              <Typography {...params}>{option.name}</Typography>
-            )}
-            onKeyDown={avoidBubblingUp}
-            renderInput={(params) => (
-              <TextField
-                sx={{
-                  minWidth: "90%",
-                  input: { color: "inherit" },
-                  label: { color: "inherit" },
-                }}
-                size="small"
-                {...params}
-                label="Your rooms"
-                required
-              />
-            )}
-            onChange={(event, newValue) => {
-              setSelectedChat(newValue);
-            }}
-          />
-
-          <Button
-            className="button"
-            sx={{ borderRadius: 50 }}
-            onClick={() => {
-              editroom({
-                roomId: SelectedChat.id,
-                type: "leaveroom",
-                feedId: "",
-              });
-              CloseMenu();
-            }}
-            size="small"
-            variant="outlined"
-            color="inherit"
-          >
-            leave chat
-          </Button>
-        </Box>
-
-        <Divider></Divider>
-        <Box
-          sx={{
-            border: "1px solid",
-            borderRadius: 4,
-            display: "flex",
-            flexDirection: "column",
-            padding: 1,
-                        alignItems: "center",
-            minWidth: "100%",
+        <Autocomplete
+          disablePortal
+          value={SelectedChat || null}
+          sx={{ minWidth: "100%" }}
+          options={User ? User.chatrooms : []}
+          getOptionLabel={(option) => `${option.name}`}
+          getOptionKey={(option) => option.name}
+          renderOption={(params, option) => (
+            <Typography {...params}>{option.name}</Typography>
+          )}
+          onKeyDown={avoidBubblingUp}
+          renderInput={(params) => (
+            <TextField
+              sx={{
+                minWidth: "90%",
+                input: { color: "inherit" },
+                label: { color: "inherit" },
+              }}
+              size="small"
+              {...params}
+              label="Your rooms"
+              required
+            />
+          )}
+          onChange={(event, newValue) => {
+            setSelectedChat(newValue);
           }}
+        />
+
+        <Button
+          className="button"
+          sx={{ borderRadius: 50 }}
+          onClick={() => {
+            editroom({
+              roomId: SelectedChat.id,
+              type: "leaveroom",
+              feedId: "",
+            });
+            CloseMenu();
+          }}
+          size="small"
+          variant="outlined"
+          color="inherit"
         >
+          leave chat
+        </Button>
+      </Box>
 
-          <Autocomplete
-            disablePortal
-            value={SelectedChangeChat || null}
-            sx={{ minWidth: "100%" }}
-            options={User ? User.chatrooms : []}
-            getOptionLabel={(option) => `${option.name}`}
-            getOptionKey={(option) => option.name}
-            renderOption={(params, option) => (
-              <Typography {...params}>{option.name}</Typography>
-            )}
-            onKeyDown={avoidBubblingUp}
-            renderInput={(params) => (
-              <TextField
-                sx={{
-                  minWidth: "90%",
-                  input: { color: "inherit" },
-                  label: { color: "inherit" },
-                }}
-                size="small"
-                {...params}
-                label="Your rooms"
-                required
-              />
-            )}
-            onChange={(event, newValue) => {
-              setSelectedChangeChat(newValue);
-              setChangeChatName(newValue.name)
-            }}
-          />
-          
-          <TextField
-            color="primary"
-            sx={{ m: 1 ,minWidth:"100%"}}
-            inputProps={{ style: { color: "inherit" } }}
-            variant="outlined"
-            InputLabelProps={{ style: { color: "inherit" } }}
-            value={ChangeChatName}
-            onChange={(event) => setChangeChatName(event.target.value)}
-            label={"New name"}
-            required
-            onKeyDown={avoidBubblingUp}
-          ></TextField>
-          <Button
-            className="button"
-            sx={{ borderRadius: 50 }}
-            onClick={() => {
-              editroom({
-                roomId: SelectedChangeChat.id,
-                type: "changename",
-                content: ChangeChatName,
-              });
-              CloseMenu();
-            }}
-            size="small"
-            variant="outlined"
-            color="inherit"
-          >
-            Change name
-          </Button>
+      <Divider></Divider>
+      <Box
+        sx={{
+          border: "1px solid",
+          borderRadius: 4,
+          display: "flex",
+          flexDirection: "column",
+          padding: 1,
+          alignItems: "center",
+          minWidth: "100%",
+        }}
+      >
+        <Autocomplete
+          disablePortal
+          value={SelectedChangeChat || null}
+          sx={{ minWidth: "100%" }}
+          options={User ? User.chatrooms : []}
+          getOptionLabel={(option) => `${option.name}`}
+          getOptionKey={(option) => option.name}
+          renderOption={(params, option) => (
+            <Typography {...params}>{option.name}</Typography>
+          )}
+          onKeyDown={avoidBubblingUp}
+          renderInput={(params) => (
+            <TextField
+              sx={{
+                minWidth: "90%",
+                input: { color: "inherit" },
+                label: { color: "inherit" },
+              }}
+              size="small"
+              {...params}
+              label="Your rooms"
+              required
+            />
+          )}
+          onChange={(event, newValue) => {
+            setSelectedChangeChat(newValue);
+            setChangeChatName(newValue.name);
+          }}
+        />
 
-        </Box>
-      
+        <TextField
+          color="primary"
+          sx={{ m: 1, minWidth: "100%" }}
+          inputProps={{ style: { color: "inherit" } }}
+          variant="outlined"
+          InputLabelProps={{ style: { color: "inherit" } }}
+          value={ChangeChatName}
+          onChange={(event) => setChangeChatName(event.target.value)}
+          label={"New name"}
+          required
+          onKeyDown={avoidBubblingUp}
+        ></TextField>
+        <Button
+          className="button"
+          sx={{ borderRadius: 50 }}
+          onClick={() => {
+            editroom({
+              roomId: SelectedChangeChat.id,
+              type: "changename",
+              content: ChangeChatName,
+            });
+            CloseMenu();
+          }}
+          size="small"
+          variant="outlined"
+          color="inherit"
+        >
+          Change name
+        </Button>
+      </Box>
     </Stack>
   );
 };

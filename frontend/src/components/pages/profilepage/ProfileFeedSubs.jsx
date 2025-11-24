@@ -14,7 +14,7 @@ const ProfileFeedSubs = (variables) => {
   }
 
   return (
-    <Box sx={{}}>
+    <Box>
       <InfiniteScroll
         dataLength={subs.data.getusersubs.length}
         next={loadmore}

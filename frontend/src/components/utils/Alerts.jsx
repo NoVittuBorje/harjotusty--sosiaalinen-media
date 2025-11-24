@@ -1,4 +1,4 @@
-import { Alert, Box, Snackbar } from "@mui/material";
+import { Alert,  Snackbar } from "@mui/material";
 
 const Alerts = ({ msg, severity, setmessage, setOpen,open }) => {
   if (msg) {

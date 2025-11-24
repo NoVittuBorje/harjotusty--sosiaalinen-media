@@ -16,12 +16,12 @@ import { useState } from "react";
 import PostModSettings from "../pages/singlepostpage/PostModSettings";
 import useGetImageUrl from "../hooks/useGetImageUrl";
 import Locked from "./Locked";
-import PostCommentItem from "./PostCommentItem"
+import PostCommentItem from "./PostCommentItem";
 
-const FeedItem = ({ item, owner, User, mods,setmessage,setseverity }) => {
+const FeedItem = ({ item, owner, User, mods, setmessage, setseverity }) => {
   const navigate = useNavigate();
   const [open, setOpen] = useState(false);
-  
+
   const ModSettings = () => {
     if (!mods | !User) {
       return;
@@ -56,9 +56,11 @@ const FeedItem = ({ item, owner, User, mods,setmessage,setseverity }) => {
         </Box>
       );
     } else {
-      return <Box key={`${item.id}description`} className="feedDesc">
-        {parse(item.description)}
-      </Box>;
+      return (
+        <Box key={`${item.id}description`} className="feedDesc">
+          {parse(item.description)}
+        </Box>
+      );
     }
   };
   return (
@@ -67,60 +69,60 @@ const FeedItem = ({ item, owner, User, mods,setmessage,setseverity }) => {
         className={"feed"}
         sx={{
           boxShadow: 3,
-          backgroundColor:"background.dark",
+          backgroundColor: "background.dark",
           "&:hover": {
             backgroundColor: "background.hover",
           },
         }}
       >
         <Box sx={{ display: "flex", flexDirection: "column" }}>
-            <Box 
-                        onClick={() => {
+          <Box
+            onClick={() => {
               navigate(`/post/${item.id}`);
-            }} sx={{ flexDirection: "column", padding: 1 }}>
-              <Useritem time={item.createdAt} user={owner}></Useritem>
+            }}
+            sx={{ flexDirection: "column", padding: 1 }}
+          >
+            <Useritem time={item.createdAt} user={owner}></Useritem>
 
-              <Box>
-                <Box
-                  sx={{
-                    display: "flex",
-                    flexDirection: "row",
-                    alignItems: "center",
-                    gap: 1,
-                    marginBottom: 1,
-                  }}
+            <Box>
+              <Box
+                sx={{
+                  display: "flex",
+                  flexDirection: "row",
+                  alignItems: "center",
+                  gap: 1,
+                  marginBottom: 1,
+                }}
+              >
+                <Typography variant="h5">{`${item.headline}`}</Typography>
+                <Button
+                  size="small"
+                  color="inherit"
+                  className="button"
+                  sx={{ borderRadius: 50 }}
                 >
-                  <Typography variant="h5">{`${item.headline}`}</Typography>
-                  <Button
-                    size="small"
+                  <Typography
                     color="inherit"
-                    className="button"
-                    sx={{ borderRadius: 50 }}
+                    variant="h8"
+                    underline="none"
+                    onClick={(event) => {
+                      event.stopPropagation();
+                      navigate(`/feed/${item.feed.feedname}`);
+                    }}
                   >
-                    <Typography
-                      color="inherit"
-                      variant="h8"
-                      underline="none"
-                      onClick={(event) => {
-                        event.stopPropagation();
-                        navigate(`/feed/${item.feed.feedname}`);
-                      }}
-                    >
-                      {`f/${item.feed.feedname}`}
-                    </Typography>
-                    
-                  </Button>
-                  <Locked locked={item.locked}></Locked>
-                </Box>
-                <FeedDescription item={item}></FeedDescription>
+                    {`f/${item.feed.feedname}`}
+                  </Typography>
+                </Button>
+                <Locked locked={item.locked}></Locked>
               </Box>
+              <FeedDescription item={item}></FeedDescription>
             </Box>
-          
+          </Box>
 
           <Box className={"footer"}>
             <KarmaItem
-            setmessage={setmessage}
-            setseverity={setseverity}
+              setmessage={setmessage}
+              setseverity={setseverity}
               type={"post"}
               karma={item.karma}
               id={item.id}
@@ -128,7 +130,6 @@ const FeedItem = ({ item, owner, User, mods,setmessage,setseverity }) => {
             ></KarmaItem>
             <PostCommentItem comments={item.commentsCount}></PostCommentItem>
 
-            
             <ModSettings></ModSettings>
           </Box>
 
@@ -138,7 +139,6 @@ const FeedItem = ({ item, owner, User, mods,setmessage,setseverity }) => {
           </Collapse>
         </Box>
       </Box>
-      
     </Box>
   );
 };

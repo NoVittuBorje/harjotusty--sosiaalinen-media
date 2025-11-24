@@ -14,7 +14,7 @@ const ProfileFeedOwnedFeeds = (variables) => {
     return <Box>loading</Box>;
   }
   return (
-    <Box sx={{}}>
+    <Box>
       <InfiniteScroll
         dataLength={ownedfeeds.data.getuserownedfeeds.length}
         next={loadmore}

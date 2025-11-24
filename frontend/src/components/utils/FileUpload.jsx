@@ -1,8 +1,8 @@
-import React, { useCallback } from "react";
+import  { useCallback } from "react";
 import { useDropzone } from "react-dropzone";
 import useUploadImage from "../hooks/useUploadImage";
 const FileUpload = ({ userid, setImagePath,type }) => {
-  const [mutate, result] = useUploadImage();
+  const [mutate] = useUploadImage();
   const onDrop = useCallback(
     (acceptedFiles) => {
       // do something here

@@ -445,7 +445,7 @@
   <td>31</td>
   <td>Made friends list and chat menu.</td>
   </tr>
-      <tr>
+  <tr>
   <td>Nov 18, 2025</td>
   <td>4</td>
   <td>236</td>
@@ -455,8 +455,15 @@
         <tr>
   <td>Nov 19, 2025</td>
   <td>4</td>
-  <td>236</td>
+  <td>240</td>
   <td>31</td>
   <td>Finished chatroom options and added chat room invite notification and searching friend request.</td>
+  </tr>
+          <tr>
+  <td>Nov 24, 2025</td>
+  <td>3</td>
+  <td>244</td>
+  <td>32</td>
+  <td>Finished chatroom options, cleaned lint errors and finished project.</td>
   </tr>
 </table>

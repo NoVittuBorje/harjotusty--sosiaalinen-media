@@ -28,27 +28,17 @@ import AccountBoxIcon from "@mui/icons-material/AccountBox";
 import LogoutIcon from "@mui/icons-material/Logout";
 import LoginIcon from "@mui/icons-material/Login";
 import PersonIcon from "@mui/icons-material/Person";
-import MailIcon from "@mui/icons-material/Mail";
 import NotificationsIcon from "@mui/icons-material/Notifications";
 import CheckCircleOutlineIcon from "@mui/icons-material/CheckCircleOutline";
 import NotInterestedIcon from "@mui/icons-material/NotInterested";
 import PeopleIcon from "@mui/icons-material/People";
-import AddIcon from "@mui/icons-material/Add";
-
 import {
   Autocomplete,
   Badge,
   Chip,
   CircularProgress,
   Collapse,
-  FormControl,
-  FormControlLabel,
-  FormLabel,
   InputBase,
-  Popper,
-  Radio,
-  RadioGroup,
-  Select,
   Stack,
   ListSubheader,
   TextField,
@@ -59,8 +49,6 @@ import {
 } from "@mui/material";
 import AddCircleOutlineIcon from "@mui/icons-material/AddCircleOutline";
 import { useState } from "react";
-import ArrowDropDownIcon from "@mui/icons-material/ArrowDropDown";
-import ArrowDropUpIcon from "@mui/icons-material/ArrowDropUp";
 import UserAvatar from "./UserAvatar";
 import useFriendsRequestActions from "../hooks/useFriendsRequestActions";
 import ExpandIcon from "./ExpandIcon";
@@ -68,6 +56,7 @@ import useChatRoomInviteAction from "../hooks/useChatRoomInviteAction";
 import useInviteToChatRoom from "../hooks/useInviteToChatRoom";
 import useGetSearchUsers from "../hooks/useGetSearchUsers";
 import useSendFriendRequest from "../hooks/useSendFriendRequest";
+import useEditUser from "../hooks/useEditUser";
 
 const Search = styled("div")(({ theme }) => ({
   position: "relative",
@@ -109,6 +98,8 @@ const StyledInputBase = styled(InputBase)(({ theme }) => ({
   },
 }));
 
+
+
 export default function PrimarySearchAppBar({
   User,
   refetch,
@@ -122,24 +113,23 @@ export default function PrimarySearchAppBar({
   const feeds = useGetManyFeeds();
 
   const [search, setSearch] = useState(null);
-  const { data, loading, error, fetchmore } = useGetSearch({ search });
-  const [friendsaction, friendsactionresult] = useFriendsRequestActions();
-  const [chatinviteaction, chatactionresult] = useChatRoomInviteAction();
-  const [InviteToChatRoom, chatinviteresult] = useInviteToChatRoom();
-  const [SendFriendRequest, sendFriendresult] = useSendFriendRequest();
+  const { data } = useGetSearch({ search });
+  const [friendsaction] = useFriendsRequestActions();
+  const [chatinviteaction] = useChatRoomInviteAction();
+  const [InviteToChatRoom] = useInviteToChatRoom();
+  const [SendFriendRequest] = useSendFriendRequest();
+  const [edituser] = useEditUser()
 
   const [open, setOpen] = useState(false);
 
-  const [searchvalue, setSearchvalue] = useState("");
+
   const [anchorEl, setAnchorEl] = useState(null);
   const [loginanchorEl, setLoginAnchorEl] = useState(null);
-  const [searchanchorEl, setSearchAnchorEl] = useState(null);
   const [notificationanchorEl, setNotificationAnchorEl] = useState(null);
   const [friendsanchorEl, setFriendsAnchorEl] = useState(null);
 
   const isMenuOpen = Boolean(anchorEl);
   const isLoginMenuOpen = Boolean(loginanchorEl);
-  const isSearchPopperOpen = Boolean(searchanchorEl);
   const isNotificationPopperOpen = Boolean(notificationanchorEl);
   const isFriendsMenuOpen = Boolean(friendsanchorEl);
 
@@ -148,8 +138,8 @@ export default function PrimarySearchAppBar({
   const notificationId = "notification-menu";
   const friendsmenuId = "Friends-Menu";
 
-  const searchopen = Boolean(searchanchorEl);
-  const searchmenuId = searchopen ? "search-popper" : undefined;
+
+
 
   const handleNotificationMenuOpen = (event) => {
     setNotificationAnchorEl(event.currentTarget);
@@ -173,9 +163,7 @@ export default function PrimarySearchAppBar({
   const handleMenuClose = () => {
     setAnchorEl(null);
   };
-  const handleSearchClose = () => {
-    setSearchAnchorEl(null);
-  };
+
   const handleFriendsMenuOpen = (event) => {
     setFriendsAnchorEl(event.currentTarget);
   };
@@ -197,7 +185,6 @@ export default function PrimarySearchAppBar({
   };
   const handleLogoutClick = () => {
     handleMenuClose();
-
     localStorage.setItem("HomeorderBy", "POPULAR");
     localStorage.setItem("FeedorderBy", "POPULAR");
     sessionStorage.clear();
@@ -218,10 +205,11 @@ export default function PrimarySearchAppBar({
   const debounced = useDebouncedCallback((value) => {
     setSearch(value);
   }, 1000);
+
   const UserSearchItem = ({ setSelectedUser, SelectedUser }) => {
     const [SearchUsers, setSearchUsers] = useState("");
 
-    const { data, error, loading } = useGetSearchUsers({
+    const { data} = useGetSearchUsers({
       search: SearchUsers,
     });
     const filterOptions = createFilterOptions({
@@ -549,7 +537,7 @@ export default function PrimarySearchAppBar({
       const [OpenChatInvite, setOpenChatInvite] = useState(false);
 
       return (
-        <Box sx={{ width: 250 }}>
+        <>
           <ListItem key={item.id} disablePadding>
             <ListItemButton onClick={() => setOpen(!Open)}>
               <ListItemIcon>
@@ -561,6 +549,7 @@ export default function PrimarySearchAppBar({
               </ListItemIcon>
             </ListItemButton>
           </ListItem>
+          <Box sx={{ width: 250 }}>
           <Collapse in={Open}>
             <Stack direction={"column"} sx={{ textAlign: "center" }}>
               <Typography>Actions:</Typography>
@@ -603,10 +592,15 @@ export default function PrimarySearchAppBar({
                   <Typography>No chatrooms to invite to.</Typography>
                 )}
               </Collapse>
-              <Button>Remove friend</Button>
+              <Button
+              onClick={() => {
+                edituser({content:item.id,type:"removefriend"})
+              }}
+              >Remove friend</Button>
             </Stack>
           </Collapse>
         </Box>
+        </>
       );
     };
     return (
@@ -628,11 +622,10 @@ export default function PrimarySearchAppBar({
           className="button"
           sx={{ borderRadius: 50 }}
           onClick={() => {
-              SendFriendRequest({ userId: SelectedUser.id });
-              setmessage(`friend request sent to ${SelectedUser.username}`);
-              setseverity("success");
-              setSelectedUser(null);
-            
+            SendFriendRequest({ userId: SelectedUser.id });
+            setseverity("success");
+            setmessage(`Friend request sent to ${SelectedUser.username}`);
+            setSelectedUser(null)
           }}
           size="small"
           variant="outlined"
@@ -858,20 +851,7 @@ export default function PrimarySearchAppBar({
 
   const NotificationState = MenuNotificationsState({ User });
 
-  const ChatsNotifications = ({ User }) => {
-    const newChatMessages = 0;
-    return (
-      <IconButton
-        size="small"
-        aria-label={`show ${newChatMessages} new mails`}
-        color="inherit"
-      >
-        <Badge badgeContent={newChatMessages} color="error">
-          <MailIcon />
-        </Badge>
-      </IconButton>
-    );
-  };
+
   return (
     <Box sx={{ flexGrow: 1 }}>
       <AppBar position="fixed" sx={{ marginBottom: "64px" }}>
@@ -931,7 +911,7 @@ export default function PrimarySearchAppBar({
                             textAlign: "left",
                             textAnchor: "left",
                           }}
-                          onClick={(event) => {
+                          onClick={() => {
                             navigate(`/feed/${option.key.feedname}`);
                           }}
                         >
@@ -954,7 +934,7 @@ export default function PrimarySearchAppBar({
                             textAlign: "left",
                             textAnchor: "left",
                           }}
-                          onClick={(event) => {
+                          onClick={() => {
                             navigate(`/post/${option.key.id}`);
                           }}
                         >
@@ -977,7 +957,7 @@ export default function PrimarySearchAppBar({
                             textAlign: "left",
                             textAnchor: "left",
                           }}
-                          onClick={(event) => {
+                          onClick={() => {
                             navigate(`/profile/${option.key.id}`);
                           }}
                         >
@@ -1005,11 +985,6 @@ export default function PrimarySearchAppBar({
                         ref={params.InputProps.ref}
                         onChange={(e) => {
                           debounced(e.target.value);
-                          if (e.target.value == "") {
-                            setSearchvalue("");
-                          } else {
-                            setSearchvalue(e.target.value);
-                          }
                         }}
                       />
                     </Search>

@@ -1,5 +1,8 @@
 # harjotusty--sosiaalinen-media
 
+<h5>Link to site https://frontend-harjotus-sosi.fly.dev/</h5>
+
+
 <h5>Record of working hours</h5>
 <table>
   
@@ -168,9 +171,11 @@
   <td>12</td>
   <td>240</td>
   </tr>
+                <tr>
+  <td>32</td>
+  <td>4</td>
+  <td>244</td>
+  </tr>
 </table>
 
 
-
-https://aws.plainenglish.io/building-graphql-api-for-effortless-file-uploads-to-aws-s3-cf9ba8b5bd12
-https://restcountries.com/#endpoints-name

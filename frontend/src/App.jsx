@@ -18,7 +18,7 @@ import ChatRoomsItem from "./components/utils/BottomBar";
 
 function App() {
   const token = sessionStorage.getItem("token");
-  const { data, loading, refetch } = useMe();
+  const { data,  refetch } = useMe();
   const [message, setmessage] = useState(null);
   const [severity, setseverity] = useState(null);
   const [open, setOpen] = useState(false);

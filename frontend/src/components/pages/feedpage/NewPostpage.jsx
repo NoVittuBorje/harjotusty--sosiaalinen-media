@@ -24,7 +24,7 @@ const validationSchema = yup.object().shape({
 const NewPostpage = ({ match, User }) => {
   const navigate = useNavigate();
   const [previewOpen, setPreviewOpen] = useState(false);
-  const [mutate, result] = useMakePost();
+  const [mutate] = useMakePost();
   const [imagepath, setImagePath] = useState("");
   const handleFormSubmit = async () => {
     const data = await mutate({ ...formik.values, img: imagepath[0] });

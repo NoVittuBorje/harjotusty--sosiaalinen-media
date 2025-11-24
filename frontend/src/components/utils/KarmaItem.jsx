@@ -12,10 +12,10 @@ import numbertoColor from "./NumbertoColor";
 
 const KarmaItem = ({ type, id, karma, User, setmessage, setseverity }) => {
   const navigate = useNavigate();
-  const [likecomment, likecommentresult] = useLikeComment();
-  const [dislikecomment, dislikecommentresult] = useDislikeComment();
-  const [likepost, likepostresult] = useLikePost();
-  const [dislikepost, dislikepostresult] = useDislikePost();
+  const [likecomment] = useLikeComment();
+  const [dislikecomment] = useDislikeComment();
+  const [likepost] = useLikePost();
+  const [dislikepost] = useDislikePost();
 
   const [liked, setLiked] = useState(false);
   const [disliked, setDisliked] = useState(false);
@@ -60,9 +60,7 @@ const KarmaItem = ({ type, id, karma, User, setmessage, setseverity }) => {
 
   const handleDislikeComment = async ({ id }) => {
     try {
-
-      const data = await dislikecomment({ id: id });
-
+      await dislikecomment({ id: id });
     } catch (error) {
       setmessage(error.message);
       setseverity("error");
@@ -70,9 +68,7 @@ const KarmaItem = ({ type, id, karma, User, setmessage, setseverity }) => {
   };
   const handleLikeComment = async ({ id }) => {
     try {
-
-      const data = await likecomment({ id: id });
-
+      await likecomment({ id: id });
     } catch (error) {
       setmessage(error.message);
       setseverity("error");
@@ -80,8 +76,7 @@ const KarmaItem = ({ type, id, karma, User, setmessage, setseverity }) => {
   };
   const handleLikePost = async () => {
     try {
-      const data = await likepost({ id: id });
-
+      await likepost({ id: id });
     } catch (error) {
       setmessage(error.message);
       setseverity("error");
@@ -89,8 +84,7 @@ const KarmaItem = ({ type, id, karma, User, setmessage, setseverity }) => {
   };
   const handleDislikePost = async () => {
     try {
-      const data = await dislikepost({ id: id });
-
+      await dislikepost({ id: id });
     } catch (error) {
       setmessage(error.message);
       setseverity("error");
@@ -114,7 +108,13 @@ const KarmaItem = ({ type, id, karma, User, setmessage, setseverity }) => {
           </IconButton>
         </Tooltip>
         <Tooltip title={`${karma} karma`}>
-          <Typography style={{ paddingTop: 0, textAlignVertical: "top", color:numbertoColor(karma)}}>
+          <Typography
+            style={{
+              paddingTop: 0,
+              textAlignVertical: "top",
+              color: numbertoColor(karma),
+            }}
+          >
             {formatNumber(karma)}
           </Typography>
         </Tooltip>
@@ -243,7 +243,13 @@ const KarmaItem = ({ type, id, karma, User, setmessage, setseverity }) => {
         ></LikeButton>
       </Tooltip>
       <Tooltip title={`${karma} karma`}>
-        <Typography style={{ paddingTop: 0, textAlignVertical: "top" ,color:numbertoColor(karma) }}>
+        <Typography
+          style={{
+            paddingTop: 0,
+            textAlignVertical: "top",
+            color: numbertoColor(karma),
+          }}
+        >
           {formatNumber(karma)}
         </Typography>
       </Tooltip>

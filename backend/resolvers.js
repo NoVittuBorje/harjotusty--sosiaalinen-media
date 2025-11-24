@@ -608,6 +608,12 @@ const resolvers = {
 
       return messages;
     },
+    getChatRoomInfo: async (root, args, context) => {
+      const room = await Room.findById(args.roomId)
+        .populate("users", { id: 1, username: 1, avatar: 1 })
+        .populate("owner", { id: 1, username: 1, avatar: 1 });
+      return room;
+    },
   },
 
   Mutation: {
@@ -1119,6 +1125,12 @@ const resolvers = {
           throw new GraphQLError(e);
         }
       }
+      if (args.type === "removefriend") {
+        const newuser = await User.findByIdAndUpdate(user.id, {
+          $pull: { friends: args.content },
+        }).populate("friends", { id: 1, username: 1, avatar: 1 });
+        return newuser;
+      }
     },
     modifyFeed: async (root, args, context) => {
       const feed = await Feed.findById(args.feedid)
@@ -1537,11 +1549,33 @@ const resolvers = {
           return newuser;
         }
       }
+      if (args.type == "kick") {
+        const room = await Room.findById(args.roomId).populate("owner", {
+          id: 1,
+        });
+
+        if (room.owner.id == context.currentUser.id) {
+          const newroom = await Room.findByIdAndUpdate(args.roomId, {
+            $pull: { users: args.content },
+          })
+            .populate("users", { id: 1, username: 1, avatar: 1 })
+            .populate("owner", { id: 1, username: 1, avatar: 1 });
+          const newuser = await User.findByIdAndUpdate(args.content, {
+            $pull: { chatrooms: args.roomId },
+          });
+          return newroom;
+        } else {
+          return new GraphQLError("not owner");
+        }
+      }
       if (args.type == "changename") {
         const newroom = await Room.findByIdAndUpdate(args.roomId, {
           $set: { name: args.content },
         });
-        const user = await User.findById(context.currentUser.id).populate("chatrooms",{id:1,name:1})
+        const user = await User.findById(context.currentUser.id).populate(
+          "chatrooms",
+          { id: 1, name: 1 }
+        );
         return user;
       }
       return new GraphQLError("no such type of action");
@@ -1556,21 +1590,25 @@ const resolvers = {
     roomInviteAction: async (root, args, context) => {
       if (args.type == "accept") {
         const newroom = await Room.findByIdAndUpdate(args.roomId, {
-          $addToSet: { users: context.currentUser },
+          $addToSet: { users: context.currentUser._id },
         });
 
         const newuser = await User.findByIdAndUpdate(context.currentUser.id, {
           $pull: { chatroominvites: newroom._id },
           $addToSet: { chatrooms: newroom._id },
-        })
-        const returnuser = await User.findById(newuser.id).populate("chatroominvites", { id: 1, name: 1 }).populate("chatrooms",{id:1,name:1});
+        });
+        const returnuser = await User.findById(newuser.id)
+          .populate("chatroominvites", { id: 1, name: 1 })
+          .populate("chatrooms", { id: 1, name: 1 });
         return returnuser;
       }
       if (args.type == "decline") {
         const newuser = await User.findByIdAndUpdate(context.currentUser.id, {
           $pull: { chatroominvites: args.roomId },
-        })
-        const returnuser = await User.findById(newuser.id).populate("chatroominvites", { id: 1, name: 1 }).populate("chatrooms",{id:1,name:1});
+        });
+        const returnuser = await User.findById(newuser.id)
+          .populate("chatroominvites", { id: 1, name: 1 })
+          .populate("chatrooms", { id: 1, name: 1 });
         return returnuser;
       }
     },
@@ -1606,6 +1644,9 @@ const resolvers = {
       if (!context.currentUser) {
         return new GraphQLError("No user logon.");
       }
+      if (args.userId == context.currentUser.id) {
+        return new GraphQLError("Cant send friend request to yourself!");
+      }
       const requestedUser = await User.findByIdAndUpdate(
         { _id: args.userId },
         { $addToSet: { friendsRequests: context.currentUser._id } }
@@ -1622,7 +1663,9 @@ const resolvers = {
         const newuser = await User.findByIdAndUpdate(context.currentUser.id, {
           $addToSet: { friends: accepteduser._id },
           $pull: { friendsRequests: accepteduser._id },
-        }).populate("friends", { username: 1, id: 1, avatar: 1 });
+        })
+          .populate("friends", { username: 1, id: 1, avatar: 1 })
+          .populate("friendsRequests", { username: 1, id: 1, avatar: 1 });
         const newaccepteduser = await User.findByIdAndUpdate(accepteduser.id, {
           $addToSet: { friends: context.currentUser._id },
           $pull: { friendsRequestsSent: context.currentUser._id },
@@ -1633,7 +1676,9 @@ const resolvers = {
         const declineduser = await User.findById(args.userId);
         const newuser = await User.findByIdAndUpdate(context.currentUser.id, {
           $pull: { friendsRequests: declineduser._id },
-        });
+        })
+          .populate("friends", { username: 1, id: 1, avatar: 1 })
+          .populate("friendsRequests", { username: 1, id: 1, avatar: 1 });
         const newdeclineduser = await User.findByIdAndUpdate(declineduser.id, {
           $pull: { friendsRequestsSent: context.currentUser._id },
         });

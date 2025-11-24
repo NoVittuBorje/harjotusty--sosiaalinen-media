@@ -1,9 +1,9 @@
 import Comment from "./Comment";
 import useMakeComment from "../hooks/useMakeComment";
-import { Box, CircularProgress, Collapse, IconButton } from "@mui/material";
+import { Box, CircularProgress, Collapse } from "@mui/material";
 import useEditComment from "../hooks/useEditComment";
 import InfiniteScroll from "react-infinite-scroll-component";
-import { useEffect, useState } from "react";
+import {  useState } from "react";
 const CommentSection = ({
   User,
   postid,
@@ -16,17 +16,17 @@ const CommentSection = ({
   setmessage,
   setseverity,
 }) => {
-  const [newcomment, result] = useMakeComment();
-  const [edit, editresult] = useEditComment();
+  const [newcomment] = useMakeComment();
+  const [edit] = useEditComment();
 
   const handleDelete = async ({ commentid, content, action }) => {
-    const data = await edit({ commentid, content, action });
+    await edit({ commentid, content, action });
   };
   const handleModify = async ({ commentid, content, action }) => {
-    const data = await edit({ commentid, content, action });
+    await edit({ commentid, content, action });
   };
   const handleReply = async ({ content, commentid }) => {
-    const data = await newcomment({
+    await newcomment({
       postid,
       content: content,
       replyto: commentid,
@@ -36,14 +36,14 @@ const CommentSection = ({
   };
 
   const handleDislike = async ({ id }) => {
-    const data = await edit({
+    await edit({
       commentid: id,
       content: "null",
       action: "dislike",
     });
   };
   const handleLike = async ({ id }) => {
-    const data = await edit({ commentid: id, content: "null", action: "like" });
+    await edit({ commentid: id, content: "null", action: "like" });
   };
   if (loading) {
     return <CircularProgress></CircularProgress>;

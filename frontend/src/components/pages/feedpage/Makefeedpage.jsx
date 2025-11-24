@@ -17,7 +17,7 @@ const validationSchema = yup.object().shape({
   description: yup.string().min(10).max(1000).required(),
 });
 const MakeFeedPage = () => {
-  const [make, result] = useMakeFeed();
+  const [make] = useMakeFeed();
 
   const navigate = useNavigate();
   const handleFormSubmit = async () => {

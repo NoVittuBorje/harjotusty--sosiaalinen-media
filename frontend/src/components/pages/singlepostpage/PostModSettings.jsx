@@ -1,9 +1,7 @@
 import { Box, Button, Stack, Typography } from "@mui/material"
 import useEditFeed from "../../hooks/useEditFeed";
 const PostModSettings = ({item}) => {
-    const [editfeed, editfeedresult] = useEditFeed()
-    const mods = item.feed.moderators
-    const owner = item.feed.owner
+    const [editfeed] = useEditFeed()
     const LockState = () => {
       if(item.locked){
         return(

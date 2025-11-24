@@ -1,5 +1,4 @@
 import {
-  Autocomplete,
   Box,
   Button,
   CircularProgress,
@@ -7,14 +6,10 @@ import {
   Divider,
   FormControl,
   Grid,
-  Icon,
   IconButton,
-  List,
-  ListItem,
   MenuItem,
   Select,
   Stack,
-  TextField,
   Typography,
 } from "@mui/material";
 import useGetFeed from "../../hooks/useGetFeed";
@@ -62,11 +57,11 @@ const FeedPage = ({ match, User, refetchUser, setmessage, setseverity }) => {
 
   const navigate = useNavigate();
   const feedinfo = useGetFeed({ feedname });
-  const { data, loading, error, fetchMore, refetch } =
+  const { data ,fetchMore  } =
     useGetFeedPosts(variables);
-  const [editfeed, resultedit] = useEditFeed();
+  const [editfeed] = useEditFeed();
 
-  const [sub, resultsub] = useSubscribe();
+  const [sub] = useSubscribe();
   const [OpenSettings, setOpenSettings] = useState(false);
   const [FeedEditOpen, setFeedEditOpen] = useState(false);
   const handleSave = async ({ content, feedid, action }) => {
@@ -84,7 +79,7 @@ const FeedPage = ({ match, User, refetchUser, setmessage, setseverity }) => {
     setorderBy(event.target.value);
   };
   const Subscribe = async ({ feedname, type }) => {
-    const data = await sub({ feedname, type });
+    await sub({ feedname, type });
 
     refetchUser();
     feedinfo.refetch();
@@ -95,7 +90,6 @@ const FeedPage = ({ match, User, refetchUser, setmessage, setseverity }) => {
     if (infoloading) {
       return <CircularProgress color="inherit"></CircularProgress>;
     }
-    console.log("info");
     return (
       <Box
         sx={{
@@ -180,8 +174,19 @@ const FeedPage = ({ match, User, refetchUser, setmessage, setseverity }) => {
     if (infoloading) {
       return <CircularProgress color="inherit"></CircularProgress>;
     }
-    console.log(info.description);
-    console.log("desc");
+    if (FeedEditOpen) {
+      return (
+        <Box sx={{ padding: 1, display: "flex" }}>
+          <Stack direction={"column"}>
+            <Stack direction={"row"} alignItems={"center"} gap={2} padding={1}>
+              <FeedAvatar width={100} height={100} feed={info}></FeedAvatar>
+              <Typography variant="h5">{`f/${info.feedname}`}</Typography>
+            </Stack>
+            <FeedEdit info={info} User={User}></FeedEdit>
+          </Stack>
+        </Box>
+      );
+    }
     return (
       <Box sx={{ padding: 1, display: "flex" }}>
         <Stack direction={"column"}>
@@ -218,21 +223,26 @@ const FeedPage = ({ match, User, refetchUser, setmessage, setseverity }) => {
     }
   };
   const FeedEdit = ({ info, User }) => {
-    if(!info){return}
+    if (!info) {
+      return;
+    }
     const mods = [...info.moderators.map((mod) => mod.id), info.owner.id];
     if (!mods || !User) {
       return;
     }
     if (mods.includes(User.id)) {
-    return (
-      <Collapse in={FeedEditOpen}>
-        <EditFeedDesc
-          setOpen={setFeedEditOpen}
-          handleSave={handleSave}
-          feed={info ? info.description : null}
-        ></EditFeedDesc>
-      </Collapse>
-    );}else{return}
+      return (
+        <Collapse in={FeedEditOpen}>
+          <EditFeedDesc
+            setOpen={setFeedEditOpen}
+            handleSave={handleSave}
+            feed={info ? info.description : null}
+          ></EditFeedDesc>
+        </Collapse>
+      );
+    } else {
+      return;
+    }
   };
   const SubButton = ({ User }) => {
     if (!User) {
@@ -361,12 +371,6 @@ const FeedPage = ({ match, User, refetchUser, setmessage, setseverity }) => {
                 </Box>
               </Box>
             </Box>
-            <FeedEdit
-              info={info}
-              infoloading={infoloading}
-              User={User}
-            ></FeedEdit>
-
             <Box sx={{ display: "flex", justifyContent: "end" }}>
               <Collapse
                 sx={{

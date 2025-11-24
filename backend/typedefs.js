@@ -193,6 +193,8 @@ const typeDefs = `#graphql
     getMessages(roomId: String!,offset:Int): [Message!]
 
     getMessagesForRoom(roomId:String!): Room!
+
+    getChatRoomInfo(roomId:String!): Room!
   }
   
   type Mutation {
