@@ -1519,8 +1519,9 @@ const resolvers = {
           const newfeed = await Feed.findByIdAndUpdate(
             { _id: feed._id },
             { chatRoom: null }
-          ).populate({path:"chatRoom", select:[ "id" ,"name","type","owner","users"],populate:{ path: ["users","owner"], select: ["id", "username", "avatar"] },})
-          return newfeed;
+          )
+          const resfeed = await Feed.findById(feed._id).populate({path:"chatRoom", select:[ "id" ,"name","type","owner","users"],populate:{ path: ["users","owner"], select: ["id", "username", "avatar"] },})
+          return resfeed;
         } else {
           return new GraphQLError("Not the owner of chat or feed");
         }
