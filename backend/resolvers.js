@@ -1343,6 +1343,27 @@ const resolvers = {
             throw new GraphQLError(e);
           }
         }
+        if (args.action == "makeowner") {
+          try {
+            const newowner = await User.findById(args.content)
+            const newfeed = await Feed.findOneAndUpdate(
+              { _id: feed._id },
+              { $set: { owner: newowner._id } }
+            );
+            const updateowner = await User.findByIdAndUpdate({_id: newowner._id},{$push:{ownedfeeds:newfeed._id}})
+            const oldowner = await User.findByIdAndUpdate({_id: context.currentUser._id},{$pop:{ownedfeeds:newfeed._id}})
+            const res = await Feed.findById(feed._id)
+              .populate("bannedusers", {
+                id: 1,
+                username: 1,
+              })
+              .populate("moderators", { id: 1, username: 1, avatar: 1 })
+              .populate("owner", { id: 1, username: 1, avatar: 1 });
+            return res;
+          } catch (e) {
+            throw new GraphQLError(e);
+          }
+        }
       } else {
         console.log("notmod");
       }
