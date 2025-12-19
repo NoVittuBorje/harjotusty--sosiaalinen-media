@@ -10,7 +10,6 @@ const EditFeedDesc = ({ feed, handleSave, setOpen }) => {
     description: yup.string().min(10).required(),
   });
   const description = feed ? feed : "";
-  console.log(feed)
   const formik = useFormik({
     initialValues: {
       description: description,

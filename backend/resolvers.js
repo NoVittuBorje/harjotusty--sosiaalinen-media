@@ -774,8 +774,8 @@ const resolvers = {
       const newuser = await User.findByIdAndUpdate(
         { _id: user._id },
         { $push: { ownedfeeds: newfeed._id } }
-      );
-      return newfeed;
+      ).populate({path:ownedfeeds,select:["id","feedname"]});
+      return newuser;
     },
     likeComment: async (root, args, context) => {
       const user = context.currentUser;
@@ -1519,7 +1519,7 @@ const resolvers = {
           const newfeed = await Feed.findByIdAndUpdate(
             { _id: feed._id },
             { chatRoom: null }
-          );
+          ).populate({path:"chatRoom", select:[ "id" ,"name","type","owner","users"],populate:{ path: ["users","owner"], select: ["id", "username", "avatar"] },})
           return newfeed;
         } else {
           return new GraphQLError("Not the owner of chat or feed");
