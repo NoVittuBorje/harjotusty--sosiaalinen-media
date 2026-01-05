@@ -747,7 +747,10 @@ const resolvers = {
         { _id: user._id },
         { $push: { ownedfeeds: newfeed._id } }
       );
-      const res = await User.findById(context.currentUser._id).populate({ path: "ownedfeeds", select: ["id", "feedname"] })
+      const res = await User.findById(context.currentUser._id).populate({
+        path: "ownedfeeds",
+        select: ["id", "feedname"],
+      });
       return res;
     },
     likeComment: async (root, args, context) => {
@@ -1100,6 +1103,25 @@ const resolvers = {
           $pull: { friends: args.content },
         }).populate("friends", { id: 1, username: 1, avatar: 1 });
         return newuser;
+      }
+      if (args.type === "Deleteuser") {
+        try {
+          user.username = `Deleted_User`
+          user.active = false;
+          user.email = "deleted@email.com";
+          user.nationality = null;
+          user.work = null;
+          user.relationship = null;
+          user.firstname = null;
+          user.lastname = null;
+          user.description = null;
+          user.avatar = null;
+          user.save()
+          await User.findByIdAndUpdate(user.id,{$set:{password_hash:uuidv4()}})
+          return user;
+        } catch (e) {
+          throw new GraphQLError(e);
+        }
       }
     },
     modifyFeed: async (root, args, context) => {

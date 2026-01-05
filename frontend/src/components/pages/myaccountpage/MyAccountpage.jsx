@@ -23,6 +23,7 @@ import TextEditor from "../../utils/TextEditor";
 import parse from "html-react-parser";
 import { useFormik } from "formik";
 import * as yup from "yup";
+import { useNavigate } from "react-router";
 
 const MyAccountpage = ({ User }) => {
   const [imagePath, setImagePath] = useState(null);
@@ -30,6 +31,7 @@ const MyAccountpage = ({ User }) => {
   const [open, setOpen] = useState(false);
   const [avataredit, setavataredit] = useState(false);
   const [edit] = useEditUser();
+  const navigate = useNavigate();
   const handleRelationshipchange = (event) => {
     setRelationship(event.target.value);
   };
@@ -411,6 +413,25 @@ const MyAccountpage = ({ User }) => {
                 valueType={"Work"}
                 handleSave={handleSave}
               ></EditFieldItem>
+              <Box sx={{ borderTop: 1, padding: 1 }}>
+                <Button
+                  onClick={() => {
+                    if (confirm("Are you sure you want to delete account")) {
+                      if (
+                        confirm("Are you sure sure you want to delete account")
+                      ) {
+                        edit({ type: "Deleteuser", content: "delete" });
+                        localStorage.setItem("HomeorderBy", "POPULAR");
+                        localStorage.setItem("FeedorderBy", "POPULAR");
+                        sessionStorage.clear();
+                        navigate("/");}
+                      
+                    }
+                  }}
+                >
+                  Delete account
+                </Button>
+              </Box>
             </Stack>
           </Box>
         </Grid>

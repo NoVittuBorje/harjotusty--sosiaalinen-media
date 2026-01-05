@@ -98,8 +98,6 @@ const StyledInputBase = styled(InputBase)(({ theme }) => ({
   },
 }));
 
-
-
 export default function PrimarySearchAppBar({
   User,
   refetch,
@@ -118,10 +116,9 @@ export default function PrimarySearchAppBar({
   const [chatinviteaction] = useChatRoomInviteAction();
   const [InviteToChatRoom] = useInviteToChatRoom();
   const [SendFriendRequest] = useSendFriendRequest();
-  const [edituser] = useEditUser()
+  const [edituser] = useEditUser();
 
   const [open, setOpen] = useState(false);
-
 
   const [anchorEl, setAnchorEl] = useState(null);
   const [loginanchorEl, setLoginAnchorEl] = useState(null);
@@ -137,9 +134,6 @@ export default function PrimarySearchAppBar({
   const loginMenuId = "login-menu";
   const notificationId = "notification-menu";
   const friendsmenuId = "Friends-Menu";
-
-
-
 
   const handleNotificationMenuOpen = (event) => {
     setNotificationAnchorEl(event.currentTarget);
@@ -209,7 +203,7 @@ export default function PrimarySearchAppBar({
   const UserSearchItem = ({ setSelectedUser, SelectedUser }) => {
     const [SearchUsers, setSearchUsers] = useState("");
 
-    const { data} = useGetSearchUsers({
+    const { data } = useGetSearchUsers({
       search: SearchUsers,
     });
     const filterOptions = createFilterOptions({
@@ -532,126 +526,140 @@ export default function PrimarySearchAppBar({
   };
   const MenufriendsState = ({ User }) => {
     const [SelectedUser, setSelectedUser] = useState(null);
+    const [OpenAddFriend, setOpenAddFriend] = useState(false);
     const Frienditem = ({ item, User }) => {
       const [Open, setOpen] = useState(false);
       const [OpenChatInvite, setOpenChatInvite] = useState(false);
 
       return (
         <>
-          <ListItem key={item.id} disablePadding>
-            <ListItemButton onClick={() => setOpen(!Open)}>
-              <ListItemIcon>
-                <PersonIcon />
-              </ListItemIcon>
-              <ListItemText primary={item.username} />
-              <ListItemIcon>
-                <ExpandIcon Open={Open}></ExpandIcon>
-              </ListItemIcon>
-            </ListItemButton>
-          </ListItem>
-          <Box sx={{ width: 250 }}>
-          <Collapse in={Open}>
-            <Stack direction={"column"} sx={{ textAlign: "center" }}>
-              <Typography>Actions:</Typography>
-              <Divider></Divider>
-              <Button onClick={() => navigate(`/profile/${item.id}`)}>
-                Go to profile
-              </Button>
-              <Button
-                onClick={() => {
-                  setOpenChatInvite(!OpenChatInvite);
-                }}
-              >
-                invite to chatroom{" "}
-                <ExpandIcon Open={OpenChatInvite}></ExpandIcon>
-              </Button>
-              <Collapse in={OpenChatInvite}>
-                {User.chatrooms ? (
-                  User.chatrooms.map((chatitem) => (
-                    <Button
-                      onClick={() => {
-                        try {
-                          InviteToChatRoom({
-                            roomId: chatitem.id,
-                            invitedId: item.id,
-                          });
-                          setseverity("success");
-                          setmessage(
-                            `Friend ${item.username} invited to ${chatitem.name}`
-                          );
-                        } catch (error) {
-                          setmessage(error.message);
-                          setseverity("error");
-                        }
-                      }}
-                    >
-                      {chatitem.name}
-                    </Button>
-                  ))
-                ) : (
-                  <Typography>No chatrooms to invite to.</Typography>
-                )}
-              </Collapse>
-              <Button
-              onClick={() => {
-                edituser({content:item.id,type:"removefriend"})
-              }}
-              >Remove friend</Button>
-            </Stack>
-          </Collapse>
-        </Box>
+          <Box key={item.id} sx={{ width: 250 }}>
+            <ListItem disablePadding>
+              <ListItemButton onClick={() => setOpen(!Open)}>
+                <ListItemIcon>
+                  <PersonIcon />
+                </ListItemIcon>
+                <ListItemText primary={item.username} />
+                <ListItemIcon>
+                  <ExpandIcon Open={Open}></ExpandIcon>
+                </ListItemIcon>
+              </ListItemButton>
+            </ListItem>
+
+            <Collapse key={item.username} in={Open}>
+              <Stack direction={"column"} sx={{ textAlign: "center" }}>
+                <Typography>Actions:</Typography>
+                <Divider></Divider>
+                <Button onClick={() => navigate(`/profile/${item.id}`)}>
+                  Go to profile
+                </Button>
+                <Button
+                  onClick={() => {
+                    setOpenChatInvite(!OpenChatInvite);
+                  }}
+                >
+                  invite to chatroom{" "}
+                  <ExpandIcon Open={OpenChatInvite}></ExpandIcon>
+                </Button>
+                <Collapse
+                  in={OpenChatInvite}
+                  key={item.username + "chatinvite"}
+                >
+                  {User.chatrooms ? (
+                    User.chatrooms.map((chatitem) => (
+                      <Button
+                        onClick={() => {
+                          try {
+                            InviteToChatRoom({
+                              roomId: chatitem.id,
+                              invitedId: item.id,
+                            });
+                            setseverity("success");
+                            setmessage(
+                              `Friend ${item.username} invited to ${chatitem.name}`
+                            );
+                          } catch (error) {
+                            setmessage(error.message);
+                            setseverity("error");
+                          }
+                        }}
+                      >
+                        {chatitem.name}
+                      </Button>
+                    ))
+                  ) : (
+                    <Typography>No chatrooms to invite to.</Typography>
+                  )}
+                </Collapse>
+                <Button
+                  onClick={() => {
+                    edituser({ content: item.id, type: "removefriend" });
+                  }}
+                >
+                  Remove friend
+                </Button>
+              </Stack>
+            </Collapse>
+          </Box>
         </>
       );
     };
     return (
-      <>
+      <Box role="presentation">
         <Divider></Divider>
-        <ListSubheader>
-          <ListItem key="addfriends" disablePadding>
-            <ListItemIcon>
-              <PeopleIcon />
-            </ListItemIcon>
-            <ListItemText primary={"Add Friends"} />
-          </ListItem>
-        </ListSubheader>
-        <UserSearchItem
-          setSelectedUser={setSelectedUser}
-          SelectedUser={SelectedUser}
-        ></UserSearchItem>
-        <Button
-          className="button"
-          sx={{ borderRadius: 50 }}
-          onClick={() => {
-            SendFriendRequest({ userId: SelectedUser.id });
-            setseverity("success");
-            setmessage(`Friend request sent to ${SelectedUser.username}`);
-            setSelectedUser(null)
-          }}
-          size="small"
-          variant="outlined"
-          color="inherit"
+        <ListItemButton
+          onClick={() => setOpenAddFriend(!OpenAddFriend)}
+          key="addfriends"
         >
-          Add
-        </Button>
+          <ListItemIcon>
+            <PeopleIcon />
+          </ListItemIcon>
 
+          <ListItemText primary={"Add Friends"} />
+          <ListItemIcon>
+            <ExpandIcon Open={OpenAddFriend}></ExpandIcon>
+          </ListItemIcon>
+        </ListItemButton>
+        <Collapse key={"AddfriendCollapse"} in={OpenAddFriend}>
+          <UserSearchItem
+            setSelectedUser={setSelectedUser}
+            SelectedUser={SelectedUser}
+          ></UserSearchItem>
+          <Button
+            className="button"
+            sx={{ borderRadius: 50 }}
+            onClick={() => {
+              SendFriendRequest({ userId: SelectedUser.id });
+              setseverity("success");
+              setmessage(`Friend request sent to ${SelectedUser.username}`);
+              setSelectedUser(null);
+            }}
+            size="small"
+            variant="outlined"
+            color="inherit"
+          >
+            Add
+          </Button>
+        </Collapse>
         <Divider></Divider>
-        <ListSubheader>
-          <ListItem key="friends" disablePadding>
+
+        <List>
+          <ListItem key="friends">
             <ListItemIcon>
               <PeopleIcon />
             </ListItemIcon>
             <ListItemText primary={"Friends"} />
           </ListItem>
-        </ListSubheader>
-
-        {User.friends ? (
-          User.friends.map((item) => (
-            <Frienditem item={item} User={User}></Frienditem>
-          ))
-        ) : (
-          <Typography>No friends :/.</Typography>
-        )}
-      </>
+          <Divider></Divider>
+          {User.friends ? (
+            User.friends.map((item) => (
+              <Frienditem item={item} User={User}></Frienditem>
+            ))
+          ) : (
+            <Typography>No friends :/.</Typography>
+          )}
+        </List>
+      </Box>
     );
   };
   const MenuState = MenuStatelogin({ User });
@@ -850,7 +858,6 @@ export default function PrimarySearchAppBar({
   };
 
   const NotificationState = MenuNotificationsState({ User });
-
 
   return (
     <Box sx={{ flexGrow: 1 }}>
