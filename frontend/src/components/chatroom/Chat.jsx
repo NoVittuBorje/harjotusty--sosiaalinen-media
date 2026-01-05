@@ -6,12 +6,32 @@ import ForumIcon from "@mui/icons-material/Forum";
 import ChatOptions from "./ChatOptions";
 import ChatRoomOptions from "./ChatRoomOptions";
 import useGetChatRoomInfo from "../hooks/useGetChatRoomInfo";
+const Chatroom = ({User,CloseMenu,type,roomId,headline}) => {
+  const { data, loading } = useGetChatRoomInfo({ roomId: roomId });
+  if(loading){
+    return
+  }
+  return(
+      <Box sx={{ height: "auto" }}>
+        <ChatRoomOptions
+          User={User}
+          info={data ? data.getChatRoomInfo : []}
+          CloseMenu={CloseMenu}
+        ></ChatRoomOptions>
+        <ChatItem
+          type={type}
+          roomId={roomId}
+          headline={headline}
+          User={User}
+          size={{ width: "auto", maxWidth: "auto", height: 200 }}
+        ></ChatItem>
+      </Box>
+  )
+}
 const Chat = ({ type, roomId, headline, User, CloseMenu }) => {
   const [Open, setOpen] = useState(false);
-  const { data, loading } = useGetChatRoomInfo({ roomId: roomId });
-  if (loading) {
-    return;
-  }
+
+
   if (type == "feed") {
     if (Open) {
       return (
@@ -63,19 +83,7 @@ const Chat = ({ type, roomId, headline, User, CloseMenu }) => {
   }
   if (type == "chatroom") {
     return (
-      <Box sx={{ height: "auto" }}>
-        <ChatRoomOptions
-          User={User}
-          info={data ? data.getChatRoomInfo : []}
-        ></ChatRoomOptions>
-        <ChatItem
-          type={type}
-          roomId={roomId}
-          headline={headline}
-          User={User}
-          size={{ width: "auto", maxWidth: "auto", height: 200 }}
-        ></ChatItem>
-      </Box>
+      <Chatroom User={User} CloseMenu={CloseMenu} type={type} roomId={roomId} headline={headline} ></Chatroom>
     );
   }
   if (type == "makechatroom") {

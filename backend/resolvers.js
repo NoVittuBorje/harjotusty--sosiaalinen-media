@@ -64,7 +64,7 @@ const resolvers = {
   },
   Query: {
     me: (root, args, context) => {
-      (context, "context");
+      context, "context";
       const currentUser = context.currentUser;
       if (!currentUser) {
         throw new GraphQLError("not authenticated", {
@@ -80,7 +80,6 @@ const resolvers = {
       return currentUser;
     },
     getuser: async (root, args) => {
-      
       const user = await User.findById(args.id)
         .populate({ path: "ownedfeeds", select: ["feedname", "id"] })
         .populate([
@@ -110,7 +109,7 @@ const resolvers = {
           ],
           select: ["_id"],
         });
-      
+
       return user;
     },
     getfeed: async (root, args) => {
@@ -146,7 +145,7 @@ const resolvers = {
               select: ["owner", "id", "name", "users"],
               populate: { path: ["owner", "users"], select: ["id"] },
             });
-          
+
           return [feed];
         }
         if (args.querytype === "many") {
@@ -156,7 +155,7 @@ const resolvers = {
           return feeds;
         }
       } catch (e) {
-         new GraphQLError(e);
+        new GraphQLError(e);
       }
     },
     getfeedposts: async (root, args) => {
@@ -176,7 +175,6 @@ const resolvers = {
         }
       }
       if (args.orderBy === "POPULAR") {
-
         try {
           const posts = await Post.find({ feed: feed._id, active: true })
             .sort({ karma: -1 })
@@ -205,7 +203,6 @@ const resolvers = {
       }
     },
     getpostcomments: async (root, args) => {
-
       const comments = await Comment.find({
         post: args.postid,
         depth: 0,
@@ -241,7 +238,6 @@ const resolvers = {
         }
       }
       if (args.orderBy === "POPULAR") {
-
         try {
           const posts = await Post.find({ active: true })
             .sort({ karma: -1 })
@@ -313,7 +309,6 @@ const resolvers = {
       return post[0];
     },
     getcomments: async (root, args) => {
-      
       const comments = await Comment.find({ _id: args.commentid })
         .populate({
           path: "user",
@@ -366,14 +361,13 @@ const resolvers = {
             select: ["feedname", "id"],
           },
         });
-        
+
         return user.posts;
       } catch (e) {
         throw new GraphQLError(e);
       }
     },
     getusercomments: async (root, args) => {
-      
       try {
         const user = await User.findById(args.userid).populate({
           path: "comments",
@@ -426,7 +420,6 @@ const resolvers = {
           ],
         });
 
-        
         return user.comments;
       } catch (e) {
         throw new GraphQLError(e);
@@ -483,7 +476,6 @@ const resolvers = {
         }).limit(10);
         const result = [...feeds, ...posts, ...users];
 
-
         return result;
       } catch (e) {
         throw new GraphQLError(e);
@@ -509,7 +501,7 @@ const resolvers = {
       try {
         const feed = await Feed.findOne({ feedname: args.feedname });
         const subs = feed.subs.length;
-        
+
         return subs;
       } catch (e) {
         throw new GraphQLError(e);
@@ -657,7 +649,7 @@ const resolvers = {
           img: args.img,
         });
         await post.save();
-        
+
         const newpost = await Post.findById(post._id)
           .populate({
             path: "feed",
@@ -735,7 +727,7 @@ const resolvers = {
           },
         });
       }
-      
+
       const userForToken = {
         username: user.username,
         id: user._id,
@@ -754,12 +746,13 @@ const resolvers = {
       const newuser = await User.findByIdAndUpdate(
         { _id: user._id },
         { $push: { ownedfeeds: newfeed._id } }
-      ).populate({path:ownedfeeds,select:["id","feedname"]});
-      return newuser;
+      );
+      const res = await User.findById(context.currentUser._id).populate({ path: "ownedfeeds", select: ["id", "feedname"] })
+      return res;
     },
     likeComment: async (root, args, context) => {
       const user = context.currentUser;
-      
+
       const comment = await Comment.findById(args.id)
         .populate({
           path: "user",
@@ -969,7 +962,6 @@ const resolvers = {
       }
     },
     modifyComment: async (root, args, context) => {
-
       const user = context.currentUser;
       const comment = await Comment.findById(args.commentid).populate({
         path: "user",
@@ -1118,7 +1110,7 @@ const resolvers = {
         .populate("moderators", { id: 1 })
         .populate("owner", { id: 1 });
       const mods = feed.moderators.map((i) => i._id.toString());
-      
+
       const bannedusers = feed.bannedusers.map((i) => i._id.toString());
       const user = context.currentUser;
       if (
@@ -1322,13 +1314,19 @@ const resolvers = {
         }
         if (args.action == "makeowner") {
           try {
-            const newowner = await User.findById(args.content)
+            const newowner = await User.findById(args.content);
             const newfeed = await Feed.findOneAndUpdate(
               { _id: feed._id },
               { $set: { owner: newowner._id } }
             );
-            const updateowner = await User.findByIdAndUpdate({_id: newowner._id},{$push:{ownedfeeds:newfeed._id}})
-            const oldowner = await User.findByIdAndUpdate({_id: context.currentUser._id},{$pop:{ownedfeeds:newfeed._id}})
+            const updateowner = await User.findByIdAndUpdate(
+              { _id: newowner._id },
+              { $push: { ownedfeeds: newfeed._id } }
+            );
+            const oldowner = await User.findByIdAndUpdate(
+              { _id: context.currentUser._id },
+              { $pop: { ownedfeeds: newfeed._id } }
+            );
             const res = await Feed.findById(feed._id)
               .populate("bannedusers", {
                 id: 1,
@@ -1342,7 +1340,6 @@ const resolvers = {
           }
         }
       } else {
-
       }
     },
     makeComment: async (root, args, context) => {
@@ -1353,7 +1350,6 @@ const resolvers = {
       if (args.replyto) {
         const user = context.currentUser;
 
-        
         const replyto = await Comment.findById(args.replyto);
 
         const newComment = new Comment({
@@ -1392,7 +1388,6 @@ const resolvers = {
           .populate({ path: "post", select: ["id"] });
         return res;
       } else {
-
         const user = context.currentUser;
         const newComment = new Comment({
           content: args.content,
@@ -1429,9 +1424,7 @@ const resolvers = {
             Body: stream,
           },
         });
-        await uploadimage.on("httpUploadProgress", (progress) => {
-
-        });
+        await uploadimage.on("httpUploadProgress", (progress) => {});
         await uploadimage.done();
 
         return [
@@ -1498,7 +1491,7 @@ const resolvers = {
           newroom.save();
           feed.chatRoom = newroom;
           feed.save();
-          
+
           return feed;
         } else {
           return new GraphQLError("Not the owner of feed");
@@ -1514,8 +1507,15 @@ const resolvers = {
           const newfeed = await Feed.findByIdAndUpdate(
             { _id: feed._id },
             { chatRoom: null }
-          )
-          const resfeed = await Feed.findById(feed._id).populate({path:"chatRoom", select:[ "id" ,"name","type","owner","users"],populate:{ path: ["users","owner"], select: ["id", "username", "avatar"] },})
+          );
+          const resfeed = await Feed.findById(feed._id).populate({
+            path: "chatRoom",
+            select: ["id", "name", "type", "owner", "users"],
+            populate: {
+              path: ["users", "owner"],
+              select: ["id", "username", "avatar"],
+            },
+          });
           return resfeed;
         } else {
           return new GraphQLError("Not the owner of chat or feed");
@@ -1530,8 +1530,12 @@ const resolvers = {
             {
               $pull: { chatrooms: args.roomId },
             }
-          ).populate("chatrooms", { id: 1, name: 1 });
-          return newuser;
+          );
+          const res = await User.findById(context.currentUser._id).populate(
+            "chatrooms",
+            { id: 1, name: 1 }
+          );
+          return res;
         } else {
           const newuser = await User.findByIdAndUpdate(
             context.currentUser._id,
@@ -1542,7 +1546,11 @@ const resolvers = {
           const newroom = await Room.findByIdAndUpdate(args.roomId, {
             $pull: { users: context.currentUser._id },
           });
-          return newuser;
+          const res = await User.findById(context.currentUser._id).populate(
+            "chatrooms",
+            { id: 1, name: 1 }
+          );
+          return res;
         }
       }
       if (args.type == "kick") {
@@ -1621,7 +1629,7 @@ const resolvers = {
 
       const message = new Message(data);
       await message.save();
-      
+
       const newroom = await Room.findByIdAndUpdate(
         { _id: room.id },
         { $push: { messages: message } }

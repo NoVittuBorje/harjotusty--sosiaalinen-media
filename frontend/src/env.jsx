@@ -1,6 +1,6 @@
 
 const environment = () => {
-    const deployment = true; //false if you want to run locally
+    const deployment = false; //false if you want to run locally
     var linktobackend = "http://localhost:3000";
     var linktows = `ws://localhost:3000/subscriptions`
     if (deployment) {

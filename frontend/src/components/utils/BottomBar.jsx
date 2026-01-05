@@ -139,6 +139,7 @@ const BottomBar = ({ User }) => {
                   type={"chatroom"}
                   roomId={OpenedChat.id}
                   headline={OpenedChat.name}
+                  CloseMenu={handleChatsMenuClose}
                   User={User}
                 ></Chat>
               </Box>

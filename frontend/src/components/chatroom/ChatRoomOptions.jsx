@@ -8,7 +8,7 @@ import {
 import { useState } from "react";
 import useEditChatRoom from "../hooks/useEditChatRoom";
 
-const ChatRoomOptions = ({ User, info }) => {
+const ChatRoomOptions = ({ User, info,CloseMenu }) => {
   const [SelectedUser, setSelectedUser] = useState();
   const [editroom] = useEditChatRoom();
   const avoidBubblingUp = (e) => {
@@ -74,10 +74,11 @@ const ChatRoomOptions = ({ User, info }) => {
         className="button"
         sx={{ borderRadius: 50 }}
         onClick={() => {
-          editroom({
+          const data = editroom({
             roomId: info.id,
             type: "leaveroom",
           });
+          CloseMenu()
         }}
         size="small"
         variant="outlined"
