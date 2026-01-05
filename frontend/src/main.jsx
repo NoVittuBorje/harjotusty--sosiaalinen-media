@@ -26,15 +26,11 @@ const authLink = setContext((_, { headers }) => {
   };
 });
 
-var linktobackend = "http://localhost:3000";
-const deployment = true;
-var linktows = `ws://localhost:3000/subscriptions`
-if (deployment) {
-  linktobackend = "https://backend-harjotus-sosi.fly.dev/";
-  linktows = `wss://backend-harjotus-sosi.fly.dev/subscriptions`
-}
+
+const env = environment()
+
 const httpLink = createUploadLink({
-  uri: `${linktobackend}`,
+  uri: `${env.linktobackend}`,
 });
 const cache = new InMemoryCache({
   typePolicies: {
@@ -79,7 +75,7 @@ const cache = new InMemoryCache({
 
 const wsLink = new GraphQLWsLink(
   createClient({
-    url: `${linktows}`,
+    url: `${env.linktows}`,
     connectionParams: {
       authToken: sessionStorage.getItem("token") ? `Bearer ${sessionStorage.getItem("token")}` : null,
     },
@@ -97,8 +93,9 @@ const splitLink = split(
   authLink.concat(httpLink)
 );
 import { loadErrorMessages, loadDevMessages } from "@apollo/client/dev";
+import environment from "./env.jsx";
 
-if (deployment == false) {
+if (env.deployment == false) {
   // Adds messages only in a dev environment
   loadDevMessages();
   loadErrorMessages();

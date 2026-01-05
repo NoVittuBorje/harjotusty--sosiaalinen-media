@@ -466,4 +466,11 @@
   <td>32</td>
   <td>Finished chatroom options, cleaned lint errors and finished project.</td>
   </tr>
+            <tr>
+  <td>Feb 05, 2026</td>
+  <td>1</td>
+  <td>245</td>
+  <td>32</td>
+  <td>Made changes to readme and cleaned backend console.logs.</td>
+  </tr>
 </table>

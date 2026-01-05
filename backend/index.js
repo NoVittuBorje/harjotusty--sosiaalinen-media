@@ -47,7 +47,8 @@ const start = async () => {
   const corsOptions = {
     origin: [
       `${linktofrontend}`,
-      "novittuborjeampari1.s3.eu-north-1.amazonaws.com",
+
+      `${process.env.AWS_S3_BUCKET_NAME+".s3."+process.env.AWS_REGION+".amazonaws.com"}`,
       "https://studio.apollographql.com",
     ],
     methods: ["GET", "PUT", "POST"],

@@ -64,7 +64,7 @@ const resolvers = {
   },
   Query: {
     me: (root, args, context) => {
-      console.log(context, "context");
+      (context, "context");
       const currentUser = context.currentUser;
       if (!currentUser) {
         throw new GraphQLError("not authenticated", {
@@ -80,7 +80,7 @@ const resolvers = {
       return currentUser;
     },
     getuser: async (root, args) => {
-      console.log(args);
+      
       const user = await User.findById(args.id)
         .populate({ path: "ownedfeeds", select: ["feedname", "id"] })
         .populate([
@@ -110,11 +110,10 @@ const resolvers = {
           ],
           select: ["_id"],
         });
-      console.log(user);
+      
       return user;
     },
     getfeed: async (root, args) => {
-      console.log(args.querytype);
       try {
         if (args.querytype === "single") {
           const feed = await Feed.findOne({ feedname: args.feedname })
@@ -147,7 +146,7 @@ const resolvers = {
               select: ["owner", "id", "name", "users"],
               populate: { path: ["owner", "users"], select: ["id"] },
             });
-          console.log(feed);
+          
           return [feed];
         }
         if (args.querytype === "many") {
@@ -157,12 +156,10 @@ const resolvers = {
           return feeds;
         }
       } catch (e) {
-        console.log(e);
-        throw new GraphQLError(e);
+         new GraphQLError(e);
       }
     },
     getfeedposts: async (root, args) => {
-      console.log(args.feedname, args.orderBy, args.offset);
       const feed = await Feed.findOne({ feedname: args.feedname });
       if (args.orderBy === "HOTTEST") {
         try {
@@ -179,7 +176,7 @@ const resolvers = {
         }
       }
       if (args.orderBy === "POPULAR") {
-        console.log("popular");
+
         try {
           const posts = await Post.find({ feed: feed._id, active: true })
             .sort({ karma: -1 })
@@ -187,7 +184,7 @@ const resolvers = {
             .limit(20)
             .populate("feed", { feedname: 1 })
             .populate("owner", { username: 1, id: 1, avatar: 1 });
-          console.log(posts);
+
           return posts;
         } catch (e) {
           throw new GraphQLError(e);
@@ -208,7 +205,7 @@ const resolvers = {
       }
     },
     getpostcomments: async (root, args) => {
-      console.log(args.postid, args.offset);
+
       const comments = await Comment.find({
         post: args.postid,
         depth: 0,
@@ -225,11 +222,9 @@ const resolvers = {
         .sort({ karma: -1 })
         .skip(args.offset)
         .limit(20);
-      console.log(comments);
       return comments;
     },
     getpopularposts: async (root, args, context) => {
-      console.log(args.orderBy);
       if (args.orderBy === "HOTTEST") {
         try {
           const posts = await Post.find({ active: true })
@@ -246,7 +241,7 @@ const resolvers = {
         }
       }
       if (args.orderBy === "POPULAR") {
-        console.log("popular");
+
         try {
           const posts = await Post.find({ active: true })
             .sort({ karma: -1 })
@@ -254,7 +249,7 @@ const resolvers = {
             .limit(20)
             .populate("feed", { feedname: 1 })
             .populate("owner", { username: 1, id: 1, avatar: 1 });
-          console.log(posts);
+
           return posts;
         } catch (e) {
           throw new GraphQLError(e);
@@ -275,7 +270,6 @@ const resolvers = {
       }
       if (args.orderBy === "SUBSCRIPTIONS") {
         try {
-          console.log(context.currentUser.feedsubs);
           const subs = context.currentUser.feedsubs.map((x) => x._id);
           const posts = await Post.find({ feed: { $in: [...subs] } })
             .sort({ createdAt: -1 })
@@ -291,9 +285,7 @@ const resolvers = {
       }
       if (args.orderBy === "OWNEDFEEDS") {
         try {
-          console.log(context.currentUser.ownedfeeds);
           const feeds = context.currentUser.ownedfeeds.map((x) => x._id);
-
           const posts = await Post.find({ feed: { $in: [...feeds] } })
             .sort({ createdAt: -1 })
             .skip(args.offset)
@@ -321,7 +313,7 @@ const resolvers = {
       return post[0];
     },
     getcomments: async (root, args) => {
-      console.log(args);
+      
       const comments = await Comment.find({ _id: args.commentid })
         .populate({
           path: "user",
@@ -345,7 +337,7 @@ const resolvers = {
             select: ["username", "avatar", "id"],
           },
         });
-      console.log(comments);
+
       return comments;
     },
     getuserposts: async (root, args) => {
@@ -374,14 +366,14 @@ const resolvers = {
             select: ["feedname", "id"],
           },
         });
-        console.log(user);
+        
         return user.posts;
       } catch (e) {
         throw new GraphQLError(e);
       }
     },
     getusercomments: async (root, args) => {
-      console.log(args);
+      
       try {
         const user = await User.findById(args.userid).populate({
           path: "comments",
@@ -434,7 +426,7 @@ const resolvers = {
           ],
         });
 
-        console.log(user);
+        
         return user.comments;
       } catch (e) {
         throw new GraphQLError(e);
@@ -490,7 +482,7 @@ const resolvers = {
           username: { $regex: args.searchby, $options: "i" },
         }).limit(10);
         const result = [...feeds, ...posts, ...users];
-        console.log(result);
+
 
         return result;
       } catch (e) {
@@ -517,7 +509,7 @@ const resolvers = {
       try {
         const feed = await Feed.findOne({ feedname: args.feedname });
         const subs = feed.subs.length;
-        console.log(subs);
+        
         return subs;
       } catch (e) {
         throw new GraphQLError(e);
@@ -533,7 +525,6 @@ const resolvers = {
 
         const response = await s3.listObjectsV2(params).promise();
         if (response.Contents.length === 0) {
-          console.log(`No images found in folder: ${userId}`);
           return [];
         }
         const imageUrls = response.Contents.map((object) => {
@@ -544,9 +535,6 @@ const resolvers = {
             Expires: 3600,
           });
         });
-        console.log(
-          `Retrieved ${imageUrls.length} images from folder: ${userId}`
-        );
         return imageUrls;
       } catch (error) {
         console.error("Error retrieving images:", error);
@@ -555,7 +543,6 @@ const resolvers = {
     },
     getImage: async (root, args, context) => {
       try {
-        console.log("getimage");
         let command = new GetObjectCommand({
           Bucket: process.env.AWS_S3_BUCKET_NAME,
           Key: args.imageId,
@@ -593,7 +580,6 @@ const resolvers = {
       const query = {
         room: input.roomId,
       };
-      console.log(input.offset);
       const options = {
         sort: {
           createdAt: -1,
@@ -636,7 +622,6 @@ const resolvers = {
         )
           .populate("ownedfeeds", { feedname: 1, id: 1 })
           .populate("feedsubs", { id: 1, feedname: 1 });
-        console.log(feed, newuser);
         return newuser;
       }
       if (args.type === "unsub") {
@@ -650,7 +635,6 @@ const resolvers = {
         )
           .populate("ownedfeeds", { feedname: 1, id: 1 })
           .populate("feedsubs", { id: 1, feedname: 1 });
-        console.log(feed, newuser);
         return newuser;
       }
     },
@@ -661,7 +645,6 @@ const resolvers = {
       const feed = await Feed.findOne({ feedname: args.feedname });
       const user = context.currentUser;
       const bannedusers = feed.bannedusers.map((i) => i._id.toString());
-      console.log(bannedusers, bannedusers.includes(user._id.toString()));
       if (bannedusers.includes(user._id.toString())) {
         return new GraphQLError("User is banned");
       } else {
@@ -674,7 +657,7 @@ const resolvers = {
           img: args.img,
         });
         await post.save();
-        console.log(post);
+        
         const newpost = await Post.findById(post._id)
           .populate({
             path: "feed",
@@ -712,7 +695,6 @@ const resolvers = {
       });
       return user.save().catch((error) => {
         if (error.errorResponse.keyValue.username) {
-          console.log("username error");
           throw new GraphQLError("Username already in use", {
             extensions: {
               code: "BAD_USER_INPUT",
@@ -722,7 +704,6 @@ const resolvers = {
           });
         }
         if (error.errorResponse.keyValue.email) {
-          console.log("email error");
           throw new GraphQLError("Email already in use", {
             extensions: {
               code: "BAD_USER_INPUT",
@@ -754,7 +735,7 @@ const resolvers = {
           },
         });
       }
-      console.log(user);
+      
       const userForToken = {
         username: user.username,
         id: user._id,
@@ -763,7 +744,6 @@ const resolvers = {
       return { value: jwt.sign(userForToken, process.env.JWT_SECRET) };
     },
     makeFeed: async (root, args, context) => {
-      console.log(context.currentUser);
       const newfeed = new Feed({
         feedname: args.feedname,
         description: sanitizeHtml(args.description),
@@ -779,7 +759,7 @@ const resolvers = {
     },
     likeComment: async (root, args, context) => {
       const user = context.currentUser;
-      console.log(user);
+      
       const comment = await Comment.findById(args.id)
         .populate({
           path: "user",
@@ -790,7 +770,6 @@ const resolvers = {
       if (comment.user.id == user.id) {
         throw new GraphQLError("Cant give karma to yourself.");
       }
-      console.log(comment);
       const likecommentids = user.likedcomments.map((comment) =>
         comment._id.toString()
       );
@@ -990,7 +969,7 @@ const resolvers = {
       }
     },
     modifyComment: async (root, args, context) => {
-      console.log(args.action);
+
       const user = context.currentUser;
       const comment = await Comment.findById(args.commentid).populate({
         path: "user",
@@ -1045,7 +1024,6 @@ const resolvers = {
       const user = context.currentUser;
       if (args.type === "Avatar") {
         try {
-          console.log(args.content);
           user.avatar = args.content;
           await user.save();
           return user;
@@ -1140,10 +1118,9 @@ const resolvers = {
         .populate("moderators", { id: 1 })
         .populate("owner", { id: 1 });
       const mods = feed.moderators.map((i) => i._id.toString());
-      console.log(mods);
+      
       const bannedusers = feed.bannedusers.map((i) => i._id.toString());
       const user = context.currentUser;
-      console.log(feed.owner._id.toString() == user._id.toString());
       if (
         mods.includes(user._id.toString()) ||
         feed.owner._id.toString() == user._id.toString()
@@ -1197,7 +1174,7 @@ const resolvers = {
         if (args.action === "ban") {
           try {
             const banneduser = await User.findById(args.content);
-            console.log(banneduser);
+
             if (bannedusers.includes(banneduser._id.toString())) {
               throw new GraphQLError("User already banned");
             }
@@ -1221,7 +1198,7 @@ const resolvers = {
         if (args.action == "unban") {
           try {
             const unbanneduser = await User.findById(args.content);
-            console.log(unbanneduser);
+
             const newfeed = await Feed.findOneAndUpdate(
               { _id: feed._id },
               { $pull: { bannedusers: unbanneduser._id } }
@@ -1344,7 +1321,7 @@ const resolvers = {
           }
         }
       } else {
-        console.log("notmod");
+
       }
     },
     makeComment: async (root, args, context) => {
@@ -1355,9 +1332,9 @@ const resolvers = {
       if (args.replyto) {
         const user = context.currentUser;
 
-        console.log(post);
+        
         const replyto = await Comment.findById(args.replyto);
-        console.log(replyto);
+
         const newComment = new Comment({
           content: args.content,
           post: post,
@@ -1394,7 +1371,7 @@ const resolvers = {
           .populate({ path: "post", select: ["id"] });
         return res;
       } else {
-        console.log("newcomment");
+
         const user = context.currentUser;
         const newComment = new Comment({
           content: args.content,
@@ -1404,7 +1381,7 @@ const resolvers = {
           depth: 0,
         });
         await newComment.save();
-        console.log(user, post);
+
         const newpost = await Post.findByIdAndUpdate(
           { _id: args.postid },
           { $push: { comments: newComment._id }, $inc: { commentsCount: 1 } }
@@ -1432,10 +1409,10 @@ const resolvers = {
           },
         });
         await uploadimage.on("httpUploadProgress", (progress) => {
-          console.log(progress);
+
         });
         await uploadimage.done();
-        console.log(uploadimage.singleUploadResult.Key);
+
         return [
           `${uploadimage.singleUploadResult.Key}`,
           `Image: ${filename} uploaded successfully`,
@@ -1459,7 +1436,6 @@ const resolvers = {
             Body: stream,
           };
           const res = await s3.upload(params).promise();
-          console.log(`File: ${filename} uploaded successfully`);
           return `Uploaded Location: ${res.Location}`;
         });
         const response = await Promise.all(uploadPromises);
@@ -1497,12 +1473,11 @@ const resolvers = {
           "owner",
           { id: 1 }
         );
-        console.log(context.currentUser.id, feed.owner.id);
         if (context.currentUser.id == feed.owner.id) {
           newroom.save();
           feed.chatRoom = newroom;
           feed.save();
-          console.log(feed);
+          
           return feed;
         } else {
           return new GraphQLError("Not the owner of feed");
@@ -1514,7 +1489,6 @@ const resolvers = {
         const feed = await Feed.findById(args.feedId)
           .populate("chatRoom", { id: 1 })
           .populate("owner", { id: 1 });
-        console.log(context.currentUser.id, feed.owner.id);
         if (context.currentUser.id == feed.owner.id) {
           const newfeed = await Feed.findByIdAndUpdate(
             { _id: feed._id },
@@ -1625,7 +1599,7 @@ const resolvers = {
 
       const message = new Message(data);
       await message.save();
-      console.log(message);
+      
       const newroom = await Room.findByIdAndUpdate(
         { _id: room.id },
         { $push: { messages: message } }
