@@ -26,8 +26,8 @@ const MakeFeedPage = () => {
       description: formik.values.description,
     });
 
-    if (data.data.makeFeed.feedname) {
-      navigate(`/feed/${data.data.makeFeed.feedname}`);
+    if (data.data.makeFeed) {
+      navigate(`/feed/${formik.values.feedname}`);
     }
   };
 
