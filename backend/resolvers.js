@@ -754,8 +754,8 @@ const resolvers = {
       const newuser = await User.findByIdAndUpdate(
         { _id: user._id },
         { $push: { ownedfeeds: newfeed._id } }
-      );
-      return newfeed;
+      ).populate({path:ownedfeeds,select:["id","feedname"]});
+      return newuser;
     },
     likeComment: async (root, args, context) => {
       const user = context.currentUser;
@@ -1320,6 +1320,27 @@ const resolvers = {
             throw new GraphQLError(e);
           }
         }
+        if (args.action == "makeowner") {
+          try {
+            const newowner = await User.findById(args.content)
+            const newfeed = await Feed.findOneAndUpdate(
+              { _id: feed._id },
+              { $set: { owner: newowner._id } }
+            );
+            const updateowner = await User.findByIdAndUpdate({_id: newowner._id},{$push:{ownedfeeds:newfeed._id}})
+            const oldowner = await User.findByIdAndUpdate({_id: context.currentUser._id},{$pop:{ownedfeeds:newfeed._id}})
+            const res = await Feed.findById(feed._id)
+              .populate("bannedusers", {
+                id: 1,
+                username: 1,
+              })
+              .populate("moderators", { id: 1, username: 1, avatar: 1 })
+              .populate("owner", { id: 1, username: 1, avatar: 1 });
+            return res;
+          } catch (e) {
+            throw new GraphQLError(e);
+          }
+        }
       } else {
 
       }
@@ -1493,8 +1514,9 @@ const resolvers = {
           const newfeed = await Feed.findByIdAndUpdate(
             { _id: feed._id },
             { chatRoom: null }
-          );
-          return newfeed;
+          )
+          const resfeed = await Feed.findById(feed._id).populate({path:"chatRoom", select:[ "id" ,"name","type","owner","users"],populate:{ path: ["users","owner"], select: ["id", "username", "avatar"] },})
+          return resfeed;
         } else {
           return new GraphQLError("Not the owner of chat or feed");
         }

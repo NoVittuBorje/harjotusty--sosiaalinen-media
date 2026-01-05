@@ -18,7 +18,13 @@ export const REGISTER = gql`
 export const MAKEFEED = gql`
   mutation Mutation($feedname: String!, $description: String!) {
     makeFeed(feedname: $feedname, description: $description) {
-      feedname
+      username
+      avatar
+      ownedfeeds {
+        feedname
+        id
+      }
+      id
     }
   }
 `;

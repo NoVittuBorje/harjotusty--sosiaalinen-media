@@ -214,7 +214,7 @@ const typeDefs = `#graphql
     makeFeed(
       feedname: String!
       description: String!
-    ): Feed
+    ): User
     makePost(
       headline: String!
       feedname: String!

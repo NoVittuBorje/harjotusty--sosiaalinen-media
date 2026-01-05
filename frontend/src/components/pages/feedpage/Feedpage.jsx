@@ -200,7 +200,6 @@ const FeedPage = ({ match, User, refetchUser, setmessage, setseverity }) => {
     );
   };
   const ModSettingIcon = ({ info, infoloading, User }) => {
-    console.log("setting");
     if (infoloading) {
       return;
     }
@@ -307,11 +306,10 @@ const FeedPage = ({ match, User, refetchUser, setmessage, setseverity }) => {
     }
   };
   const FeedChat = ({ info, infoloading, User }) => {
-    console.log(info);
     if (infoloading || !info.chatRoom) {
       return;
     }
-    console.log(info);
+    if(info.chatRoom.id){
     return (
       <Chat
         type={"feed"}
@@ -319,7 +317,7 @@ const FeedPage = ({ match, User, refetchUser, setmessage, setseverity }) => {
         User={User}
         roomId={info.chatRoom.id}
       ></Chat>
-    );
+    );}else{return}
   };
   const feed = data ? data.getfeedposts : [];
   let info = feedinfo.data ? feedinfo.data.getfeed : {};
